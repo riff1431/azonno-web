@@ -434,7 +434,8 @@ export function computeCustomerRiskProfile(params: {
 export function generateWhatsAppOrderMessage(
   order: any,
   templateType: "confirm" | "shipped" | "advance" | "review" | "cancelled" | "refund",
-  customAdvanceAmount: number = 120
+  customAdvanceAmount: number = 120,
+  customTemplates?: Array<{ template_type: string; template: string; advance_amount?: number; is_active?: boolean }>
 ): string {
   const phone = order.shipping_address_snapshot?.phone || order.guest_phone || "";
   const sanitized = sanitizeBdPhoneNumber(phone).sanitized;
@@ -443,31 +444,63 @@ export function generateWhatsAppOrderMessage(
   const orderNum = order.order_number || order.id?.slice(0, 8);
   const items = order.order_items || [];
   const itemsSummary = items.map((it: any) => `${it.product_name_snapshot} x${it.quantity}`).join(", ") || "Cosmetics Order";
-  const codDue = order.amount_to_collect !== undefined ? order.amount_to_collect : order.total;
+  const codDue = order.amount_to_collect !== undefined ? order.amount_to_collect : (order.total || 0);
+  const courier = order.courier_name || "SteadFast";
+  const tracking = order.consignment_id || order.tracking_code || "Pending";
+  const trackUrl = order.tracking_url || `https://steadfast.com.bd/t/${tracking}`;
+  const advanceFee = customAdvanceAmount || 120;
+  const remainingDue = Math.max(0, codDue - advanceFee);
+
+  // Check if admin defined a custom active template for this type
+  const matchedCustom = customTemplates?.find(
+    (t) => t.template_type === templateType && t.is_active !== false
+  );
 
   let text = "";
 
-  if (templateType === "confirm") {
-    text = `Hello ${name}, thank you for placing Order #${orderNum} at Blush & Budget!
+  if (matchedCustom && matchedCustom.template) {
+    let customText = matchedCustom.template;
+    const feeToUse = matchedCustom.advance_amount || advanceFee;
+    const remToUse = Math.max(0, codDue - feeToUse);
+
+    const replacements: Record<string, string> = {
+      customer_name: name,
+      order_number: String(orderNum),
+      store_name: "Blush & Budget",
+      items_summary: itemsSummary,
+      cod_due: String(codDue),
+      courier_name: courier,
+      tracking_id: String(tracking),
+      tracking_url: trackUrl,
+      advance_amount: String(feeToUse),
+      remaining_due: String(remToUse),
+    };
+
+    for (const [k, v] of Object.entries(replacements)) {
+      customText = customText.replaceAll(`{{${k}}}`, v);
+    }
+    text = customText;
+  } else {
+    // Standard system default templates
+    if (templateType === "confirm") {
+      text = `Hello ${name}, thank you for placing Order #${orderNum} at Blush & Budget!
 Items: ${itemsSummary}
 Total COD Due: BDT ${codDue}
 Your parcel is confirmed and being prepared for delivery.`;
-  } else if (templateType === "shipped") {
-    const courier = order.courier_name || "SteadFast";
-    const tracking = order.consignment_id || order.tracking_code || "Pending";
-    const trackUrl = order.tracking_url || `https://steadfast.com.bd/t/${tracking}`;
-    text = `Hello ${name}, your Order #${orderNum} has been handed over to ${courier}!
+    } else if (templateType === "shipped") {
+      text = `Hello ${name}, your Order #${orderNum} has been handed over to ${courier}!
 Consignment / Tracking ID: ${tracking}
 Live Tracking Link: ${trackUrl}
 Please keep BDT ${codDue} ready for the delivery rider.`;
-  } else if (templateType === "advance") {
-    text = `Hello ${name}, to confirm delivery of your Order #${orderNum} (Total BDT ${codDue}), please send BDT ${customAdvanceAmount} delivery advance via bKash/Nagad Merchant Number. Remaining BDT ${Math.max(0, codDue - customAdvanceAmount)} will be Cash on Delivery.`;
-  } else if (templateType === "review") {
-    text = `Hello ${name}, we hope you loved your products from Order #${orderNum}! Please share your feedback and review with us.`;
-  } else if (templateType === "cancelled") {
-    text = `Hello ${name}, we would like to inform you that your Order #${orderNum} has been cancelled. If you have questions or wish to re-order, please reply to this chat.`;
-  } else if (templateType === "refund") {
-    text = `Hello ${name}, your refund request for Order #${orderNum} has been approved and processed. Thank you for shopping with Blush & Budget.`;
+    } else if (templateType === "advance") {
+      text = `Hello ${name}, to confirm delivery of your Order #${orderNum} (Total BDT ${codDue}), please send BDT ${advanceFee} delivery advance via bKash/Nagad Merchant Number. Remaining BDT ${remainingDue} will be Cash on Delivery.`;
+    } else if (templateType === "review") {
+      text = `Hello ${name}, we hope you loved your products from Order #${orderNum}! Please share your feedback and review with us.`;
+    } else if (templateType === "cancelled") {
+      text = `Hello ${name}, we would like to inform you that your Order #${orderNum} has been cancelled. If you have questions or wish to re-order, please reply to this chat.`;
+    } else if (templateType === "refund") {
+      text = `Hello ${name}, your refund request for Order #${orderNum} has been approved and processed. Thank you for shopping with Blush & Budget.`;
+    }
   }
 
   return `https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`;

@@ -113,10 +113,11 @@ export const adminNavItems = [
     title: "Communication",
     icon: "MessageSquare",
     children: [
+      { title: "Notification Settings", href: "/admin/communication/notifications" },
+      { title: "WhatsApp Templates", href: "/admin/communication/whatsapp" },
       { title: "SMS Providers", href: "/admin/communication/sms" },
       { title: "SMS Templates", href: "/admin/communication/sms/templates" },
       { title: "Email Settings", href: "/admin/communication/email" },
-      { title: "Notification Settings", href: "/admin/communication/notifications" },
     ],
   },
   {

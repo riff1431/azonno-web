@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Eye,
@@ -41,6 +41,7 @@ import { Button } from "@/components/shared/ui/button";
 import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
 import { getAvailableNextStatuses, OrderStatus, generateWhatsAppOrderMessage } from "@/types/orders";
 import { BDCourierBadge } from "@/features/fraud/bdcourier-badge";
+import { getWhatsAppTemplates, type WhatsAppTemplate } from "@/features/communication/whatsapp-actions";
 
 interface OrderListClientProps {
   initialOrders: any[];
@@ -107,8 +108,15 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     notes: "Manual order placed via Phone/WhatsApp",
   });
 
-  // WhatsApp dropdown menu open state
+  // WhatsApp dropdown menu open state & templates
   const [openWhatsAppId, setOpenWhatsAppId] = useState<string | null>(null);
+  const [waTemplates, setWaTemplates] = useState<WhatsAppTemplate[]>([]);
+
+  useEffect(() => {
+    getWhatsAppTemplates().then((res) => {
+      if (res && res.length > 0) setWaTemplates(res);
+    });
+  }, []);
 
   // Filter Orders  // Search & Tab Filtering
   const filteredOrders = orders.filter((o) => {
@@ -1067,12 +1075,21 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                             </button>
 
                             {openWhatsAppId === ord.id && (
-                              <div className="absolute left-0 mt-1 w-52 bg-white rounded-2xl border border-gray-200 shadow-xl p-2 z-50 text-[11px] space-y-1 animate-in fade-in-0">
-                                <span className="font-black text-[9px] uppercase text-gray-400 px-2 block">
-                                  WhatsApp Templates:
-                                </span>
+                              <div className="absolute left-0 mt-1 w-56 bg-white rounded-2xl border border-gray-200 shadow-xl p-2 z-50 text-[11px] space-y-1 animate-in fade-in-0">
+                                <div className="flex items-center justify-between px-2 py-0.5 border-b border-gray-100 pb-1">
+                                  <span className="font-black text-[9px] uppercase text-gray-400">
+                                    WhatsApp Actions
+                                  </span>
+                                  <Link
+                                    href="/admin/communication/whatsapp"
+                                    onClick={() => setOpenWhatsAppId(null)}
+                                    className="text-[9px] font-bold text-emerald-600 hover:text-emerald-800"
+                                  >
+                                    Manage ⚙️
+                                  </Link>
+                                </div>
                                 <a
-                                  href={generateWhatsAppOrderMessage(ord, "confirm")}
+                                  href={generateWhatsAppOrderMessage(ord, "confirm", 120, waTemplates)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenWhatsAppId(null)}
@@ -1081,7 +1098,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                   Order Confirmed
                                 </a>
                                 <a
-                                  href={generateWhatsAppOrderMessage(ord, "shipped")}
+                                  href={generateWhatsAppOrderMessage(ord, "shipped", 120, waTemplates)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenWhatsAppId(null)}
@@ -1090,16 +1107,16 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                   Courier Live Tracking
                                 </a>
                                 <a
-                                  href={generateWhatsAppOrderMessage(ord, "advance")}
+                                  href={generateWhatsAppOrderMessage(ord, "advance", 120, waTemplates)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenWhatsAppId(null)}
                                   className="block px-2 py-1.5 rounded-lg hover:bg-emerald-50 text-gray-800 font-bold"
                                 >
-                                  Request Advance (BDT 120)
+                                  Request Advance
                                 </a>
                                 <a
-                                  href={generateWhatsAppOrderMessage(ord, "review")}
+                                  href={generateWhatsAppOrderMessage(ord, "review", 120, waTemplates)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenWhatsAppId(null)}
@@ -1108,7 +1125,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                   Review Request
                                 </a>
                                 <a
-                                  href={generateWhatsAppOrderMessage(ord, "cancelled")}
+                                  href={generateWhatsAppOrderMessage(ord, "cancelled", 120, waTemplates)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenWhatsAppId(null)}
@@ -1117,7 +1134,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                   Order Cancelled
                                 </a>
                                 <a
-                                  href={generateWhatsAppOrderMessage(ord, "refund")}
+                                  href={generateWhatsAppOrderMessage(ord, "refund", 120, waTemplates)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={() => setOpenWhatsAppId(null)}
