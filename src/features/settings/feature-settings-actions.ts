@@ -29,6 +29,8 @@ export interface StoreFeatureSettings {
   // Customer Return & Exchange Portal
   enable_return_portal: boolean;
   return_window_days: number;
+  enable_reverse_courier_booking: boolean;
+  default_return_warehouse_address: string;
 }
 
 const DEFAULT_FEATURE_SETTINGS: StoreFeatureSettings = {
@@ -52,6 +54,8 @@ const DEFAULT_FEATURE_SETTINGS: StoreFeatureSettings = {
 
   enable_return_portal: true,
   return_window_days: 7,
+  enable_reverse_courier_booking: true,
+  default_return_warehouse_address: "Blush & Budget Fulfilment Hub, House 14, Road 11, Block D, Banani, Dhaka-1213",
 };
 
 /**
@@ -81,6 +85,8 @@ export async function getStoreFeatureSettings(): Promise<StoreFeatureSettings> {
 
       enable_return_portal: data.enable_return_portal !== false,
       return_window_days: Number(data.return_window_days ?? DEFAULT_FEATURE_SETTINGS.return_window_days),
+      enable_reverse_courier_booking: data.enable_reverse_courier_booking !== false,
+      default_return_warehouse_address: data.default_return_warehouse_address || DEFAULT_FEATURE_SETTINGS.default_return_warehouse_address,
     };
   } catch {
     return DEFAULT_FEATURE_SETTINGS;

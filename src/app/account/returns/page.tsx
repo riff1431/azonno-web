@@ -223,9 +223,12 @@ export default function AccountReturnsPage() {
               </div>
 
               {ret.admin_notes && (
-                <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 text-xs space-y-1">
-                  <span className="font-bold text-gray-800 block">Customer Care Update:</span>
-                  <p className="text-gray-600">{ret.admin_notes}</p>
+                <div className="rounded-2xl bg-pink-50/50 border border-pink-200 p-3.5 text-xs space-y-1.5">
+                  <span className="font-bold text-gray-900 flex items-center gap-1.5">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                    Customer Care &amp; Pickup Update:
+                  </span>
+                  <p className="text-gray-700 leading-relaxed">{ret.admin_notes}</p>
                 </div>
               )}
             </div>
