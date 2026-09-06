@@ -283,10 +283,7 @@ export default function AdminMetaSettingsPage() {
           }`}
         >
           <Target className="inline h-4 w-4 text-[#e91e63]" />
-          <span>Purchase &amp; EMQ Control</span>
-          <span className="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded-full font-black border border-emerald-300">
-            EMQ 9.0+
-          </span>
+          <span>Purchase Event Control</span>
         </button>
         <button
           onClick={() => setActiveTab("gtm")}
@@ -681,21 +678,14 @@ export default function AdminMetaSettingsPage() {
           <form onSubmit={handleSave} className="space-y-6">
             {/* 1. Mode & Status Gate Configuration */}
             <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-5">
-              <div className="border-b border-border pb-3 flex items-center justify-between">
-                <div>
-                  <h2 className="text-sm font-bold text-text flex items-center gap-2">
-                    <Target className="h-4 w-4 text-[#e91e63]" />
-                    Purchase Event Dispatch Control &amp; Optimization
-                  </h2>
-                  <p className="text-xs text-text-secondary mt-0.5">
-                    Configure when and how Purchase / CompletePayment events fire to protect ad optimization from unverified or returned COD orders.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                  EMQ 9.0+ Active
-                </div>
+              <div className="border-b border-border pb-3">
+                <h2 className="text-sm font-bold text-text flex items-center gap-2">
+                  <Target className="h-4 w-4 text-[#e91e63]" />
+                  Purchase Event Dispatch Control &amp; Optimization
+                </h2>
+                <p className="text-xs text-text-secondary mt-0.5">
+                  Configure when and how Purchase / CompletePayment events fire to protect ad optimization from unverified or returned COD orders.
+                </p>
               </div>
 
               {/* Mode Selection */}
@@ -819,7 +809,7 @@ export default function AdminMetaSettingsPage() {
                         Meta CAPI Purchase Dispatch
                       </span>
                       <p className="text-[11px] text-gray-500 mt-0.5">
-                        Sends Graph API v21.0 Purchase event with 13 EMQ parameters.
+                        Sends Graph API v21.0 Purchase event with advanced matching parameters.
                       </p>
                     </div>
                     <input
