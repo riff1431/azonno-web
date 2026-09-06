@@ -513,11 +513,12 @@ export async function sendAbandonedRecoverySms(id: string) {
   if (item) {
     await sendSmsNotification({
       recipientPhone: item.customer_phone,
-      eventType: "order_confirmed",
+      eventType: "abandoned_cart",
       variables: {
-        customer_name: item.customer_name,
-        order_number: "BAG",
-        invoice_url: `${appUrl}/checkout`,
+        customer_name: item.customer_name || "সম্মানিত গ্রাহক",
+        store_name: "Blush & Budget",
+        checkout_url: `${appUrl}/checkout`,
+        discount_code: "BLUSH5",
       },
     });
     item.recovery_status = "sms_sent";

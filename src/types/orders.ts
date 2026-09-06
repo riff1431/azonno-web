@@ -433,18 +433,18 @@ export function computeCustomerRiskProfile(params: {
  */
 export function generateWhatsAppOrderMessage(
   order: any,
-  templateType: "confirm" | "shipped" | "advance" | "review" | "cancelled" | "refund",
+  templateType: "abandoned" | "confirm" | "shipped" | "advance" | "review" | "cancelled" | "refund",
   customAdvanceAmount: number = 120,
   customTemplates?: Array<{ template_type: string; template: string; advance_amount?: number; is_active?: boolean }>
 ): string {
-  const phone = order.shipping_address_snapshot?.phone || order.guest_phone || "";
+  const phone = order.shipping_address_snapshot?.phone || order.guest_phone || order.customer_phone || "";
   const sanitized = sanitizeBdPhoneNumber(phone).sanitized;
   const intlPhone = sanitized ? `88${sanitized}` : "";
-  const name = order.shipping_address_snapshot?.name || order.guest_name || "Customer";
+  const name = order.shipping_address_snapshot?.name || order.guest_name || order.customer_name || "Customer";
   const orderNum = order.order_number || order.id?.slice(0, 8);
-  const items = order.order_items || [];
-  const itemsSummary = items.map((it: any) => `${it.product_name_snapshot} x${it.quantity}`).join(", ") || "Cosmetics Order";
-  const codDue = order.amount_to_collect !== undefined ? order.amount_to_collect : (order.total || 0);
+  const items = order.order_items || order.cart_items || [];
+  const itemsSummary = items.map((it: any) => `${it.product_name_snapshot || it.name} x${it.quantity}`).join(", ") || "Cosmetics Order";
+  const codDue = order.amount_to_collect !== undefined ? order.amount_to_collect : (order.cart_total || order.total || 0);
   const courier = order.courier_name || "SteadFast";
   const tracking = order.consignment_id || order.tracking_code || "Pending";
   const trackUrl = order.tracking_url || `https://steadfast.com.bd/t/${tracking}`;
@@ -474,6 +474,8 @@ export function generateWhatsAppOrderMessage(
       tracking_url: trackUrl,
       advance_amount: String(feeToUse),
       remaining_due: String(remToUse),
+      checkout_url: order.checkout_url || "https://blushandbudget.com/checkout",
+      discount_code: "BLUSH5",
     };
 
     for (const [k, v] of Object.entries(replacements)) {
@@ -482,45 +484,44 @@ export function generateWhatsAppOrderMessage(
     text = customText;
   } else {
     // Standard system default templates (Humanized Bangla with English Order Numbers)
-    if (templateType === "confirm") {
-      text = `প্রিয় ${name}, Blush & Budget-এ আপনার অর্ডারটির জন্য আন্তরিক ধন্যবাদ! 🌸
-
-অর্ডার নাম্বার: #${orderNum}
-প্রোডাক্ট: ${itemsSummary}
-ক্যাশ অন ডেলিভারি বিল: ৳${codDue}
-
-আমরা আপনার পার্সেলটি যত্ন সহকারে প্যাক করছি এবং দ্রুততম সময়ে ডেলিভারির জন্য প্রস্তুত করছি। ডেলিভারি রাইডার কল করলে অনুগ্রহ করে রিসিভ করবেন।`;
+    if (templateType === "abandoned") {
+      text = `প্রিয় ${name}, আসসালামু আলাইকুম! 🌸 আপনি Blush & Budget-এ আপনার পছন্দের কিছু প্রোডাক্ট কার্টে রেখে গিয়েছিলেন (${itemsSummary})।\n\nআপনি চাইলে এখনই আপনার অর্ডারটি কনফার্ম করতে পারেন। আপনার সুবিধার্থে আমরা দিচ্ছি দ্রুত হোম ডেলিভারি।\n\nঅর্ডার সম্পূর্ণ করতে ভিজিট করুন: ${order.checkout_url || "https://blushandbudget.com/checkout"}\nযেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের মেসেজ দিন। ধন্যবাদ!`;
+    } else if (templateType === "confirm") {
+      text = `প্রিয় ${name}, Blush & Budget-এ আপনার অর্ডারটির জন্য আন্তরিক ধন্যবাদ! 🌸\n\nঅর্ডার নাম্বার: #${orderNum}\nপ্রোডাক্ট: ${itemsSummary}\nক্যাশ অন ডেলিভারি বিল: ৳${codDue}\n\nআমরা আপনার পার্সেলটি যত্ন সহকারে প্যাক করছি এবং দ্রুততম সময়ে ডেলিভারির জন্য প্রস্তুত করছি। ডেলিভারি রাইডার কল করলে অনুগ্রহ করে রিসিভ করবেন।`;
     } else if (templateType === "shipped") {
-      text = `প্রিয় ${name}, সুখবর! আপনার অর্ডারটি (#${orderNum}) কুরিয়ারে হ্যান্ডওভার করা হয়েছে। 🚚
-
-কুরিয়ার: ${courier}
-ট্র্যাকিং আইডি: ${tracking}
-লাইভ ট্র্যাকিং লিংক: ${trackUrl}
-ডেলিভারি রাইডারকে প্রদেয় মোট টাকা: ৳${codDue}
-
-রাইডার আপনার ঠিকানায় পৌঁছানোর আগে কল করবেন। যেকোনো প্রয়োজনে আমাদের এই নম্বরে মেসেজ দিন।`;
+      text = `প্রিয় ${name}, সুখবর! আপনার অর্ডারটি (#${orderNum}) কুরিয়ারে হ্যান্ডওভার করা হয়েছে। 🚚\n\nকুরিয়ার: ${courier}\nট্র্যাকিং আইডি: ${tracking}\nলাইভ ট্র্যাকিং লিংক: ${trackUrl}\nডেলিভারি রাইডারকে প্রদেয় মোট টাকা: ৳${codDue}\n\nরাইডার আপনার ঠিকানায় পৌঁছানোর আগে কল করবেন। যেকোনো প্রয়োজনে আমাদের এই নম্বরে মেসেজ দিন।`;
     } else if (templateType === "advance") {
-      text = `প্রিয় ${name}, Blush & Budget থেকে শুভেচ্ছা! আপনার অর্ডার #${orderNum} টি চূড়ান্তভাবে প্রসেসিং করতে ঢাকার বাইরের ডেলিভারি চার্জ বাবদ ৳${advanceFee} অগ্রিম প্রদান করার জন্য বিনীত অনুরোধ করছি।
-
-বাকি ৳${remainingDue} আপনি পার্সেল হাতে পেয়ে ক্যাশ অন ডেলিভারিতে পরিশোধ করবেন।
-
-বিকাশ/নগদ মার্চেন্ট নম্বরে পেমেন্ট করার পর ট্রানজেকশন আইডি বা স্ক্রিনশট এই চ্যাটে পাঠিয়ে কনফার্ম করুন। ধন্যবাদ!`;
+      text = `প্রিয় ${name}, Blush & Budget থেকে শুভেচ্ছা! আপনার অর্ডার #${orderNum} টি চূড়ান্তভাবে প্রসেসিং করতে ঢাকার বাইরের ডেলিভারি চার্জ বাবদ ৳${advanceFee} অগ্রিম প্রদান করার জন্য বিনীত অনুরোধ করছি।\n\nবাকি ৳${remainingDue} আপনি পার্সেল হাতে পেয়ে ক্যাশ অন ডেলিভারিতে পরিশোধ করবেন।\n\nবিকাশ/নগদ মার্চেন্ট নম্বরে পেমেন্ট করার পর ট্রানজেকশন আইডি বা স্ক্রিনশট এই চ্যাটে পাঠিয়ে কনফার্ম করুন। ধন্যবাদ!`;
     } else if (templateType === "review") {
-      text = `প্রিয় ${name}, আসসালামু আলাইকুম! আশা করি Blush & Budget থেকে নেওয়া আপনার প্রোডাক্টগুলো হাতে পেয়েছেন এবং ব্যবহার উপভোগ করছেন। ✨
-
-আমাদের প্রোডাক্ট ও সার্ভিসের অভিজ্ঞতা আপনার কেমন লাগলো? আপনার মূল্যবান রিভিউ অথবা একটি সুন্দর ছবি আমাদের সাথে শেয়ার করলে আমরা অনেক আনন্দিত হব!`;
+      text = `প্রিয় ${name}, আসসালামু আলাইকুম! আশা করি Blush & Budget থেকে নেওয়া আপনার প্রোডাক্টগুলো হাতে পেয়েছেন এবং ব্যবহার উপভোগ করছেন। ✨\n\nআমাদের প্রোডাক্ট ও সার্ভিসের অভিজ্ঞতা আপনার কেমন লাগলো? আপনার মূল্যবান রিভিউ অথবা একটি সুন্দর ছবি আমাদের সাথে শেয়ার করলে আমরা অনেক আনন্দিত হব!`;
     } else if (templateType === "cancelled") {
-      text = `প্রিয় ${name}, আমরা আন্তরিকভাবে দুঃখের সাথে জানাচ্ছি যে আপনার অর্ডারটি (#${orderNum}) বাতিল করা হয়েছে।
-
-কোনো ভুল বোঝাবুঝি হয়ে থাকলে অথবা পুনরায় অর্ডার করতে চাইলে অনুগ্রহ করে এই চ্যাটে আমাদের জানান। আমরা আপনাকে সাহায্য করতে সবসময় প্রস্তুত।`;
+      text = `প্রিয় ${name}, আমরা আন্তরিকভাবে দুঃখের সাথে জানাচ্ছি যে আপনার অর্ডারটি (#${orderNum}) বাতিল করা হয়েছে।\n\nকোনো ভুল বোঝাবুঝি হয়ে থাকলে অথবা পুনরায় অর্ডার করতে চাইলে অনুগ্রহ করে এই চ্যাটে আমাদের জানান। আমরা আপনাকে সাহায্য করতে সবসময় প্রস্তুত।`;
     } else if (templateType === "refund") {
-      text = `প্রিয় ${name}, আপনার অর্ডার #${orderNum}-এর রিফান্ড সফলভাবে সম্পন্ন হয়েছে। আপনার দেওয়া পেমেন্ট একাউন্টটি অনুগ্রহ করে চেক করে নিন।
-
-যেকোনো সহযোগিতার জন্য আমরা পাশে আছি। Blush & Budget-এর সাথে থাকার জন্য ধন্যবাদ।`;
+      text = `প্রিয় ${name}, আপনার অর্ডার #${orderNum}-এর রিফান্ড সফলভাবে সম্পন্ন হয়েছে। আপনার দেওয়া পেমেন্ট একাউন্টটি অনুগ্রহ করে চেক করে নিন।\n\nযেকোনো সহযোগিতার জন্য আমরা পাশে আছি। Blush & Budget-এর সাথে থাকার জন্য ধন্যবাদ।`;
     }
   }
 
   return `https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`;
+}
+
+/**
+ * Generate Structured WhatsApp recovery link for Incomplete / Abandoned checkouts
+ */
+export function generateWhatsAppAbandonedMessage(
+  lead: any,
+  originUrl: string = "",
+  customTemplates?: Array<{ template_type: string; template: string; advance_amount?: number; is_active?: boolean }>
+): string {
+  const checkoutUrl = `${originUrl || "https://blushandbudget.com"}/checkout`;
+  return generateWhatsAppOrderMessage(
+    {
+      ...lead,
+      checkout_url: checkoutUrl,
+    },
+    "abandoned",
+    120,
+    customTemplates
+  );
 }
 
 

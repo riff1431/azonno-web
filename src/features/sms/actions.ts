@@ -35,34 +35,74 @@ let memorySmsLogs: SmsLogItem[] = [
 const DEFAULT_TEMPLATES: SmsTemplate[] = [
   {
     id: "t0",
-    name: "Order Phone Verification OTP",
+    name: "ফোন ভেরিফিকেশন ওটিপি (Phone OTP Verification)",
     event_type: "order_otp",
-    template: "Your {{store_name}} order verification OTP code is {{otp_code}}. Valid for 5 minutes. Do not share this code.",
+    template: "প্রিয় {{customer_name}}, {{store_name}}-এ আপনার ওটিপি কোড হলো {{otp_code}}। এটি ৫ মিনিটের জন্য প্রযোজ্য। কোডটি গোপন রাখুন।",
     variables: ["otp_code", "store_name", "customer_name"],
     status: "active",
   },
   {
     id: "t1",
-    name: "Order Placed & Confirmed",
+    name: "অর্ডার গ্রহণ ও কনফার্মেশন (Order Placed & Confirmed)",
     event_type: "order_created",
-    template: "Dear {{customer_name}}, your order {{order_number}} of BDT {{total}} has been confirmed! We will dispatch soon. Track: {{tracking_url}}",
-    variables: ["customer_name", "order_number", "total", "tracking_url"],
+    template: "প্রিয় {{customer_name}}, {{store_name}}-এ আপনার অর্ডার #{{order_number}} সফলভাবে গ্রহণ করা হয়েছে (বিল: ৳{{total}})। দ্রুত পার্সেল ডেলিভারি করা হবে। লাইভ ট্র্যাক: {{tracking_url}}",
+    variables: ["customer_name", "order_number", "total", "store_name", "tracking_url"],
     status: "active",
   },
   {
     id: "t2",
-    name: "Consignment Dispatched",
+    name: "কুরিয়ারে হস্তান্তর ও ট্র্যাকিং (Consignment Shipped)",
     event_type: "order_shipped",
-    template: "Dear {{customer_name}}, your order {{order_number}} is on the way via {{courier_name}}. Tracking ID: {{tracking_id}}. Track: {{tracking_url}}",
+    template: "প্রিয় {{customer_name}}, আপনার পার্সেলটি (#{{order_number}}) {{courier_name}} কুরিয়ারে তুলে দেওয়া হয়েছে। ট্র্যাকিং আইডি: {{tracking_id}}। ট্র্যাক করুন: {{tracking_url}}",
     variables: ["customer_name", "order_number", "courier_name", "tracking_id", "tracking_url"],
     status: "active",
   },
   {
     id: "t3",
-    name: "Flash Sale Promotional Voucher",
+    name: "ডেলিভারি সম্পন্ন নিশ্চিতকরণ (Order Delivered)",
+    event_type: "order_delivered",
+    template: "প্রিয় {{customer_name}}, {{store_name}}-এর অর্ডার #{{order_number}} সফলভাবে ডেলিভারি হয়েছে। আমাদের সাথে থাকার জন্য আন্তরিক ধন্যবাদ!",
+    variables: ["customer_name", "order_number", "store_name"],
+    status: "active",
+  },
+  {
+    id: "t4",
+    name: "অসম্পূর্ণ চেকআউট রিকভারি (Abandoned Cart Recovery)",
+    event_type: "abandoned_cart",
+    template: "প্রিয় {{customer_name}}, {{store_name}}-এ আপনার পছন্দের প্রোডাক্টগুলো কার্টে রাখা আছে। এখনই অর্ডারটি কনফার্ম করতে ভিজিট করুন: {{checkout_url}}",
+    variables: ["customer_name", "store_name", "checkout_url", "discount_code"],
+    status: "active",
+  },
+  {
+    id: "t5",
+    name: "অর্ডার বাতিল সংক্রান্ত তথ্য (Order Cancelled)",
+    event_type: "order_cancelled",
+    template: "প্রিয় {{customer_name}}, আপনার অর্ডার #{{order_number}} বাতিল করা হয়েছে। যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন। ধন্যবাদ।",
+    variables: ["customer_name", "order_number", "store_name"],
+    status: "active",
+  },
+  {
+    id: "t6",
+    name: "অগ্রিম ডেলিভারি চার্জ অনুরোধ (Advance Delivery Fee)",
+    event_type: "advance_requested",
+    template: "প্রিয় {{customer_name}}, অর্ডার #{{order_number}}-এর ডেলিভারি চার্জ বাবদ ৳{{advance_amount}} অগ্রিম পাঠানোর অনুরোধ করছি। বাকি টাকা ক্যাশ অন ডেলিভারিতে দিন।",
+    variables: ["customer_name", "order_number", "advance_amount"],
+    status: "active",
+  },
+  {
+    id: "t7",
+    name: "রিভিউ ও ফিডব্যাক অনুরোধ (Review & Feedback)",
+    event_type: "review_request",
+    template: "প্রিয় {{customer_name}}, আশা করি {{store_name}}-এর প্রোডাক্টগুলো আপনার পছন্দ হয়েছে। আপনার মূল্যবান রিভিউ ও মতামত আমাদের জানান: {{store_url}}",
+    variables: ["customer_name", "store_name", "store_url"],
+    status: "active",
+  },
+  {
+    id: "t8",
+    name: "প্রমোশনাল ভাউচার ও ডিসকাউন্ট (Promotional Offer)",
     event_type: "promotional",
-    template: "Exclusive Flash Deal! Use promo code {{coupon_code}} for {{discount}} OFF authentic K-Beauty skincare. Shop now: {{store_url}}",
-    variables: ["coupon_code", "discount", "store_url"],
+    template: "বিশেষ অফার! {{store_name}}-এ কেনাকাটায় {{discount}} ছাড় পেতে ব্যবহার করুন প্রোমোকোড {{coupon_code}}। এখনই কিনুন: {{store_url}}",
+    variables: ["coupon_code", "discount", "store_name", "store_url"],
     status: "active",
   },
 ];
@@ -71,6 +111,14 @@ export async function getSmsTemplates(): Promise<SmsTemplate[]> {
   const { getSetting } = await import("@/lib/settings/config-service");
   const saved = await getSetting<SmsTemplate[]>("sms", "templates", DEFAULT_TEMPLATES);
   return saved || DEFAULT_TEMPLATES;
+}
+
+export async function resetSmsTemplatesToDefault(): Promise<{ success: boolean; templates: SmsTemplate[] }> {
+  const { updateGroupSettings } = await import("@/lib/settings/config-service");
+  await updateGroupSettings("sms", { templates: DEFAULT_TEMPLATES });
+  const { revalidatePath } = await import("next/cache");
+  revalidatePath("/admin/communication/sms/templates");
+  return { success: true, templates: DEFAULT_TEMPLATES };
 }
 
 export async function saveSmsTemplate(template: {
@@ -163,10 +211,21 @@ export async function sendSmsNotification(input: {
   const templates = await getSmsTemplates();
   const template = templates.find((t) => t.event_type === input.eventType) || templates[0];
 
+  const mergedVars: Record<string, string> = {
+    store_name: "Blush & Budget",
+    discount_code: "BLUSH5",
+    coupon_code: "BLUSH5",
+    store_url: "https://blushandbudget.com",
+    customer_name: "সম্মানিত গ্রাহক",
+    ...input.variables,
+  };
+
   let message = template.template;
-  for (const [key, val] of Object.entries(input.variables)) {
-    message = message.replaceAll(`{{${key}}}`, val);
+  for (const [key, val] of Object.entries(mergedVars)) {
+    message = message.replaceAll(`{{${key}}}`, String(val ?? ""));
   }
+  // Remove any remaining unresolved double-brace tokens cleanly
+  message = message.replace(/\{\{[^}]+\}\}/g, "").replace(/\s{2,}/g, " ").trim();
 
   const logItem: SmsLogItem = {
     id: `sms-${Date.now()}`,

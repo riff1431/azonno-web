@@ -29,20 +29,22 @@ interface WhatsAppTemplatesClientProps {
 
 const AVAILABLE_VARIABLES = [
   { key: "customer_name", label: "Customer Name", example: "Tanvir Ahmed" },
-  { key: "order_number", label: "English Order ID", example: "ORD-84219" },
+  { key: "order_number", label: "Order ID", example: "ORD-84219" },
   { key: "store_name", label: "Store Brand Name", example: "Blush & Budget" },
   { key: "items_summary", label: "Items Summary", example: "COSRX Snail Mucin 96% x1, BOJ Sun Relief x1" },
   { key: "cod_due", label: "COD Amount Due (BDT)", example: "2,760" },
   { key: "courier_name", label: "Courier Name", example: "SteadFast Courier" },
   { key: "tracking_id", label: "Tracking / Consignment ID", example: "SF-8921094" },
   { key: "tracking_url", label: "Live Tracking Link", example: "https://steadfast.com.bd/t/SF-8921094" },
+  { key: "checkout_url", label: "Direct Checkout Recovery URL", example: "https://blushandbudget.com/checkout" },
+  { key: "discount_code", label: "Discount Promo Code", example: "BLUSH5" },
   { key: "advance_amount", label: "Advance Fee (BDT)", example: "120" },
   { key: "remaining_due", label: "Remaining COD Due (BDT)", example: "2,640" },
 ];
 
 export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesClientProps) {
   const [templates, setTemplates] = useState<WhatsAppTemplate[]>(initialTemplates);
-  const [selectedId, setSelectedId] = useState<string>(initialTemplates[0]?.id || "wa-1");
+  const [selectedId, setSelectedId] = useState<string>(initialTemplates[0]?.id || "wa-0");
   const [testPhone, setTestPhone] = useState<string>("01700000000");
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState(false);
@@ -72,6 +74,8 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
       courier_name: "SteadFast Courier",
       tracking_id: "SF-8921094",
       tracking_url: "https://steadfast.com.bd/t/SF-8921094",
+      checkout_url: "https://blushandbudget.com/checkout",
+      discount_code: "BLUSH5",
       advance_amount: String(selectedTemplate.advance_amount || 120),
       remaining_due: String(2760 - (selectedTemplate.advance_amount || 120)),
     };
@@ -97,7 +101,7 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
   };
 
   const handleReset = async () => {
-    if (confirm("Reset all 6 WhatsApp templates back to default system wording?")) {
+    if (confirm("Reset all WhatsApp templates back to default humanized Bangla wording?")) {
       setSaving(true);
       try {
         const res = await resetWhatsAppTemplatesToDefault();
@@ -119,7 +123,7 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <ModuleHeader
           title="WhatsApp 1-Click Message Templates"
-          description="Customize the pre-formatted text, dynamic tags, advance delivery amounts, and status triggers for all 6 WhatsApp actions in order management."
+          description="Customize the humanized Bangla text, dynamic tags, advance delivery amounts, and status triggers for all WhatsApp actions in order and abandoned cart management."
           icon={PhoneCall}
           backHref="/admin/communication/notifications"
         />
@@ -163,7 +167,7 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
         <div className="lg:col-span-4 space-y-2">
           <div className="flex items-center justify-between px-1">
             <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
-              6 Pre-Formatted Actions
+              {templates.length} Pre-Formatted Actions
             </span>
             <span className="text-[10px] text-text-muted">Click to edit</span>
           </div>

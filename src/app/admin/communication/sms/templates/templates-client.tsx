@@ -1,20 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, Edit2, Plus, Code, Trash2, X, AlertCircle } from "lucide-react";
+import { MessageSquare, Edit2, Plus, Code, Trash2, X, AlertCircle, RotateCcw } from "lucide-react";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
-import { saveSmsTemplate, deleteSmsTemplate, type SmsTemplate } from "@/features/sms/actions";
+import { saveSmsTemplate, deleteSmsTemplate, resetSmsTemplatesToDefault, type SmsTemplate } from "@/features/sms/actions";
 
 const COMMON_VARIABLES = [
   "customer_name",
   "order_number",
   "total",
+  "store_name",
   "courier_name",
   "tracking_id",
   "tracking_url",
+  "checkout_url",
+  "discount_code",
+  "advance_amount",
   "coupon_code",
   "store_url",
   "otp_code",
@@ -30,6 +34,7 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
   const [editingTemplate, setEditingTemplate] = useState<SmsTemplate | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
 
   // Form states
   const [name, setName] = useState("");
@@ -109,20 +114,47 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
     }
   };
 
+  const handleResetDefaults = async () => {
+    if (confirm("Reset all SMS templates back to natural, humanized Bangla default wording?")) {
+      setResetting(true);
+      try {
+        const res = await resetSmsTemplatesToDefault();
+        setTemplates(res.templates);
+      } catch (err: any) {
+        alert("Failed to reset templates: " + err.message);
+      } finally {
+        setResetting(false);
+      }
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <ModuleHeader
           title="SMS Notification Templates & Dynamic Variables"
-          description="Manage automated message content for OTP verification, order placements, courier dispatches, and delivery confirmations."
+          description="Manage automated message content for OTP verification, order placements, courier dispatches, abandoned carts, and delivery confirmations in humanized Bangla."
           iconName="MessageSquare"
           backHref="/admin/communication/sms"
         />
 
-        <Button onClick={openAddModal} size="sm" className="text-xs shrink-0">
-          <Plus className="h-3.5 w-3.5 mr-1" />
-          Create Template
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={handleResetDefaults}
+            disabled={resetting}
+            variant="outline"
+            size="sm"
+            className="text-xs shrink-0"
+          >
+            <RotateCcw className={`h-3.5 w-3.5 mr-1 ${resetting ? "animate-spin" : ""}`} />
+            Reset Defaults
+          </Button>
+
+          <Button onClick={openAddModal} size="sm" className="text-xs shrink-0">
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            Create Template
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -228,11 +260,15 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
                   onChange={(e) => setEventType(e.target.value)}
                   className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-text focus:border-primary-500 focus:outline-none"
                 >
-                  <option value="order_created">Order Placed & Confirmed (order_created)</option>
-                  <option value="order_shipped">Consignment Shipped (order_shipped)</option>
-                  <option value="order_delivered">Order Delivered (order_delivered)</option>
-                  <option value="otp_auth">Mobile OTP Sign Up (otp_auth)</option>
-                  <option value="promotional">Promotional Voucher (promotional)</option>
+                  <option value="order_created">অর্ডার গ্রহণ ও কনফার্মেশন (order_created)</option>
+                  <option value="order_shipped">কুরিয়ারে হস্তান্তর ও ট্র্যাকিং (order_shipped)</option>
+                  <option value="order_delivered">ডেলিভারি সম্পন্ন নিশ্চিতকরণ (order_delivered)</option>
+                  <option value="abandoned_cart">অসম্পূর্ণ চেকআউট রিকভারি (abandoned_cart)</option>
+                  <option value="order_cancelled">অর্ডার বাতিল তথ্য (order_cancelled)</option>
+                  <option value="advance_requested">অগ্রিম ডেলিভারি চার্জ অনুরোধ (advance_requested)</option>
+                  <option value="review_request">রিভিউ ও ফিডব্যাক অনুরোধ (review_request)</option>
+                  <option value="order_otp">ফোন ওটিপি ভেরিফিকেশন (order_otp)</option>
+                  <option value="promotional">প্রমোশনাল অফার ও ভাউচার (promotional)</option>
                 </select>
               </div>
 

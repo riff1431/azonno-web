@@ -42,11 +42,11 @@ export async function triggerReviewRequest(orderId: string, phone: string, custo
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "";
   await sendSmsNotification({
     recipientPhone: phone,
-    eventType: "order_confirmed",
+    eventType: "review_request",
     variables: {
       customer_name: customerName,
-      order_number: "REVIEW",
-      invoice_url: `${appUrl}/account/reviews`,
+      store_name: "Blush & Budget",
+      store_url: `${appUrl}/account/reviews`,
     },
   });
 
@@ -60,11 +60,13 @@ export async function triggerReplenishmentAlert(phone: string, customerName: str
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "";
   await sendSmsNotification({
     recipientPhone: phone,
-    eventType: "order_confirmed",
+    eventType: "promotional",
     variables: {
       customer_name: customerName,
-      order_number: "REORDER",
-      invoice_url: `${appUrl}/`,
+      store_name: "Blush & Budget",
+      discount: "10%",
+      coupon_code: "GLOW10",
+      store_url: `${appUrl}/`,
     },
   });
 

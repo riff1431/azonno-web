@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 export interface WhatsAppTemplate {
   id: string;
   name: string;
-  template_type: "confirm" | "shipped" | "advance" | "review" | "cancelled" | "refund";
+  template_type: "abandoned" | "confirm" | "shipped" | "advance" | "review" | "cancelled" | "refund";
   template: string;
   variables: string[];
   is_active: boolean;
@@ -14,6 +14,15 @@ export interface WhatsAppTemplate {
 }
 
 const DEFAULT_WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
+  {
+    id: "wa-0",
+    name: "অসম্পূর্ণ চেকআউট রিকভারি (Abandoned Cart Recovery)",
+    template_type: "abandoned",
+    template:
+      "প্রিয় {{customer_name}}, আসসালামু আলাইকুম! 🌸 আপনি {{store_name}}-এ আপনার পছন্দের কিছু প্রোডাক্ট কার্টে রেখে গিয়েছিলেন ({{items_summary}})।\n\nআপনি চাইলে এখনই আপনার অর্ডারটি কনফার্ম করতে পারেন। আপনার সুবিধার্থে আমরা দিচ্ছি দ্রুত হোম ডেলিভারি।\n\nঅর্ডার সম্পূর্ণ করতে ভিজিট করুন: {{checkout_url}}\nযেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের মেসেজ দিন। ধন্যবাদ!",
+    variables: ["customer_name", "store_name", "items_summary", "checkout_url", "discount_code"],
+    is_active: true,
+  },
   {
     id: "wa-1",
     name: "অর্ডার কনফার্ম ও পার্সেল প্রস্তুত (Order Confirmed)",

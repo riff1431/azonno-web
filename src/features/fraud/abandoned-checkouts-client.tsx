@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ShoppingCart,
   Send,
@@ -23,6 +23,8 @@ import { Button } from "@/components/shared/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { sendSmsNotification } from "@/features/sms/actions";
 import { createOrderFromAbandonedLead, getAbandonedCheckouts } from "@/features/fraud/actions";
+import { generateWhatsAppAbandonedMessage } from "@/types/orders";
+import { getWhatsAppTemplates, type WhatsAppTemplate } from "@/features/communication/whatsapp-actions";
 
 interface AbandonedCheckoutsClientProps {
   initialCheckouts: any[];
@@ -34,6 +36,13 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
   const [convertingId, setConvertingId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [feedback, setFeedback] = useState<{ text: string; isError?: boolean } | null>(null);
+  const [waTemplates, setWaTemplates] = useState<WhatsAppTemplate[]>([]);
+
+  useEffect(() => {
+    getWhatsAppTemplates()
+      .then((tpls) => setWaTemplates(tpls))
+      .catch((err) => console.warn("Could not load WhatsApp templates:", err));
+  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -77,18 +86,19 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     try {
       await sendSmsNotification({
         recipientPhone: item.customer_phone,
-        eventType: "order_confirmed",
+        eventType: "abandoned_cart",
         variables: {
-          customer_name: item.customer_name,
-          order_number: "BAG",
-          invoice_url: `${origin}/checkout`,
+          customer_name: item.customer_name || "সম্মানিত গ্রাহক",
+          store_name: "Blush & Budget",
+          checkout_url: `${origin}/checkout`,
+          discount_code: "BLUSH5",
         },
       });
 
       setCheckouts((prev) =>
         prev.map((c) => (c.id === item.id ? { ...c, recovery_status: "sms_sent" } : c))
       );
-      setFeedback({ text: `Recovery SMS dispatched to ${item.customer_phone}!` });
+      setFeedback({ text: `Humanized Bangla Recovery SMS dispatched to ${item.customer_phone}!` });
       setTimeout(() => setFeedback(null), 3500);
     } catch {
       setFeedback({ text: "Failed to send SMS.", isError: true });
@@ -103,11 +113,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
       sortable: true,
       cell: (row) => {
         const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
-        const rawPhone = (row.customer_phone || "").replace(/[^0-9]/g, "");
-        const bdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=${bdPhone}&text=${encodeURIComponent(
-          `Hi ${row.customer_name}! We noticed you left some authentic skincare items in your Blush & Budget bag. Complete your order now with free shipping code BLUSH5: ${origin}/checkout`
-        )}`;
+        const whatsappUrl = generateWhatsAppAbandonedMessage(row, origin, waTemplates);
 
         return (
           <div className="space-y-1">
@@ -209,11 +215,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
       header: "Recovery & Actions",
       cell: (row) => {
         const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
-        const rawPhone = (row.customer_phone || "").replace(/[^0-9]/g, "");
-        const bdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=${bdPhone}&text=${encodeURIComponent(
-          `Hi ${row.customer_name}! We saved your skincare bag at Blush & Budget (Total: ৳${row.cart_total}). Complete now with 5% off code BLUSH5: ${origin}/checkout`
-        )}`;
+        const whatsappUrl = generateWhatsAppAbandonedMessage(row, origin, waTemplates);
 
         return (
           <div className="flex flex-wrap items-center gap-1.5">
