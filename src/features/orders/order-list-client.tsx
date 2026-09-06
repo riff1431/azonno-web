@@ -8,10 +8,12 @@ import {
   Phone,
   Calendar,
   Clock,
+  Clock3,
   Truck,
   Printer,
   CheckCircle2,
   AlertTriangle,
+  AlertOctagon,
   MessageCircle,
   Loader2,
   ShieldAlert,
@@ -32,6 +34,9 @@ import {
   X,
   Sliders,
   Zap,
+  RotateCcw,
+  MapPin,
+  CornerDownLeft,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { updateOrderStatus, createOrder } from "./actions";
@@ -127,6 +132,14 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     else if (activeTab === "on-hold") matchesTab = o.status === "on-hold";
     else if (activeTab === "completed") matchesTab = o.status === "completed" || o.status === "delivered" || o.status === "shipped";
     else if (activeTab === "cancelled") matchesTab = o.status === "cancelled";
+    else if (activeTab === "courier-returns") {
+      matchesTab = Boolean(
+        o.is_courier_returned ||
+        o.is_courier_cancelled ||
+        o.status === "returned" ||
+        (o.status === "failed" && Boolean(o.consignment_id))
+      );
+    }
     else if (activeTab === "failed") matchesTab = o.status === "failed" || o.status === "returned" || o.status === "refunded";
     else matchesTab = o.status === activeTab;
 
@@ -685,6 +698,11 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     { label: "On Hold", value: "on-hold", count: orders.filter((o) => o.status === "on-hold").length },
     { label: "Completed", value: "completed", count: orders.filter((o) => o.status === "completed" || o.status === "delivered" || o.status === "shipped").length },
     { label: "Cancelled", value: "cancelled", count: orders.filter((o) => o.status === "cancelled").length },
+    {
+      label: "Courier Returns / RTO",
+      value: "courier-returns",
+      count: orders.filter((o) => o.is_courier_returned || o.is_courier_cancelled || o.status === "returned" || (o.status === "failed" && Boolean(o.consignment_id))).length,
+    },
     { label: "Failed / Returns", value: "failed", count: orders.filter((o) => o.status === "failed" || o.status === "returned" || o.status === "refunded").length },
   ];
 
@@ -886,9 +904,10 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
         </div>
       </div>
 
-      {/* Interactive Orders Table with 1-Click Actions */}
+      {/* Interactive Orders Table (Desktop: md+) & Responsive Mobile Cards (Mobile: <md) */}
       <div className="rounded-3xl border border-gray-200 bg-white shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop View: Full Data Table */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-gray-50 text-gray-600 uppercase font-black border-b border-gray-200">
               <tr>
@@ -933,28 +952,23 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                   const courier = ord.courier_name || "SteadFast Courier";
                   const consignment = ord.consignment_id || "";
                   const isLoading = actionLoadingId === ord.id;
+                  const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(ord.consignment_id)));
+                  const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(ord.consignment_id)));
+                  const webhookNote = ord.courier_webhook_note || ord.admin_note || "";
 
                   const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
-
-                  // 4 Dynamic WhatsApp Templates
-                  const waConfirm = `https://api.whatsapp.com/send?phone=${bdPhone}&text=${encodeURIComponent(
-                    `Hello ${customerName}! Your Blush & Budget order (${ord.order_number}) of ৳${ord.total} is confirmed and packed. Track: ${origin}/account/track`
-                  )}`;
-                  const waShipped = `https://api.whatsapp.com/send?phone=${bdPhone}&text=${encodeURIComponent(
-                    `Hello ${customerName}! Your parcel is dispatched with ${courier} (Tracking: ${consignment || "SF-EXPRESS"}). Live Track: ${origin}/account/track`
-                  )}`;
-                  const waAdvance = `https://api.whatsapp.com/send?phone=${bdPhone}&text=${encodeURIComponent(
-                    `Hello ${customerName}! For your order ${ord.order_number}, please send ৳120 advance delivery charge to bKash 01700-000000 to confirm immediate parcel handover.`
-                  )}`;
-                  const waReview = `https://api.whatsapp.com/send?phone=${bdPhone}&text=${encodeURIComponent(
-                    `Hello ${customerName}! We hope you love your authentic skincare products from Blush & Budget. Please rate your experience: ${origin}/products`
-                  )}`;
 
                   return (
                     <tr
                       key={ord.id}
                       className={`hover:bg-gray-50/70 transition-colors ${
-                        isChecked ? "bg-pink-50/30" : ""
+                        isRet
+                          ? "bg-rose-50/30"
+                          : isCanc
+                          ? "bg-amber-50/20"
+                          : isChecked
+                          ? "bg-pink-50/30"
+                          : ""
                       }`}
                     >
                       {/* Checkbox */}
@@ -967,7 +981,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         />
                       </td>
 
-                      {/* Order Number & Consignment Code */}
+                      {/* Order Number & Consignment Code & Courier Return Indicator */}
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-1.5">
                           <Link
@@ -991,6 +1005,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                             year: "numeric",
                           })}
                         </span>
+
                         {consignment && (
                           <div className="inline-flex items-center gap-1 mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold">
                             <span>{consignment}</span>
@@ -1005,6 +1020,35 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                 <Copy className="h-2.5 w-2.5" />
                               )}
                             </button>
+                          </div>
+                        )}
+
+                        {/* Prominent Courier Webhook Return / Cancel Badges */}
+                        {isRet && (
+                          <div className="mt-1 flex flex-col gap-0.5">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-rose-100 text-rose-800 border border-rose-300 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider w-fit">
+                              <RotateCcw className="h-2.5 w-2.5 text-rose-700 animate-pulse" />
+                              <span>Courier Returned (RTO)</span>
+                            </span>
+                            {webhookNote && (
+                              <span className="text-[9px] text-rose-600 font-medium max-w-44 truncate" title={webhookNote}>
+                                {webhookNote}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {isCanc && (
+                          <div className="mt-1 flex flex-col gap-0.5">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 text-amber-800 border border-amber-300 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider w-fit">
+                              <Ban className="h-2.5 w-2.5 text-amber-700" />
+                              <span>Courier Cancelled</span>
+                            </span>
+                            {webhookNote && (
+                              <span className="text-[9px] text-amber-700 font-medium max-w-44 truncate" title={webhookNote}>
+                                {webhookNote}
+                              </span>
+                            )}
                           </div>
                         )}
                       </td>
@@ -1062,7 +1106,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                             <Phone className="h-3.5 w-3.5 text-blue-600" />
                           </a>
 
-                          {/* 1-Click WhatsApp Menu with 4 Templates */}
+                          {/* 1-Click WhatsApp Menu with Templates */}
                           <div className="relative">
                             <button
                               onClick={() =>
@@ -1144,7 +1188,6 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                 </a>
                               </div>
                             )}
-
                           </div>
 
                           {/* 1-Click Block Number & IP Modal Trigger */}
@@ -1184,6 +1227,12 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           </div>
                         )}
                         {(() => {
+                          if (isRet) {
+                            return <span className="text-[10px] uppercase font-bold text-rose-700 block mt-1">COURIER RTO</span>;
+                          }
+                          if (isCanc) {
+                            return <span className="text-[10px] uppercase font-bold text-amber-700 block mt-1">COURIER CANCELLED</span>;
+                          }
                           if (ord.status === "completed" || ord.status === "delivered") {
                             return (
                               <span className="inline-block mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase">
@@ -1241,7 +1290,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           );
                         })()}
 
-                        {/* EMQ 9.0+ CAPI Purchase Status Badge */}
+                        {/* CAPI Purchase Status Badge */}
                         {Boolean(ord.shipping_address_snapshot?.purchase_capi_fired_at) ? (
                           <div
                             className="flex items-center gap-1 mt-1 text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md w-fit"
@@ -1264,6 +1313,34 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       {/* 1-Click Courier Dispatch Buttons with Exact Layout Alignment */}
                       <td className="px-4 py-3.5 text-center whitespace-nowrap">
                         {(() => {
+                          if (isRet) {
+                            return (
+                              <a
+                                href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment || ord.tracking_code}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-1.5 text-rose-700 font-bold text-xs bg-rose-50 hover:bg-rose-100 h-7 px-3 rounded-xl border border-rose-200 transition-colors"
+                                title="Parcel returned back from courier. Click to view live tracking."
+                              >
+                                <RotateCcw className="h-3.5 w-3.5 text-rose-600 shrink-0" />
+                                <span>Returned ({courier.split(" ")[0]})</span>
+                                <ExternalLink className="h-2.5 w-2.5 text-rose-600 opacity-60" />
+                              </a>
+                            );
+                          }
+
+                          if (isCanc) {
+                            return (
+                              <div
+                                className="inline-flex items-center justify-center gap-1 text-amber-800 font-bold text-[11px] bg-amber-50 h-7 px-3 rounded-xl border border-amber-200"
+                                title={`Cancelled by courier: ${webhookNote || "Cancelled"}`}
+                              >
+                                <Ban className="h-3 w-3 text-amber-600" />
+                                <span>Cancelled ({courier.split(" ")[0]})</span>
+                              </div>
+                            );
+                          }
+
                           const isDispatched = Boolean(consignment || ord.tracking_code || ord.status === "shipped" || ord.status === "completed");
                           const isProcessing = ord.status === "processing" || ord.status === "confirmed";
                           const statusLabel = ord.status === "on-hold" ? "On Hold" : ord.status === "failed" ? "Failed/RTO" : ord.status;
@@ -1337,9 +1414,6 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         })()}
                       </td>
 
-
-
-
                       {/* Action Links & Printing */}
                       <td className="px-4 py-3.5 text-right">
                         <div className="flex items-center justify-end gap-1">
@@ -1371,6 +1445,343 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile View (< md): Touch-Friendly Responsive Cards Layout */}
+        <div className="block md:hidden divide-y divide-gray-100">
+          {filteredOrders.length === 0 ? (
+            <div className="p-8 text-center text-gray-400 font-medium text-xs">
+              No orders match your filter criteria.
+            </div>
+          ) : (
+            filteredOrders.map((ord) => {
+              const addr = ord.shipping_address_snapshot || {};
+              const isChecked = selectedIds.includes(ord.id);
+              const phone = addr.phone || ord.guest_phone || "01700000000";
+              const rawPhone = phone.replace(/[^0-9]/g, "");
+              const bdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
+              const customerName = addr.name || ord.guest_name || "Customer";
+              const courier = ord.courier_name || "SteadFast Courier";
+              const consignment = ord.consignment_id || "";
+              const isLoading = actionLoadingId === ord.id;
+              const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(ord.consignment_id)));
+              const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(ord.consignment_id)));
+              const webhookNote = ord.courier_webhook_note || ord.admin_note || "";
+              const isProcessing = ord.status === "processing" || ord.status === "confirmed";
+              const isDispatched = Boolean(consignment || ord.tracking_code || ord.status === "shipped" || ord.status === "completed");
+
+              return (
+                <div
+                  key={ord.id}
+                  className={`p-4 space-y-3 transition-colors ${
+                    isRet
+                      ? "bg-rose-50/40"
+                      : isCanc
+                      ? "bg-amber-50/30"
+                      : isChecked
+                      ? "bg-pink-50/40"
+                      : "bg-white"
+                  }`}
+                >
+                  {/* Top Card Row: Checkbox, Order #, Created Date & Status dropdown */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleSelect(ord.id)}
+                        className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63] h-4 w-4"
+                      />
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <Link
+                            href={`/admin/orders/${ord.id}`}
+                            className="font-mono font-black text-sm text-[#e91e63] hover:underline"
+                          >
+                            {ord.order_number}
+                          </Link>
+                          <button
+                            onClick={() => setQuickViewOrder(ord)}
+                            title="Quick View"
+                            className="text-gray-400 hover:text-gray-700"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                        <span className="text-[10px] text-gray-400 font-medium block">
+                          {new Date(ord.created_at).toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Status Select */}
+                    <div>
+                      {(() => {
+                        const availableOptions = getAvailableNextStatuses(ord.status);
+                        return (
+                          <select
+                            value={ord.status}
+                            disabled={isLoading}
+                            onChange={(e) => handleStatusChange(ord.id, e.target.value)}
+                            className={`rounded-xl border px-2.5 py-1 text-xs font-bold capitalize focus:outline-none cursor-pointer shadow-2xs ${
+                              statusColors[ord.status] || "bg-gray-50 text-gray-700 border-gray-200"
+                            }`}
+                          >
+                            {availableOptions.map((opt) => (
+                              <option key={opt.value} value={opt.value} className="bg-white text-gray-900 font-medium">
+                                {opt.label}
+                              </option>
+                            ))}
+                            <option disabled className="text-gray-300">──────</option>
+                            <option value="__override__" className="bg-amber-50 text-amber-900 font-bold">
+                              Override...
+                            </option>
+                          </select>
+                        );
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Customer Info, Risk Badge & 1-Click Contacts */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-gray-100">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="font-bold text-gray-900 text-xs">{customerName}</span>
+                      {ord.risk_profile && (
+                        ord.risk_profile.risk_level === "blocked" ? (
+                          <span className="rounded-md px-1.5 py-0.5 text-[9px] font-black uppercase bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1">
+                            <Ban className="h-2.5 w-2.5 text-rose-700" />
+                            <span>Blocked</span>
+                          </span>
+                        ) : ord.risk_profile.risk_level === "high" ? (
+                          <span className="rounded-md px-1.5 py-0.5 text-[9px] font-black uppercase bg-red-100 text-red-700 border border-red-200 inline-flex items-center gap-1">
+                            <ShieldAlert className="h-2.5 w-2.5 text-red-600" />
+                            <span>High Risk</span>
+                          </span>
+                        ) : ord.risk_profile.risk_level === "medium" ? (
+                          <span className="rounded-md px-1.5 py-0.5 text-[9px] font-black uppercase bg-amber-100 text-amber-800 border border-amber-200 inline-flex items-center gap-1">
+                            <AlertTriangle className="h-2.5 w-2.5 text-amber-600" />
+                            <span>Med Risk</span>
+                          </span>
+                        ) : (
+                          <span className="rounded-md px-1.5 py-0.5 text-[9px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
+                            <CheckCircle2 className="h-2.5 w-2.5 text-emerald-600" />
+                            <span>Safe</span>
+                          </span>
+                        )
+                      )}
+                      <BDCourierBadge phone={phone} />
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-gray-700 font-mono font-bold text-xs">{phone}</span>
+                      <a
+                        href={`tel:${phone}`}
+                        title="Call Customer"
+                        className="p-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100"
+                      >
+                        <Phone className="h-3.5 w-3.5" />
+                      </a>
+                      <div className="relative">
+                        <button
+                          onClick={() => setOpenWhatsAppId(openWhatsAppId === ord.id ? null : ord.id)}
+                          title="WhatsApp Options"
+                          className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" />
+                        </button>
+
+                        {openWhatsAppId === ord.id && (
+                          <div className="absolute right-0 mt-1 w-52 bg-white rounded-2xl border border-gray-200 shadow-xl p-2 z-50 text-[11px] space-y-1">
+                            <a
+                              href={generateWhatsAppOrderMessage(ord, "confirm", 120, waTemplates)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setOpenWhatsAppId(null)}
+                              className="block px-2 py-1 rounded-lg hover:bg-emerald-50 text-gray-800 font-bold"
+                            >
+                              Order Confirmed
+                            </a>
+                            <a
+                              href={generateWhatsAppOrderMessage(ord, "shipped", 120, waTemplates)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setOpenWhatsAppId(null)}
+                              className="block px-2 py-1 rounded-lg hover:bg-emerald-50 text-gray-800 font-bold"
+                            >
+                              Live Courier Tracking
+                            </a>
+                            <a
+                              href={generateWhatsAppOrderMessage(ord, "advance", 120, waTemplates)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setOpenWhatsAppId(null)}
+                              className="block px-2 py-1 rounded-lg hover:bg-emerald-50 text-gray-800 font-bold"
+                            >
+                              Request Advance
+                            </a>
+                            <a
+                              href={generateWhatsAppOrderMessage(ord, "cancelled", 120, waTemplates)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={() => setOpenWhatsAppId(null)}
+                              className="block px-2 py-1 rounded-lg hover:bg-rose-50 text-rose-800 font-bold"
+                            >
+                              Order Cancelled
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => handleOpenBlockModal(ord)}
+                        title="Block Number"
+                        className="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100"
+                      >
+                        <Ban className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Destination & Financials */}
+                  <div className="bg-gray-50 rounded-2xl p-2.5 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-bold text-gray-900 block">{addr.district || "Dhaka City"}</span>
+                      <span className="text-[11px] text-gray-500 line-clamp-1">{addr.address || addr.thana}</span>
+                      <span className="text-[10px] text-gray-400 font-medium mt-0.5 block">{ord.order_items?.length || 1} Item(s)</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-black text-gray-900 text-sm block">
+                        {formatPrice(ord.amount_to_collect !== undefined ? ord.amount_to_collect : ord.total)}
+                      </span>
+                      {Number(ord.advance_paid) > 0 ? (
+                        <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md">
+                          ৳{ord.advance_paid} Advance
+                        </span>
+                      ) : (
+                        <span className="text-[10px] uppercase font-bold text-gray-400">COD Due</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Courier Status Banner (RTO / Returned / Cancelled / Dispatched) */}
+                  {isRet ? (
+                    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-900 space-y-1">
+                      <div className="flex items-center justify-between font-bold">
+                        <span className="flex items-center gap-1.5 text-rose-800">
+                          <RotateCcw className="h-3.5 w-3.5 text-rose-600 animate-pulse" />
+                          <span>Returned from Courier (RTO)</span>
+                        </span>
+                        {consignment && (
+                          <a
+                            href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-[10px] text-rose-700 underline font-bold"
+                          >
+                            {consignment} ↗
+                          </a>
+                        )}
+                      </div>
+                      {webhookNote && (
+                        <p className="text-[10px] text-rose-700 font-medium">
+                          Webhook Note: {webhookNote}
+                        </p>
+                      )}
+                    </div>
+                  ) : isCanc ? (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900 space-y-1">
+                      <div className="flex items-center justify-between font-bold">
+                        <span className="flex items-center gap-1.5 text-amber-800">
+                          <Ban className="h-3.5 w-3.5 text-amber-600" />
+                          <span>Cancelled via Courier Webhook</span>
+                        </span>
+                        {consignment && (
+                          <span className="font-mono text-[10px] text-amber-700 font-bold">{consignment}</span>
+                        )}
+                      </div>
+                      {webhookNote && (
+                        <p className="text-[10px] text-amber-700 font-medium">
+                          Reason: {webhookNote}
+                        </p>
+                      )}
+                    </div>
+                  ) : consignment ? (
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-emerald-800 font-bold text-[11px]">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        <span>Dispatched ({courier.split(" ")[0]})</span>
+                        <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-emerald-200 text-[10px] text-emerald-900">
+                          {consignment}
+                        </span>
+                      </div>
+                      <a
+                        href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center gap-0.5"
+                      >
+                        <span>Track</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </div>
+                  ) : null}
+
+                  {/* 1-Click Action Buttons for Mobile */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-gray-100">
+                    <div className="flex items-center gap-1.5">
+                      {isProcessing && !consignment ? (
+                        <>
+                          <Button
+                            onClick={() => handleOneClickDispatch(ord, "steadfast")}
+                            disabled={isLoading}
+                            size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs h-7 px-2.5 rounded-xl shadow-xs"
+                          >
+                            {isLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Zap className="h-3 w-3 mr-1" />}
+                            SteadFast
+                          </Button>
+                          <Button
+                            onClick={() => handleOneClickDispatch(ord, "pathao")}
+                            disabled={isLoading}
+                            size="sm"
+                            variant="outline"
+                            className="border-red-200 text-red-700 hover:bg-red-50 font-black text-xs h-7 px-2 rounded-xl"
+                          >
+                            Pathao
+                          </Button>
+                          <button
+                            type="button"
+                            onClick={() => handleOpenCustomDispatch(ord, "steadfast")}
+                            disabled={isLoading}
+                            className="h-7 w-7 flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50 text-gray-600"
+                            title="Custom COD & Note"
+                          >
+                            <Sliders className="h-3 w-3" />
+                          </button>
+                        </>
+                      ) : null}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 ml-auto">
+                      <Link href={`/admin/orders/${ord.id}/invoice`} target="_blank">
+                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-xl border border-gray-200">
+                          <Printer className="h-3.5 w-3.5 text-gray-700" />
+                        </Button>
+                      </Link>
+                      <Link href={`/admin/orders/${ord.id}`}>
+                        <Button size="sm" className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl h-7 px-3">
+                          Manage
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -1459,6 +1870,53 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                     <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
                     <span>No risk signals detected. Valid Bangladeshi mobile and normal order pattern.</span>
                   </p>
+                )}
+              </div>
+            )}
+
+            {/* Courier & Delivery Webhook Details */}
+            {(quickViewOrder.consignment_id || quickViewOrder.courier_name || quickViewOrder.courier_webhook_note || quickViewOrder.status === "returned") && (
+              <div className={`rounded-2xl border p-4 space-y-2 text-xs ${
+                quickViewOrder.status === "returned" || quickViewOrder.is_courier_returned
+                  ? "border-rose-200 bg-rose-50/70"
+                  : quickViewOrder.status === "cancelled" || quickViewOrder.is_courier_cancelled
+                  ? "border-amber-200 bg-amber-50/70"
+                  : "border-emerald-200 bg-emerald-50/50"
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="font-bold uppercase text-[10px] flex items-center gap-1.5 text-gray-800">
+                    <Truck className="h-3.5 w-3.5 text-[#e91e63]" />
+                    <span>Courier & Logistics Status</span>
+                  </span>
+                  {quickViewOrder.consignment_id && (
+                    <a
+                      href={quickViewOrder.tracking_url || `https://steadfast.com.bd/t/${quickViewOrder.consignment_id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#e91e63] font-mono font-bold text-xs hover:underline inline-flex items-center gap-1"
+                    >
+                      <span>{quickViewOrder.consignment_id}</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
+                  <div>
+                    <span className="text-gray-500 block">Courier Partner:</span>
+                    <span className="font-bold text-gray-900">{quickViewOrder.courier_name || "SteadFast Courier"}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 block">Current Status:</span>
+                    <span className="font-black uppercase text-gray-900">{quickViewOrder.status}</span>
+                  </div>
+                </div>
+
+                {quickViewOrder.courier_webhook_note && (
+                  <div className="pt-2 border-t border-gray-200/60 text-[11px]">
+                    <span className="font-bold text-gray-700 block">Latest Courier Webhook Note / Return Reason:</span>
+                    <p className="text-gray-800 font-medium mt-0.5">{quickViewOrder.courier_webhook_note}</p>
+                  </div>
                 )}
               </div>
             )}

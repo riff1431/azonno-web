@@ -560,12 +560,33 @@ export async function getAdminOrders(statusFilter?: string) {
       isBlacklisted: Boolean(order.fraud_score && order.fraud_score < 20),
     });
 
+    const historyList = (order.order_status_history || []).sort(
+      (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    const latestCourierHistory = historyList.find((h: any) =>
+      h.note?.toLowerCase().includes("webhook") ||
+      h.note?.toLowerCase().includes("steadfast") ||
+      h.note?.toLowerCase().includes("pathao") ||
+      h.note?.toLowerCase().includes("courier") ||
+      h.note?.toLowerCase().includes("rto")
+    );
+    const isCourierReturned =
+      order.status === "returned" ||
+      (order.status === "failed" && Boolean(order.consignment_id)) ||
+      Boolean(latestCourierHistory?.note?.toLowerCase().includes("returned") || latestCourierHistory?.note?.toLowerCase().includes("rto"));
+    const isCourierCancelled =
+      order.status === "cancelled" &&
+      (Boolean(order.consignment_id) || Boolean(latestCourierHistory?.note?.toLowerCase().includes("cancelled")));
+
     return {
       ...order,
       advance_paid: advancePaid,
       amount_to_collect: financials.amount_to_collect,
       payment_status: order.payment_status || financials.payment_status,
       risk_profile: riskProfile,
+      courier_webhook_note: latestCourierHistory?.note || null,
+      is_courier_returned: isCourierReturned,
+      is_courier_cancelled: isCourierCancelled,
     };
   });
 }
