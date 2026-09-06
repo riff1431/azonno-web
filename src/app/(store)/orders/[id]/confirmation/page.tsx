@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getOrderById } from "@/features/orders/actions";
+import { getMarketingAnalyticsSettings } from "@/features/marketing/meta-actions";
 import { PurchaseTracker } from "@/components/analytics/purchase-tracker";
 import { OrderConfirmationClient } from "./order-confirmation-client";
 
@@ -9,16 +10,23 @@ export default async function OrderConfirmationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const order = await getOrderById(id);
+  const [order, marketingSettings] = await Promise.all([
+    getOrderById(id),
+    getMarketingAnalyticsSettings(),
+  ]);
 
   if (!order) notFound();
 
   const address = order.shipping_address_snapshot || {};
   const items = order.order_items || [];
 
+  // If status-gated purchase tracking is enabled, suppress browser pixel Purchase on confirmation
+  const isStatusGated = marketingSettings.purchase_tracking_mode !== "immediate";
+  const suppressBrowserPixel = isStatusGated && marketingSettings.suppress_browser_pixel_on_status_gated !== false;
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8 space-y-8">
-      {/* 1. GA4 DataLayer Purchase Event Dispatcher */}
+      {/* 1. GA4 DataLayer Purchase Event Dispatcher (with status-gated suppression support) */}
       <PurchaseTracker
         orderData={{
           transaction_id: order.order_number || order.id,
@@ -30,6 +38,8 @@ export default async function OrderConfirmationPage({
           coupon: order.coupon_code || undefined,
           discount: Number(order.discount_amount) || 0,
           payment_type: order.payment_method || "Cash on Delivery",
+          suppressMetaPixel: suppressBrowserPixel,
+          suppressTikTokPixel: suppressBrowserPixel,
           customer: {
             email: order.customer_email || address.email || undefined,
             phone: order.customer_phone || address.phone || undefined,

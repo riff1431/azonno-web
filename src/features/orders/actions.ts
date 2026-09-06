@@ -327,6 +327,33 @@ export async function createOrder(input: CreateOrderInput) {
       }
     }
 
+    // 0.2 Capture First-Party Marketing Cookies & Network Identifiers for EMQ 9.0+
+    let trackingMetadata: Record<string, string | undefined> = {};
+    try {
+      const { headers, cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const headerStore = await headers();
+
+      const fbp = cookieStore.get("_fbp")?.value;
+      const fbc = cookieStore.get("_fbc")?.value;
+      const ttp = cookieStore.get("_ttp")?.value;
+      const ttclid = cookieStore.get("_ttclid")?.value;
+      const fbclid = cookieStore.get("fbclid")?.value;
+      const clientIp = headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() || headerStore.get("x-real-ip") || undefined;
+      const clientUa = headerStore.get("user-agent") || undefined;
+
+      trackingMetadata = {
+        fbp: fbp || undefined,
+        fbc: fbc || (fbclid ? `fb.1.${Date.now()}.${fbclid}` : undefined),
+        ttp: ttp || undefined,
+        ttclid: ttclid || undefined,
+        ip_address: clientIp,
+        user_agent: clientUa,
+      };
+    } catch {
+      // Non-fatal if running in context without request headers
+    }
+
     // 6. Initial Status matching WooCommerce (COD -> processing, Online -> pending)
     const selectedMethod = (input.paymentMethod || "cod").toLowerCase();
     const initialStatus = selectedMethod === "cod" ? "processing" : "pending";
@@ -356,6 +383,7 @@ export async function createOrder(input: CreateOrderInput) {
           district: input.customer.district,
           thana: input.customer.thana,
           address: input.customer.address,
+          ...trackingMetadata,
         },
         public_note: input.customer.notes || null,
         status: initialStatus,
@@ -591,7 +619,131 @@ export async function updateOrderStatus(
     created_by: authData?.user?.id || null,
   });
 
+  // 3. Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger
+  await triggerStatusGatedPurchaseCapi(orderId, newStatus, data, authData?.user?.id || null, supabaseAdmin);
+
   return { success: true, order: data };
+}
+
+/**
+ * Dispatches Server-Side EMQ 9.0+ Purchase / CompletePayment to Meta CAPI & TikTok Events API
+ * when order reaches the admin-configured trigger status (e.g. "completed" / "delivered").
+ */
+async function triggerStatusGatedPurchaseCapi(
+  orderId: string,
+  newStatus: string,
+  orderData: any,
+  authUserId: string | null,
+  supabaseAdmin: any
+) {
+  try {
+    const { getMarketingAnalyticsSettings, dispatchAdvancedPurchaseCapi } = await import("@/features/marketing/meta-actions");
+    const marketingConfig = await getMarketingAnalyticsSettings();
+
+    const isStatusGated = marketingConfig.purchase_tracking_mode !== "immediate";
+    if (!isStatusGated) return;
+
+    const targetTriggerStatus = marketingConfig.purchase_trigger_status || "completed";
+    const isTriggerMatched =
+      newStatus === targetTriggerStatus ||
+      (targetTriggerStatus === "completed" && (newStatus === "completed" || newStatus === "delivered"));
+
+    const addressSnap = orderData?.shipping_address_snapshot || {};
+    const alreadyFired = Boolean(addressSnap.purchase_capi_fired_at);
+
+    if (isTriggerMatched && !alreadyFired) {
+      // Ensure we have order_items
+      let fullOrder = orderData;
+      if (!fullOrder?.order_items || fullOrder.order_items.length === 0) {
+        const { data: fetchedOrder } = await supabaseAdmin
+          .from("orders")
+          .select("*, order_items(*)")
+          .eq("id", orderId)
+          .single();
+        if (fetchedOrder) fullOrder = fetchedOrder;
+      }
+
+      if (fullOrder) {
+        const capiResults = await dispatchAdvancedPurchaseCapi(fullOrder, newStatus);
+
+        const updatedSnapshot = {
+          ...addressSnap,
+          purchase_capi_fired_at: new Date().toISOString(),
+          purchase_capi_results: {
+            meta_success: capiResults.meta?.success ?? false,
+            tiktok_success: capiResults.tiktok?.success ?? false,
+            meta_trace_id: capiResults.meta?.fbTraceId || null,
+            tiktok_request_id: capiResults.tiktok?.requestId || null,
+          },
+        };
+
+        await supabaseAdmin
+          .from("orders")
+          .update({ shipping_address_snapshot: updatedSnapshot })
+          .eq("id", orderId);
+
+        await supabaseAdmin.from("order_status_history").insert({
+          order_id: orderId,
+          status: newStatus,
+          note: `🎯 [CAPI Purchase Fired]: Server-Side EMQ 9.0+ Purchase Event dispatched for Meta & TikTok. Status: ${newStatus.toUpperCase()}`,
+          created_by: authUserId || null,
+        });
+      }
+    }
+  } catch (capiErr) {
+    console.warn("[CAPI Trigger Non-Fatal Warning]:", capiErr);
+  }
+}
+
+/**
+ * Admin Action to Manually Trigger CAPI Purchase for an Order (with EMQ 9.0+ Verification)
+ */
+export async function triggerManualOrderCapiPurchase(orderId: string) {
+  const supabaseAdmin = createAdminClient();
+  const supabaseUser = await createClient();
+  const { data: authData } = await supabaseUser.auth.getUser();
+
+  const { data: fullOrder, error } = await supabaseAdmin
+    .from("orders")
+    .select("*, order_items(*)")
+    .eq("id", orderId)
+    .single();
+
+  if (error || !fullOrder) {
+    return { success: false, error: "Order not found" };
+  }
+
+  const { dispatchAdvancedPurchaseCapi } = await import("@/features/marketing/meta-actions");
+  const capiResults = await dispatchAdvancedPurchaseCapi(fullOrder, fullOrder.status || "manual");
+
+  const addressSnap = fullOrder.shipping_address_snapshot || {};
+  const updatedSnapshot = {
+    ...addressSnap,
+    purchase_capi_fired_at: new Date().toISOString(),
+    purchase_capi_results: {
+      meta_success: capiResults.meta?.success ?? false,
+      tiktok_success: capiResults.tiktok?.success ?? false,
+      meta_trace_id: capiResults.meta?.fbTraceId || null,
+      tiktok_request_id: capiResults.tiktok?.requestId || null,
+    },
+  };
+
+  await supabaseAdmin
+    .from("orders")
+    .update({ shipping_address_snapshot: updatedSnapshot })
+    .eq("id", orderId);
+
+  await supabaseAdmin.from("order_status_history").insert({
+    order_id: orderId,
+    status: fullOrder.status,
+    note: `🎯 [Manual CAPI Purchase Fired]: Admin manual CAPI trigger executed with EMQ 9.0+ parameters.`,
+    created_by: authData?.user?.id || null,
+  });
+
+  revalidatePath(`/admin/orders`);
+  revalidatePath(`/admin/orders/${orderId}`);
+
+  return { success: true, results: capiResults };
 }
 
 
@@ -737,6 +889,11 @@ export async function updateAdminOrderFull(orderId: string, payload: {
           },
         }).catch((e) => console.error("Dispatch SMS trigger failed:", e));
       }
+    }
+
+    // Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger
+    if (payload.status) {
+      await triggerStatusGatedPurchaseCapi(orderId, payload.status, data, authData?.user?.id || null, supabaseAdmin);
     }
   }
 

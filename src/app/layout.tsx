@@ -48,6 +48,7 @@ export const metadata: Metadata = {
 };
 
 import { StorefrontAnalytics } from "@/components/analytics/storefront-analytics";
+import { CookieTracker } from "@/components/analytics/cookie-tracker";
 
 const storeSchema = {
   "@context": "https://schema.org",
@@ -74,6 +75,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-white antialiased">
+        <CookieTracker />
         <StorefrontAnalytics />
         {children}
       </body>

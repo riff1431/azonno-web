@@ -1049,9 +1049,6 @@ export function trackAddPaymentInfo(
   );
 }
 
-// ============================================================================
-// 15. Purchase (GA4: purchase | Meta: Purchase)
-// ============================================================================
 export interface PurchaseEventParams {
   transaction_id: string;
   order_id?: string;
@@ -1064,6 +1061,8 @@ export interface PurchaseEventParams {
   payment_type?: string;
   customer?: CustomerData;
   items: GA4Item[];
+  suppressMetaPixel?: boolean;
+  suppressTikTokPixel?: boolean;
 }
 
 export function trackPurchase(params: PurchaseEventParams): void {
@@ -1105,31 +1104,35 @@ export function trackPurchase(params: PurchaseEventParams): void {
     },
   });
 
-  trackMetaEvent(
-    "Purchase",
-    {
-      content_type: "product",
-      content_ids: contentIds,
-      contents,
-      currency: curr,
-      value: params.value,
-      num_items: totalQuantity,
-      order_id: txId,
-    },
-    params.customer
-  );
+  if (!params.suppressMetaPixel) {
+    trackMetaEvent(
+      "Purchase",
+      {
+        content_type: "product",
+        content_ids: contentIds,
+        contents,
+        currency: curr,
+        value: params.value,
+        num_items: totalQuantity,
+        order_id: txId,
+      },
+      params.customer
+    );
+  }
 
-  trackTikTokEvent(
-    "CompletePayment",
-    {
-      content_type: "product",
-      currency: curr,
-      value: params.value,
-      quantity: totalQuantity,
-      order_id: txId,
-    },
-    params.customer
-  );
+  if (!params.suppressTikTokPixel) {
+    trackTikTokEvent(
+      "CompletePayment",
+      {
+        content_type: "product",
+        currency: curr,
+        value: params.value,
+        quantity: totalQuantity,
+        order_id: txId,
+      },
+      params.customer
+    );
+  }
 }
 
 // ============================================================================

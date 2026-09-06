@@ -1240,6 +1240,25 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                             </select>
                           );
                         })()}
+
+                        {/* EMQ 9.0+ CAPI Purchase Status Badge */}
+                        {Boolean(ord.shipping_address_snapshot?.purchase_capi_fired_at) ? (
+                          <div
+                            className="flex items-center gap-1 mt-1 text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md w-fit"
+                            title={`CAPI Purchase Fired at ${new Date(ord.shipping_address_snapshot.purchase_capi_fired_at).toLocaleTimeString()}`}
+                          >
+                            <Sparkles className="h-2.5 w-2.5 text-emerald-600" />
+                            <span>CAPI Fired ✓</span>
+                          </div>
+                        ) : (ord.status === "completed" || ord.status === "delivered") ? (
+                          <div
+                            className="flex items-center gap-1 mt-1 text-[9px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded-md w-fit"
+                            title="Order completed; CAPI trigger ready"
+                          >
+                            <Sparkles className="h-2.5 w-2.5 text-blue-600" />
+                            <span>CAPI Ready</span>
+                          </div>
+                        ) : null}
                       </td>
 
                       {/* 1-Click Courier Dispatch Buttons with Exact Layout Alignment */}
