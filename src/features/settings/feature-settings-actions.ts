@@ -104,6 +104,7 @@ export async function saveStoreFeatureSettings(
     revalidatePath("/", "layout");
     revalidatePath("/products");
     revalidatePath("/admin/settings/features");
+    revalidatePath("/admin/returns");
     return { success: true };
   } catch (err: unknown) {
     return {
@@ -112,3 +113,10 @@ export async function saveStoreFeatureSettings(
     };
   }
 }
+
+export async function updateStoreFeatureSettings(
+  settings: Partial<StoreFeatureSettings>
+): Promise<{ success: boolean; error?: string }> {
+  return saveStoreFeatureSettings(settings);
+}
+

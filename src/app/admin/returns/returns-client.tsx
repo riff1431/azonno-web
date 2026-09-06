@@ -21,6 +21,8 @@ import {
   Loader2,
   Copy,
   Sparkles,
+  Settings,
+  Save,
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
@@ -29,19 +31,36 @@ import {
   dispatchReverseCourierPickup,
   type ReturnRequest,
 } from "@/features/returns/actions";
+import {
+  type StoreFeatureSettings,
+  updateStoreFeatureSettings,
+} from "@/features/settings/feature-settings-actions";
 import Link from "next/link";
 
 interface ReturnsClientProps {
   initialReturns: ReturnRequest[];
+  initialSettings?: StoreFeatureSettings;
 }
 
-export function ReturnsClient({ initialReturns }: ReturnsClientProps) {
+export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClientProps) {
   const [returnsList, setReturnsList] = useState<ReturnRequest[]>(initialReturns);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedReturn, setSelectedReturn] = useState<ReturnRequest | null>(null);
   const [adminNoteInput, setAdminNoteInput] = useState("");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  // Policy Settings Modal State
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [settings, setSettings] = useState<Partial<StoreFeatureSettings>>({
+    enable_return_portal: initialSettings?.enable_return_portal ?? true,
+    return_window_days: initialSettings?.return_window_days ?? 7,
+    enable_reverse_courier_booking: initialSettings?.enable_reverse_courier_booking ?? true,
+    default_return_warehouse_address:
+      initialSettings?.default_return_warehouse_address ||
+      "Blush & Budget Fulfilment Hub, House 14, Road 11, Block D, Banani, Dhaka-1213",
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
 
   // Reverse Courier Dispatch State
   const [reverseModalReturn, setReverseModalReturn] = useState<ReturnRequest | null>(null);
@@ -50,6 +69,21 @@ export function ReturnsClient({ initialReturns }: ReturnsClientProps) {
   const [reversePickupAddress, setReversePickupAddress] = useState("");
   const [dispatchingReverse, setDispatchingReverse] = useState(false);
   const [bannerFeedback, setBannerFeedback] = useState<{ text: string; isError?: boolean } | null>(null);
+
+
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
+    try {
+      await updateStoreFeatureSettings(settings);
+      setBannerFeedback({ text: "Return policy and reverse courier settings updated successfully!" });
+      setShowSettingsModal(false);
+      setTimeout(() => setBannerFeedback(null), 5000);
+    } catch (err: any) {
+      setBannerFeedback({ text: err.message || "Failed to save settings", isError: true });
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   const handleStatusUpdate = async (id: string, newStatus: ReturnRequest["status"]) => {
     setUpdatingId(id);
@@ -65,6 +99,7 @@ export function ReturnsClient({ initialReturns }: ReturnsClientProps) {
       setUpdatingId(null);
     }
   };
+
 
   const handleOpenReverseModal = (item: ReturnRequest) => {
     setReverseModalReturn(item);
@@ -174,12 +209,25 @@ export function ReturnsClient({ initialReturns }: ReturnsClientProps) {
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <ModuleHeader
-        title="Customer Returns & RMA Management"
-        description="Review customer return requests, inspect evidence photos, dispatch 1-click reverse courier pickups (SteadFast/Pathao), and authorize refunds."
-        icon={RotateCcw}
-        badgeLabel={`${pendingCount} Pending Action`}
-      />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <ModuleHeader
+          title="Customer Returns & RMA Management"
+          description="Review customer return requests, inspect evidence photos, dispatch 1-click reverse courier pickups (SteadFast/Pathao), and authorize refunds."
+          icon={RotateCcw}
+          badgeLabel={`${pendingCount} Pending Action`}
+        />
+        <div className="shrink-0 flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSettingsModal(true)}
+            className="gap-2 text-xs font-bold border-border hover:border-[#e91e63] hover:text-[#e91e63] bg-white rounded-xl shadow-xs py-2.5 px-4 h-auto"
+          >
+            <Settings className="h-4 w-4" />
+            RMA & Courier Policy
+          </Button>
+        </div>
+      </div>
 
       {/* Feedback Banner */}
       {bannerFeedback && (
@@ -196,6 +244,7 @@ export function ReturnsClient({ initialReturns }: ReturnsClientProps) {
           </button>
         </div>
       )}
+
 
       {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
@@ -634,6 +683,148 @@ export function ReturnsClient({ initialReturns }: ReturnsClientProps) {
           </div>
         </div>
       )}
+
+      {/* RMA Policy & Reverse Courier Settings Modal */}
+      {showSettingsModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl border border-border shadow-2xl max-w-lg w-full p-6 space-y-5 animate-in fade-in-0">
+            <div className="flex items-start justify-between border-b border-border pb-3">
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <Settings className="h-4 w-4 text-[#e91e63]" />
+                  <span className="text-[10px] font-bold text-pink-700 uppercase tracking-wider">
+                    RMA & Logistics Admin Controls
+                  </span>
+                </div>
+                <h3 className="text-base font-extrabold text-gray-900 mt-1">
+                  Return Policy & Reverse Pickup Settings
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Configure return validity windows, warehouse drop hubs, and reverse courier dispatch rules.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="text-gray-400 hover:text-gray-700 p-1"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              {/* Return Portal Toggle */}
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gray-50 border border-gray-200">
+                <div>
+                  <div className="font-bold text-gray-900">Customer Return Portal</div>
+                  <div className="text-[11px] text-gray-500">
+                    Allow customers to submit return requests from their Account Dashboard.
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={settings.enable_return_portal ?? true}
+                    onChange={(e) =>
+                      setSettings((prev) => ({ ...prev, enable_return_portal: e.target.checked }))
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-10 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#e91e63]"></div>
+                </label>
+              </div>
+
+              {/* Reverse Courier Booking Toggle */}
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-gray-50 border border-gray-200">
+                <div>
+                  <div className="font-bold text-gray-900">1-Click Reverse Courier Pickup</div>
+                  <div className="text-[11px] text-gray-500">
+                    Enable automated doorstep pickup booking via SteadFast & Pathao Reverse APIs.
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={settings.enable_reverse_courier_booking ?? true}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        enable_reverse_courier_booking: e.target.checked,
+                      }))
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-10 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#e91e63]"></div>
+                </label>
+              </div>
+
+              {/* Return Window Days */}
+              <div>
+                <label className="block font-bold text-gray-900 mb-1">
+                  Return Window Eligibility (Days after Delivery)
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[3, 7, 14].map((days) => (
+                    <button
+                      key={days}
+                      type="button"
+                      onClick={() => setSettings((prev) => ({ ...prev, return_window_days: days }))}
+                      className={`py-2 px-3 rounded-xl border font-bold text-xs transition-all ${
+                        settings.return_window_days === days
+                          ? "border-[#e91e63] bg-pink-50 text-[#e91e63] ring-1 ring-[#e91e63]"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                      }`}
+                    >
+                      {days} Days
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Warehouse Drop Address */}
+              <div>
+                <label className="block font-bold text-gray-900 mb-1">
+                  Central Return & Warehouse Hub Address
+                </label>
+                <textarea
+                  value={settings.default_return_warehouse_address || ""}
+                  onChange={(e) =>
+                    setSettings((prev) => ({
+                      ...prev,
+                      default_return_warehouse_address: e.target.value,
+                    }))
+                  }
+                  rows={3}
+                  placeholder="Enter central warehouse address for return parcel drop..."
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#e91e63]"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowSettingsModal(false)}
+                className="text-xs"
+              >
+                Cancel
+              </Button>
+
+              <Button
+                size="sm"
+                onClick={handleSaveSettings}
+                disabled={savingSettings}
+                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+              >
+                <Save className={`h-3.5 w-3.5 mr-1.5 ${savingSettings ? "animate-spin" : ""}`} />
+                {savingSettings ? "Saving Settings..." : "Save Policy"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
