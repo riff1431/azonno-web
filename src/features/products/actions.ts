@@ -73,6 +73,29 @@ export async function getProductById(id: string) {
   return data;
 }
 
+/**
+ * Schema-resilience cache: keeps track of columns that don't exist in the current Supabase
+ * 'products' schema cache (e.g., if a migration hasn't been executed yet in the live database).
+ */
+const missingProductColumns = new Set<string>();
+
+function parseMissingColumn(errorMessage?: string | null): string | null {
+  if (!errorMessage) return null;
+  const matchPostgrest = errorMessage.match(/Could not find the '([^']+)' column/i);
+  if (matchPostgrest) return matchPostgrest[1];
+  const matchPg = errorMessage.match(/column "?([a-zA-Z0-9_]+)"? (?:of relation [^\s]+ )?does not exist/i);
+  if (matchPg) return matchPg[1];
+  return null;
+}
+
+function stripMissingColumns(payload: Record<string, unknown>): Record<string, unknown> {
+  const sanitized = { ...payload };
+  for (const col of missingProductColumns) {
+    delete sanitized[col];
+  }
+  return sanitized;
+}
+
 export async function createProduct(input: {
   product: Record<string, unknown>;
   category_ids?: string[];
@@ -102,26 +125,55 @@ export async function createProduct(input: {
   }
 
   // Insert product with beauty taxonomy
-  const { data: product, error: prodError } = await supabase
-    .from("products")
-    .insert({
-      ...input.product,
-      sku: sku,
-      skin_type: input.product.skin_type || null,
-      skin_concern: input.product.skin_concern || null,
-      key_actives: input.product.key_actives || null,
-      origin_country: input.product.origin_country || input.product.country || null,
-      batch_number: input.product.batch_number || null,
-      expiry_date: input.product.expiry_date || null,
-      routine_step: input.product.routine_step || null,
-      authenticity_verified: input.product.authenticity_verified ?? true,
-      created_by: user?.id,
-      updated_by: user?.id,
-    })
-    .select()
-    .single();
+  // Strip client-only / not-yet-migrated fields before writing to DB
+  const { authenticity_verified: _av, ...safeProductInsert } = input.product as Record<string, unknown>;
+  void _av;
 
-  if (prodError) return { error: prodError.message };
+  const rawInsertPayload: Record<string, unknown> = {
+    ...safeProductInsert,
+    sku: sku,
+    skin_type: input.product.skin_type || null,
+    skin_concern: input.product.skin_concern || null,
+    key_actives: input.product.key_actives || null,
+    origin_country: input.product.origin_country || input.product.country || null,
+    batch_number: input.product.batch_number || null,
+    expiry_date: input.product.expiry_date || null,
+    routine_step: input.product.routine_step || null,
+    created_by: user?.id,
+    updated_by: user?.id,
+  };
+
+  let insertPayload = stripMissingColumns(rawInsertPayload);
+  let product: any = null;
+  let prodError: any = null;
+
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const res = await supabase
+      .from("products")
+      .insert(insertPayload)
+      .select()
+      .single();
+
+    if (!res.error) {
+      product = res.data;
+      prodError = null;
+      break;
+    }
+
+    const missingCol = parseMissingColumn(res.error.message);
+    if (missingCol && missingCol in insertPayload) {
+      console.warn(`[products/actions] Column '${missingCol}' missing from 'products' table. Auto-omitting and retrying insert.`);
+      missingProductColumns.add(missingCol);
+      delete insertPayload[missingCol];
+      prodError = res.error;
+      continue;
+    }
+
+    prodError = res.error;
+    break;
+  }
+
+  if (prodError || !product) return { error: prodError?.message || "Failed to create product" };
 
   // Assign categories
   if (input.category_ids?.length) {
@@ -231,25 +283,98 @@ export async function updateProduct(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const productData = { ...input.product };
-  if (productData.sku !== undefined) {
-    const trimmedSku = String(productData.sku || "").trim();
-    if (!trimmedSku) {
-      const nextSerial = await getNextProductSerial();
-      productData.sku = String(nextSerial);
-    } else {
-      productData.sku = trimmedSku;
-    }
+  const raw = input.product as Record<string, unknown>;
+
+  // Resolve SKU
+  let sku = raw.sku !== undefined ? String(raw.sku || "").trim() : undefined;
+  if (sku === "") {
+    const nextSerial = await getNextProductSerial();
+    sku = String(nextSerial);
   }
 
-  const { data: product, error } = await supabase
-    .from("products")
-    .update({ ...productData, updated_by: user?.id })
-    .eq("id", id)
-    .select()
-    .single();
+  // Build a safe payload containing ONLY columns that exist in the products table.
+  // Beauty taxonomy columns (batch_number, expiry_date, skin_type, skin_concern,
+  // key_actives, routine_step, origin_country) are included and will be saved once
+  // migration 009_add_beauty_taxonomy_columns.sql has been run in Supabase.
+  const safeUpdate: Record<string, unknown> = {
+    // Core fields (always present)
+    ...(raw.name !== undefined && { name: raw.name }),
+    ...(raw.slug !== undefined && { slug: raw.slug }),
+    ...(sku !== undefined && { sku }),
+    ...(raw.barcode !== undefined && { barcode: raw.barcode }),
+    ...(raw.product_type !== undefined && { product_type: raw.product_type }),
+    ...(raw.brand_id !== undefined && { brand_id: raw.brand_id }),
+    ...(raw.status !== undefined && { status: raw.status }),
+    ...(raw.is_featured !== undefined && { is_featured: raw.is_featured }),
+    ...(raw.short_description !== undefined && { short_description: raw.short_description }),
+    ...(raw.description !== undefined && { description: raw.description }),
+    ...(raw.benefits !== undefined && { benefits: raw.benefits }),
+    ...(raw.usage !== undefined && { usage: raw.usage }),
+    ...(raw.ingredients_specifications !== undefined && { ingredients_specifications: raw.ingredients_specifications }),
+    ...(raw.country !== undefined && { country: raw.country }),
+    ...(raw.origin_country !== undefined && { origin_country: raw.origin_country }),
+    ...(raw.warranty !== undefined && { warranty: raw.warranty }),
+    // Pricing
+    ...(raw.cost_price !== undefined && { cost_price: raw.cost_price }),
+    ...(raw.regular_price !== undefined && { regular_price: raw.regular_price }),
+    ...(raw.sale_price !== undefined && { sale_price: raw.sale_price }),
+    ...(raw.sale_start !== undefined && { sale_start: raw.sale_start }),
+    ...(raw.sale_end !== undefined && { sale_end: raw.sale_end }),
+    // Physical
+    ...(raw.weight !== undefined && { weight: raw.weight }),
+    ...(raw.length !== undefined && { length: raw.length }),
+    ...(raw.width !== undefined && { width: raw.width }),
+    ...(raw.height !== undefined && { height: raw.height }),
+    ...(raw.shipping_class !== undefined && { shipping_class: raw.shipping_class }),
+    // SEO
+    ...(raw.seo_title !== undefined && { seo_title: raw.seo_title }),
+    ...(raw.seo_description !== undefined && { seo_description: raw.seo_description }),
+    ...(raw.canonical_override !== undefined && { canonical_override: raw.canonical_override }),
+    ...(raw.og_image_url !== undefined && { og_image_url: raw.og_image_url }),
+    ...(raw.is_indexed !== undefined && { is_indexed: raw.is_indexed }),
+    // Beauty taxonomy (available after migration 009)
+    ...(raw.skin_type !== undefined && { skin_type: raw.skin_type }),
+    ...(raw.skin_concern !== undefined && { skin_concern: raw.skin_concern }),
+    ...(raw.key_actives !== undefined && { key_actives: raw.key_actives }),
+    ...(raw.routine_step !== undefined && { routine_step: raw.routine_step }),
+    ...(raw.batch_number !== undefined && { batch_number: raw.batch_number }),
+    ...(raw.expiry_date !== undefined && { expiry_date: raw.expiry_date || null }),
+    // Audit
+    updated_by: user?.id,
+  };
 
-  if (error) return { error: error.message };
+  let updatePayload = stripMissingColumns(safeUpdate);
+  let product: any = null;
+  let updateError: any = null;
+
+  for (let attempt = 0; attempt < 12; attempt++) {
+    const res = await supabase
+      .from("products")
+      .update(updatePayload)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (!res.error) {
+      product = res.data;
+      updateError = null;
+      break;
+    }
+
+    const missingCol = parseMissingColumn(res.error.message);
+    if (missingCol && missingCol in updatePayload) {
+      console.warn(`[products/actions] Column '${missingCol}' missing from 'products' table. Auto-omitting and retrying update.`);
+      missingProductColumns.add(missingCol);
+      delete updatePayload[missingCol];
+      updateError = res.error;
+      continue;
+    }
+
+    updateError = res.error;
+    break;
+  }
+
+  if (updateError || !product) return { error: updateError?.message || "Failed to update product" };
 
   // Sync categories
   if (input.category_ids) {

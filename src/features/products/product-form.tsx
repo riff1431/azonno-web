@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Save, Loader2, ArrowLeft, Package, FileText,
   DollarSign, Ruler, Image as ImageIcon, Search,
-  Box, Layers, Upload, Trash2, Plus, Check, Sparkles, Tag, Truck
+  Box, Layers, Upload, Trash2, Plus, Check, Sparkles, Tag, Truck,
+  AlertTriangle, AlertCircle, ShieldCheck, Clock, Calendar
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
@@ -128,6 +129,60 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     // Inventory
     initial_stock: 0,
   });
+
+  // Dynamic Batch & Expiry Date Alert Computation
+  const expiryAlertInfo = useMemo(() => {
+    if (!form.expiry_date) return null;
+    const expDate = new Date(form.expiry_date);
+    if (isNaN(expDate.getTime())) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffTime = expDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffMonths = +(diffDays / 30.4).toFixed(1);
+
+    if (diffDays < 0) {
+      return {
+        type: "expired" as const,
+        days: Math.abs(diffDays),
+        title: "Expired Cosmetic Batch Alert (মেয়াদোত্তীর্ণ)",
+        description: `This cosmetic batch expired ${Math.abs(diffDays)} day(s) ago (${form.expiry_date}). Do not sell expired skincare items — quarantine or return to distributor immediately.`,
+        badgeColor: "bg-red-100 text-red-800 border-red-200",
+        containerColor: "bg-red-50/90 border-red-200 text-red-900",
+      };
+    } else if (diffDays <= 90) {
+      return {
+        type: "critical" as const,
+        days: diffDays,
+        months: diffMonths,
+        title: "Critical Expiry Alert (< 3 Months Remaining)",
+        description: `Expires in ${diffDays} days (${diffMonths} months). Skincare batches nearing 3 months should be placed on clearance sale or promotional bundle to avoid unsold losses.`,
+        badgeColor: "bg-rose-100 text-rose-900 border-rose-300 font-bold",
+        containerColor: "bg-rose-50/90 border-rose-200 text-rose-950",
+      };
+    } else if (diffDays <= 180) {
+      return {
+        type: "warning" as const,
+        days: diffDays,
+        months: diffMonths,
+        title: "Approaching Expiry Warning (3–6 Months Remaining)",
+        description: `Expires in ${diffDays} days (~${diffMonths} months). Good shelf-life for normal turnover, but recommended to monitor velocity before the 90-day critical cutoff.`,
+        badgeColor: "bg-amber-100 text-amber-900 border-amber-300 font-bold",
+        containerColor: "bg-amber-50/80 border-amber-200 text-amber-950",
+      };
+    } else {
+      return {
+        type: "fresh" as const,
+        days: diffDays,
+        months: diffMonths,
+        title: "Optimal Fresh Shelf-Life (> 6 Months)",
+        description: `Batch has ${diffMonths} months (${diffDays} days) of fresh shelf-life remaining. Safe for storefront display and standard marketing.`,
+        badgeColor: "bg-emerald-100 text-emerald-900 border-emerald-300 font-bold",
+        containerColor: "bg-emerald-50/80 border-emerald-200 text-emerald-950",
+      };
+    }
+  }, [form.expiry_date]);
 
   useEffect(() => {
     Promise.all([getCategories(), getBrands(), getAttributes(), getProducts()]).then(([cats, brs, attrs, prods]) => {
@@ -389,7 +444,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
       routine_step: form.routine_step || null,
       batch_number: form.batch_number || null,
       expiry_date: form.expiry_date || null,
-      authenticity_verified: form.authenticity_verified,
+      // Note: authenticity_verified is displayed client-side only; not a DB column yet
+
       // Pricing
       cost_price: form.cost_price || null,
       regular_price: form.regular_price || 0,
@@ -841,6 +897,31 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   </p>
                 </div>
               </div>
+
+              {/* Dynamic Real-Time Expiry Status Banner */}
+              {expiryAlertInfo && (
+                <div className={`rounded-2xl border p-4 transition-all ${expiryAlertInfo.containerColor}`}>
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 shrink-0">
+                      {expiryAlertInfo.type === "expired" && <AlertTriangle className="h-5 w-5 text-red-600 animate-bounce" />}
+                      {expiryAlertInfo.type === "critical" && <AlertCircle className="h-5 w-5 text-rose-600" />}
+                      {expiryAlertInfo.type === "warning" && <Clock className="h-5 w-5 text-amber-600" />}
+                      {expiryAlertInfo.type === "fresh" && <ShieldCheck className="h-5 w-5 text-emerald-600" />}
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="text-xs font-black">{expiryAlertInfo.title}</h4>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] border ${expiryAlertInfo.badgeColor}`}>
+                          {expiryAlertInfo.type === "expired"
+                            ? `${expiryAlertInfo.days} days past expiry`
+                            : `${expiryAlertInfo.days} days left (~${expiryAlertInfo.months} mos)`}
+                        </span>
+                      </div>
+                      <p className="text-xs leading-relaxed opacity-90">{expiryAlertInfo.description}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Authenticity Guarantee Toggle */}
               <div className="flex items-center justify-between rounded-xl bg-pink-50/60 border border-pink-200 p-4">
