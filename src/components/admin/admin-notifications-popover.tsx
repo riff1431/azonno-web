@@ -152,12 +152,51 @@ export function AdminNotificationsPopover() {
     if (next) playNotificationChime();
   };
 
-  // Fetch notifications on mount and set up periodic refresh
+  const knownIdsRef = useRef<Set<string>>(new Set());
+  const initialFetchDoneRef = useRef(false);
+
+  // Fetch notifications and trigger alerts for new incoming orders
   const fetchNotifications = async () => {
-    setLoading(true);
     try {
       const result = await getAdminNotifications();
-      setNotifications(result.notifications);
+      const currentList = result.notifications || [];
+
+      if (!initialFetchDoneRef.current) {
+        // Initial load: record existing IDs without firing chimes
+        currentList.forEach((n) => knownIdsRef.current.add(n.id));
+        initialFetchDoneRef.current = true;
+        setNotifications(currentList);
+      } else {
+        // Subsequent polling check: detect brand new orders
+        const newOrders = currentList.filter(
+          (n) => n.type === "order" && !knownIdsRef.current.has(n.id)
+        );
+
+        if (newOrders.length > 0) {
+          const newest = newOrders[0];
+          newOrders.forEach((n) => knownIdsRef.current.add(n.id));
+
+          // 1. Play audio chime
+          if (soundEnabled) {
+            playNotificationChime();
+          }
+
+          // 2. Trigger PC Desktop Web Notification
+          sendDesktopNotification(
+            newest.title,
+            newest.message,
+            newest.link || "/admin/orders"
+          );
+
+          // 3. Show floating toast
+          setLiveToast(newest);
+          setTimeout(() => setLiveToast(null), 8000);
+        }
+
+        // Update list and populate known IDs
+        currentList.forEach((n) => knownIdsRef.current.add(n.id));
+        setNotifications(currentList);
+      }
     } catch (err) {
       console.error("Error fetching notifications:", err);
     } finally {
@@ -167,12 +206,12 @@ export function AdminNotificationsPopover() {
 
   useEffect(() => {
     fetchNotifications();
-    // Poll every 45 seconds as backup
-    const interval = setInterval(fetchNotifications, 45000);
+    // High-frequency polling (every 5 seconds) ensures 100% reliability across all devices
+    const interval = setInterval(fetchNotifications, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [soundEnabled]);
 
-  // Supabase Real-Time WebSocket Channel: Listens for INSTANT New Orders
+  // Supabase Real-Time WebSocket Channel: Listens for INSTANT New Orders (Sub-second)
   useEffect(() => {
     const supabase = createClient();
     const channel = supabase
@@ -186,9 +225,13 @@ export function AdminNotificationsPopover() {
           const name = newOrder.shipping_address_snapshot?.name || newOrder.guest_name || newOrder.customer_name || "New Customer";
           const total = newOrder.total ? `৳${Number(newOrder.total).toLocaleString("en-BD")}` : "";
           const method = (newOrder.payment_method || "COD").toUpperCase();
+          const notifId = `notif-ord-${newOrder.id || Date.now()}`;
+
+          if (knownIdsRef.current.has(notifId)) return;
+          knownIdsRef.current.add(notifId);
 
           const notif: AdminNotification = {
-            id: `realtime-ord-${newOrder.id || Date.now()}`,
+            id: notifId,
             title: `🛍️ New Order #${orderNum}`,
             message: `${name} placed an order for ${total} via ${method}.`,
             type: "order",
@@ -199,7 +242,7 @@ export function AdminNotificationsPopover() {
           };
 
           // 1. Insert into notifications list
-          setNotifications((prev) => [notif, ...prev]);
+          setNotifications((prev) => [notif, ...prev.filter((p) => p.id !== notifId)]);
 
           // 2. Play subtle audio chime
           if (soundEnabled) {

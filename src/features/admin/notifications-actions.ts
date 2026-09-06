@@ -31,15 +31,20 @@ export async function getAdminNotifications(): Promise<{
     // 1. Fetch recent orders awaiting attention
     const { data: recentOrders } = await supabase
       .from("orders")
-      .select("id, order_number, status, total, customer_name, payment_method, payment_status, created_at")
+      .select("id, order_number, status, total, customer_name, guest_name, shipping_address_snapshot, payment_method, payment_status, created_at")
       .order("created_at", { ascending: false })
-      .limit(6);
+      .limit(10);
 
     if (recentOrders && recentOrders.length > 0) {
       for (const order of recentOrders) {
         const orderNum = order.order_number || order.id.slice(0, 8).toUpperCase();
         const method = (order.payment_method || "COD").toUpperCase();
         const total = order.total ? `BDT ${Number(order.total).toLocaleString("en-BD")}` : "";
+        const customerName =
+          order.customer_name ||
+          (order.shipping_address_snapshot as any)?.name ||
+          (order as any).guest_name ||
+          "Customer";
 
         // Check for payment verification
         if (
@@ -49,7 +54,7 @@ export async function getAdminNotifications(): Promise<{
           notifications.push({
             id: `notif-pay-${order.id}`,
             title: `Payment Verification: ${method}`,
-            message: `Order #${orderNum} (${order.customer_name || "Customer"}) requires ${method} verification (${total}).`,
+            message: `Order #${orderNum} (${customerName}) requires ${method} verification (${total}).`,
             type: "payment",
             link: `/admin/orders/${order.id}`,
             createdAt: order.created_at,
@@ -58,19 +63,17 @@ export async function getAdminNotifications(): Promise<{
           });
         }
 
-        // New / Pending order alert
-        if (order.status === "pending" || order.status === "processing") {
-          notifications.push({
-            id: `notif-ord-${order.id}`,
-            title: `New Order #${orderNum}`,
-            message: `${order.customer_name || "Guest Customer"} placed an order for ${total} via ${method}.`,
-            type: "order",
-            link: `/admin/orders/${order.id}`,
-            createdAt: order.created_at,
-            read: false,
-            priority: "normal",
-          });
-        }
+        // New / Recent order alert (all recent active orders)
+        notifications.push({
+          id: `notif-ord-${order.id}`,
+          title: `New Order #${orderNum}`,
+          message: `${customerName} placed an order for ${total} via ${method}.`,
+          type: "order",
+          link: `/admin/orders/${order.id}`,
+          createdAt: order.created_at,
+          read: false,
+          priority: order.status === "pending" ? "high" : "normal",
+        });
       }
     }
 
