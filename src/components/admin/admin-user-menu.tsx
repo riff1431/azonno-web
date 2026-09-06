@@ -15,9 +15,11 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 export function AdminUserMenu() {
   const router = useRouter();
+  const { t } = useAdminLang();
   const [isOpen, setIsOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("admin@ecomx.com");
   const menuRef = useRef<HTMLDivElement>(null);
@@ -115,7 +117,7 @@ export function AdminUserMenu() {
               className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 hover:bg-surface-secondary transition-colors"
             >
               <ExternalLink className="h-4 w-4 text-text-muted" />
-              <span>View Live Storefront</span>
+              <span>{t("view_all")}</span>
             </Link>
 
             <Link
@@ -124,7 +126,7 @@ export function AdminUserMenu() {
               className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 hover:bg-surface-secondary transition-colors"
             >
               <Settings className="h-4 w-4 text-text-muted" />
-              <span>Store Configuration</span>
+              <span>{t("store_settings")}</span>
             </Link>
 
             <Link
@@ -133,7 +135,7 @@ export function AdminUserMenu() {
               className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 hover:bg-surface-secondary transition-colors"
             >
               <Layers className="h-4 w-4 text-text-muted" />
-              <span>Feature Modules</span>
+              <span>{t("feature_modules")}</span>
             </Link>
 
             <Link
@@ -142,7 +144,7 @@ export function AdminUserMenu() {
               className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 hover:bg-surface-secondary transition-colors"
             >
               <Activity className="h-4 w-4 text-text-muted" />
-              <span>Audit Activity Trail</span>
+              <span>{t("activity_audit")}</span>
             </Link>
           </div>
 
@@ -153,7 +155,7 @@ export function AdminUserMenu() {
               className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium text-danger-600 hover:bg-danger-50 transition-colors"
             >
               <LogOut className="h-4 w-4" />
-              <span>Sign Out</span>
+              <span>{t("sign_out")}</span>
             </button>
           </div>
         </div>

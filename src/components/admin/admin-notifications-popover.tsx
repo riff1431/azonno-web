@@ -28,6 +28,7 @@ import {
   type AdminNotification,
 } from "@/features/admin/notifications-actions";
 import { createClient } from "@/lib/supabase/client";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 // Web Audio API Global Context & Unlock Engine
 let sharedAudioCtx: AudioContext | null = null;
@@ -146,6 +147,7 @@ export function AdminNotificationsPopover() {
   const [liveToast, setLiveToast] = useState<AdminNotification | null>(null);
   const [showPermBanner, setShowPermBanner] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const { t } = useAdminLang();
 
   // Check desktop notification permission on mount
   useEffect(() => {
@@ -402,12 +404,12 @@ export function AdminNotificationsPopover() {
   const formatTime = (isoString: string) => {
     try {
       const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000);
-      if (diff < 60) return "Just now";
-      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-      return `${Math.floor(diff / 86400)}d ago`;
+      if (diff < 60) return t("just_now");
+      if (diff < 3600) return `${Math.floor(diff / 60)}${t("minutes_ago")}`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}${t("hours_ago")}`;
+      return `${Math.floor(diff / 86400)}${t("days_ago")}`;
     } catch {
-      return "Recent";
+      return t("just_now");
     }
   };
 
@@ -478,14 +480,14 @@ export function AdminNotificationsPopover() {
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border bg-gray-50/70 px-4 py-3">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-text text-sm">Notifications</span>
+              <span className="font-semibold text-text text-sm">{t("notifications")}</span>
               {unreadCount > 0 ? (
                 <span className="rounded-full bg-danger-100 text-danger-700 font-semibold px-2 py-0.5 text-xs">
-                  {unreadCount} new
+                  {unreadCount} {t("new_badge")}
                 </span>
               ) : (
                 <span className="rounded-full bg-emerald-100 text-emerald-700 font-semibold px-2 py-0.5 text-xs flex items-center gap-1">
-                  <Check className="h-3 w-3" /> All read
+                  <Check className="h-3 w-3" /> {t("all_read")}
                 </span>
               )}
             </div>
@@ -517,7 +519,7 @@ export function AdminNotificationsPopover() {
                   onClick={markAllAsRead}
                   className="rounded-md px-2 py-1 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors"
                 >
-                  Mark all as read
+                  {t("mark_all_read")}
                 </button>
               )}
             </div>
@@ -529,7 +531,7 @@ export function AdminNotificationsPopover() {
               {desktopPermission === "granted" ? (
                 <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold flex items-center gap-1">
                   <Laptop className="h-3 w-3 text-emerald-600" />
-                  PC Alerts Active ✓
+                  {t("pc_alerts_active")}
                 </span>
               ) : (
                 <button
@@ -538,7 +540,7 @@ export function AdminNotificationsPopover() {
                   title="Click to allow Windows / Mac desktop notifications"
                 >
                   <Laptop className="h-3 w-3 text-[#e91e63]" />
-                  Enable PC Alerts
+                  {t("enable_pc_alerts")}
                 </button>
               )}
             </div>
@@ -548,7 +550,7 @@ export function AdminNotificationsPopover() {
               className="text-[10px] text-text-muted hover:text-text font-bold underline cursor-pointer"
               title="Test chime sound and desktop notification"
             >
-              Test Alert
+              {t("test_alert")}
             </button>
           </div>
 
@@ -563,7 +565,7 @@ export function AdminNotificationsPopover() {
                   : "border-transparent text-text-muted hover:text-text"
               )}
             >
-              All ({notifications.length})
+              {t("notif_tab_all")} ({notifications.length})
             </button>
             <button
               onClick={() => setActiveTab("orders")}
@@ -574,7 +576,7 @@ export function AdminNotificationsPopover() {
                   : "border-transparent text-text-muted hover:text-text"
               )}
             >
-              Orders & Pay
+              {t("notif_tab_orders")}
             </button>
             <button
               onClick={() => setActiveTab("stock")}
@@ -585,7 +587,7 @@ export function AdminNotificationsPopover() {
                   : "border-transparent text-text-muted hover:text-text"
               )}
             >
-              Stock
+              {t("notif_tab_stock")}
             </button>
             <button
               onClick={() => setActiveTab("system")}
@@ -596,7 +598,7 @@ export function AdminNotificationsPopover() {
                   : "border-transparent text-text-muted hover:text-text"
               )}
             >
-              System
+              {t("notif_tab_system")}
             </button>
           </div>
 
@@ -607,11 +609,11 @@ export function AdminNotificationsPopover() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-secondary text-text-muted mb-2">
                   <Inbox className="h-5 w-5" />
                 </div>
-                <p className="text-sm font-medium text-text">No notifications here</p>
+                <p className="text-sm font-medium text-text">{t("no_notifications")}</p>
                 <p className="text-xs text-text-muted mt-0.5">
                   {activeTab === "all"
-                    ? "You're completely up to date!"
-                    : "No notifications found in this category."}
+                    ? t("up_to_date")
+                    : t("no_notif_category")}
                 </p>
               </div>
             ) : (
@@ -674,7 +676,7 @@ export function AdminNotificationsPopover() {
                         </button>
                       ) : (
                         <span className="opacity-0 group-hover:opacity-100 text-[10px] text-text-muted">
-                          Read
+                          {t("read")}
                         </span>
                       )}
 
@@ -695,7 +697,7 @@ export function AdminNotificationsPopover() {
               onClick={() => setIsOpen(false)}
               className="font-medium text-text-muted hover:text-primary-600 transition-colors flex items-center gap-1"
             >
-              Orders <ChevronRight className="h-3 w-3" />
+              {t("notif_orders_link")} <ChevronRight className="h-3 w-3" />
             </Link>
 
             <Link
@@ -703,7 +705,7 @@ export function AdminNotificationsPopover() {
               onClick={() => setIsOpen(false)}
               className="font-medium text-primary-600 hover:text-primary-700 transition-colors flex items-center gap-1"
             >
-              Activity Audit <ChevronRight className="h-3 w-3" />
+              {t("activity_audit")} <ChevronRight className="h-3 w-3" />
             </Link>
           </div>
         </div>
@@ -717,7 +719,7 @@ export function AdminNotificationsPopover() {
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-[#e91e63] flex items-center gap-1">
-                <Sparkles className="h-3 w-3" /> Real-time Alert
+                <Sparkles className="h-3 w-3" /> {t("realtime_alert")}
               </span>
               <button
                 onClick={() => setLiveToast(null)}
@@ -734,13 +736,13 @@ export function AdminNotificationsPopover() {
                 onClick={() => setLiveToast(null)}
                 className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#e91e63] hover:bg-sg-pink-hover px-3 py-1.5 rounded-lg shadow-sm transition-all"
               >
-                View Order <ChevronRight className="h-3 w-3" />
+                {t("view_order")} <ChevronRight className="h-3 w-3" />
               </Link>
               <button
                 onClick={() => setLiveToast(null)}
                 className="text-xs text-gray-500 hover:text-gray-800 font-medium px-2 py-1"
               >
-                Dismiss
+                {t("dismiss")}
               </button>
             </div>
           </div>
@@ -752,13 +754,13 @@ export function AdminNotificationsPopover() {
         <div className="fixed top-4 right-20 z-999 bg-slate-900 text-white rounded-xl shadow-xl px-3.5 py-2 flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-top-3">
           <div className="flex items-center gap-2 text-xs">
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
-            <span className="font-medium text-slate-200">Enable PC Order Alerts & Sound</span>
+            <span className="font-medium text-slate-200">{t("enable_pc_sound")}</span>
           </div>
           <button
             onClick={requestDesktopPermission}
             className="text-[11px] font-bold bg-[#e91e63] hover:bg-sg-pink-hover text-white px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
           >
-            Enable Now
+            {t("enable_now")}
           </button>
           <button
             onClick={() => setShowPermBanner(false)}

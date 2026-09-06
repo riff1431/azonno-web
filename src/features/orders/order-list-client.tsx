@@ -48,6 +48,7 @@ import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
 import { getAvailableNextStatuses, OrderStatus, generateWhatsAppOrderMessage } from "@/types/orders";
 import { BDCourierBadge } from "@/features/fraud/bdcourier-badge";
 import { getWhatsAppTemplates, type WhatsAppTemplate } from "@/features/communication/whatsapp-actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface OrderListClientProps {
   initialOrders: any[];
@@ -57,6 +58,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
   const [orders, setOrders] = useState(initialOrders);
   const [activeTab, setActiveTab] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const { t } = useAdminLang();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [bulkLoading, setBulkLoading] = useState(false);
@@ -775,18 +777,18 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
   };
 
   const tabs = [
-    { label: "All Orders", value: "all", count: orders.length },
-    { label: "Pending", value: "pending", count: orders.filter((o) => o.status === "pending").length },
-    { label: "Processing", value: "processing", count: orders.filter((o) => o.status === "processing" || o.status === "confirmed").length },
+    { label: t("tab_all"), value: "all", count: orders.length },
+    { label: t("tab_pending"), value: "pending", count: orders.filter((o) => o.status === "pending").length },
+    { label: t("tab_processing"), value: "processing", count: orders.filter((o) => o.status === "processing" || o.status === "confirmed").length },
     { label: "On Hold", value: "on-hold", count: orders.filter((o) => o.status === "on-hold").length },
-    { label: "Completed", value: "completed", count: orders.filter((o) => o.status === "completed" || o.status === "delivered" || o.status === "shipped").length },
-    { label: "Cancelled", value: "cancelled", count: orders.filter((o) => o.status === "cancelled").length },
+    { label: t("tab_delivered"), value: "completed", count: orders.filter((o) => o.status === "completed" || o.status === "delivered" || o.status === "shipped").length },
+    { label: t("tab_cancelled"), value: "cancelled", count: orders.filter((o) => o.status === "cancelled").length },
     {
-      label: "Courier Returns / RTO",
+      label: t("returns_rto"),
       value: "courier-returns",
       count: orders.filter((o) => o.is_courier_returned || o.is_courier_cancelled || o.status === "returned" || (o.status === "failed" && Boolean(o.consignment_id))).length,
     },
-    { label: "Failed / Returns", value: "failed", count: orders.filter((o) => o.status === "failed" || o.status === "returned" || o.status === "refunded").length },
+    { label: t("tab_returned"), value: "failed", count: orders.filter((o) => o.status === "failed" || o.status === "returned" || o.status === "refunded").length },
   ];
 
 
@@ -992,7 +994,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by order #, phone, customer, district..."
+              placeholder={t("search_orders")}
               className="w-full rounded-xl border border-gray-200 bg-gray-50 pl-9 pr-3.5 py-2 text-xs font-medium text-gray-900 focus:outline-none"
             />
           </div>
@@ -1014,25 +1016,25 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                     className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
                   />
                 </th>
-                <th className="px-4 py-3.5">Order Info</th>
-                <th className="px-4 py-3.5">Customer & Contacts</th>
-                <th className="px-4 py-3.5">Destination & Items</th>
-                <th className="px-4 py-3.5">Amount Due</th>
-                <th className="px-4 py-3.5">Status</th>
+                <th className="px-4 py-3.5">{t("column_order")}</th>
+                <th className="px-4 py-3.5">{t("column_customer")}</th>
+                <th className="px-4 py-3.5">{t("column_status")}</th>
+                <th className="px-4 py-3.5">{t("column_amount")}</th>
+                <th className="px-4 py-3.5">{t("column_status")}</th>
                 <th className="px-4 py-3.5 text-center">
                   <span className="inline-flex items-center justify-center gap-1">
                     <Zap className="h-3.5 w-3.5 text-[#e91e63]" />
-                    <span>1-Click Courier Dispatch</span>
+                    <span>{t("action_send_courier")}</span>
                   </span>
                 </th>
-                <th className="px-4 py-3.5 text-right">Actions</th>
+                <th className="px-4 py-3.5 text-right">{t("column_actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filteredOrders.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="p-8 text-center text-gray-400 font-medium">
-                    No orders match your filter criteria.
+                    {t("no_orders")}
                   </td>
                 </tr>
               ) : (

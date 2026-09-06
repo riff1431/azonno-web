@@ -8,16 +8,101 @@ import {
   Megaphone, Truck, DollarSign, Image, FileText, Palette,
   Shield, BarChart3, Settings, ScrollText, ChevronDown,
   ChevronRight, Menu, X, Search, Bell, LogOut, User,
-  CreditCard, MessageSquare, BookOpen,
+  CreditCard, MessageSquare, BookOpen, Languages,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { adminNavItems } from "@/config/site";
 import { createClient } from "@/lib/supabase/client";
+import { AdminLanguageProvider, useAdminLang } from "@/lib/admin-lang-context";
+import type { TranslationKey } from "@/lib/admin-i18n";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   LayoutDashboard, ShoppingBag, Package, Warehouse, Users,
   Megaphone, Truck, DollarSign, Image, FileText, Palette,
   Shield, BarChart3, Settings, ScrollText, CreditCard, MessageSquare, BookOpen,
+};
+
+// Map nav item titles to translation keys
+const navTitleKeyMap: Record<string, TranslationKey> = {
+  "Dashboard": "dashboard",
+  "Orders": "orders",
+  "All Orders": "all_orders",
+  "Invoice & Thermal": "invoice_thermal",
+  "Incomplete Orders": "incomplete_orders",
+  "Fraud & Blocklist": "fraud_blocklist",
+  "Order Tracking": "order_tracking",
+  "Returns & RTO": "returns_rto",
+  "Order Settings": "order_settings",
+  "Products": "products",
+  "All Products": "all_products",
+  "Add Product": "add_product",
+  "Categories": "categories",
+  "Brands": "brands",
+  "Attributes": "attributes",
+  "Inventory": "inventory",
+  "Reviews": "reviews",
+  "Q&A": "qa",
+  "Product Settings": "product_settings",
+  "Blog & Editorial": "blog_editorial",
+  "All Articles": "all_articles",
+  "Write Article": "write_article",
+  "Authors & Experts": "authors_experts",
+  "Blog Categories": "blog_categories",
+  "Customers": "customers",
+  "All Customers": "all_customers",
+  "Fraud Checker": "fraud_checker",
+  "Customer Settings": "customer_settings",
+  "Marketing": "marketing",
+  "Storefront Sections": "storefront_sections",
+  "Coupons": "coupons",
+  "SMS Marketing": "sms_marketing",
+  "Tracking": "tracking",
+  "Catalog Feeds": "catalog_feeds",
+  "Search Analytics": "search_analytics",
+  "Marketing Settings": "marketing_settings",
+  "Shipping & Courier": "shipping_courier",
+  "Delivery Partners": "delivery_partners",
+  "Shipping Zones": "shipping_zones",
+  "Payments": "payments",
+  "Payment Methods": "payment_methods",
+  "Cash on Delivery": "cash_on_delivery",
+  "Custom Payments": "custom_payments",
+  "Payment Verification": "payment_verification",
+  "Communication": "communication",
+  "Notification Settings": "notification_settings",
+  "WhatsApp Templates": "whatsapp_templates",
+  "SMS Providers": "sms_providers",
+  "SMS Templates": "sms_templates",
+  "Email Settings": "email_settings",
+  "Media": "media",
+  "Media Library": "media_library",
+  "Cloudinary Settings": "cloudinary_settings",
+  "Media Settings": "media_settings",
+  "Finance": "finance",
+  "Sales Reports": "sales_reports",
+  "Profit & Loss": "profit_loss",
+  "Costs": "costs",
+  "Accounting": "accounting",
+  "Suppliers": "suppliers",
+  "Due Manager": "due_manager",
+  "Investors": "investors",
+  "Content": "content",
+  "Blog Posts": "blog_posts",
+  "Blog Authors": "blog_authors",
+  "Pages": "pages",
+  "Theme Customizer": "theme_customizer",
+  "Users & Access": "users_access",
+  "Admin Users": "admin_users",
+  "Activity Logs": "activity_logs",
+  "System": "system",
+  "Feature Modules": "feature_modules",
+  "Feature Flags": "feature_flags",
+  "Store Settings": "store_settings",
+  "Invoice & Thermal (Settings)": "invoice_thermal",
+  "Checkout Settings": "checkout_settings",
+  "SEO Settings": "seo_settings",
+  "System Health": "system_health",
+  "Maintenance": "maintenance",
 };
 
 interface AdminSidebarProps {
@@ -29,6 +114,7 @@ function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const { t } = useAdminLang();
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -50,6 +136,11 @@ function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
   const isGroupActive = (children: readonly { href: string }[]) => {
     return children.some((child) => pathname.startsWith(child.href));
+  };
+
+  const translateNav = (title: string): string => {
+    const key = navTitleKeyMap[title];
+    return key ? t(key) : title;
   };
 
   return (
@@ -99,7 +190,7 @@ function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                       )}
                     >
                       <Icon className="h-4 w-4 shrink-0" />
-                      <span className="flex-1 text-left">{item.title}</span>
+                      <span className="flex-1 text-left">{translateNav(item.title)}</span>
                       {expanded ? (
                         <ChevronDown className="h-4 w-4 shrink-0" />
                       ) : (
@@ -119,7 +210,7 @@ function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                                   : "text-admin-sidebar-text"
                               )}
                             >
-                              {child.title}
+                              {translateNav(child.title)}
                             </Link>
                           </li>
                         ))}
@@ -141,7 +232,7 @@ function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                     )}
                   >
                     <Icon className="h-4 w-4 shrink-0" />
-                    <span>{item.title}</span>
+                    <span>{translateNav(item.title)}</span>
                   </Link>
                 </li>
               );
@@ -156,7 +247,7 @@ function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-admin-sidebar-text transition-colors hover:bg-admin-sidebar-hover hover:text-white"
           >
             <LogOut className="h-4 w-4" />
-            <span>Logout</span>
+            <span>{t("logout")}</span>
           </button>
         </div>
       </aside>
@@ -168,8 +259,23 @@ import { AdminNotificationsPopover } from "@/components/admin/admin-notification
 import { AdminUserMenu } from "@/components/admin/admin-user-menu";
 import { AdminQuickSearchDialog } from "@/components/admin/admin-quick-search-dialog";
 
+function LangToggleButton() {
+  const { lang, setLang } = useAdminLang();
+  return (
+    <button
+      onClick={() => setLang(lang === "en" ? "bn" : "en")}
+      title={lang === "en" ? "বাংলায় দেখুন" : "Switch to English"}
+      className="flex items-center gap-1.5 rounded-lg border border-border px-2.5 py-1.5 text-xs font-bold text-text-secondary hover:bg-surface-secondary hover:text-text transition-colors select-none"
+    >
+      <Languages className="h-3.5 w-3.5" />
+      <span>{lang === "en" ? "বাংলা" : "EN"}</span>
+    </button>
+  );
+}
+
 function AdminTopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const [searchOpen, setSearchOpen] = useState(false);
+  const { t } = useAdminLang();
 
   // Global ⌘K / Ctrl+K shortcut listener
   React.useEffect(() => {
@@ -190,7 +296,7 @@ function AdminTopBar({ onMenuClick }: { onMenuClick: () => void }) {
           <button
             onClick={onMenuClick}
             className="rounded-lg p-2 hover:bg-surface-secondary lg:hidden"
-            aria-label="Toggle Menu"
+            aria-label={t("toggle_menu")}
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -201,14 +307,17 @@ function AdminTopBar({ onMenuClick }: { onMenuClick: () => void }) {
             className="hidden items-center gap-2 rounded-xl border border-border bg-surface-secondary px-3 py-1.5 text-sm text-text-muted hover:border-border-hover hover:text-text md:flex transition-colors cursor-pointer"
           >
             <Search className="h-4 w-4" />
-            <span>Search menus, orders, products... </span>
+            <span>{t("search_placeholder")}</span>
             <kbd className="ml-4 rounded-md bg-white px-1.5 py-0.5 text-xs font-semibold text-text-secondary shadow-xs border border-border">
               ⌘K
             </kbd>
           </button>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* Language Toggle */}
+          <LangToggleButton />
+
           {/* Functional Notifications Popover */}
           <AdminNotificationsPopover />
 
@@ -241,20 +350,21 @@ export default function AdminLayoutClient({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-surface-secondary">
-      <AdminSidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+    <AdminLanguageProvider>
+      <div className="flex h-screen overflow-hidden bg-surface-secondary">
+        <AdminSidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <AdminTopBar onMenuClick={() => setSidebarOpen(true)} />
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <AdminTopBar onMenuClick={() => setSidebarOpen(true)} />
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children}
-        </main>
+          <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </AdminLanguageProvider>
   );
 }
-

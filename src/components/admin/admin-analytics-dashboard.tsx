@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useAdminLang } from "@/lib/admin-lang-context";
 import {
   DollarSign,
   ShoppingBag,
@@ -49,6 +50,7 @@ export default function AdminAnalyticsDashboard({
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
   const [chartView, setChartView] = useState<"daily" | "weekly">("daily");
+  const { t } = useAdminLang();
 
   // Filter Orders based on Selected Date Range
   const filteredOrders = useMemo(() => {
@@ -176,11 +178,11 @@ export default function AdminAnalyticsDashboard({
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 uppercase">
-              Live Real-Time Analytics
+              {t("live_analytics")}
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-gray-900 mt-1">
-            Store Analytics & Performance Overview
+            {t("store_overview")}
           </h1>
           <p className="text-xs text-gray-500 mt-0.5">
             Real-time gross revenue, product buying cost (COGS), profit margins, fulfillment rates, and inventory alerts.
@@ -202,7 +204,7 @@ export default function AdminAnalyticsDashboard({
           </Link>
           <Link href="/admin/products/create">
             <Button size="sm" className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-black rounded-xl shadow-md">
-              + Add Product
+              + {t("add_product")}
             </Button>
           </Link>
         </div>
@@ -215,12 +217,12 @@ export default function AdminAnalyticsDashboard({
             <Filter className="h-3.5 w-3.5 text-[#e91e63]" /> Timeframe:
           </span>
           {[
-            { id: "all", label: "All Time" },
-            { id: "today", label: "Today" },
-            { id: "week", label: "This Week" },
-            { id: "month", label: "This Month" },
-            { id: "last_month", label: "Last Month" },
-            { id: "custom", label: "Custom Range" },
+            { id: "all", label: t("all_time") },
+            { id: "today", label: t("today") },
+            { id: "week", label: t("this_week") },
+            { id: "month", label: t("this_month") },
+            { id: "last_month", label: t("last_month") },
+            { id: "custom", label: t("custom_range") },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -255,7 +257,7 @@ export default function AdminAnalyticsDashboard({
         )}
 
         <div className="text-xs text-gray-500 font-semibold self-end md:self-auto">
-          Showing <strong>{filteredOrders.length}</strong> orders (Total: <strong className="text-gray-900">{formatPrice(grossSales)}</strong>)
+          {t("showing")} <strong>{filteredOrders.length}</strong> {t("orders")} ({t("total_revenue")}: <strong className="text-gray-900">{formatPrice(grossSales)}</strong>)
         </div>
       </div>
 
@@ -272,7 +274,7 @@ export default function AdminAnalyticsDashboard({
             </span>
           </div>
           <div>
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Gross Sales</span>
+            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{t("total_revenue")}</span>
             <p className="text-lg sm:text-xl font-black text-gray-900 mt-0.5">{formatPrice(grossSales)}</p>
           </div>
         </div>
@@ -284,11 +286,11 @@ export default function AdminAnalyticsDashboard({
               <ShoppingBag className="h-5 w-5" />
             </div>
             <span className="text-[10px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
-              {completedOrders} Delivered
+              {completedOrders} {t("status_delivered")}
             </span>
           </div>
           <div>
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Total Orders</span>
+            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{t("total_orders")}</span>
             <p className="text-lg sm:text-xl font-black text-gray-900 mt-0.5">{totalOrdersCount}</p>
           </div>
         </div>
@@ -304,7 +306,7 @@ export default function AdminAnalyticsDashboard({
             </span>
           </div>
           <div>
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Avg. Order Value</span>
+            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{t("avg_order_value")}</span>
             <p className="text-lg sm:text-xl font-black text-gray-900 mt-0.5">{formatPrice(aov)}</p>
           </div>
         </div>
@@ -320,7 +322,7 @@ export default function AdminAnalyticsDashboard({
             </span>
           </div>
           <div>
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Active Customers</span>
+            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{t("total_customers")}</span>
             <p className="text-lg sm:text-xl font-black text-gray-900 mt-0.5">{activeCustomersCount}</p>
           </div>
         </div>
@@ -338,7 +340,7 @@ export default function AdminAnalyticsDashboard({
             )}
           </div>
           <div>
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Pending Orders</span>
+            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{t("tab_pending")}</span>
             <p className="text-lg sm:text-xl font-black text-amber-600 mt-0.5">{pendingOrders}</p>
           </div>
         </div>
@@ -354,7 +356,7 @@ export default function AdminAnalyticsDashboard({
             </span>
           </div>
           <div>
-            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">In Transit</span>
+            <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">{t("status_in_transit")}</span>
             <p className="text-lg sm:text-xl font-black text-gray-900 mt-0.5">{inTransitOrders}</p>
           </div>
         </div>
@@ -383,7 +385,7 @@ export default function AdminAnalyticsDashboard({
             <span className="text-[11px] font-bold text-gray-500 uppercase">1. Gross Revenue</span>
             <p className="text-2xl font-black text-gray-900">{formatPrice(grossSales)}</p>
             <span className="text-[10px] text-emerald-600 font-bold flex items-center">
-              <ArrowUpRight className="h-3 w-3" /> Total Invoiced Orders
+              <ArrowUpRight className="h-3 w-3" />{t("revenue")}
             </span>
           </div>
 
@@ -398,7 +400,7 @@ export default function AdminAnalyticsDashboard({
 
           {/* Gross Profit */}
           <div className="rounded-2xl bg-pink-50/40 p-4 border border-pink-100 space-y-1">
-            <span className="text-[11px] font-bold text-pink-700 uppercase">3. Gross Profit</span>
+            <span className="text-[11px] font-bold text-pink-700 uppercase">3. {t("gross_profit")}</span>
             <p className="text-2xl font-black text-gray-900">{formatPrice(grossProfit)}</p>
             <span className="text-[10px] text-pink-700 font-bold">
               Sales minus Buying Cost
@@ -410,7 +412,7 @@ export default function AdminAnalyticsDashboard({
             <span className="text-[11px] font-bold text-emerald-800 uppercase">4. Net Profit (After Expenses)</span>
             <p className="text-2xl font-black text-emerald-700">{formatPrice(netEarnings)}</p>
             <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100/70 px-2 py-0.5 rounded inline-block">
-              Net Profit in Pocket
+              {t("net_profit")}
             </span>
           </div>
         </div>
@@ -479,7 +481,7 @@ export default function AdminAnalyticsDashboard({
           {/* SteadFast & Pathao Delivery Success Rate */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
             <h2 className="text-base font-black text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-              <Truck className="h-5 w-5 text-[#e91e63]" /> Courier Delivery Success Rate
+              <Truck className="h-5 w-5 text-[#e91e63]" /> {t("delivery_success")}
             </h2>
 
             <div className="space-y-4">
@@ -530,7 +532,7 @@ export default function AdminAnalyticsDashboard({
 
             <Link href="/admin/shipping" className="block pt-1">
               <Button variant="outline" size="sm" className="w-full text-xs font-bold rounded-xl border-gray-200">
-                Manage Delivery Couriers & API
+                {t("delivery_partners")}
               </Button>
             </Link>
           </div>
@@ -543,11 +545,11 @@ export default function AdminAnalyticsDashboard({
         <div className="lg:col-span-8 rounded-3xl border border-gray-200 bg-white shadow-xs overflow-hidden">
           <div className="p-5 border-b border-gray-100 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-black text-gray-900">Recent Store Orders</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Live incoming customer orders and payment statuses.</p>
+              <h2 className="text-base font-black text-gray-900">{t("recent_orders")}</h2>
+              <p className="text-xs text-gray-500 mt-0.5">{t("live_analytics")}</p>
             </div>
             <Link href="/admin/orders" className="text-xs font-bold text-[#e91e63] hover:underline">
-              View All Orders &rarr;
+              {t("view_all_orders")} →
             </Link>
           </div>
 
@@ -555,11 +557,11 @@ export default function AdminAnalyticsDashboard({
             <table className="w-full text-left text-xs">
               <thead className="bg-gray-50 text-gray-500 uppercase font-black border-b border-gray-100">
                 <tr>
-                  <th className="px-5 py-3">Order Number</th>
-                  <th className="px-5 py-3">Customer</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Payment</th>
-                  <th className="px-5 py-3 font-black text-gray-900 text-right">Total</th>
+                  <th className="px-5 py-3">{t("column_order")}</th>
+                  <th className="px-5 py-3">{t("column_customer")}</th>
+                  <th className="px-5 py-3">{t("column_status")}</th>
+                  <th className="px-5 py-3">{t("column_payment")}</th>
+                  <th className="px-5 py-3 font-black text-gray-900 text-right">{t("column_amount")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -593,10 +595,10 @@ export default function AdminAnalyticsDashboard({
         <div className="lg:col-span-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-gray-100 pb-3">
             <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-amber-500" /> Low Stock & Restock Alerts
+              <AlertTriangle className="h-5 w-5 text-amber-500" /> {t("low_stock_alert")}
             </h2>
             <Link href="/admin/inventory" className="text-xs font-bold text-[#e91e63] hover:underline">
-              Inventory &rarr;
+              {t("inventory")} →
             </Link>
           </div>
 
@@ -626,7 +628,7 @@ export default function AdminAnalyticsDashboard({
 
           <Link href="/admin/products" className="block pt-1">
             <Button size="sm" variant="outline" className="w-full text-xs font-bold rounded-xl border-gray-200">
-              View All {products.length} Products in Catalog
+              {t("view_all_products")} ({products.length})
             </Button>
           </Link>
         </div>

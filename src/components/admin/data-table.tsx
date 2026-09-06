@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/shared/ui/input";
 import { Button } from "@/components/shared/ui/button";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 // --- Types ---
 
@@ -53,6 +54,7 @@ export function DataTable<T>({
   headerActions,
   getRowId,
 }: DataTableProps<T>) {
+  const { t } = useAdminLang();
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
@@ -157,7 +159,7 @@ export function DataTable<T>({
           </div>
           {selected.size > 0 && bulkActions && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-text-secondary">{selected.size} selected</span>
+              <span className="text-xs text-text-secondary">{selected.size} {t("results")}</span>
               {bulkActions}
             </div>
           )}
@@ -198,7 +200,7 @@ export function DataTable<T>({
               ))}
               {actions && (
                 <th className="w-16 px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-text-muted">
-                  Actions
+                  {t("column_actions")}
                 </th>
               )}
             </tr>
@@ -208,7 +210,7 @@ export function DataTable<T>({
               <tr>
                 <td colSpan={columns.length + (getRowId ? 1 : 0) + (actions ? 1 : 0)} className="px-4 py-12 text-center">
                   <Loader2 className="mx-auto h-6 w-6 animate-spin text-text-muted" />
-                  <p className="mt-2 text-sm text-text-muted">Loading...</p>
+                  <p className="mt-2 text-sm text-text-muted">{t("loading")}</p>
                 </td>
               </tr>
             ) : paged.length === 0 ? (
@@ -261,8 +263,8 @@ export function DataTable<T>({
       <div className="flex items-center justify-between border-t border-border px-4 py-3">
         <p className="text-xs text-text-muted">
           {sorted.length === 0
-            ? "No results"
-            : `Showing ${page * pageSize + 1}–${Math.min((page + 1) * pageSize, sorted.length)} of ${sorted.length}`}
+            ? t("no_data")
+            : `${t("showing")} ${page * pageSize + 1}–${Math.min((page + 1) * pageSize, sorted.length)} ${t("of")} ${sorted.length}`}
         </p>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="icon" onClick={() => setPage(0)} disabled={page === 0}>

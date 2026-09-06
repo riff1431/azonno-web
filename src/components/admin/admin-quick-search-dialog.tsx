@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Search, X, ArrowRight, CornerDownLeft } from "lucide-react";
 import { adminNavItems } from "@/config/site";
 import { cn } from "@/lib/utils";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface AdminQuickSearchDialogProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface AdminQuickSearchDialogProps {
 
 export function AdminQuickSearchDialog({ isOpen, onClose }: AdminQuickSearchDialogProps) {
   const router = useRouter();
+  const { t } = useAdminLang();
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -96,7 +98,7 @@ export function AdminQuickSearchDialog({ isOpen, onClose }: AdminQuickSearchDial
               setQuery(e.target.value);
               setSelectedIndex(0);
             }}
-            placeholder="Search menus, orders, products, settings (e.g. bkash, inventory, courier)..."
+            placeholder={t("search_input_placeholder")}
             className="w-full bg-transparent text-sm text-text placeholder:text-text-muted outline-hidden"
           />
           {query && (
@@ -119,7 +121,7 @@ export function AdminQuickSearchDialog({ isOpen, onClose }: AdminQuickSearchDial
         <div className="max-h-80 overflow-y-auto p-2">
           {filteredItems.length === 0 ? (
             <div className="py-8 text-center text-sm text-text-muted">
-              No matching pages found for &quot;{query}&quot;
+              {t("search_empty")} &quot;{query}&quot;
             </div>
           ) : (
             <div className="space-y-1">
@@ -157,8 +159,8 @@ export function AdminQuickSearchDialog({ isOpen, onClose }: AdminQuickSearchDial
 
         {/* Footer info */}
         <div className="flex items-center justify-between border-t border-border bg-gray-50 px-4 py-2 text-[11px] text-text-muted">
-          <span>Navigate with ↑ and ↓</span>
-          <span>Press Enter to select</span>
+          <span>↑↓ {t("press_arrows")}</span>
+          <span>↵ {t("press_enter")}</span>
         </div>
       </div>
     </div>
