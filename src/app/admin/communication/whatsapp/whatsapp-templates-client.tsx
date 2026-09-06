@@ -29,7 +29,7 @@ interface WhatsAppTemplatesClientProps {
 
 const AVAILABLE_VARIABLES = [
   { key: "customer_name", label: "Customer Name", example: "Tanvir Ahmed" },
-  { key: "order_number", label: "English Order ID", example: "ORD-2026-894120" },
+  { key: "order_number", label: "English Order ID", example: "ORD-84219" },
   { key: "store_name", label: "Store Brand Name", example: "Blush & Budget" },
   { key: "items_summary", label: "Items Summary", example: "COSRX Snail Mucin 96% x1, BOJ Sun Relief x1" },
   { key: "cod_due", label: "COD Amount Due (BDT)", example: "2,760" },
@@ -65,7 +65,7 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
     let msg = templateText;
     const sampleData: Record<string, string> = {
       customer_name: "Tanvir Ahmed",
-      order_number: "ORD-2026-894120",
+      order_number: "ORD-84219",
       store_name: "Blush & Budget",
       items_summary: "COSRX Snail Mucin 96% x1, BOJ Sun Relief x1",
       cod_due: "2,760",

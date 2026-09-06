@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { sendSmsNotification } from "@/features/sms/actions";
+import { generateOrderNumber } from "@/lib/utils";
 
 export interface CreateOrderInput {
   customer: {
@@ -265,9 +266,8 @@ export async function createOrder(input: CreateOrderInput) {
     const shippingAmount = isFreeShipping ? 0 : input.shipping.amount;
     const total = Math.max(0, subtotal - discountAmount + shippingAmount);
 
-    // 4. Generate Order Number: ORD-2026-XXXXXX
-    const randomSuffix = Math.floor(100000 + Math.random() * 900000);
-    const orderNumber = `ORD-2026-${randomSuffix}`;
+    // 4. Generate Short, Memorable Order Number (e.g. ORD-84219)
+    const orderNumber = generateOrderNumber();
 
     // 5. Customer Account Association & Automatic Account Creation
     let orderUserId = user?.id || null;

@@ -24,9 +24,8 @@ export function generateSlug(text: string): string {
 }
 
 export function generateOrderNumber(): string {
-  const year = new Date().getFullYear();
-  const random = Math.floor(100000 + Math.random() * 900000);
-  return `ORD-${year}-${random}`;
+  const random = Math.floor(10000 + Math.random() * 90000);
+  return `ORD-${random}`;
 }
 
 export function truncate(str: string, length: number): string {
