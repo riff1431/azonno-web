@@ -56,6 +56,7 @@ export async function saveCheckoutSettings(settings: {
   require_phone?: boolean;
   require_email?: boolean;
   order_notes_enabled?: boolean;
+  show_location_hierarchy?: boolean;
 }) {
   await updateGroupSettings("checkout", settings);
   revalidatePath("/admin/settings/checkout");

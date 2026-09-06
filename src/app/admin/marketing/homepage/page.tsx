@@ -25,6 +25,7 @@ import {
   Banknote,
   HelpCircle,
   PanelBottom,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { HomepageImageField } from "@/components/admin/marketing/homepage-image-field";
@@ -74,6 +75,7 @@ export default function AdminHomepageManagerPage() {
     require_phone: true,
     require_email: false,
     order_notes_enabled: true,
+    show_location_hierarchy: true,
     min_order_amount: 0,
     cod_max_amount: 20000,
   });
@@ -113,6 +115,7 @@ export default function AdminHomepageManagerPage() {
           require_phone: checkoutData.require_phone ?? true,
           require_email: checkoutData.require_email ?? false,
           order_notes_enabled: checkoutData.order_notes_enabled ?? true,
+          show_location_hierarchy: checkoutData.show_location_hierarchy !== false,
           min_order_amount: Number(checkoutData.min_order_amount || 0),
           cod_max_amount: Number(checkoutData.cod_max_amount || 20000),
         });
@@ -2079,6 +2082,27 @@ export default function AdminHomepageManagerPage() {
                     checked={checkoutSettings.order_notes_enabled}
                     onChange={(e) =>
                       setCheckoutSettings({ ...checkoutSettings, order_notes_enabled: e.target.checked })
+                    }
+                    className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
+                  />
+                </label>
+
+                {/* Division, District, Thana Dropdowns Control */}
+                <label className="flex items-center justify-between p-3.5 rounded-2xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                  <div>
+                    <span className="font-bold text-gray-900 text-xs sm:text-sm block flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4 text-[#e91e63]" />
+                      Show Division, District &amp; Thana (বিভাগ, জেলা, থানা) Selectors
+                    </span>
+                    <span className="text-gray-500 text-[11px]">
+                      When enabled, customers pick Division, District, and Thana from dropdown lists during checkout. When disabled, customers only choose Inside/Outside Dhaka and enter their complete street address.
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={checkoutSettings.show_location_hierarchy}
+                    onChange={(e) =>
+                      setCheckoutSettings({ ...checkoutSettings, show_location_hierarchy: e.target.checked })
                     }
                     className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
                   />

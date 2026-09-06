@@ -26,6 +26,9 @@ export interface CheckoutAndFraudSettings {
   enable_abandoned_cart_capture: boolean;
   abandoned_cart_recovery_hours: number;
   abandoned_cart_discount_code?: string;
+
+  // Checkout Form Location Controls
+  show_location_hierarchy: boolean; // Show Division, District & Thana dropdowns in checkout
 }
 
 const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
@@ -47,6 +50,8 @@ const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
   enable_abandoned_cart_capture: true,
   abandoned_cart_recovery_hours: 2,
   abandoned_cart_discount_code: "SAVE5",
+
+  show_location_hierarchy: true,
 };
 
 /**
@@ -74,6 +79,8 @@ export async function getCheckoutAndFraudSettings(): Promise<CheckoutAndFraudSet
       enable_abandoned_cart_capture: data.enable_abandoned_cart_capture !== false,
       abandoned_cart_recovery_hours: Number(data.abandoned_cart_recovery_hours ?? DEFAULT_SETTINGS.abandoned_cart_recovery_hours),
       abandoned_cart_discount_code: data.abandoned_cart_discount_code || DEFAULT_SETTINGS.abandoned_cart_discount_code,
+
+      show_location_hierarchy: data.show_location_hierarchy !== false,
     };
   } catch (e) {
     return DEFAULT_SETTINGS;

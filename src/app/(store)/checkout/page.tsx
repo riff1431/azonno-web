@@ -103,6 +103,7 @@ export default function CheckoutPage() {
     enable_abandoned_cart_capture: true,
     abandoned_cart_recovery_hours: 2,
     abandoned_cart_discount_code: "SAVE5",
+    show_location_hierarchy: true,
   });
 
   // Customer 3-Tier Address & Form State
@@ -823,73 +824,75 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* 3-Tier Dynamic Location Hierarchy */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-border">
-                <div>
-                  <label className="block font-bold text-text mb-1">{t("checkout", "division")}</label>
-                  <select
-                    value={formData.division}
-                    onChange={(e) => handleDivisionChange(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs font-semibold text-text focus:outline-none"
-                  >
-                    {BD_GEO_HIERARCHY.map((div) => (
-                      <option key={div.name} value={div.name}>
-                        {div.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-text mb-1">{t("checkout", "district")}</label>
-                  <select
-                    value={formData.district}
-                    onChange={(e) => handleDistrictChange(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs font-bold text-text focus:outline-none"
-                  >
-                    {availableDistricts.map((dist) => (
-                      <option key={dist.name} value={dist.name}>
-                        {dist.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-text mb-1">{t("checkout", "thana")}</label>
-                  {availableThanas.length > 0 ? (
+              {/* 3-Tier Dynamic Location Hierarchy (Admin Controllable) */}
+              {settings.show_location_hierarchy !== false && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-border">
+                  <div>
+                    <label className="block font-bold text-text mb-1">{t("checkout", "division")}</label>
                     <select
-                      value={formData.thana}
-                      onChange={(e) => {
-                        const newThana = e.target.value;
-                        setFormData((prev) => ({ ...prev, thana: newThana }));
-                        if (currentZone !== "inside_dhaka") {
-                          lastOutsideLocationRef.current = {
-                            division: formData.division,
-                            district: formData.district,
-                            thana: newThana,
-                          };
-                        }
-                      }}
+                      value={formData.division}
+                      onChange={(e) => handleDivisionChange(e.target.value)}
                       className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs font-semibold text-text focus:outline-none"
                     >
-                      {availableThanas.map((th) => (
-                        <option key={th} value={th}>
-                          {th}
+                      {BD_GEO_HIERARCHY.map((div) => (
+                        <option key={div.name} value={div.name}>
+                          {div.name}
                         </option>
                       ))}
                     </select>
-                  ) : (
-                    <input
-                      type="text"
-                      placeholder={language === "bn" ? "যেমন: সদর" : "e.g. Sadar"}
-                      value={formData.thana}
-                      onChange={(e) => setFormData({ ...formData, thana: e.target.value })}
-                      className="w-full rounded-xl border border-border px-3 py-2 text-xs text-text focus:outline-none"
-                    />
-                  )}
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-text mb-1">{t("checkout", "district")}</label>
+                    <select
+                      value={formData.district}
+                      onChange={(e) => handleDistrictChange(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs font-bold text-text focus:outline-none"
+                    >
+                      {availableDistricts.map((dist) => (
+                        <option key={dist.name} value={dist.name}>
+                          {dist.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-text mb-1">{t("checkout", "thana")}</label>
+                    {availableThanas.length > 0 ? (
+                      <select
+                        value={formData.thana}
+                        onChange={(e) => {
+                          const newThana = e.target.value;
+                          setFormData((prev) => ({ ...prev, thana: newThana }));
+                          if (currentZone !== "inside_dhaka") {
+                            lastOutsideLocationRef.current = {
+                              division: formData.division,
+                              district: formData.district,
+                              thana: newThana,
+                            };
+                          }
+                        }}
+                        className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs font-semibold text-text focus:outline-none"
+                      >
+                        {availableThanas.map((th) => (
+                          <option key={th} value={th}>
+                            {th}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        placeholder={language === "bn" ? "যেমন: সদর" : "e.g. Sadar"}
+                        value={formData.thana}
+                        onChange={(e) => setFormData({ ...formData, thana: e.target.value })}
+                        className="w-full rounded-xl border border-border px-3 py-2 text-xs text-text focus:outline-none"
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <label className="block font-bold text-text mb-1">

@@ -13,6 +13,7 @@ import {
   Clock,
   Tag,
   Radio,
+  MapPin,
 } from "lucide-react";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
@@ -34,6 +35,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
     require_phone: initialSettings.require_phone ?? true,
     require_email: initialSettings.require_email ?? false,
     order_notes_enabled: initialSettings.order_notes_enabled ?? true,
+    show_location_hierarchy: initialSettings.show_location_hierarchy !== false,
 
     // Dynamic Delivery Charges (BDT)
     inside_dhaka_rate: initialSettings.inside_dhaka_rate ? Number(initialSettings.inside_dhaka_rate) : 70,
@@ -76,6 +78,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
           require_phone: formData.require_phone,
           require_email: formData.require_email,
           order_notes_enabled: formData.order_notes_enabled,
+          show_location_hierarchy: formData.show_location_hierarchy,
         }),
         saveCheckoutAndFraudSettings({
           inside_dhaka_rate: formData.inside_dhaka_rate,
@@ -93,6 +96,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
           enable_abandoned_cart_capture: formData.enable_abandoned_cart_capture,
           abandoned_cart_recovery_hours: formData.abandoned_cart_recovery_hours,
           abandoned_cart_discount_code: formData.abandoned_cart_discount_code,
+          show_location_hierarchy: formData.show_location_hierarchy,
         }),
       ]);
 
@@ -466,6 +470,26 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 checked={formData.require_email}
                 onChange={(e) =>
                   setFormData({ ...formData, require_email: e.target.checked })
+                }
+                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+              />
+            </label>
+
+            <label className="flex items-center justify-between p-3.5 rounded-2xl border border-border hover:bg-surface-secondary/40 cursor-pointer transition-colors">
+              <div>
+                <span className="font-bold text-text text-xs sm:text-sm block flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 text-[#e91e63]" />
+                  Show Division, District &amp; Thana (বিভাগ, জেলা, থানা) Selectors
+                </span>
+                <span className="text-text-muted text-[11px]">
+                  When enabled, customers pick Division, District, and Thana from dropdown lists during checkout. When disabled, customers only choose Inside/Outside Dhaka and enter their complete street address.
+                </span>
+              </div>
+              <input
+                type="checkbox"
+                checked={formData.show_location_hierarchy}
+                onChange={(e) =>
+                  setFormData({ ...formData, show_location_hierarchy: e.target.checked })
                 }
                 className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
               />
