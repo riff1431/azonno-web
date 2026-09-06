@@ -352,6 +352,9 @@ export async function syncLiveCourierStatus(orderId: string) {
     .from("orders")
     .update({
       status: mappedStatus,
+      is_courier_returned: isReturned,
+      is_courier_cancelled: isCancelled,
+      courier_webhook_note: statusNote,
       order_status_history: newHistory,
       updated_at: new Date().toISOString(),
     })

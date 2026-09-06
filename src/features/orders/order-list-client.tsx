@@ -1045,10 +1045,10 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                   const customerName = addr.name || ord.guest_name || "Customer";
                   const isShipped = ord.status === "shipped" || Boolean(ord.consignment_id);
                   const courier = ord.courier_name || "SteadFast Courier";
-                  const consignment = ord.consignment_id || "";
+                  const consignment = ord.consignment_id || ord.tracking_code || ord.tracking_id || "";
                   const isLoading = actionLoadingId === ord.id;
-                  const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(ord.consignment_id)));
-                  const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(ord.consignment_id)));
+                  const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(consignment)));
+                  const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(consignment)));
                   const webhookNote = ord.courier_webhook_note || ord.admin_note || "";
 
                   const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
@@ -1409,84 +1409,134 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       <td className="px-4 py-3.5 text-center whitespace-nowrap">
                         {(() => {
                           const isSyncing = syncingCourierId === ord.id;
+                          const activeCid = consignment || ord.tracking_code || ord.tracking_id || "";
+                          const courierBrand = (courier || "SteadFast").split(" ")[0];
+                          const trackUrl = ord.tracking_url || (courier.toLowerCase().includes("pathao")
+                            ? `https://merchant.pathao.com/tracking?consignment_id=${activeCid}`
+                            : `https://steadfast.com.bd/t/${activeCid}`);
+
                           if (isRet) {
                             return (
-                              <div className="flex items-center justify-center gap-1">
-                                <a
-                                  href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment || ord.tracking_code}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center justify-center gap-1 text-rose-700 font-bold text-xs bg-rose-50 hover:bg-rose-100 h-7 px-2.5 rounded-xl border border-rose-200 transition-colors"
-                                  title="Parcel returned back from courier. Click to view live tracking."
-                                >
-                                  <RotateCcw className="h-3.5 w-3.5 text-rose-600 shrink-0" />
-                                  <span>RTO ({courier.split(" ")[0]})</span>
-                                  <ExternalLink className="h-2.5 w-2.5 text-rose-600 opacity-60" />
-                                </a>
-                                <button
-                                  type="button"
-                                  onClick={() => handleSyncSingleCourier(ord.id)}
-                                  disabled={isSyncing}
-                                  className="h-7 w-7 flex items-center justify-center rounded-xl border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 transition-colors shadow-2xs"
-                                  title="Sync Real-Time Status from Courier API"
-                                >
-                                  <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
-                                </button>
+                              <div className="flex flex-col items-center gap-1">
+                                <div className="flex items-center gap-1">
+                                  <a
+                                    href={trackUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-rose-700 font-bold text-xs bg-rose-50 hover:bg-rose-100 h-6 px-2 rounded-lg border border-rose-200 transition-colors shadow-2xs"
+                                    title="Parcel returned from courier. Click to open live tracking."
+                                  >
+                                    <RotateCcw className="h-3 w-3 text-rose-600 shrink-0 animate-pulse" />
+                                    <span>RTO Return ({courierBrand})</span>
+                                    <ExternalLink className="h-2.5 w-2.5 text-rose-600 opacity-60" />
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSyncSingleCourier(ord.id)}
+                                    disabled={isSyncing}
+                                    className="h-6 w-6 flex items-center justify-center rounded-lg border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 transition-colors shadow-2xs"
+                                    title="Query live delivery status from Courier API"
+                                  >
+                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                  </button>
+                                </div>
+                                {activeCid && (
+                                  <div className="inline-flex items-center gap-1 text-[10px] font-mono text-rose-700 font-bold">
+                                    <span>CID: {activeCid}</span>
+                                    <button
+                                      onClick={() => handleCopy(activeCid, ord.id)}
+                                      title="Copy Consignment ID"
+                                      className="hover:text-rose-950 p-0.5"
+                                    >
+                                      {copiedId === ord.id ? <Check className="h-2.5 w-2.5 text-emerald-600" /> : <Copy className="h-2.5 w-2.5" />}
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             );
                           }
 
                           if (isCanc) {
                             return (
-                              <div className="flex items-center justify-center gap-1">
-                                <div
-                                  className="inline-flex items-center justify-center gap-1 text-amber-800 font-bold text-[11px] bg-amber-50 h-7 px-2.5 rounded-xl border border-amber-200"
-                                  title={`Cancelled by courier: ${webhookNote || "Cancelled"}`}
-                                >
-                                  <Ban className="h-3 w-3 text-amber-600" />
-                                  <span>Cancelled ({courier.split(" ")[0]})</span>
+                              <div className="flex flex-col items-center gap-1">
+                                <div className="flex items-center gap-1">
+                                  <div
+                                    className="inline-flex items-center gap-1 text-amber-800 font-bold text-[11px] bg-amber-50 h-6 px-2 rounded-lg border border-amber-200 shadow-2xs"
+                                    title={`Cancelled by courier: ${webhookNote || "Cancelled"}`}
+                                  >
+                                    <Ban className="h-3 w-3 text-amber-600" />
+                                    <span>Cancelled ({courierBrand})</span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSyncSingleCourier(ord.id)}
+                                    disabled={isSyncing}
+                                    className="h-6 w-6 flex items-center justify-center rounded-lg border border-amber-200 bg-white hover:bg-amber-50 text-amber-700 transition-colors shadow-2xs"
+                                    title="Query live delivery status from Courier API"
+                                  >
+                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                  </button>
                                 </div>
-                                <button
-                                  type="button"
-                                  onClick={() => handleSyncSingleCourier(ord.id)}
-                                  disabled={isSyncing}
-                                  className="h-7 w-7 flex items-center justify-center rounded-xl border border-amber-200 bg-white hover:bg-amber-50 text-amber-700 transition-colors shadow-2xs"
-                                  title="Sync Real-Time Status from Courier API"
-                                >
-                                  <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
-                                </button>
+                                {activeCid && (
+                                  <span className="text-[10px] font-mono text-amber-800 font-bold">CID: {activeCid}</span>
+                                )}
                               </div>
                             );
                           }
 
-                          const isDispatched = Boolean(consignment || ord.tracking_code || ord.status === "shipped" || ord.status === "completed");
+                          const isDispatched = Boolean(activeCid || ord.status === "shipped" || ord.status === "completed" || ord.status === "delivered");
                           const isProcessing = ord.status === "processing" || ord.status === "confirmed";
-                          const statusLabel = ord.status === "on-hold" ? "On Hold" : ord.status === "failed" ? "Failed/RTO" : ord.status;
 
                           if (isDispatched) {
                             const isDelivered = ord.status === "completed" || ord.status === "delivered";
                             return (
-                              <div className="flex items-center justify-center gap-1">
-                                <a
-                                  href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment || ord.tracking_code}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center justify-center gap-1.5 text-emerald-700 font-bold text-xs bg-emerald-50 hover:bg-emerald-100 h-7 px-2.5 rounded-xl border border-emerald-200 transition-colors"
-                                  title="View Courier Live Tracking"
-                                >
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                                  <span>{isDelivered ? "Delivered" : "Dispatched"} ({courier.split(" ")[0]})</span>
-                                  <ExternalLink className="h-2.5 w-2.5 text-emerald-600 opacity-60" />
-                                </a>
-                                <button
-                                  type="button"
-                                  onClick={() => handleSyncSingleCourier(ord.id)}
-                                  disabled={isSyncing}
-                                  className="h-7 w-7 flex items-center justify-center rounded-xl border border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-700 transition-colors shadow-2xs"
-                                  title="Sync Real-Time Status from Courier API"
-                                >
-                                  <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
-                                </button>
+                              <div className="flex flex-col items-center gap-1">
+                                <div className="flex items-center gap-1">
+                                  <a
+                                    href={trackUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`inline-flex items-center gap-1.5 font-bold text-xs h-6 px-2.5 rounded-lg border transition-colors shadow-2xs ${
+                                      isDelivered
+                                        ? "bg-emerald-100/80 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
+                                        : "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                                    }`}
+                                    title={`Click to open official live tracking for ${courierBrand}`}
+                                  >
+                                    {isDelivered ? (
+                                      <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
+                                    ) : (
+                                      <Truck className="h-3 w-3 text-blue-600 shrink-0 animate-pulse" />
+                                    )}
+                                    <span>{isDelivered ? "Delivered" : "In Transit"} ({courierBrand})</span>
+                                    <ExternalLink className="h-2.5 w-2.5 opacity-60" />
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSyncSingleCourier(ord.id)}
+                                    disabled={isSyncing}
+                                    className="h-6 w-6 flex items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-colors shadow-2xs cursor-pointer"
+                                    title="Query live delivery status from Courier API"
+                                  >
+                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : "text-gray-600"}`} />
+                                  </button>
+                                </div>
+                                {activeCid && (
+                                  <div className="inline-flex items-center gap-1 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-gray-800">
+                                    <span>CID: {activeCid}</span>
+                                    <button
+                                      onClick={() => handleCopy(activeCid, ord.id)}
+                                      title="Copy Consignment ID"
+                                      className="hover:text-gray-950 p-0.5"
+                                    >
+                                      {copiedId === ord.id ? (
+                                        <Check className="h-2.5 w-2.5 text-emerald-600" />
+                                      ) : (
+                                        <Copy className="h-2.5 w-2.5 text-gray-500" />
+                                      )}
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             );
                           }
@@ -1538,7 +1588,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                               className="inline-flex items-center justify-center gap-1 text-gray-400 font-bold text-[11px] bg-gray-50 h-7 px-3 rounded-xl border border-gray-200 cursor-not-allowed"
                               title={`Courier dispatch is locked because order is ${ord.status.toUpperCase()}`}
                             >
-                              <span>Locked ({statusLabel})</span>
+                              <span>Locked ({ord.status})</span>
                             </div>
                           );
                         })()}
@@ -1860,34 +1910,42 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         </p>
                       )}
                     </div>
-                  ) : consignment ? (
-                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-emerald-800 font-bold text-[11px]">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                        <span>Dispatched ({courier.split(" ")[0]})</span>
-                        <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-emerald-200 text-[10px] text-emerald-900">
-                          {consignment}
-                        </span>
+                  ) : (consignment || ord.status === "shipped" || ord.status === "completed" || ord.status === "delivered") ? (
+                    <div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-2.5 text-xs flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-blue-900 font-bold text-[11px]">
+                        {ord.status === "completed" || ord.status === "delivered" ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        ) : (
+                          <Truck className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
+                        )}
+                        <span>{ord.status === "completed" || ord.status === "delivered" ? "Delivered" : "In Transit"} ({courier.split(" ")[0]})</span>
+                        {consignment && (
+                          <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-blue-200 text-[10px] text-blue-900">
+                            {consignment}
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleSyncSingleCourier(ord.id)}
                           disabled={syncingCourierId === ord.id}
-                          className="inline-flex items-center gap-1 bg-white border border-emerald-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-emerald-800 hover:bg-emerald-100"
+                          className="inline-flex items-center gap-1 bg-white border border-blue-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-blue-800 hover:bg-blue-100 shadow-2xs"
                           title="Query live delivery status from Courier API"
                         >
                           <RefreshCw className={`h-2.5 w-2.5 ${syncingCourierId === ord.id ? "animate-spin text-[#e91e63]" : ""}`} />
                           <span>Sync API</span>
                         </button>
-                        <a
-                          href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center gap-0.5"
-                        >
-                          <span>Track</span>
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
+                        {consignment && (
+                          <a
+                            href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] font-bold text-blue-700 hover:underline inline-flex items-center gap-0.5"
+                          >
+                            <span>Track</span>
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
                       </div>
                     </div>
                   ) : null}
