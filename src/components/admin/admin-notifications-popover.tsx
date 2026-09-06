@@ -210,8 +210,12 @@ export function AdminNotificationsPopover() {
   // Fetch notifications and trigger alerts for new incoming orders
   const fetchNotifications = async () => {
     try {
-      const result = await getAdminNotifications();
-      const currentList = result.notifications || [];
+      const res = await fetch(`/api/admin/notifications?_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: { "Pragma": "no-cache" },
+      });
+      const result = res.ok ? await res.json() : await getAdminNotifications();
+      const currentList: AdminNotification[] = result.notifications || [];
 
       if (!initialFetchDoneRef.current) {
         // Initial load: record existing IDs without firing chimes

@@ -29,11 +29,15 @@ export async function getAdminNotifications(): Promise<{
     const notifications: AdminNotification[] = [];
 
     // 1. Fetch recent orders awaiting attention
-    const { data: recentOrders } = await supabase
+    const { data: recentOrders, error: orderQueryErr } = await supabase
       .from("orders")
-      .select("id, order_number, status, total, customer_name, guest_name, shipping_address_snapshot, payment_method, payment_status, created_at")
+      .select("id, order_number, status, total, guest_name, shipping_address_snapshot, payment_method, payment_status, created_at")
       .order("created_at", { ascending: false })
       .limit(10);
+
+    if (orderQueryErr) {
+      console.error("Order notifications query error:", orderQueryErr);
+    }
 
     if (recentOrders && recentOrders.length > 0) {
       for (const order of recentOrders) {
@@ -41,9 +45,8 @@ export async function getAdminNotifications(): Promise<{
         const method = (order.payment_method || "COD").toUpperCase();
         const total = order.total ? `BDT ${Number(order.total).toLocaleString("en-BD")}` : "";
         const customerName =
-          order.customer_name ||
           (order.shipping_address_snapshot as any)?.name ||
-          (order as any).guest_name ||
+          order.guest_name ||
           "Customer";
 
         // Check for payment verification
