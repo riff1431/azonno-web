@@ -266,8 +266,19 @@ export async function createOrder(input: CreateOrderInput) {
     const shippingAmount = isFreeShipping ? 0 : input.shipping.amount;
     const total = Math.max(0, subtotal - discountAmount + shippingAmount);
 
-    // 4. Generate Short, Memorable Order Number (e.g. ORD-84219)
-    const orderNumber = generateOrderNumber();
+    // 4. Generate Short, Random, Non-Serial Order Number (e.g. ORD-84219)
+    let orderNumber = generateOrderNumber();
+    let collisionCheck = 0;
+    while (collisionCheck < 5) {
+      const { data: existing } = await supabaseAdmin
+        .from("orders")
+        .select("id")
+        .eq("order_number", orderNumber)
+        .maybeSingle();
+      if (!existing) break;
+      orderNumber = generateOrderNumber();
+      collisionCheck++;
+    }
 
     // 5. Customer Account Association & Automatic Account Creation
     let orderUserId = user?.id || null;
