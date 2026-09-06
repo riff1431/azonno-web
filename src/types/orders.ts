@@ -481,25 +481,42 @@ export function generateWhatsAppOrderMessage(
     }
     text = customText;
   } else {
-    // Standard system default templates
+    // Standard system default templates (Humanized Bangla with English Order Numbers)
     if (templateType === "confirm") {
-      text = `Hello ${name}, thank you for placing Order #${orderNum} at Blush & Budget!
-Items: ${itemsSummary}
-Total COD Due: BDT ${codDue}
-Your parcel is confirmed and being prepared for delivery.`;
+      text = `প্রিয় ${name}, Blush & Budget-এ আপনার অর্ডারটির জন্য আন্তরিক ধন্যবাদ! 🌸
+
+অর্ডার নাম্বার: #${orderNum}
+প্রোডাক্ট: ${itemsSummary}
+ক্যাশ অন ডেলিভারি বিল: ৳${codDue}
+
+আমরা আপনার পার্সেলটি যত্ন সহকারে প্যাক করছি এবং দ্রুততম সময়ে ডেলিভারির জন্য প্রস্তুত করছি। ডেলিভারি রাইডার কল করলে অনুগ্রহ করে রিসিভ করবেন।`;
     } else if (templateType === "shipped") {
-      text = `Hello ${name}, your Order #${orderNum} has been handed over to ${courier}!
-Consignment / Tracking ID: ${tracking}
-Live Tracking Link: ${trackUrl}
-Please keep BDT ${codDue} ready for the delivery rider.`;
+      text = `প্রিয় ${name}, সুখবর! আপনার অর্ডারটি (#${orderNum}) কুরিয়ারে হ্যান্ডওভার করা হয়েছে। 🚚
+
+কুরিয়ার: ${courier}
+ট্র্যাকিং আইডি: ${tracking}
+লাইভ ট্র্যাকিং লিংক: ${trackUrl}
+ডেলিভারি রাইডারকে প্রদেয় মোট টাকা: ৳${codDue}
+
+রাইডার আপনার ঠিকানায় পৌঁছানোর আগে কল করবেন। যেকোনো প্রয়োজনে আমাদের এই নম্বরে মেসেজ দিন।`;
     } else if (templateType === "advance") {
-      text = `Hello ${name}, to confirm delivery of your Order #${orderNum} (Total BDT ${codDue}), please send BDT ${advanceFee} delivery advance via bKash/Nagad Merchant Number. Remaining BDT ${remainingDue} will be Cash on Delivery.`;
+      text = `প্রিয় ${name}, Blush & Budget থেকে শুভেচ্ছা! আপনার অর্ডার #${orderNum} টি চূড়ান্তভাবে প্রসেসিং করতে ঢাকার বাইরের ডেলিভারি চার্জ বাবদ ৳${advanceFee} অগ্রিম প্রদান করার জন্য বিনীত অনুরোধ করছি।
+
+বাকি ৳${remainingDue} আপনি পার্সেল হাতে পেয়ে ক্যাশ অন ডেলিভারিতে পরিশোধ করবেন।
+
+বিকাশ/নগদ মার্চেন্ট নম্বরে পেমেন্ট করার পর ট্রানজেকশন আইডি বা স্ক্রিনশট এই চ্যাটে পাঠিয়ে কনফার্ম করুন। ধন্যবাদ!`;
     } else if (templateType === "review") {
-      text = `Hello ${name}, we hope you loved your products from Order #${orderNum}! Please share your feedback and review with us.`;
+      text = `প্রিয় ${name}, আসসালামু আলাইকুম! আশা করি Blush & Budget থেকে নেওয়া আপনার প্রোডাক্টগুলো হাতে পেয়েছেন এবং ব্যবহার উপভোগ করছেন। ✨
+
+আমাদের প্রোডাক্ট ও সার্ভিসের অভিজ্ঞতা আপনার কেমন লাগলো? আপনার মূল্যবান রিভিউ অথবা একটি সুন্দর ছবি আমাদের সাথে শেয়ার করলে আমরা অনেক আনন্দিত হব!`;
     } else if (templateType === "cancelled") {
-      text = `Hello ${name}, we would like to inform you that your Order #${orderNum} has been cancelled. If you have questions or wish to re-order, please reply to this chat.`;
+      text = `প্রিয় ${name}, আমরা আন্তরিকভাবে দুঃখের সাথে জানাচ্ছি যে আপনার অর্ডারটি (#${orderNum}) বাতিল করা হয়েছে।
+
+কোনো ভুল বোঝাবুঝি হয়ে থাকলে অথবা পুনরায় অর্ডার করতে চাইলে অনুগ্রহ করে এই চ্যাটে আমাদের জানান। আমরা আপনাকে সাহায্য করতে সবসময় প্রস্তুত।`;
     } else if (templateType === "refund") {
-      text = `Hello ${name}, your refund request for Order #${orderNum} has been approved and processed. Thank you for shopping with Blush & Budget.`;
+      text = `প্রিয় ${name}, আপনার অর্ডার #${orderNum}-এর রিফান্ড সফলভাবে সম্পন্ন হয়েছে। আপনার দেওয়া পেমেন্ট একাউন্টটি অনুগ্রহ করে চেক করে নিন।
+
+যেকোনো সহযোগিতার জন্য আমরা পাশে আছি। Blush & Budget-এর সাথে থাকার জন্য ধন্যবাদ।`;
     }
   }
 
