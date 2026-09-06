@@ -202,7 +202,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-text text-xs truncate max-w-[180px]">
+              <span className="font-bold text-text text-xs truncate max-w-45">
                 {row.full_name || "Unnamed Customer"}
               </span>
               {row.is_blocked && (
@@ -213,7 +213,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-text-muted mt-0.5">
               <Mail className="h-3 w-3 shrink-0 text-text-muted" />
-              <span className="truncate max-w-[170px]">{row.email || "No Email"}</span>
+              <span className="truncate max-w-42.5">{row.email || "No Email"}</span>
               {row.email && (
                 <button
                   type="button"
@@ -276,7 +276,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
                 <ShieldAlert className="h-3 w-3 text-red-600" /> Fraud Blocked
               </span>
               {row.blacklist_reason && (
-                <span className="text-[10px] text-red-600 max-w-[160px] truncate" title={row.blacklist_reason}>
+                <span className="text-[10px] text-red-600 max-w-40 truncate" title={row.blacklist_reason}>
                   {row.blacklist_reason}
                 </span>
               )}

@@ -728,7 +728,7 @@ export function AdminNotificationsPopover() {
               <Link
                 href={liveToast.link || "/admin/orders"}
                 onClick={() => setLiveToast(null)}
-                className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#e91e63] hover:bg-[#d81b60] px-3 py-1.5 rounded-lg shadow-sm transition-all"
+                className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#e91e63] hover:bg-sg-pink-hover px-3 py-1.5 rounded-lg shadow-sm transition-all"
               >
                 View Order <ChevronRight className="h-3 w-3" />
               </Link>
@@ -752,7 +752,7 @@ export function AdminNotificationsPopover() {
           </div>
           <button
             onClick={requestDesktopPermission}
-            className="text-[11px] font-bold bg-[#e91e63] hover:bg-[#d81b60] text-white px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+            className="text-[11px] font-bold bg-[#e91e63] hover:bg-sg-pink-hover text-white px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
           >
             Enable Now
           </button>
