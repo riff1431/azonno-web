@@ -944,105 +944,271 @@ export default function AdminMetaSettingsPage() {
         </form>
       )}
 
-      {/* TAB 4: Dynamic Catalog XML Feeds */}
+      {/* TAB 4: Dynamic Omnichannel Catalog Feeds (Meta, TikTok, Google) */}
       {activeTab === "catalog" && (
-        <div className="space-y-4">
-          <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-5">
+        <div className="space-y-6">
+          {/* Meta Feed Card */}
+          <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
             <div className="border-b border-border pb-3 flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-bold text-text flex items-center gap-2">
-                  <FileCode className="h-4 w-4 text-[#e91e63]" />
-                  Meta Dynamic Product Catalog XML Feed
+                  <Sparkles className="h-4 w-4 text-blue-600" />
+                  Meta Dynamic Product Catalog Feed (Facebook &amp; Instagram Shop)
                 </h2>
                 <p className="text-xs text-text-secondary mt-0.5">
-                  Live XML Feed compliant with Meta Commerce Manager, Advantage+ Dynamic Ads, and Instagram Shop tagging.
+                  Official format for Meta Commerce Manager, Advantage+ Dynamic Ads, and Instagram Shop tagging.
                 </p>
               </div>
-              <a
-                href="/admin/marketing/catalog"
-                className="text-[11px] font-bold text-primary-600 hover:underline flex items-center gap-1"
-              >
-                View All Feeds <ExternalLink className="h-3 w-3" />
-              </a>
+              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 uppercase">
+                XML &amp; CSV Supported
+              </span>
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-text">
-                Meta Catalog Feed URL (Paste into Meta Commerce Manager &gt; Data Sources)
-              </label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 rounded-xl border border-border bg-surface-secondary px-3.5 py-2.5 font-mono text-xs text-[#e91e63] select-all truncate">
-                  {fullFeedUrl}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                  <span className="flex items-center gap-1">
+                    <FileCode className="h-3.5 w-3.5 text-[#e91e63]" />
+                    Meta XML Feed (Auto-Sync)
+                  </span>
+                  <a
+                    href="/api/feed/meta"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-blue-600 hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-3 w-3" /> View
+                  </a>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopyFeed}
-                  className="text-xs font-bold rounded-xl shrink-0"
-                >
-                  {copiedFeed ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 mr-1 text-emerald-600" /> Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5 mr-1" /> Copy URL
-                    </>
-                  )}
-                </Button>
-                <a
-                  href="/api/feed/meta"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-xl bg-gray-900 hover:bg-black text-white font-bold text-xs px-3 py-2 shadow-xs transition-colors shrink-0"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" /> Preview Feed
-                </a>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 rounded-xl border border-border bg-white px-2.5 py-1.5 font-mono text-[11px] text-gray-700 select-all truncate">
+                    {`${origin}/api/feed/meta`}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleCopyFeed()}
+                    className="text-xs font-bold rounded-xl shrink-0"
+                  >
+                    {copiedFeed ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                  <span className="flex items-center gap-1">
+                    <FileCode className="h-3.5 w-3.5 text-emerald-600" />
+                    Meta CSV Feed (RFC-4180)
+                  </span>
+                  <a
+                    href="/api/feed/meta?format=csv"
+                    target="_blank"
+                    download
+                    className="text-[11px] text-emerald-700 hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Download
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 rounded-xl border border-border bg-white px-2.5 py-1.5 font-mono text-[11px] text-gray-700 select-all truncate">
+                    {`${origin}/api/feed/meta?format=csv`}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${origin}/api/feed/meta?format=csv`);
+                      setCopiedFeed(true);
+                      setTimeout(() => setCopiedFeed(false), 2500);
+                    }}
+                    className="text-xs font-bold rounded-xl shrink-0"
+                  >
+                    {copiedFeed ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-5">
-            <div className="border-b border-border pb-3">
-              <h2 className="text-sm font-bold text-text flex items-center gap-2">
-                <Video className="h-4 w-4 text-pink-600" />
-                TikTok Product Catalog XML Feed
-              </h2>
-              <p className="text-xs text-text-secondary mt-0.5">
-                Dynamic product XML feed formatted for TikTok Catalog Manager, Video Shopping Ads, and Dynamic Showcase Ads.
-              </p>
+          {/* TikTok Feed Card */}
+          <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
+            <div className="border-b border-border pb-3 flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-bold text-text flex items-center gap-2">
+                  <Video className="h-4 w-4 text-pink-600" />
+                  TikTok Product Catalog Feed (TikTok Shop &amp; Ads Manager)
+                </h2>
+                <p className="text-xs text-text-secondary mt-0.5">
+                  Formatted for TikTok Catalog Manager, Video Shopping Ads, and Dynamic Showcase Ads (DSA).
+                </p>
+              </div>
+              <span className="text-[10px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200 uppercase">
+                XML &amp; CSV Supported
+              </span>
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-text">
-                TikTok Catalog Feed URL (Paste into TikTok Ads Manager &gt; Assets &gt; Catalogs)
-              </label>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 rounded-xl border border-border bg-surface-secondary px-3.5 py-2.5 font-mono text-xs text-pink-600 select-all truncate">
-                  {`${origin}/api/feed/tiktok`}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                  <span className="flex items-center gap-1">
+                    <FileCode className="h-3.5 w-3.5 text-pink-600" />
+                    TikTok XML Feed (Auto-Sync)
+                  </span>
+                  <a
+                    href="/api/feed/tiktok"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-pink-600 hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-3 w-3" /> View
+                  </a>
                 </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    navigator.clipboard.writeText(`${origin}/api/feed/tiktok`);
-                    setCopiedFeed(true);
-                    setTimeout(() => setCopiedFeed(false), 2500);
-                  }}
-                  className="text-xs font-bold rounded-xl shrink-0"
-                >
-                  <Copy className="h-3.5 w-3.5 mr-1" /> Copy URL
-                </Button>
-                <a
-                  href="/api/feed/tiktok"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs px-3 py-2 shadow-xs transition-colors shrink-0"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" /> Preview Feed
-                </a>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 rounded-xl border border-border bg-white px-2.5 py-1.5 font-mono text-[11px] text-gray-700 select-all truncate">
+                    {`${origin}/api/feed/tiktok`}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${origin}/api/feed/tiktok`);
+                      setCopiedFeed(true);
+                      setTimeout(() => setCopiedFeed(false), 2500);
+                    }}
+                    className="text-xs font-bold rounded-xl shrink-0"
+                  >
+                    {copiedFeed ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                  <span className="flex items-center gap-1">
+                    <FileCode className="h-3.5 w-3.5 text-emerald-600" />
+                    TikTok CSV Feed (RFC-4180)
+                  </span>
+                  <a
+                    href="/api/feed/tiktok?format=csv"
+                    target="_blank"
+                    download
+                    className="text-[11px] text-emerald-700 hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Download
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 rounded-xl border border-border bg-white px-2.5 py-1.5 font-mono text-[11px] text-gray-700 select-all truncate">
+                    {`${origin}/api/feed/tiktok?format=csv`}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${origin}/api/feed/tiktok?format=csv`);
+                      setCopiedFeed(true);
+                      setTimeout(() => setCopiedFeed(false), 2500);
+                    }}
+                    className="text-xs font-bold rounded-xl shrink-0"
+                  >
+                    {copiedFeed ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Google Merchant Center Feed Card */}
+          <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
+            <div className="border-b border-border pb-3 flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-bold text-text flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-emerald-600" />
+                  Google Merchant Center Product Feed
+                </h2>
+                <p className="text-xs text-text-secondary mt-0.5">
+                  Powers Google Shopping Ads, Free Organic Search Listings, and Performance Max (PMax) campaigns.
+                </p>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 uppercase">
+                XML &amp; CSV Supported
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                  <span className="flex items-center gap-1">
+                    <FileCode className="h-3.5 w-3.5 text-emerald-600" />
+                    Google Merchant XML Feed
+                  </span>
+                  <a
+                    href="/api/feed/google"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-emerald-700 hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-3 w-3" /> View
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 rounded-xl border border-border bg-white px-2.5 py-1.5 font-mono text-[11px] text-gray-700 select-all truncate">
+                    {`${origin}/api/feed/google`}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${origin}/api/feed/google`);
+                      setCopiedFeed(true);
+                      setTimeout(() => setCopiedFeed(false), 2500);
+                    }}
+                    className="text-xs font-bold rounded-xl shrink-0"
+                  >
+                    {copiedFeed ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
+                <div className="flex items-center justify-between text-xs font-bold text-gray-800">
+                  <span className="flex items-center gap-1">
+                    <FileCode className="h-3.5 w-3.5 text-emerald-600" />
+                    Google Merchant CSV Feed
+                  </span>
+                  <a
+                    href="/api/feed/google?format=csv"
+                    target="_blank"
+                    download
+                    className="text-[11px] text-emerald-700 hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Download
+                  </a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 rounded-xl border border-border bg-white px-2.5 py-1.5 font-mono text-[11px] text-gray-700 select-all truncate">
+                    {`${origin}/api/feed/google?format=csv`}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${origin}/api/feed/google?format=csv`);
+                      setCopiedFeed(true);
+                      setTimeout(() => setCopiedFeed(false), 2500);
+                    }}
+                    className="text-xs font-bold rounded-xl shrink-0"
+                  >
+                    {copiedFeed ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -1051,3 +1217,4 @@ export default function AdminMetaSettingsPage() {
     </div>
   );
 }
+
