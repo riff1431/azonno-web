@@ -234,8 +234,9 @@ export default function AdminLayoutClient({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
-  // If on a dedicated invoice/print page, render full clean view without admin sidebar or topbar
-  if (pathname?.includes("/invoice")) {
+  // Only bypass admin sidebar on dedicated order printable invoice pages (e.g., /admin/orders/[id]/invoice)
+  const isOrderPrintPage = pathname?.startsWith("/admin/orders/") && pathname?.endsWith("/invoice");
+  if (isOrderPrintPage) {
     return <>{children}</>;
   }
 

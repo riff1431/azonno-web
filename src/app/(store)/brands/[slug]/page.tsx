@@ -53,6 +53,7 @@ export default async function BrandDetailPage({
       regular_price,
       sale_price,
       og_image_url,
+      shipping_class,
       brands (name),
       inventory (available)
     `)
@@ -76,6 +77,8 @@ export default async function BrandDetailPage({
       is_in_stock: isAvailable,
       rating: 5.0,
       review_count: 14,
+      is_free_shipping: p.shipping_class === "free_shipping",
+      shipping_class: p.shipping_class || null,
     };
   });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   ShoppingBag,
@@ -12,9 +13,19 @@ import {
   ShieldCheck,
   Ticket,
   Sparkles,
+  Lock,
+  KeyRound,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  Loader2,
+  X,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
+import { Input } from "@/components/shared/ui/input";
+import { Label } from "@/components/shared/ui/label";
+import { createClient } from "@/lib/supabase/client";
 import { useLanguage } from "@/context/language-context";
 
 interface AccountOverviewClientProps {
@@ -31,6 +42,16 @@ interface AccountOverviewClientProps {
 export function AccountOverviewClient({ data }: AccountOverviewClientProps) {
   const { language, toBn, formatPriceBn } = useLanguage();
   const isBn = language === "bn";
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [dismissBanner, setDismissBanner] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdError, setPwdError] = useState("");
+  const [pwdSuccess, setPwdSuccess] = useState(false);
+  const [passwordAlreadySet, setPasswordAlreadySet] = useState(false);
 
   if (!data) {
     return (
@@ -54,6 +75,56 @@ export function AccountOverviewClient({ data }: AccountOverviewClientProps) {
 
   const { totalOrders, pendingOrders, deliveredOrders, latestOrder, user, role } = data;
   const isAdmin = role === "admin" || role === "moderator";
+
+  const needsPassword =
+    !passwordAlreadySet &&
+    (user?.user_metadata?.has_custom_password === false ||
+      user?.user_metadata?.auto_created === true);
+
+  const handleSetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwdError("");
+    setPwdSuccess(false);
+
+    if (newPassword !== confirmPassword) {
+      setPwdError(isBn ? "পাসওয়ার্ড দুটি মেলেনি।" : "Passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPwdError(isBn ? "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।" : "Password must be at least 8 characters.");
+      return;
+    }
+
+    setPwdLoading(true);
+
+    try {
+      const supabase = createClient();
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+        data: {
+          has_custom_password: true,
+          auto_created: false,
+        },
+      });
+
+      if (updateError) {
+        setPwdError(updateError.message);
+        return;
+      }
+
+      setPwdSuccess(true);
+      setPasswordAlreadySet(true);
+      setTimeout(() => {
+        setShowPasswordModal(false);
+        setPwdSuccess(false);
+      }, 2500);
+    } catch {
+      setPwdError(isBn ? "পাসওয়ার্ড সেট করতে ব্যর্থ হয়েছে।" : "Failed to set password. Please try again.");
+    } finally {
+      setPwdLoading(false);
+    }
+  };
 
   const stats = [
     {
@@ -97,6 +168,158 @@ export function AccountOverviewClient({ data }: AccountOverviewClientProps) {
 
   return (
     <div className="space-y-6">
+      {/* Auto-Created Account: Set Password Prompt Banner */}
+      {needsPassword && !dismissBanner && (
+        <div className="rounded-3xl border border-pink-200 bg-linear-to-r from-pink-50 via-rose-50/70 to-amber-50/50 p-5 sm:p-6 shadow-sm transition-all">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#e91e63] text-white shadow-xs">
+                <KeyRound className="h-5 w-5" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-sm sm:text-base font-bold text-gray-900">
+                  {isBn ? "আপনার অ্যাকাউন্টের জন্য পাসওয়ার্ড সেট করুন" : "Set a Password for Your Account"}
+                </h3>
+                <p className="text-xs text-gray-600 max-w-xl">
+                  {isBn
+                    ? "আপনার অর্ডার করার সময় এই অ্যাকাউন্টটি স্বয়ংক্রিয়ভাবে তৈরি হয়েছে। ভবিষ্যতে সরাসরি লগইন করতে এবং অর্ডার ট্র্যাক করতে একটি স্থায়ী পাসওয়ার্ড সেট করুন।"
+                    : "Your account was automatically created when you placed your order. Set a permanent password now to easily log in and manage your orders anytime."}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+              <Button
+                onClick={() => setShowPasswordModal(true)}
+                className="bg-[#e91e63] hover:bg-[#d81557] text-white font-bold text-xs px-5 py-2.5 rounded-2xl shadow-xs"
+              >
+                <Lock className="h-3.5 w-3.5 mr-1.5" />
+                {isBn ? "পাসওয়ার্ড সেট করুন" : "Set Password"}
+              </Button>
+              <button
+                type="button"
+                onClick={() => setDismissBanner(true)}
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-white/60 transition-colors"
+                title={isBn ? "বন্ধ করুন" : "Dismiss"}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Set Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl space-y-5 border border-gray-100">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-pink-100 text-[#e91e63]">
+                  <KeyRound className="h-4 w-4" />
+                </div>
+                <h3 className="text-base font-bold text-gray-900">
+                  {isBn ? "স্থায়ী পাসওয়ার্ড সেট করুন" : "Set Permanent Password"}
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowPasswordModal(false)}
+                className="text-gray-400 hover:text-gray-600 rounded-lg p-1"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {pwdSuccess ? (
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center space-y-2">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto" />
+                <p className="text-sm font-bold text-emerald-900">
+                  {isBn ? "পাসওয়ার্ড সফলভাবে সেট করা হয়েছে!" : "Password has been set successfully!"}
+                </p>
+                <p className="text-xs text-emerald-700">
+                  {isBn
+                    ? "এখন থেকে আপনি আপনার ফোন নম্বর / ইমেইল ও এই পাসওয়ার্ড দিয়ে লগইন করতে পারবেন।"
+                    : "You can now log in anytime using your mobile number or email and this password."}
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSetPassword} className="space-y-4 text-xs">
+                {pwdError && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-700 font-medium">
+                    {pwdError}
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <Label className="font-bold text-gray-800">
+                    {isBn ? "নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)" : "New Password (min. 8 characters)"}
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      type={showPwd ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder={isBn ? "পাসওয়ার্ড দিন" : "Enter new password"}
+                      required
+                      minLength={8}
+                      className="pl-10 pr-10 rounded-xl"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPwd(!showPwd)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="font-bold text-gray-800">
+                    {isBn ? "পাসওয়ার্ড নিশ্চিত করুন" : "Confirm Password"}
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      type={showPwd ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder={isBn ? "আবার পাসওয়ার্ড দিন" : "Re-enter password"}
+                      required
+                      minLength={8}
+                      className="pl-10 pr-10 rounded-xl"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowPasswordModal(false)}
+                    className="rounded-xl"
+                  >
+                    {isBn ? "পরে করুন" : "Cancel"}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={pwdLoading}
+                    className="bg-[#e91e63] hover:bg-[#d81557] text-white font-bold rounded-xl"
+                  >
+                    {pwdLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      isBn ? "সংরক্ষণ করুন" : "Save Password"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Admin Quick Launch Banner */}
       {isAdmin && (
         <div className="rounded-3xl border border-pink-300 bg-pink-50/80 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">

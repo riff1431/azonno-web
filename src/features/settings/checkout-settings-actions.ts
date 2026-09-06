@@ -11,7 +11,12 @@ export interface CheckoutAndFraudSettings {
   free_shipping_threshold: number;
   enable_free_shipping_meter: boolean;
 
-  // Anti-Fraud & Risk Protection
+  // Phone SMS OTP Verification Rules (Admin Controllable)
+  require_otp_all_orders: boolean; // Require SMS OTP on ALL orders
+  enable_courier_ratio_otp: boolean; // Require SMS OTP if BDCourier ratio is below threshold
+  courier_ratio_otp_threshold: number; // e.g. 60%
+
+  // High-Value COD & Risk Protection
   enable_cod_otp: boolean;
   cod_otp_threshold: number; // Trigger OTP for COD orders exceeding this BDT amount
   enable_duplicate_blocker: boolean;
@@ -29,6 +34,10 @@ const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
   outside_dhaka_rate: 130,
   free_shipping_threshold: 2500,
   enable_free_shipping_meter: true,
+
+  require_otp_all_orders: false,
+  enable_courier_ratio_otp: true,
+  courier_ratio_otp_threshold: 60,
 
   enable_cod_otp: true,
   cod_otp_threshold: 3000,
@@ -53,6 +62,10 @@ export async function getCheckoutAndFraudSettings(): Promise<CheckoutAndFraudSet
       free_shipping_threshold: Number(data.free_shipping_threshold ?? DEFAULT_SETTINGS.free_shipping_threshold),
       enable_free_shipping_meter: data.enable_free_shipping_meter !== false,
 
+      require_otp_all_orders: Boolean(data.require_otp_all_orders),
+      enable_courier_ratio_otp: data.enable_courier_ratio_otp !== false,
+      courier_ratio_otp_threshold: Number(data.courier_ratio_otp_threshold ?? DEFAULT_SETTINGS.courier_ratio_otp_threshold),
+
       enable_cod_otp: data.enable_cod_otp !== false,
       cod_otp_threshold: Number(data.cod_otp_threshold ?? DEFAULT_SETTINGS.cod_otp_threshold),
       enable_duplicate_blocker: data.enable_duplicate_blocker !== false,
@@ -74,5 +87,6 @@ export async function saveCheckoutAndFraudSettings(settings: Partial<CheckoutAnd
   await updateGroupSettings("checkout_fraud", settings as Record<string, any>);
   revalidatePath("/checkout");
   revalidatePath("/admin/settings/checkout");
+  revalidatePath("/admin/orders/fraud");
   return { success: true };
 }

@@ -137,6 +137,51 @@ export async function createOrder(input: CreateOrderInput) {
     }
     const verifiedPhone = phoneCheck.cleanPhone;
 
+    // 0.1 Check Blacklist & Blocked Customer Status
+    try {
+      // Check fraud_profiles_store
+      const { data: storeSetting } = await supabaseAdmin
+        .from("store_settings")
+        .select("value")
+        .eq("key", "fraud_profiles_store")
+        .maybeSingle();
+
+      if (storeSetting && Array.isArray(storeSetting.value)) {
+        const cleanCustomerEmail = (input.customer.email || "").trim().toLowerCase();
+        const blacklisted = storeSetting.value.find((fp: any) => {
+          if (!fp.is_blacklisted) return false;
+          const val = (fp.identifier_value || "").trim().toLowerCase();
+          const valDigits = val.replace(/\D/g, "");
+          const matchPhone = valDigits === verifiedPhone || val === verifiedPhone;
+          const matchEmail = cleanCustomerEmail && val === cleanCustomerEmail;
+          return matchPhone || matchEmail;
+        });
+
+        if (blacklisted) {
+          return {
+            error:
+              blacklisted.blacklist_reason ||
+              "This phone number or email is restricted on our security blacklist. Please contact support.",
+          };
+        }
+      }
+
+      // Check customer_blacklist table if present
+      const { data: blockedEntry } = await supabaseAdmin
+        .from("customer_blacklist")
+        .select("reason")
+        .or(`phone.eq.${verifiedPhone},phone.eq.+88${verifiedPhone}`)
+        .maybeSingle();
+
+      if (blockedEntry) {
+        return {
+          error: `This customer contact is restricted: ${blockedEntry.reason || "Blocked"}`,
+        };
+      }
+    } catch (e) {
+      console.warn("Fraud check skip on DB error:", e);
+    }
+
     // 1. Calculate and re-verify Subtotal
     let subtotal = 0;
     const validatedItems: any[] = [];
@@ -224,20 +269,78 @@ export async function createOrder(input: CreateOrderInput) {
     const randomSuffix = Math.floor(100000 + Math.random() * 900000);
     const orderNumber = `ORD-2026-${randomSuffix}`;
 
-    // 5. Initial Status matching WooCommerce (COD -> processing, Online -> pending)
+    // 5. Customer Account Association & Automatic Account Creation
+    let orderUserId = user?.id || null;
+    let autoCreatedAccount: { email: string; tempPassword?: string; isNewUser: boolean } | null = null;
+
+    if (!orderUserId) {
+      const customerEmail = (input.customer.email?.trim() || `${verifiedPhone}@customer.blushandbudget.com`).toLowerCase();
+
+      try {
+        // Check if user with phone or email already exists in profiles
+        const { data: existingProfile } = await supabaseAdmin
+          .from("profiles")
+          .select("id, email, phone")
+          .or(`phone.eq.${verifiedPhone},email.eq.${customerEmail}`)
+          .maybeSingle();
+
+        if (existingProfile) {
+          orderUserId = existingProfile.id;
+        } else {
+          // Automatically create customer user in Supabase Auth
+          const tempPassword = `Blush#${Math.random().toString(36).slice(-6)}!${verifiedPhone.slice(-4)}`;
+          const { data: createdAuthUser, error: authCreateErr } = await supabaseAdmin.auth.admin.createUser({
+            email: customerEmail,
+            password: tempPassword,
+            email_confirm: true,
+            user_metadata: {
+              full_name: input.customer.name,
+              phone: verifiedPhone,
+              auto_created: true,
+              has_custom_password: false,
+            },
+          });
+
+          if (!authCreateErr && createdAuthUser?.user) {
+            orderUserId = createdAuthUser.user.id;
+            await supabaseAdmin.from("profiles").upsert(
+              {
+                id: orderUserId,
+                email: customerEmail,
+                full_name: input.customer.name,
+                phone: verifiedPhone,
+                role: "customer",
+                updated_at: new Date().toISOString(),
+              },
+              { onConflict: "id" }
+            );
+
+            autoCreatedAccount = {
+              email: customerEmail,
+              tempPassword: tempPassword,
+              isNewUser: true,
+            };
+          }
+        }
+      } catch (authErr) {
+        console.warn("Auto account creation warning (proceeding with guest order):", authErr);
+      }
+    }
+
+    // 6. Initial Status matching WooCommerce (COD -> processing, Online -> pending)
     const selectedMethod = (input.paymentMethod || "cod").toLowerCase();
     const initialStatus = selectedMethod === "cod" ? "processing" : "pending";
 
-    // 6. Insert Order
+    // 7. Insert Order
     const { data: order, error: orderErr } = await supabaseAdmin
       .from("orders")
       .insert({
         order_number: orderNumber,
-        user_id: user?.id || null,
+        user_id: orderUserId,
         guest_name: input.customer.name,
         guest_phone: verifiedPhone,
         guest_email: input.customer.email || null,
-        is_guest: !user,
+        is_guest: !orderUserId,
         subtotal,
         discount_amount: discountAmount,
         shipping_amount: shippingAmount,
@@ -319,6 +422,7 @@ export async function createOrder(input: CreateOrderInput) {
       success: true,
       orderId: order.id,
       orderNumber: order.order_number,
+      autoCreatedAccount: autoCreatedAccount || null,
       order: {
         ...order,
         order_items: itemsToInsert,

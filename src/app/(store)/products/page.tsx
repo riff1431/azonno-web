@@ -67,6 +67,7 @@ export default async function ProductsListingPage({
       key_actives,
       origin_country,
       routine_step,
+      shipping_class,
       brands (name),
       inventory (available)
     `)
@@ -98,19 +99,6 @@ export default async function ProductsListingPage({
     }
   }
 
-  if (search) {
-    const cleanSearch = search.trim().replace(/^#/, "");
-    query = query.or(`name.ilike.%${cleanSearch}%,sku.ilike.%${cleanSearch}%`);
-  }
-
-  if (min_price) {
-    query = query.gte("regular_price", Number(min_price));
-  }
-
-  if (max_price) {
-    query = query.lte("regular_price", Number(max_price));
-  }
-
   if (skin_type) {
     query = query.contains("skin_type", [skin_type]);
   }
@@ -124,22 +112,45 @@ export default async function ProductsListingPage({
   }
 
   if (origin) {
-    query = query.eq("origin_country", origin);
+    query = query.ilike("origin_country", `%${origin}%`);
   }
 
-  // Sort
-  if (sort === "price_asc") {
-    query = query.order("regular_price", { ascending: true });
-  } else if (sort === "price_desc") {
-    query = query.order("regular_price", { ascending: false });
-  } else {
-    query = query.order("created_at", { ascending: false });
+  if (search) {
+    query = query.ilike("name", `%${search}%`);
+  }
+
+  if (min_price) {
+    query = query.gte("regular_price", Number(min_price));
+  }
+
+  if (max_price) {
+    query = query.lte("regular_price", Number(max_price));
+  }
+
+  // Sorting
+  switch (sort) {
+    case "price_asc":
+      query = query.order("regular_price", { ascending: true });
+      break;
+    case "price_desc":
+      query = query.order("regular_price", { ascending: false });
+      break;
+    case "popular":
+      query = query.order("regular_price", { ascending: false });
+      break;
+    case "rating":
+      query = query.order("created_at", { ascending: false });
+      break;
+    case "newest":
+    default:
+      query = query.order("created_at", { ascending: false });
+      break;
   }
 
   const { data: products } = await query;
 
   const productCardItems: ProductCardData[] = (products || [])
-    .map((p) => {
+    .map((p: any) => {
       const inv = p.inventory as Array<{ available: number }> | null;
       const isAvailable = inv ? inv.some((i) => i.available > 0) : true;
       const brandData = (Array.isArray(p.brands) ? p.brands[0] : p.brands) as { name: string } | null;
@@ -156,6 +167,8 @@ export default async function ProductsListingPage({
         is_in_stock: isAvailable,
         rating: 5.0,
         review_count: 14,
+        is_free_shipping: p.shipping_class === "free_shipping",
+        shipping_class: p.shipping_class || null,
       };
     })
     .filter((p) => {

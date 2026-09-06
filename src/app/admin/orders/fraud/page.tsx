@@ -1,4 +1,5 @@
 import { getFraudProfiles } from "@/features/fraud/actions";
+import { getBDCourierSettings } from "@/features/fraud/bdcourier-service";
 import FraudBlacklistClient from "./fraud-blacklist-client";
 
 export const metadata = {
@@ -6,7 +7,16 @@ export const metadata = {
 };
 
 export default async function AdminFraudPage() {
-  const profiles = await getFraudProfiles();
+  const [profiles, bdcourierSettings] = await Promise.all([
+    getFraudProfiles(),
+    getBDCourierSettings(),
+  ]);
 
-  return <FraudBlacklistClient initialProfiles={profiles} />;
+  return (
+    <FraudBlacklistClient
+      initialProfiles={profiles}
+      initialBDCourierSettings={bdcourierSettings}
+    />
+  );
 }
+

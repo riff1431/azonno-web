@@ -77,7 +77,7 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
           <div className="inline-flex items-center gap-2 rounded-xl bg-white border border-border px-4 py-2 shadow-xs text-xs font-bold text-text">
             <span>{t("orders", "orderNumber")}:</span>
             <span className="text-[#e91e63] text-sm font-extrabold font-mono">
-              {toBn(order.order_number)}
+              {order.order_number}
             </span>
           </div>
 

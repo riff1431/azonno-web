@@ -15,6 +15,8 @@ export interface FraudCheckResult {
  */
 export async function evaluateCheckoutFraudRisk(params: {
   phone: string;
+  email?: string;
+  userId?: string;
   orderTotal: number;
   paymentMethod: string;
   ipAddress?: string;
@@ -43,24 +45,56 @@ export async function evaluateCheckoutFraudRisk(params: {
     };
   }
 
-  // 2. Blacklist Check
+  // 2. Blacklist & Fraud Block Check (Profiles, Fraud Store & Customer Blacklist)
   try {
+    // Check fraud_profiles_store
+    const { data: storeSetting } = await supabase
+      .from("store_settings")
+      .select("value")
+      .eq("key", "fraud_profiles_store")
+      .single();
+
+    if (storeSetting && Array.isArray(storeSetting.value)) {
+      const blacklistedItem = storeSetting.value.find((fp: any) => {
+        if (!fp.is_blacklisted) return false;
+        const val = (fp.identifier_value || "").trim().toLowerCase();
+        const valDigits = val.replace(/\D/g, "");
+        const matchPhone = normalizedPhone && (valDigits === normalizedPhone || val === normalizedPhone);
+        const matchEmail = params.email && val === params.email.trim().toLowerCase();
+        const matchIp = params.ipAddress && val === params.ipAddress.trim();
+        return matchPhone || matchEmail || matchIp;
+      });
+
+      if (blacklistedItem) {
+        return {
+          allowed: false,
+          requiresOtp: false,
+          riskScore: 100,
+          riskReasons: [
+            blacklistedItem.blacklist_reason ||
+              "This contact (phone/email) is restricted on the security blacklist. Orders cannot be placed.",
+          ],
+        };
+      }
+    }
+
+    // Check customer_blacklist table
     const { data: blocked } = await supabase
       .from("customer_blacklist")
       .select("reason")
       .or(`phone.eq.${normalizedPhone},phone.eq.+88${normalizedPhone}`)
-      .single();
+      .maybeSingle();
 
     if (blocked) {
       return {
         allowed: false,
         requiresOtp: false,
         riskScore: 100,
-        riskReasons: [`Customer phone is flagged on the security blocklist: ${blocked.reason}`],
+        riskReasons: [`Customer phone is flagged on the security blocklist: ${blocked.reason || "Restricted"}`],
       };
     }
   } catch (e) {
-    // Table may not exist yet or empty
+    // Fail gracefully
   }
 
   // 3. Duplicate Order Blocker (Within configured window)
@@ -90,8 +124,36 @@ export async function evaluateCheckoutFraudRisk(params: {
     }
   }
 
-  // 4. High-Value COD OTP Check
+  // 4. SMS OTP Verification Rule Evaluation (Admin Configurable)
   let requiresOtp = false;
+
+  // Rule A: Admin configured OTP verification on ALL orders
+  if (settings.require_otp_all_orders) {
+    requiresOtp = true;
+    riskScore += 10;
+    reasons.push("SMS phone verification is required for all orders.");
+  }
+
+  // Rule B: Admin configured OTP verification if BDCourier delivery success ratio is below threshold (e.g. < 60%)
+  if (settings.enable_courier_ratio_otp) {
+    try {
+      const { fetchBDCourierReport } = await import("./bdcourier-service");
+      const courierReport = await fetchBDCourierReport(normalizedPhone);
+      const threshold = settings.courier_ratio_otp_threshold ?? 60;
+
+      if (courierReport && courierReport.total_parcel > 0 && courierReport.success_ratio < threshold) {
+        requiresOtp = true;
+        riskScore += 40;
+        reasons.push(
+          `Customer courier delivery success ratio is ${courierReport.success_ratio}% (below ${threshold}% safety threshold). Phone verification required.`
+        );
+      }
+    } catch (e) {
+      // Fallback gracefully
+    }
+  }
+
+  // Rule C: High-Value COD Security Threshold Check
   if (
     settings.enable_cod_otp &&
     params.paymentMethod === "cod" &&
@@ -103,6 +165,8 @@ export async function evaluateCheckoutFraudRisk(params: {
       `Order total BDT ${params.orderTotal} exceeds COD security threshold of BDT ${settings.cod_otp_threshold}. OTP verification required.`
     );
   }
+
+  // If Admin has disabled all OTP rules (or conditions not met), requiresOtp stays false (No SMS needed)
 
   return {
     allowed: true,
@@ -116,7 +180,7 @@ export async function evaluateCheckoutFraudRisk(params: {
 const otpStore = new Map<string, { code: string; expiresAt: number }>();
 
 /**
- * Generate and send SMS OTP for high-risk COD verification
+ * Generate and send SMS OTP via SMS Gateway for order phone verification
  */
 export async function generateCheckoutOtp(phone: string): Promise<{ success: boolean; message: string; debugOtp?: string }> {
   const cleanPhone = phone.replace(/\D/g, "");
@@ -128,10 +192,24 @@ export async function generateCheckoutOtp(phone: string): Promise<{ success: boo
 
   otpStore.set(normalizedPhone, { code, expiresAt });
 
-  console.log(`[Anti-Fraud OTP] Generated OTP ${code} for phone ${normalizedPhone}`);
+  console.log(`[Anti-Fraud SMS Gateway] Generated OTP ${code} for phone ${normalizedPhone}`);
 
-  // In production, integrate with SMS gateway (BulkSMSBD, Greenweb, etc.)
-  // For instant dev testing, return success and allow auto-fill
+  // Send real SMS through configured SMS Gateway (BulkSMSBD / Greenweb / MimSMS)
+  try {
+    const { sendSmsNotification } = await import("@/features/sms/actions");
+    await sendSmsNotification({
+      recipientPhone: normalizedPhone,
+      eventType: "order_otp",
+      variables: {
+        customer_name: "Customer",
+        otp_code: code,
+        store_name: "Blush & Budget",
+      },
+    });
+  } catch (err) {
+    console.warn("SMS gateway send warning:", err);
+  }
+
   return {
     success: true,
     message: `A 4-digit verification code has been sent to ${normalizedPhone}.`,

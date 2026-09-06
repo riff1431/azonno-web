@@ -32,6 +32,8 @@ export interface ProductCardData {
   review_count?: number;
   size?: string | null;
   is_in_stock?: boolean;
+  is_free_shipping?: boolean | null;
+  shipping_class?: string | null;
 }
 
 export function ProductCard({
@@ -244,8 +246,8 @@ export function ProductCard({
           />
         </Link>
 
-        {/* Solid Pink FREE SHIPPING Strip at the bottom of the image (Exact Shajgoj Style) */}
-        {cardSettings?.showFreeShippingStrip !== false && (
+        {/* Solid Pink FREE SHIPPING Strip at the bottom of the image - Controlled per product */}
+        {(product.is_free_shipping === true || product.shipping_class === "free_shipping") && (
           <div
             style={{ position: "absolute", bottom: "0px", left: "0px", right: "0px", zIndex: 10 }}
             className="bg-[#e91e63] py-1 text-center shadow-xs pointer-events-none"

@@ -62,7 +62,7 @@ export async function sendTestSms(phone: string, message: string) {
 
   return {
     success: true,
-    message: `Test SMS successfully dispatched to ${phone}! Log ID: ${res.log.id}`,
+    message: `Test SMS successfully dispatched to ${phone}! Log ID: ${res.log?.id || "sent"}`,
   };
 }
 
@@ -126,14 +126,88 @@ export async function testEmailSend(testRecipient: string) {
   };
 }
 
+export interface NotificationMatrixSettings {
+  [key: string]: boolean;
+}
+
+const DEFAULT_NOTIFICATION_MATRIX: Record<string, boolean> = {
+  // Order Placed
+  order_placed_sms: true,
+  order_placed_whatsapp: true,
+  order_placed_email: true,
+  order_placed_inapp: true,
+
+  // Consignment Shipped
+  order_shipped_sms: true,
+  order_shipped_whatsapp: true,
+  order_shipped_email: true,
+  order_shipped_inapp: true,
+
+  // Order Delivered
+  order_delivered_sms: true,
+  order_delivered_whatsapp: false,
+  order_delivered_email: true,
+  order_delivered_inapp: true,
+
+  // Order Cancelled
+  order_cancelled_sms: true,
+  order_cancelled_whatsapp: false,
+  order_cancelled_email: true,
+  order_cancelled_inapp: true,
+
+  // Refund Approved
+  refund_approved_sms: true,
+  refund_approved_whatsapp: true,
+  refund_approved_email: true,
+  refund_approved_inapp: true,
+
+  // Advance Delivery Fee Request
+  advance_requested_sms: false,
+  advance_requested_whatsapp: true,
+  advance_requested_email: false,
+  advance_requested_inapp: true,
+
+  // Review & Feedback Request
+  review_request_sms: false,
+  review_request_whatsapp: true,
+  review_request_email: true,
+  review_request_inapp: false,
+
+  // Password Reset / Account OTP
+  password_reset_sms: true,
+  password_reset_whatsapp: false,
+  password_reset_email: true,
+  password_reset_inapp: false,
+};
+
+export async function getDefaultNotificationMatrix(): Promise<Record<string, boolean>> {
+  return DEFAULT_NOTIFICATION_MATRIX;
+}
+
 // Event Notification Matrix
-export async function getNotificationMatrix() {
+export async function getNotificationMatrix(): Promise<Record<string, boolean>> {
   const settings = await getSettingsByGroup("notifications");
-  return settings;
+
+  if (!settings || Object.keys(settings).length === 0) {
+    return DEFAULT_NOTIFICATION_MATRIX;
+  }
+  return { ...DEFAULT_NOTIFICATION_MATRIX, ...settings };
 }
 
 export async function saveNotificationMatrix(matrix: Record<string, boolean>) {
   await updateGroupSettings("notifications", matrix);
   revalidatePath("/admin/communication/notifications");
   return { success: true };
+}
+
+export async function shouldSendNotification(
+  eventKey: string,
+  channel: "sms" | "whatsapp" | "email" | "inapp"
+): Promise<boolean> {
+  const matrix = await getNotificationMatrix();
+  const settingKey = `${eventKey}_${channel}`;
+  if (matrix[settingKey] !== undefined) {
+    return matrix[settingKey];
+  }
+  return DEFAULT_NOTIFICATION_MATRIX[settingKey] ?? true;
 }

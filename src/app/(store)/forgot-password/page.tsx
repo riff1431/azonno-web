@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
+import { resolveUserAuthEmail } from "@/features/account/actions";
 import { useLanguage } from "@/context/language-context";
 
 export default function ForgotPasswordPage() {
@@ -22,9 +23,10 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
+      const resolvedEmail = await resolveUserAuthEmail(email);
       const supabase = createClient();
       const { error: authError } = await supabase.auth.resetPasswordForEmail(
-        email,
+        resolvedEmail,
         {
           redirectTo: `${window.location.origin}/reset-password`,
         }
@@ -95,25 +97,24 @@ export default function ForgotPasswordPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email">
-                    {language === "bn" ? "ইমেইল অ্যাড্রেস" : "Email Address"}
+                    {language === "bn" ? "মোবাইল নম্বর বা ইমেইল অ্যাড্রেস" : "Mobile Number or Email Address"}
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
                     <Input
                       id="email"
-                      type="email"
-                      placeholder="you@example.com"
+                      type="text"
+                      placeholder={language === "bn" ? "০১XXXXXXXXX বা you@example.com" : "01XXXXXXXXX or you@example.com"}
                       className="pl-10"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      autoComplete="email"
                     />
                   </div>
                   <p className="text-xs text-text-muted">
                     {language === "bn"
-                      ? "আপনার অ্যাকাউন্টের সাথে যুক্ত ইমেইলটি লিখুন, আমরা পাসওয়ার্ড রিসেটের লিঙ্ক পাঠাব।"
-                      : "Enter the email associated with your account and we'll send a reset link."}
+                      ? "আপনার অ্যাকাউন্টের সাথে যুক্ত মোবাইল নম্বর বা ইমেইলটি লিখুন, আমরা পাসওয়ার্ড রিসেট করার ব্যবস্থা করব।"
+                      : "Enter the mobile number or email associated with your account to reset your password."}
                   </p>
                 </div>
 

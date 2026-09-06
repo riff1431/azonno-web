@@ -40,6 +40,7 @@ import { addBlacklistEntry } from "@/features/fraud/actions";
 import { Button } from "@/components/shared/ui/button";
 import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
 import { getAvailableNextStatuses, OrderStatus, generateWhatsAppOrderMessage } from "@/types/orders";
+import { BDCourierBadge } from "@/features/fraud/bdcourier-badge";
 
 interface OrderListClientProps {
   initialOrders: any[];
@@ -1039,6 +1040,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                               </span>
                             )
                           )}
+                          <BDCourierBadge phone={phone} />
                         </div>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className="text-gray-600 font-mono font-bold text-[11px]">{phone}</span>
@@ -1105,8 +1107,27 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                 >
                                   Review Request
                                 </a>
+                                <a
+                                  href={generateWhatsAppOrderMessage(ord, "cancelled")}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => setOpenWhatsAppId(null)}
+                                  className="block px-2 py-1.5 rounded-lg hover:bg-rose-50 text-rose-800 font-bold"
+                                >
+                                  Order Cancelled
+                                </a>
+                                <a
+                                  href={generateWhatsAppOrderMessage(ord, "refund")}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => setOpenWhatsAppId(null)}
+                                  className="block px-2 py-1.5 rounded-lg hover:bg-emerald-50 text-emerald-800 font-bold"
+                                >
+                                  Refund Processed
+                                </a>
                               </div>
                             )}
+
                           </div>
 
                           {/* 1-Click Block Number & IP Modal Trigger */}

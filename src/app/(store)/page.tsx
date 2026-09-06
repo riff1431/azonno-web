@@ -23,6 +23,7 @@ export default async function HomePage() {
         regular_price,
         sale_price,
         og_image_url,
+        shipping_class,
         brands (name),
         inventory (available),
         reviews (rating, status)
@@ -66,6 +67,8 @@ export default async function HomePage() {
       is_in_stock: isAvailable,
       rating: averageRating,
       review_count: reviewCount > 0 ? reviewCount : undefined,
+      is_free_shipping: p.shipping_class === "free_shipping",
+      shipping_class: p.shipping_class || null,
     };
   });
 

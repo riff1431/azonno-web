@@ -433,7 +433,7 @@ export function computeCustomerRiskProfile(params: {
  */
 export function generateWhatsAppOrderMessage(
   order: any,
-  templateType: "confirm" | "shipped" | "advance" | "review",
+  templateType: "confirm" | "shipped" | "advance" | "review" | "cancelled" | "refund",
   customAdvanceAmount: number = 120
 ): string {
   const phone = order.shipping_address_snapshot?.phone || order.guest_phone || "";
@@ -464,8 +464,13 @@ Please keep BDT ${codDue} ready for the delivery rider.`;
     text = `Hello ${name}, to confirm delivery of your Order #${orderNum} (Total BDT ${codDue}), please send BDT ${customAdvanceAmount} delivery advance via bKash/Nagad Merchant Number. Remaining BDT ${Math.max(0, codDue - customAdvanceAmount)} will be Cash on Delivery.`;
   } else if (templateType === "review") {
     text = `Hello ${name}, we hope you loved your products from Order #${orderNum}! Please share your feedback and review with us.`;
+  } else if (templateType === "cancelled") {
+    text = `Hello ${name}, we would like to inform you that your Order #${orderNum} has been cancelled. If you have questions or wish to re-order, please reply to this chat.`;
+  } else if (templateType === "refund") {
+    text = `Hello ${name}, your refund request for Order #${orderNum} has been approved and processed. Thank you for shopping with Blush & Budget.`;
   }
 
   return `https://wa.me/${intlPhone}?text=${encodeURIComponent(text)}`;
 }
+
 

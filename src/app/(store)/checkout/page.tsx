@@ -93,6 +93,9 @@ export default function CheckoutPage() {
     outside_dhaka_rate: 130,
     free_shipping_threshold: 2500,
     enable_free_shipping_meter: true,
+    require_otp_all_orders: false,
+    enable_courier_ratio_otp: true,
+    courier_ratio_otp_threshold: 60,
     enable_cod_otp: true,
     cod_otp_threshold: 3000,
     enable_duplicate_blocker: true,
@@ -394,6 +397,19 @@ export default function CheckoutPage() {
         return;
       }
 
+      // If account was automatically created, sign in seamlessly on client
+      if (res.autoCreatedAccount?.email && res.autoCreatedAccount?.tempPassword) {
+        try {
+          const supabase = createClient();
+          await supabase.auth.signInWithPassword({
+            email: res.autoCreatedAccount.email,
+            password: res.autoCreatedAccount.tempPassword,
+          });
+        } catch (signInErr) {
+          console.warn("Auto sign-in notice:", signInErr);
+        }
+      }
+
       // If bKash Online Payment is selected, initiate bKash PGW session
       if (selectedPaymentMethod === "bkash") {
         clearCart();
@@ -464,6 +480,7 @@ export default function CheckoutPage() {
     // Evaluate Anti-Fraud & Risk Score
     const fraudResult = await evaluateCheckoutFraudRisk({
       phone: formData.phone,
+      email: formData.email,
       orderTotal: finalTotal,
       paymentMethod: selectedPaymentMethod,
     });

@@ -118,6 +118,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     width: (initialData?.width as number) ?? 0,
     height: (initialData?.height as number) ?? 0,
     shipping_class: (initialData?.shipping_class as string) ?? "",
+    is_free_shipping: (initialData?.shipping_class === "free_shipping" || (initialData?.is_free_shipping as boolean)) ?? false,
     // SEO
     seo_title: (initialData?.seo_title as string) ?? "",
     seo_description: (initialData?.seo_description as string) ?? "",
@@ -399,7 +400,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
       length: form.length || null,
       width: form.width || null,
       height: form.height || null,
-      shipping_class: form.shipping_class || null,
+      shipping_class: form.is_free_shipping ? "free_shipping" : (form.shipping_class && form.shipping_class !== "free_shipping" ? form.shipping_class : null),
       seo_title: form.seo_title || null,
       seo_description: form.seo_description || null,
       canonical_override: form.canonical_override || null,
@@ -609,10 +610,43 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                 <Label>Tags (comma separated)</Label>
                 <Input value={form.tags} onChange={(e) => updateField("tags", e.target.value)} placeholder="skincare, essence, k-beauty" />
               </div>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" checked={form.is_featured} onChange={(e) => updateField("is_featured", e.target.checked)} className="rounded border-border" />
-                <span className="text-sm text-text font-medium">Feature on Homepage</span>
-              </label>
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={form.is_featured} onChange={(e) => updateField("is_featured", e.target.checked)} className="rounded border-border h-4 w-4 text-[#e91e63] accent-[#e91e63]" />
+                  <span className="text-sm text-text font-medium">Feature on Homepage</span>
+                </label>
+              </div>
+
+              {/* Free Delivery Control Card */}
+              <div className="flex items-center justify-between rounded-2xl bg-pink-50/70 border border-pink-200 p-4 transition-all">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-[#e91e63]">
+                    <Truck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-sm font-bold text-gray-900">Free Delivery (ফ্রি ডেলিভারি)</h4>
+                      {form.is_free_shipping && (
+                        <span className="rounded bg-[#e91e63] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-xs">
+                          ফ্রি ডেলিভারি Active
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      When enabled, this product will display the solid pink &quot;ফ্রি ডেলিভারি&quot; badge on storefront product cards and highlight free nationwide delivery.
+                    </p>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0 ml-4">
+                  <input
+                    type="checkbox"
+                    checked={form.is_free_shipping}
+                    onChange={(e) => updateField("is_free_shipping", e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e91e63]"></div>
+                </label>
+              </div>
             </div>
           )}
 
@@ -1098,9 +1132,52 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   <Input type="number" step="0.01" min="0" value={form.height || ""} onChange={(e) => updateField("height", parseFloat(e.target.value) || 0)} />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label>Shipping Class</Label>
-                <Input value={form.shipping_class} onChange={(e) => updateField("shipping_class", e.target.value)} placeholder="e.g. standard, fragile" />
+              <div className="space-y-3 pt-2 border-t border-gray-100">
+                <Label>Shipping Class & Delivery Option</Label>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() => updateField("is_free_shipping", false)}
+                    className={cn(
+                      "flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all",
+                      !form.is_free_shipping
+                        ? "border-[#e91e63] bg-pink-50/50 shadow-xs"
+                        : "border-gray-200 bg-white hover:bg-gray-50"
+                    )}
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-700">
+                      <Box className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-gray-900">Standard Shipping</p>
+                      <p className="text-[11px] text-gray-500">Regular shipping rates apply</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => updateField("is_free_shipping", true)}
+                    className={cn(
+                      "flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all",
+                      form.is_free_shipping
+                        ? "border-[#e91e63] bg-pink-50/70 shadow-xs ring-1 ring-[#e91e63]"
+                        : "border-gray-200 bg-white hover:bg-gray-50"
+                    )}
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-[#e91e63]">
+                      <Truck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-gray-900">Free Delivery</p>
+                        <span className="rounded bg-[#e91e63] px-1.5 py-0.2 text-[9px] font-black uppercase text-white">
+                          ফ্রি
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#e91e63] font-medium">Free nationwide shipping badge</p>
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -1460,6 +1537,16 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   <span className="font-medium text-primary-600">{generatedVariants.length} generated</span>
                 </div>
               )}
+              <div className="flex justify-between items-center pt-1 border-t border-border">
+                <span className="text-text-muted">Delivery</span>
+                {form.is_free_shipping ? (
+                  <span className="font-bold text-xs text-[#e91e63] bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+                    Free Delivery
+                  </span>
+                ) : (
+                  <span className="font-medium text-text text-xs">Standard</span>
+                )}
+              </div>
             </div>
           </div>
         </div>

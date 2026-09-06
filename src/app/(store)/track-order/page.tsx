@@ -160,7 +160,7 @@ export default function TrackOrderPage() {
               <div>
                 <span className="text-xs text-text-muted">{t("orders", "trackingResults")}:</span>
                 <p className="text-lg font-extrabold text-primary-600 font-mono">
-                  {toBn(order.order_number)}
+                  {order.order_number}
                 </p>
               </div>
 

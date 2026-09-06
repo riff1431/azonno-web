@@ -294,4 +294,39 @@ export async function registerUserAccount(input: {
   }
 }
 
+/**
+ * Resolve user identifier (phone number or email) to corresponding Supabase auth email
+ */
+export async function resolveUserAuthEmail(identifier: string): Promise<string> {
+  const cleanId = identifier.trim();
+  if (cleanId.includes("@")) {
+    return cleanId.toLowerCase();
+  }
+
+  // Treat as Bangladeshi phone number: extract digits
+  const digits = cleanId.replace(/\D/g, "");
+  const cleanPhone = digits.startsWith("880")
+    ? `0${digits.slice(3)}`
+    : digits.startsWith("88")
+    ? digits.slice(2)
+    : digits;
+
+  try {
+    const adminClient = createAdminClient();
+    const { data: profile } = await adminClient
+      .from("profiles")
+      .select("email")
+      .eq("phone", cleanPhone)
+      .maybeSingle();
+
+    if (profile?.email) {
+      return profile.email.toLowerCase();
+    }
+  } catch {
+    // Fallback to synthetic phone email
+  }
+
+  return `${cleanPhone}@customer.blushandbudget.com`.toLowerCase();
+}
+
 

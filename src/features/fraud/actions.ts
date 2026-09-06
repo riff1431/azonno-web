@@ -171,27 +171,34 @@ let memoryAbandonedCheckouts: AbandonedLead[] = [
  */
 export async function evaluateOrderRisk({
   phone,
+  email,
   district,
   total,
   ipAddress,
 }: {
   phone: string;
+  email?: string;
   district?: string;
   total?: number;
   ipAddress?: string;
 }): Promise<RiskEvaluation> {
   const supabase = createAdminClient();
   const cleanPhone = phone.trim().replace(/[^0-9]/g, "");
+  const cleanEmail = (email || "").trim().toLowerCase();
   const reasons: string[] = [];
   let riskScore = 0;
 
   // 1. Blacklist Check
   const profiles = await getStoredFraudProfiles();
-  const blacklisted = profiles.find(
-    (p: FraudProfile) =>
-      p.is_blacklisted &&
-      (p.identifier_value === cleanPhone || (ipAddress && p.identifier_value === ipAddress))
-  );
+  const blacklisted = profiles.find((p: FraudProfile) => {
+    if (!p.is_blacklisted) return false;
+    const val = (p.identifier_value || "").trim().toLowerCase();
+    const valDigits = val.replace(/[^0-9]/g, "");
+    const matchPhone = cleanPhone && (valDigits === cleanPhone || val === cleanPhone);
+    const matchEmail = cleanEmail && val === cleanEmail;
+    const matchIp = ipAddress && val === ipAddress.trim();
+    return matchPhone || matchEmail || matchIp;
+  });
 
   if (blacklisted) {
     return {
@@ -201,7 +208,7 @@ export async function evaluateOrderRisk({
       courierSuccessRate: "0%",
       previousOrdersCount: 0,
       isDuplicateOrder: false,
-      reasons: [blacklisted.blacklist_reason || "Number/IP explicitly blacklisted by store admin."],
+      reasons: [blacklisted.blacklist_reason || "Customer contact / IP explicitly blacklisted by store admin."],
       recommendedAction: "block",
     };
   }

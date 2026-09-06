@@ -42,7 +42,10 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
     free_shipping_threshold: initialSettings.free_shipping_threshold ? Number(initialSettings.free_shipping_threshold) : 2500,
     enable_free_shipping_meter: initialSettings.enable_free_shipping_meter !== false,
 
-    // Anti-Fraud & OTP
+    // Anti-Fraud & OTP Rules
+    require_otp_all_orders: Boolean(initialSettings.require_otp_all_orders),
+    enable_courier_ratio_otp: initialSettings.enable_courier_ratio_otp !== false,
+    courier_ratio_otp_threshold: initialSettings.courier_ratio_otp_threshold ? Number(initialSettings.courier_ratio_otp_threshold) : 60,
     enable_cod_otp: initialSettings.enable_cod_otp !== false,
     cod_otp_threshold: initialSettings.cod_otp_threshold ? Number(initialSettings.cod_otp_threshold) : 3000,
     enable_duplicate_blocker: initialSettings.enable_duplicate_blocker !== false,
@@ -80,6 +83,9 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
           outside_dhaka_rate: formData.outside_dhaka_rate,
           free_shipping_threshold: formData.free_shipping_threshold,
           enable_free_shipping_meter: formData.enable_free_shipping_meter,
+          require_otp_all_orders: formData.require_otp_all_orders,
+          enable_courier_ratio_otp: formData.enable_courier_ratio_otp,
+          courier_ratio_otp_threshold: formData.courier_ratio_otp_threshold,
           enable_cod_otp: formData.enable_cod_otp,
           cod_otp_threshold: formData.cod_otp_threshold,
           enable_duplicate_blocker: formData.enable_duplicate_blocker,
@@ -219,14 +225,75 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
           </div>
 
           <div className="space-y-3">
-            {/* COD OTP Toggle */}
+            {/* Option 1: Require OTP on ALL Orders */}
             <label className="flex items-center justify-between p-3.5 rounded-2xl border border-border hover:bg-surface-secondary/40 cursor-pointer transition-colors">
               <div>
                 <span className="font-bold text-text text-xs sm:text-sm block">
-                  Enable SMS OTP Verification for High-Risk COD Orders
+                  Verify Phone Number with SMS OTP on ALL Orders
                 </span>
                 <span className="text-text-muted text-[11px]">
-                  Requires a 4-digit SMS OTP code before confirming Cash on Delivery orders to eliminate fake numbers and duplicate spam orders.
+                  When enabled, every single order requires a 4-digit SMS OTP code sent to the customer's phone before confirming the order.
+                </span>
+              </div>
+              <input
+                type="checkbox"
+                checked={formData.require_otp_all_orders}
+                onChange={(e) =>
+                  setFormData({ ...formData, require_otp_all_orders: e.target.checked })
+                }
+                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+              />
+            </label>
+
+            {/* Option 2: Require OTP if BDCourier Ratio is Low */}
+            <label className="flex items-center justify-between p-3.5 rounded-2xl border border-border hover:bg-surface-secondary/40 cursor-pointer transition-colors">
+              <div>
+                <span className="font-bold text-text text-xs sm:text-sm block">
+                  Verify Phone with SMS if BDCourier Delivery Ratio is Below Threshold
+                </span>
+                <span className="text-text-muted text-[11px]">
+                  Cross-checks customer's courier delivery history. If success ratio is less than {formData.courier_ratio_otp_threshold}%, automatically prompts for SMS verification.
+                </span>
+              </div>
+              <input
+                type="checkbox"
+                checked={formData.enable_courier_ratio_otp}
+                onChange={(e) =>
+                  setFormData({ ...formData, enable_courier_ratio_otp: e.target.checked })
+                }
+                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+              />
+            </label>
+
+            {formData.enable_courier_ratio_otp && (
+              <div className="p-4 rounded-2xl bg-surface-secondary/50 border border-border space-y-2">
+                <label className="block font-bold text-text">
+                  BDCourier Ratio OTP Trigger Threshold (%)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={formData.courier_ratio_otp_threshold}
+                  onChange={(e) =>
+                    setFormData({ ...formData, courier_ratio_otp_threshold: Number(e.target.value) })
+                  }
+                  className="w-full sm:w-64 rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-bold text-text focus:outline-none"
+                />
+                <span className="text-[10px] text-text-muted block">
+                  Customers with a courier delivery success rate below this percentage (e.g. 60%) must complete SMS verification.
+                </span>
+              </div>
+            )}
+
+            {/* Option 3: COD OTP Toggle */}
+            <label className="flex items-center justify-between p-3.5 rounded-2xl border border-border hover:bg-surface-secondary/40 cursor-pointer transition-colors">
+              <div>
+                <span className="font-bold text-text text-xs sm:text-sm block">
+                  Enable SMS OTP Verification for High-Value COD Orders
+                </span>
+                <span className="text-text-muted text-[11px]">
+                  Requires a 4-digit SMS OTP code for Cash on Delivery orders exceeding the threshold amount.
                 </span>
               </div>
               <input
@@ -256,6 +323,13 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 <span className="text-[10px] text-text-muted block">
                   Orders exceeding this BDT amount will be prompted for instant SMS OTP verification.
                 </span>
+              </div>
+            )}
+
+            {/* Note: If all disabled */}
+            {!formData.require_otp_all_orders && !formData.enable_courier_ratio_otp && !formData.enable_cod_otp && (
+              <div className="p-3 rounded-2xl bg-zinc-100 border border-zinc-200 text-[11px] text-zinc-600 font-medium">
+                ℹ️ <strong>All SMS verification rules are currently turned OFF.</strong> Customers can place orders directly without receiving any SMS OTP codes.
               </div>
             )}
 

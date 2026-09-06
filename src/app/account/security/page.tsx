@@ -36,6 +36,10 @@ export default function AccountSecurityPage() {
       const supabase = createClient();
       const { error: updateError } = await supabase.auth.updateUser({
         password: newPassword,
+        data: {
+          has_custom_password: true,
+          auto_created: false,
+        },
       });
 
       if (updateError) {

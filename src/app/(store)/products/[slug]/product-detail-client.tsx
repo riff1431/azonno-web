@@ -539,11 +539,22 @@ export function ProductDetailClient({
                 </>
               )}
             </div>
-            <p className="text-[11px] text-text-muted">
-              {language === "bn"
-                ? "ট্যাক্স অন্তর্ভুক্ত। ২,০০০ টাকার অর্ডারে সারা দেশে ফ্রি ডেলিভারি।"
-                : "Tax included. Free Delivery available inside Dhaka over ৳2,500."}
-            </p>
+            <div className="flex items-center gap-1.5 text-[11px] text-text-muted">
+              {product.shipping_class === "free_shipping" ? (
+                <span className="font-bold text-[#e91e63] bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                  <Truck className="h-3.5 w-3.5 text-[#e91e63]" />
+                  {language === "bn"
+                    ? "এই পণ্যে সারা দেশে ফ্রি ডেলিভারি!"
+                    : "Free Nationwide Delivery on this product!"}
+                </span>
+              ) : (
+                <span>
+                  {language === "bn"
+                    ? "২,০০০ টাকার অর্ডারে সারা দেশে ফ্রি ডেলিভারি।"
+                    : "Free Delivery available on orders over ৳2,500."}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Shade & Variant Selector with Interactive Color Swatches */}

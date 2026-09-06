@@ -34,6 +34,14 @@ let memorySmsLogs: SmsLogItem[] = [
 
 const DEFAULT_TEMPLATES: SmsTemplate[] = [
   {
+    id: "t0",
+    name: "Order Phone Verification OTP",
+    event_type: "order_otp",
+    template: "Your {{store_name}} order verification OTP code is {{otp_code}}. Valid for 5 minutes. Do not share this code.",
+    variables: ["otp_code", "store_name", "customer_name"],
+    status: "active",
+  },
+  {
     id: "t1",
     name: "Order Placed & Confirmed",
     event_type: "order_created",
@@ -128,6 +136,30 @@ export async function sendSmsNotification(input: {
   eventType: string;
   variables: Record<string, string>;
 }) {
+  const { shouldSendNotification, getSmsProviderConfig } = await import("@/features/communication/actions");
+  
+  // Check if provider is enabled
+  const providerConfig = await getSmsProviderConfig();
+  if (!providerConfig.is_active && input.eventType !== "test_sms") {
+    return {
+      success: false,
+      skipped: true,
+      reason: "SMS Provider Gateway is currently disabled in Admin settings.",
+    };
+  }
+
+  // Check event-specific notification matrix (OTP and test SMS bypass this check)
+  if (input.eventType !== "order_otp" && input.eventType !== "test_sms") {
+    const isAllowed = await shouldSendNotification(input.eventType, "sms");
+    if (!isAllowed) {
+      return {
+        success: true,
+        skipped: true,
+        reason: `SMS notification for event '${input.eventType}' is toggled OFF by admin.`,
+      };
+    }
+  }
+
   const templates = await getSmsTemplates();
   const template = templates.find((t) => t.event_type === input.eventType) || templates[0];
 
@@ -141,7 +173,7 @@ export async function sendSmsNotification(input: {
     recipient_phone: input.recipientPhone,
     message,
     status: "delivered",
-    provider: "BulkSMSBD",
+    provider: providerConfig.provider_name || "BulkSMSBD",
     sent_at: new Date().toISOString(),
   };
 
@@ -153,7 +185,7 @@ export async function sendSmsNotification(input: {
       recipient_phone: input.recipientPhone,
       message,
       status: "delivered",
-      provider_response: { gateway: "BulkSMSBD", status: "SUCCESS", message_id: logItem.id },
+      provider_response: { gateway: providerConfig.provider_name || "BulkSMSBD", status: "SUCCESS", message_id: logItem.id },
     });
   } catch (e) {
     // Graceful fallback
@@ -161,3 +193,4 @@ export async function sendSmsNotification(input: {
 
   return { success: true, log: logItem };
 }
+

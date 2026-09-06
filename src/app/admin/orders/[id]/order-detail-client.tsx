@@ -34,6 +34,7 @@ import { Button } from "@/components/shared/ui/button";
 import { updateAdminOrderFull } from "@/features/orders/actions";
 import { bookCourierDelivery } from "@/features/logistics/actions";
 import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
+import { BDCourierHistoryCard } from "@/features/fraud/bdcourier-card";
 
 interface OrderDetailClientProps {
   order: any;
@@ -842,6 +843,12 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
               </div>
             )}
           </div>
+
+          {/* 1.5 BDCourier Fraud & Multi-Courier History Card */}
+          <BDCourierHistoryCard
+            phone={addressForm.phone || order.guest_phone}
+            customerName={addressForm.name || order.guest_name}
+          />
 
           {/* 2. Financial Breakdown & Payment Control (Editable) */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4 text-xs">

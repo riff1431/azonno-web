@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Loader2, Mail, Lock, ShieldCheck, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Phone, Lock, ShieldCheck, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { getHomepageConfig } from "@/features/marketing/homepage-actions";
+import { resolveUserAuthEmail } from "@/features/account/actions";
 import { type HomepageFullConfig, DEFAULT_HOMEPAGE_CONFIG } from "@/features/marketing/homepage-types";
 import { useLanguage } from "@/context/language-context";
 
@@ -42,16 +43,17 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
+      const resolvedEmail = await resolveUserAuthEmail(email);
       const supabase = createClient();
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: resolvedEmail,
         password,
       });
 
       if (authError) {
         setError(
           authError.message === "Invalid login credentials"
-            ? (language === "bn" ? "ভুল ইমেইল বা পাসওয়ার্ড। অনুগ্রহ করে পুনরায় চেষ্টা করুন।" : "Invalid email address or password. Please check your credentials and try again.")
+            ? (language === "bn" ? "ভুল মোবাইল নম্বর/ইমেইল বা পাসওয়ার্ড। অনুগ্রহ করে পুনরায় চেষ্টা করুন।" : "Invalid mobile number/email or password. Please check your credentials and try again.")
             : authError.message
         );
         setLoading(false);
@@ -131,17 +133,19 @@ export default function LoginForm() {
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="login-email" className="text-xs font-bold text-gray-800">
-              {language === "bn" ? "ইমেইল অ্যাড্রেস" : "Email Address"}
+              {language === "bn" ? "মোবাইল নম্বর বা ইমেইল অ্যাড্রেস" : "Mobile Number or Email Address"}
             </Label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 id="login-email"
-                type="email"
-                placeholder="name@example.com"
+                type="text"
+                placeholder={language === "bn" ? "০১XXXXXXXXX বা name@example.com" : "01XXXXXXXXX or name@example.com"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoCapitalize="none"
+                autoCorrect="off"
                 className="pl-10 h-11 rounded-xl text-sm border-gray-200"
               />
             </div>

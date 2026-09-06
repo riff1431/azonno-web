@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, Package, Archive, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, Package, Archive, Eye, Truck } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { DataTable, RowActions, RowAction, type Column } from "@/components/admin/data-table";
 import { getProducts, deleteProduct, bulkUpdateProductStatus } from "@/features/products/actions";
@@ -19,6 +19,7 @@ interface ProductRow {
   regular_price: number;
   sale_price: number | null;
   is_featured: boolean;
+  shipping_class?: string | null;
   created_at: string;
   brands: { name: string } | null;
   inventory: Array<{ on_hand: number; available: number }>;
@@ -76,10 +77,15 @@ export default function ProductListClient() {
           </div>
           <div className="min-w-0">
             <p className="font-medium text-text truncate max-w-55">{row.name}</p>
-            <div className="flex items-center gap-2 text-xs text-text-muted mt-0.5">
+            <div className="flex flex-wrap items-center gap-1.5 text-xs text-text-muted mt-0.5">
               <span className="capitalize">{row.product_type}</span>
               {row.is_featured && (
                 <span className="rounded bg-yellow-50 px-1.5 py-0.5 text-yellow-700 font-medium">Featured</span>
+              )}
+              {row.shipping_class === "free_shipping" && (
+                <span className="inline-flex items-center gap-1 rounded bg-pink-50 border border-pink-200 px-1.5 py-0.5 text-[#e91e63] font-bold text-[10px]">
+                  <Truck className="h-3 w-3" /> Free Delivery
+                </span>
               )}
             </div>
           </div>
