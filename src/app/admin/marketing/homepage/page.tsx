@@ -27,10 +27,12 @@ import {
   PanelBottom,
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
+import { HomepageImageField } from "@/components/admin/marketing/homepage-image-field";
 import {
   getHomepageConfig,
   saveHomepageConfig,
 } from "@/features/marketing/homepage-actions";
+
 import {
   getCheckoutSettings,
   saveCheckoutSettings,
@@ -310,16 +312,15 @@ export default function AdminHomepageManagerPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1">Banner Image URL</label>
-                    <div className="flex gap-3 items-center">
-                      <input
-                        type="text"
-                        value={deal.image}
-                        onChange={(e) => updateBannerList("dealsYouCannotMiss", idx, "image", e.target.value)}
-                        className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                      />
-                      {deal.image && <img src={deal.image} alt="preview" className="h-10 w-10 object-cover rounded-lg border border-gray-200 shrink-0" />}
-                    </div>
+                    <HomepageImageField
+                      label="Deal Poster Image"
+                      recommendedSize="600 × 600 px"
+                      aspectRatioLabel="1:1 Square"
+                      value={deal.image}
+                      onChange={(url) => updateBannerList("dealsYouCannotMiss", idx, "image", url)}
+                      folder="deals"
+                      previewHeightClass="h-12 w-12"
+                    />
                   </div>
                 </div>
               ))}
@@ -379,16 +380,15 @@ export default function AdminHomepageManagerPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1">Banner Image URL</label>
-                    <div className="flex gap-3 items-center">
-                      <input
-                        type="text"
-                        value={brand.image}
-                        onChange={(e) => updateBannerList("topBrandsAndOffers", idx, "image", e.target.value)}
-                        className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                      />
-                      {brand.image && <img src={brand.image} alt="preview" className="h-10 w-16 object-cover rounded-lg border border-gray-200 shrink-0" />}
-                    </div>
+                    <HomepageImageField
+                      label="Promo Banner Image"
+                      recommendedSize="800 × 450 px"
+                      aspectRatioLabel="16:9 Banner"
+                      value={brand.image}
+                      onChange={(url) => updateBannerList("topBrandsAndOffers", idx, "image", url)}
+                      folder="brands"
+                      previewHeightClass="h-12 w-20"
+                    />
                   </div>
                 </div>
               ))}
@@ -449,16 +449,15 @@ export default function AdminHomepageManagerPage() {
                       />
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-[11px] font-bold text-gray-700 mb-1">Banner Image URL</label>
-                      <div className="flex gap-3 items-center">
-                        <input
-                          type="text"
-                          value={slide.image}
-                          onChange={(e) => updateBannerList("heroSlides", idx, "image", e.target.value)}
-                          className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                        />
-                        {slide.image && <img src={slide.image} alt="preview" className="h-10 w-24 object-cover rounded-lg border border-gray-200 shrink-0" />}
-                      </div>
+                      <HomepageImageField
+                        label="Hero Banner Image"
+                        recommendedSize="1920 × 550 px"
+                        aspectRatioLabel="Wide Landscape Banner"
+                        value={slide.image}
+                        onChange={(url) => updateBannerList("heroSlides", idx, "image", url)}
+                        folder="hero"
+                        previewHeightClass="h-12 w-32"
+                      />
                     </div>
                   </div>
                 </div>
@@ -493,20 +492,20 @@ export default function AdminHomepageManagerPage() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-[11px] font-bold text-gray-700 mb-1">Strip Image URL</label>
-                <div className="flex gap-3 items-center">
-                  <input
-                    type="text"
-                    value={config.stripBanner?.image || ""}
-                    onChange={(e) => setConfig({ ...config, stripBanner: { ...config.stripBanner, image: e.target.value } })}
-                    className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                  />
-                  {config.stripBanner?.image && <img src={config.stripBanner.image} alt="preview" className="h-10 w-28 object-contain rounded-lg border border-gray-200 shrink-0" />}
-                </div>
+                <HomepageImageField
+                  label="Promotional Strip Banner Image"
+                  recommendedSize="1920 × 250 px"
+                  aspectRatioLabel="Horizontal Strip Banner"
+                  value={config.stripBanner?.image || ""}
+                  onChange={(url) => setConfig({ ...config, stripBanner: { ...config.stripBanner, image: url } })}
+                  folder="strip"
+                  previewHeightClass="h-12 w-36"
+                />
               </div>
             </div>
           </div>
         )}
+
 
         {/* 5. LIMITED TIME OFFERS */}
         {activeTab === "limitedOffers" && (
@@ -596,20 +595,19 @@ export default function AdminHomepageManagerPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1">Artwork Image URL</label>
-                    <div className="flex gap-2 items-center">
-                      <input
-                        type="text"
-                        value={cat.image || ""}
-                        onChange={(e) => {
-                          const list = [...config.shopByCategories];
-                          list[idx] = { ...list[idx], image: e.target.value };
-                          setConfig({ ...config, shopByCategories: list });
-                        }}
-                        className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                      />
-                      {cat.image && <img src={cat.image} alt="preview" className="h-8 w-8 object-contain rounded-md border border-gray-200 shrink-0" />}
-                    </div>
+                    <HomepageImageField
+                      label="Category Artwork Image"
+                      recommendedSize="400 × 400 px"
+                      aspectRatioLabel="1:1 Square"
+                      value={cat.image || ""}
+                      onChange={(url) => {
+                        const list = [...config.shopByCategories];
+                        list[idx] = { ...list[idx], image: url };
+                        setConfig({ ...config, shopByCategories: list });
+                      }}
+                      folder="categories"
+                      previewHeightClass="h-10 w-10"
+                    />
                   </div>
                 </div>
               ))}
@@ -783,21 +781,23 @@ export default function AdminHomepageManagerPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1">Before Image URL</label>
-                    <input
-                      type="text"
+                    <HomepageImageField
+                      label="Before Photo Image"
+                      recommendedSize="1200 × 900 px"
+                      aspectRatioLabel="4:3 Skincare Ratio"
                       placeholder="e.g. /banners/before_skin.jpg"
                       value={config.beforeAfterSection?.beforeImage ?? ""}
-                      onChange={(e) =>
+                      onChange={(url) =>
                         setConfig({
                           ...config,
                           beforeAfterSection: {
                             ...(config.beforeAfterSection || DEFAULT_HOMEPAGE_CONFIG.beforeAfterSection!),
-                            beforeImage: e.target.value,
+                            beforeImage: url,
                           },
                         })
                       }
-                      className="w-full rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
+                      folder="before-after"
+                      previewHeightClass="h-12 w-16"
                     />
                   </div>
 
@@ -851,21 +851,23 @@ export default function AdminHomepageManagerPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-gray-700 mb-1">After Image URL</label>
-                    <input
-                      type="text"
+                    <HomepageImageField
+                      label="After Photo Image"
+                      recommendedSize="1200 × 900 px"
+                      aspectRatioLabel="4:3 Skincare Ratio"
                       placeholder="e.g. /banners/after_skin.jpg"
                       value={config.beforeAfterSection?.afterImage ?? ""}
-                      onChange={(e) =>
+                      onChange={(url) =>
                         setConfig({
                           ...config,
                           beforeAfterSection: {
                             ...(config.beforeAfterSection || DEFAULT_HOMEPAGE_CONFIG.beforeAfterSection!),
-                            afterImage: e.target.value,
+                            afterImage: url,
                           },
                         })
                       }
-                      className="w-full rounded-xl border border-emerald-200 px-3 py-2 text-xs font-mono focus:outline-none"
+                      folder="before-after"
+                      previewHeightClass="h-12 w-16"
                     />
                   </div>
 
@@ -1293,27 +1295,20 @@ export default function AdminHomepageManagerPage() {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-bold text-gray-700 mb-1">Custom Icon / Image URL (Optional)</label>
-                      <div className="flex gap-2 items-center">
-                        <input
-                          type="text"
-                          placeholder="e.g. /banners/icon.png"
-                          value={tp.imageUrl ?? ""}
-                          onChange={(e) => {
-                            const list = [...config.trustPillars];
-                            list[idx] = { ...list[idx], imageUrl: e.target.value };
-                            setConfig({ ...config, trustPillars: list });
-                          }}
-                          className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                        />
-                        {tp.imageUrl && (
-                          <img
-                            src={tp.imageUrl}
-                            alt="icon preview"
-                            className="h-8 w-8 object-contain rounded-md border border-gray-200 shrink-0 bg-pink-50 p-1"
-                          />
-                        )}
-                      </div>
+                      <HomepageImageField
+                        label="Custom Icon / Image (Optional)"
+                        recommendedSize="120 × 120 px"
+                        aspectRatioLabel="1:1 Transparent PNG/SVG"
+                        placeholder="e.g. /banners/icon.png"
+                        value={tp.imageUrl ?? ""}
+                        onChange={(url) => {
+                          const list = [...config.trustPillars];
+                          list[idx] = { ...list[idx], imageUrl: url };
+                          setConfig({ ...config, trustPillars: list });
+                        }}
+                        folder="trust"
+                        previewHeightClass="h-8 w-8"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1400,9 +1395,11 @@ export default function AdminHomepageManagerPage() {
                 </div>
 
                 <div>
-                  <ImageUploadDropzone
-                    label="Desktop Logo Image"
-                    description="Upload brand logo for desktop navbar (Hides text when image is uploaded)"
+                  <HomepageImageField
+                    label="Desktop Header Logo Image"
+                    recommendedSize="400 × 90 px"
+                    aspectRatioLabel="4:1 to 5:1 Transparent PNG/SVG"
+                    placeholder="e.g. /logos/brand-logo.png"
                     value={config.headerConfig?.logoImageUrl ?? ""}
                     onChange={(url) =>
                       setConfig({
@@ -1414,7 +1411,7 @@ export default function AdminHomepageManagerPage() {
                       })
                     }
                     folder="logos"
-                    previewShape="rounded"
+                    previewHeightClass="h-9 w-28"
                   />
                 </div>
 
@@ -1471,31 +1468,24 @@ export default function AdminHomepageManagerPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 mb-1">Mobile Logo Image URL (Optional - hides text when set)</label>
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="text"
-                      placeholder="e.g. /banners/mobile-logo.png"
-                      value={config.headerConfig?.mobileLogoImageUrl ?? ""}
-                      onChange={(e) =>
-                        setConfig({
-                          ...config,
-                          headerConfig: {
-                            ...(config.headerConfig || DEFAULT_HOMEPAGE_CONFIG.headerConfig),
-                            mobileLogoImageUrl: e.target.value,
-                          },
-                        })
-                      }
-                      className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                    />
-                    {(config.headerConfig?.mobileLogoImageUrl || config.headerConfig?.logoImageUrl) && (
-                      <img
-                        src={config.headerConfig.mobileLogoImageUrl || config.headerConfig.logoImageUrl}
-                        alt="mobile logo preview"
-                        className="h-8 max-h-8 w-auto max-w-20 object-contain rounded-md border border-gray-200 shrink-0 bg-gray-50 p-1"
-                      />
-                    )}
-                  </div>
+                  <HomepageImageField
+                    label="Mobile Top Bar Logo (Optional)"
+                    recommendedSize="280 × 70 px"
+                    aspectRatioLabel="4:1 Transparent PNG/SVG"
+                    placeholder="e.g. /banners/mobile-logo.png"
+                    value={config.headerConfig?.mobileLogoImageUrl ?? ""}
+                    onChange={(url) =>
+                      setConfig({
+                        ...config,
+                        headerConfig: {
+                          ...(config.headerConfig || DEFAULT_HOMEPAGE_CONFIG.headerConfig),
+                          mobileLogoImageUrl: url,
+                        },
+                      })
+                    }
+                    folder="logos"
+                    previewHeightClass="h-8 w-24"
+                  />
                 </div>
               </div>
             </div>
@@ -1532,31 +1522,24 @@ export default function AdminHomepageManagerPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 mb-1">Drawer Logo Image URL (Optional - hides text when set)</label>
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="text"
-                      placeholder="e.g. /banners/drawer-logo.png"
-                      value={config.headerConfig?.drawerLogoImageUrl ?? ""}
-                      onChange={(e) =>
-                        setConfig({
-                          ...config,
-                          headerConfig: {
-                            ...(config.headerConfig || DEFAULT_HOMEPAGE_CONFIG.headerConfig),
-                            drawerLogoImageUrl: e.target.value,
-                          },
-                        })
-                      }
-                      className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                    />
-                    {(config.headerConfig?.drawerLogoImageUrl || config.headerConfig?.mobileLogoImageUrl || config.headerConfig?.logoImageUrl) && (
-                      <img
-                        src={config.headerConfig.drawerLogoImageUrl || config.headerConfig.mobileLogoImageUrl || config.headerConfig.logoImageUrl}
-                        alt="drawer logo preview"
-                        className="h-8 max-h-8 w-auto max-w-20 object-contain rounded-md border border-gray-200 shrink-0 bg-gray-50 p-1"
-                      />
-                    )}
-                  </div>
+                  <HomepageImageField
+                    label="Mobile Menu Drawer Logo (Optional)"
+                    recommendedSize="280 × 70 px"
+                    aspectRatioLabel="4:1 Transparent PNG/SVG"
+                    placeholder="e.g. /banners/drawer-logo.png"
+                    value={config.headerConfig?.drawerLogoImageUrl ?? ""}
+                    onChange={(url) =>
+                      setConfig({
+                        ...config,
+                        headerConfig: {
+                          ...(config.headerConfig || DEFAULT_HOMEPAGE_CONFIG.headerConfig),
+                          drawerLogoImageUrl: url,
+                        },
+                      })
+                    }
+                    folder="logos"
+                    previewHeightClass="h-8 w-24"
+                  />
                 </div>
               </div>
             </div>
@@ -1735,10 +1718,10 @@ export default function AdminHomepageManagerPage() {
                       <label className="block text-[11px] font-bold text-gray-700">
                         Mega Menu Promo Banner (Column 4)
                       </label>
-                      <div className="grid gap-3 sm:grid-cols-3">
+                      <div className="grid gap-3 sm:grid-cols-2">
                         <input
                           type="text"
-                          placeholder="Promo Title"
+                          placeholder="Promo Title (e.g. FLAT 25% OFF)"
                           value={cat.promoBanner?.title || ""}
                           onChange={(e) => {
                             const newCats = [...(config.headerConfig?.navCategories || DEFAULT_HOMEPAGE_CONFIG.headerConfig.navCategories)];
@@ -1757,34 +1740,11 @@ export default function AdminHomepageManagerPage() {
                               },
                             });
                           }}
-                          className="rounded-lg border px-3 py-1.5 text-xs font-bold focus:outline-none"
+                          className="rounded-xl border px-3 py-2 text-xs font-bold focus:outline-none"
                         />
                         <input
                           type="text"
-                          placeholder="Promo Image URL"
-                          value={cat.promoBanner?.image || ""}
-                          onChange={(e) => {
-                            const newCats = [...(config.headerConfig?.navCategories || DEFAULT_HOMEPAGE_CONFIG.headerConfig.navCategories)];
-                            newCats[catIdx] = {
-                              ...newCats[catIdx],
-                              promoBanner: {
-                                ...(newCats[catIdx].promoBanner || { title: "", subtitle: "", href: "" }),
-                                image: e.target.value,
-                              },
-                            };
-                            setConfig({
-                              ...config,
-                              headerConfig: {
-                                ...(config.headerConfig || DEFAULT_HOMEPAGE_CONFIG.headerConfig),
-                                navCategories: newCats,
-                              },
-                            });
-                          }}
-                          className="rounded-lg border px-3 py-1.5 text-xs font-mono focus:outline-none"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Target URL"
+                          placeholder="Target URL (e.g. /products?brand=ponds)"
                           value={cat.promoBanner?.href || ""}
                           onChange={(e) => {
                             const newCats = [...(config.headerConfig?.navCategories || DEFAULT_HOMEPAGE_CONFIG.headerConfig.navCategories)];
@@ -1803,8 +1763,36 @@ export default function AdminHomepageManagerPage() {
                               },
                             });
                           }}
-                          className="rounded-lg border px-3 py-1.5 text-xs font-mono focus:outline-none"
+                          className="rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
                         />
+                        <div className="sm:col-span-2">
+                          <HomepageImageField
+                            label="Promo Banner Poster Image"
+                            recommendedSize="400 × 500 px"
+                            aspectRatioLabel="4:5 Portrait Card"
+                            placeholder="e.g. /banners/megamenu_promo.jpg"
+                            value={cat.promoBanner?.image || ""}
+                            onChange={(url) => {
+                              const newCats = [...(config.headerConfig?.navCategories || DEFAULT_HOMEPAGE_CONFIG.headerConfig.navCategories)];
+                              newCats[catIdx] = {
+                                ...newCats[catIdx],
+                                promoBanner: {
+                                  ...(newCats[catIdx].promoBanner || { title: "", subtitle: "", href: "" }),
+                                  image: url,
+                                },
+                              };
+                              setConfig({
+                                ...config,
+                                headerConfig: {
+                                  ...(config.headerConfig || DEFAULT_HOMEPAGE_CONFIG.headerConfig),
+                                  navCategories: newCats,
+                                },
+                              });
+                            }}
+                            folder="megamenu"
+                            previewHeightClass="h-14 w-12"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1928,25 +1916,16 @@ export default function AdminHomepageManagerPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                    Footer Logo Image URL (Optional - hides text when set)
-                  </label>
-                  <div className="flex gap-2 items-center">
-                    <input
-                      type="text"
-                      placeholder="e.g. /banners/footer-logo.png (defaults to header logo)"
-                      value={config.footerLogoImageUrl ?? ""}
-                      onChange={(e) => setConfig({ ...config, footerLogoImageUrl: e.target.value })}
-                      className="flex-1 rounded-xl border px-3 py-2 text-xs font-mono focus:outline-none"
-                    />
-                    {(config.footerLogoImageUrl || config.headerConfig?.logoImageUrl) && (
-                      <img
-                        src={config.footerLogoImageUrl || config.headerConfig?.logoImageUrl}
-                        alt="footer logo preview"
-                        className="h-8 max-h-8 w-auto max-w-20 object-contain rounded-md border border-gray-200 shrink-0 bg-slate-900 p-1"
-                      />
-                    )}
-                  </div>
+                  <HomepageImageField
+                    label="Footer Brand Logo Image (Optional)"
+                    recommendedSize="320 × 80 px"
+                    aspectRatioLabel="4:1 Transparent PNG/SVG"
+                    placeholder="e.g. /banners/footer-logo.png"
+                    value={config.footerLogoImageUrl ?? ""}
+                    onChange={(url) => setConfig({ ...config, footerLogoImageUrl: url })}
+                    folder="logos"
+                    previewHeightClass="h-8 w-24"
+                  />
                 </div>
 
                 <div className="sm:col-span-2">
