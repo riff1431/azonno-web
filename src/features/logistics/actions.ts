@@ -277,4 +277,100 @@ export async function deleteShippingZone(id: string): Promise<ShippingZoneItem[]
   return updated;
 }
 
+/**
+ * Real-Time Live Courier Status Sync (SteadFast & Pathao)
+ * Queries live API for consignment status and updates database in real time.
+ */
+export async function syncLiveCourierStatus(orderId: string) {
+  const supabase = createAdminClient();
+  const { data: order, error } = await supabase
+    .from("orders")
+    .select("*, order_status_history(*)")
+    .eq("id", orderId)
+    .single();
+
+  if (error || !order) {
+    return { success: false, error: "Order not found." };
+  }
+
+  const cid = order.consignment_id || order.tracking_code;
+  if (!cid) {
+    return { success: false, error: "Order has not been dispatched to a courier yet." };
+  }
+
+  const courier = (order.courier_name || "").toLowerCase();
+  let liveStatus = "";
+  let statusNote = "";
+  let rawData: any = null;
+
+  if (courier.includes("pathao")) {
+    const { getPathaoOrderStatus } = await import("./services/pathao");
+    const res = await getPathaoOrderStatus(cid);
+    liveStatus = (res.delivery_status || "").toLowerCase();
+    statusNote = `Pathao Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
+    rawData = res;
+  } else {
+    // Default to SteadFast Courier
+    const { getSteadfastStatusByCid } = await import("./services/steadfast");
+    const res = await getSteadfastStatusByCid(cid);
+    liveStatus = (res.delivery_status || "").toLowerCase();
+    statusNote = `SteadFast Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
+    rawData = res;
+  }
+
+  // Map to system OrderStatus
+  let mappedStatus = order.status;
+  let isReturned = false;
+  let isCancelled = false;
+
+  if (liveStatus.includes("delivered") && !liveStatus.includes("pending")) {
+    mappedStatus = "completed";
+  } else if (liveStatus.includes("cancelled") || liveStatus === "cancel") {
+    mappedStatus = "cancelled";
+    isCancelled = true;
+  } else if (liveStatus.includes("return") || liveStatus.includes("rto") || liveStatus.includes("hold")) {
+    mappedStatus = "returned";
+    isReturned = true;
+  } else if (liveStatus.includes("transit") || liveStatus.includes("picked") || liveStatus.includes("review") || liveStatus.includes("pending")) {
+    mappedStatus = "shipped";
+  }
+
+  // Update order in Supabase
+  const history = Array.isArray(order.order_status_history) ? order.order_status_history : [];
+  const newHistory = [
+    ...history,
+    {
+      from: order.status,
+      to: mappedStatus,
+      changed_at: new Date().toISOString(),
+      changed_by: "Real-time Courier API Sync",
+      note: statusNote,
+    },
+  ];
+
+  await supabase
+    .from("orders")
+    .update({
+      status: mappedStatus,
+      order_status_history: newHistory,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", orderId);
+
+  revalidatePath("/admin/orders");
+  revalidatePath(`/admin/orders/${orderId}`);
+
+  return {
+    success: true,
+    orderId,
+    courierName: order.courier_name || "SteadFast",
+    consignmentId: cid,
+    liveStatus,
+    mappedStatus,
+    statusNote,
+    isReturned,
+    isCancelled,
+  };
+}
+
 

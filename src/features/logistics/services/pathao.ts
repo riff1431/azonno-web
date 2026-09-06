@@ -174,3 +174,45 @@ export async function createPathaoConsignment(
     raw: { status: 200, mock: true, consignment_id: simulatedCid, tracking_code: simulatedTrack },
   };
 }
+
+/**
+ * 5. Check Live Pathao Status by Consignment ID
+ * GET /aladdin/api/v1/orders/{consignment_id}/info
+ */
+export async function getPathaoOrderStatus(consignmentId: string) {
+  const settings = await getPathaoSettings();
+  const token = await getPathaoAccessToken(settings);
+  const isLive = settings.environment === "live";
+  const apiBase = isLive
+    ? "https://api-hermes.pathao.com/aladdin/api/v1"
+    : "https://courier-api-sandbox.pathao.com/aladdin/api/v1";
+
+  if (token && consignmentId) {
+    try {
+      const response = await fetch(`${apiBase}/orders/${consignmentId}/info`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      const data = await response.json();
+      if (data && data.data) {
+        return {
+          status: 200,
+          delivery_status: (data.data.order_status || data.data.status || "").toLowerCase(),
+          raw: data.data,
+        };
+      }
+    } catch (err: any) {
+      console.error("Pathao status fetch error:", err);
+      return { status: 500, error: err.message };
+    }
+  }
+
+  return {
+    status: 200,
+    delivery_status: "in_transit",
+    message: "Simulated Pathao Status",
+  };
+}

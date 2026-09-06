@@ -37,10 +37,11 @@ import {
   RotateCcw,
   MapPin,
   CornerDownLeft,
+  RefreshCw,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { updateOrderStatus, createOrder } from "./actions";
-import { bookCourierDelivery } from "@/features/logistics/actions";
+import { bookCourierDelivery, syncLiveCourierStatus } from "@/features/logistics/actions";
 import { addBlacklistEntry } from "@/features/fraud/actions";
 import { Button } from "@/components/shared/ui/button";
 import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
@@ -59,6 +60,8 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [syncingCourierId, setSyncingCourierId] = useState<string | null>(null);
+  const [bulkSyncLoading, setBulkSyncLoading] = useState(false);
   const [bannerMsg, setBannerMsg] = useState<{ text: string; isError: boolean } | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -242,6 +245,86 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     }
   };
 
+  // 1.2 Real-Time Live Courier Status Sync (SteadFast & Pathao API)
+  const handleSyncSingleCourier = async (orderId: string) => {
+    setSyncingCourierId(orderId);
+    try {
+      const res = await syncLiveCourierStatus(orderId);
+      if (res.success) {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  status: res.mappedStatus,
+                  is_courier_returned: res.isReturned,
+                  is_courier_cancelled: res.isCancelled,
+                  courier_webhook_note: res.statusNote,
+                }
+              : o
+          )
+        );
+        setBannerMsg({
+          text: `Live Sync for Order #${orderId.slice(0, 8)}: ${res.statusNote}`,
+          isError: false,
+        });
+      } else {
+        setBannerMsg({
+          text: res.error || "Failed to sync live status from courier API.",
+          isError: true,
+        });
+      }
+    } catch (err: any) {
+      setBannerMsg({ text: err.message || "Courier sync failed", isError: true });
+    } finally {
+      setSyncingCourierId(null);
+      setTimeout(() => setBannerMsg(null), 4500);
+    }
+  };
+
+  // 1.3 Bulk Real-Time Courier Sync for all Selected Dispatched Orders
+  const handleBulkSyncCouriers = async () => {
+    const targets = orders.filter(
+      (o) => selectedIds.includes(o.id) && Boolean(o.consignment_id || o.tracking_code)
+    );
+    if (targets.length === 0) {
+      setBannerMsg({ text: "No dispatched orders in selection to sync.", isError: true });
+      setTimeout(() => setBannerMsg(null), 3500);
+      return;
+    }
+
+    setBulkSyncLoading(true);
+    let count = 0;
+    for (const ord of targets) {
+      try {
+        const res = await syncLiveCourierStatus(ord.id);
+        if (res.success) {
+          setOrders((prev) =>
+            prev.map((o) =>
+              o.id === ord.id
+                ? {
+                    ...o,
+                    status: res.mappedStatus,
+                    is_courier_returned: res.isReturned,
+                    is_courier_cancelled: res.isCancelled,
+                    courier_webhook_note: res.statusNote,
+                  }
+                : o
+            )
+          );
+          count++;
+        }
+      } catch (e) {
+        console.warn("Bulk sync error for order:", ord.id, e);
+      }
+    }
+    setBulkSyncLoading(false);
+    setBannerMsg({
+      text: `Live Status Sync completed: Updated ${count} parcels from Courier APIs!`,
+      isError: false,
+    });
+    setTimeout(() => setBannerMsg(null), 4500);
+  };
 
   // 2. 1-Click Courier Dispatch (SteadFast or Pathao)
   const handleOneClickDispatch = async (
@@ -802,7 +885,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
             <div className="flex flex-wrap items-center gap-2">
               <Button
                 onClick={() => handleBulkCourierDispatch("steadfast")}
-                disabled={bulkLoading}
+                disabled={bulkLoading || bulkSyncLoading}
                 size="sm"
                 className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-sm"
               >
@@ -812,7 +895,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
 
               <Button
                 onClick={() => handleBulkCourierDispatch("pathao")}
-                disabled={bulkLoading}
+                disabled={bulkLoading || bulkSyncLoading}
                 size="sm"
                 className="bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-xl shadow-sm"
               >
@@ -820,8 +903,20 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               </Button>
 
               <Button
+                onClick={handleBulkSyncCouriers}
+                disabled={bulkLoading || bulkSyncLoading}
+                size="sm"
+                variant="outline"
+                className="text-xs font-bold rounded-xl border-emerald-600 text-emerald-300 hover:bg-emerald-950/60"
+                title="Query live delivery status from SteadFast/Pathao API for all selected parcels"
+              >
+                {bulkSyncLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1 text-emerald-400" /> : <RefreshCw className="h-3.5 w-3.5 mr-1 text-emerald-400" />}
+                Sync Live Status
+              </Button>
+
+              <Button
                 onClick={() => handleBulkStatusUpdate("confirmed")}
-                disabled={bulkLoading}
+                disabled={bulkLoading || bulkSyncLoading}
                 size="sm"
                 variant="outline"
                 className="text-xs font-bold rounded-xl border-gray-700 text-gray-200 hover:bg-gray-800"
@@ -832,7 +927,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
 
               <button
                 onClick={() => setSelectedIds([])}
-                disabled={bulkLoading}
+                disabled={bulkLoading || bulkSyncLoading}
                 className="text-xs text-gray-400 hover:text-white font-bold ml-2 underline"
               >
                 Clear
@@ -1310,33 +1405,56 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         ) : null}
                       </td>
 
-                      {/* 1-Click Courier Dispatch Buttons with Exact Layout Alignment */}
+                      {/* 1-Click Courier Dispatch & Real-time API Sync */}
                       <td className="px-4 py-3.5 text-center whitespace-nowrap">
                         {(() => {
+                          const isSyncing = syncingCourierId === ord.id;
                           if (isRet) {
                             return (
-                              <a
-                                href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment || ord.tracking_code}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-1.5 text-rose-700 font-bold text-xs bg-rose-50 hover:bg-rose-100 h-7 px-3 rounded-xl border border-rose-200 transition-colors"
-                                title="Parcel returned back from courier. Click to view live tracking."
-                              >
-                                <RotateCcw className="h-3.5 w-3.5 text-rose-600 shrink-0" />
-                                <span>Returned ({courier.split(" ")[0]})</span>
-                                <ExternalLink className="h-2.5 w-2.5 text-rose-600 opacity-60" />
-                              </a>
+                              <div className="flex items-center justify-center gap-1">
+                                <a
+                                  href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment || ord.tracking_code}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center justify-center gap-1 text-rose-700 font-bold text-xs bg-rose-50 hover:bg-rose-100 h-7 px-2.5 rounded-xl border border-rose-200 transition-colors"
+                                  title="Parcel returned back from courier. Click to view live tracking."
+                                >
+                                  <RotateCcw className="h-3.5 w-3.5 text-rose-600 shrink-0" />
+                                  <span>RTO ({courier.split(" ")[0]})</span>
+                                  <ExternalLink className="h-2.5 w-2.5 text-rose-600 opacity-60" />
+                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSyncSingleCourier(ord.id)}
+                                  disabled={isSyncing}
+                                  className="h-7 w-7 flex items-center justify-center rounded-xl border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 transition-colors shadow-2xs"
+                                  title="Sync Real-Time Status from Courier API"
+                                >
+                                  <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                </button>
+                              </div>
                             );
                           }
 
                           if (isCanc) {
                             return (
-                              <div
-                                className="inline-flex items-center justify-center gap-1 text-amber-800 font-bold text-[11px] bg-amber-50 h-7 px-3 rounded-xl border border-amber-200"
-                                title={`Cancelled by courier: ${webhookNote || "Cancelled"}`}
-                              >
-                                <Ban className="h-3 w-3 text-amber-600" />
-                                <span>Cancelled ({courier.split(" ")[0]})</span>
+                              <div className="flex items-center justify-center gap-1">
+                                <div
+                                  className="inline-flex items-center justify-center gap-1 text-amber-800 font-bold text-[11px] bg-amber-50 h-7 px-2.5 rounded-xl border border-amber-200"
+                                  title={`Cancelled by courier: ${webhookNote || "Cancelled"}`}
+                                >
+                                  <Ban className="h-3 w-3 text-amber-600" />
+                                  <span>Cancelled ({courier.split(" ")[0]})</span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSyncSingleCourier(ord.id)}
+                                  disabled={isSyncing}
+                                  className="h-7 w-7 flex items-center justify-center rounded-xl border border-amber-200 bg-white hover:bg-amber-50 text-amber-700 transition-colors shadow-2xs"
+                                  title="Sync Real-Time Status from Courier API"
+                                >
+                                  <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                </button>
                               </div>
                             );
                           }
@@ -1346,18 +1464,30 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           const statusLabel = ord.status === "on-hold" ? "On Hold" : ord.status === "failed" ? "Failed/RTO" : ord.status;
 
                           if (isDispatched) {
+                            const isDelivered = ord.status === "completed" || ord.status === "delivered";
                             return (
-                              <a
-                                href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment || ord.tracking_code}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center gap-1.5 text-emerald-700 font-bold text-xs bg-emerald-50 hover:bg-emerald-100 h-7 px-3 rounded-xl border border-emerald-200 transition-colors"
-                                title="View Courier Live Tracking"
-                              >
-                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                                <span>Dispatched ({courier.split(" ")[0]})</span>
-                                <ExternalLink className="h-2.5 w-2.5 text-emerald-600 opacity-60" />
-                              </a>
+                              <div className="flex items-center justify-center gap-1">
+                                <a
+                                  href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment || ord.tracking_code}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center justify-center gap-1.5 text-emerald-700 font-bold text-xs bg-emerald-50 hover:bg-emerald-100 h-7 px-2.5 rounded-xl border border-emerald-200 transition-colors"
+                                  title="View Courier Live Tracking"
+                                >
+                                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                                  <span>{isDelivered ? "Delivered" : "Dispatched"} ({courier.split(" ")[0]})</span>
+                                  <ExternalLink className="h-2.5 w-2.5 text-emerald-600 opacity-60" />
+                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSyncSingleCourier(ord.id)}
+                                  disabled={isSyncing}
+                                  className="h-7 w-7 flex items-center justify-center rounded-xl border border-emerald-200 bg-white hover:bg-emerald-50 text-emerald-700 transition-colors shadow-2xs"
+                                  title="Sync Real-Time Status from Courier API"
+                                >
+                                  <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                </button>
+                              </div>
                             );
                           }
 
@@ -1674,16 +1804,27 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           <RotateCcw className="h-3.5 w-3.5 text-rose-600 animate-pulse" />
                           <span>Returned from Courier (RTO)</span>
                         </span>
-                        {consignment && (
-                          <a
-                            href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-mono text-[10px] text-rose-700 underline font-bold"
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleSyncSingleCourier(ord.id)}
+                            disabled={syncingCourierId === ord.id}
+                            className="inline-flex items-center gap-1 bg-white border border-rose-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-rose-800 hover:bg-rose-100"
+                            title="Query live delivery status from Courier API"
                           >
-                            {consignment} ↗
-                          </a>
-                        )}
+                            <RefreshCw className={`h-2.5 w-2.5 ${syncingCourierId === ord.id ? "animate-spin text-[#e91e63]" : ""}`} />
+                            <span>Sync API</span>
+                          </button>
+                          {consignment && (
+                            <a
+                              href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="font-mono text-[10px] text-rose-700 underline font-bold"
+                            >
+                              {consignment} ↗
+                            </a>
+                          )}
+                        </div>
                       </div>
                       {webhookNote && (
                         <p className="text-[10px] text-rose-700 font-medium">
@@ -1698,9 +1839,20 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           <Ban className="h-3.5 w-3.5 text-amber-600" />
                           <span>Cancelled via Courier Webhook</span>
                         </span>
-                        {consignment && (
-                          <span className="font-mono text-[10px] text-amber-700 font-bold">{consignment}</span>
-                        )}
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleSyncSingleCourier(ord.id)}
+                            disabled={syncingCourierId === ord.id}
+                            className="inline-flex items-center gap-1 bg-white border border-amber-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-amber-800 hover:bg-amber-100"
+                            title="Query live delivery status from Courier API"
+                          >
+                            <RefreshCw className={`h-2.5 w-2.5 ${syncingCourierId === ord.id ? "animate-spin text-[#e91e63]" : ""}`} />
+                            <span>Sync API</span>
+                          </button>
+                          {consignment && (
+                            <span className="font-mono text-[10px] text-amber-700 font-bold">{consignment}</span>
+                          )}
+                        </div>
                       </div>
                       {webhookNote && (
                         <p className="text-[10px] text-amber-700 font-medium">
@@ -1717,15 +1869,26 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           {consignment}
                         </span>
                       </div>
-                      <a
-                        href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center gap-0.5"
-                      >
-                        <span>Track</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleSyncSingleCourier(ord.id)}
+                          disabled={syncingCourierId === ord.id}
+                          className="inline-flex items-center gap-1 bg-white border border-emerald-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-emerald-800 hover:bg-emerald-100"
+                          title="Query live delivery status from Courier API"
+                        >
+                          <RefreshCw className={`h-2.5 w-2.5 ${syncingCourierId === ord.id ? "animate-spin text-[#e91e63]" : ""}`} />
+                          <span>Sync API</span>
+                        </button>
+                        <a
+                          href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center gap-0.5"
+                        >
+                          <span>Track</span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
                     </div>
                   ) : null}
 
