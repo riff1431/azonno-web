@@ -392,54 +392,7 @@ export default function OrderAutomationSettingsClient({
         </div>
 
         {/* ============================================================ */}
-        {/* 2. AUTOMATION & DISPATCH STRATEGY RULES                      */}
-        {/* ============================================================ */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
-          <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-            <Radio className="h-4 w-4 text-[#e91e63]" /> Dispatch Strategy & Auto-Booking Rules
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl border border-gray-200 bg-gray-50/50 space-y-2">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.autoDispatchOnConfirm}
-                  onChange={(e) => setForm({ ...form, autoDispatchOnConfirm: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
-                />
-                <div>
-                  <span className="font-bold text-gray-900 block">Auto-Book Consignment on 'Confirmed'</span>
-                  <span className="text-[11px] text-gray-500">
-                    Immediately calls the courier API to generate real tracking code upon order confirmation.
-                  </span>
-                </div>
-              </label>
-            </div>
-
-            <div>
-              <label className="block font-bold text-gray-800 mb-1">
-                Default Courier Routing Strategy
-              </label>
-              <select
-                value={form.defaultCourier}
-                onChange={(e) => setForm({ ...form, defaultCourier: e.target.value as any })}
-                className="w-full rounded-xl border px-3.5 py-2.5 text-xs font-bold text-gray-900 focus:outline-none"
-              >
-                <option value="smart">Smart Route (Inside Dhaka &rarr; Pathao, Outside &rarr; SteadFast)</option>
-                <option value="steadfast">SteadFast Courier (Priority Gateway)</option>
-                <option value="pathao">Pathao Express (Priority Gateway)</option>
-                <option value="manual">Manual Selection (Choose per Order Dispatch)</option>
-              </select>
-              <p className="text-[10px] text-gray-500 mt-1">
-                Controls which courier API endpoint is automatically invoked during 1-click & auto dispatches.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ============================================================ */}
-        {/* 3. RETURNS (RTO) & INVENTORY SYNCHRONIZATION                */}
+        {/* 2. RETURNS (RTO) & INVENTORY SYNCHRONIZATION                */}
         {/* ============================================================ */}
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
           <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
@@ -467,7 +420,7 @@ export default function OrderAutomationSettingsClient({
         </div>
 
         {/* ============================================================ */}
-        {/* 4. POST-PURCHASE & REPLENISHMENT AUTOMATION                  */}
+        {/* 3. POST-PURCHASE & REPLENISHMENT AUTOMATION                  */}
         {/* ============================================================ */}
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
           <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
