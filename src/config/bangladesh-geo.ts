@@ -7,7 +7,7 @@ export interface DivisionInfo {
   name: string;
   districts: {
     name: string;
-    zone: "inside_dhaka" | "sub_dhaka" | "outside_dhaka";
+    zone: "inside_dhaka" | "outside_dhaka";
     thanas: string[];
   }[];
 }
@@ -48,18 +48,18 @@ export const BD_GEO_HIERARCHY: DivisionInfo[] = [
       },
       {
         name: "Gazipur",
-        zone: "sub_dhaka",
+        zone: "outside_dhaka",
         thanas: ["Gazipur Sadar", "Tongi", "Kaliakair", "Kapasia", "Sreepur", "Kaliganj"],
       },
       {
         name: "Narayanganj",
-        zone: "sub_dhaka",
+        zone: "outside_dhaka",
         thanas: ["Narayanganj Sadar", "Bandar", "Fatullah", "Siddhirganj", "Sonargaon", "Rupganj", "Araihazar"],
       },
       {
         name: "Savar & Keraniganj",
-        zone: "sub_dhaka",
-        thanas: ["Savar", "Ashulia", "Keraniganj", "Dhamrai", "Hemayetpur"],
+        zone: "outside_dhaka",
+        thanas: ["Savar Sadar", "Ashulia", "Keraniganj Sadar", "Dhamrai", "Nawabganj", "Dohar"],
       },
       {
         name: "Faridpur",
@@ -406,32 +406,14 @@ export const BD_GEO_HIERARCHY: DivisionInfo[] = [
 ];
 
 /**
- * Determine dynamic shipping zone given district name
+ * Determine dynamic shipping zone given district name:
+ * Strictly "inside_dhaka" (Dhaka City) vs "outside_dhaka" (All other districts)
  */
-export function getShippingZoneByDistrict(districtName: string): "inside_dhaka" | "sub_dhaka" | "outside_dhaka" {
-  const normalized = districtName.trim().toLowerCase();
+export function getShippingZoneByDistrict(districtName: string): "inside_dhaka" | "outside_dhaka" {
+  const normalized = (districtName || "").trim().toLowerCase();
   
   if (normalized.includes("dhaka city") || normalized === "dhaka") {
     return "inside_dhaka";
-  }
-  
-  if (
-    normalized.includes("gazipur") ||
-    normalized.includes("tongi") ||
-    normalized.includes("narayanganj") ||
-    normalized.includes("savar") ||
-    normalized.includes("keraniganj") ||
-    normalized.includes("ashulia")
-  ) {
-    return "sub_dhaka";
-  }
-
-  for (const div of BD_GEO_HIERARCHY) {
-    for (const dist of div.districts) {
-      if (dist.name.toLowerCase() === normalized) {
-        return dist.zone;
-      }
-    }
   }
 
   return "outside_dhaka";

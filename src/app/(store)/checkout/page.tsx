@@ -383,9 +383,7 @@ export default function CheckoutPage() {
           method:
             currentZone === "inside_dhaka"
               ? "Inside Dhaka Express (24-48h)"
-              : currentZone === "sub_dhaka"
-              ? "Dhaka Suburbs Courier"
-              : "Nationwide Courier (3-5d)",
+              : "Outside Dhaka Courier (3-5d)",
           amount: shippingFee,
         },
         couponCode: coupon?.code || null,
@@ -1165,7 +1163,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between text-text-secondary">
                 <span className="flex items-center gap-1">
                   <Truck className="h-3.5 w-3.5 text-text-muted" />
-                  {t("checkout", "deliveryFee")} ({currentZone === "inside_dhaka" ? t("checkout", "insideDhaka") : currentZone === "sub_dhaka" ? (language === "bn" ? "ঢাকা সাব-এরিয়া" : "Dhaka Suburbs") : t("checkout", "outsideDhaka")})
+                  {t("checkout", "deliveryFee")} ({currentZone === "inside_dhaka" ? t("checkout", "insideDhaka") : t("checkout", "outsideDhaka")})
                 </span>
                 <span className="font-mono font-bold">
                   {isFreeShipping ? (
