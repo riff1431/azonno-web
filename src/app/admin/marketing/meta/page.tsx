@@ -33,7 +33,6 @@ import {
   getMarketingAnalyticsSettings,
   saveMarketingAnalyticsSettings,
   testMetaCapiDiagnostic,
-  simulateFullEmqPurchaseTest,
   type MarketingAnalyticsSettings,
 } from "@/features/marketing/meta-actions";
 import {
@@ -49,7 +48,6 @@ export default function AdminMetaSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [testingCapi, setTestingCapi] = useState(false);
   const [testingTikTok, setTestingTikTok] = useState(false);
-  const [runningEmqSim, setRunningEmqSim] = useState(false);
   const [copiedFeed, setCopiedFeed] = useState(false);
 
   const [formData, setFormData] = useState<MarketingAnalyticsSettings>({
@@ -89,15 +87,6 @@ export default function AdminMetaSettingsPage() {
     requestId?: string;
   } | null>(null);
 
-  const [simTestParams, setSimTestParams] = useState({
-    customerName: "Tanvir Ahmed",
-    phone: "01712345678",
-    email: "tanvir.ahmed@example.com",
-    city: "Dhaka",
-    total: 2450,
-  });
-
-  const [simResult, setSimResult] = useState<any>(null);
 
   useEffect(() => {
     Promise.all([getMarketingAnalyticsSettings(), getTikTokSettings()]).then(
@@ -192,31 +181,6 @@ export default function AdminMetaSettingsPage() {
       });
     } finally {
       setTestingTikTok(false);
-    }
-  };
-
-  const handleRunEmqSimulation = async () => {
-    setRunningEmqSim(true);
-    setSimResult(null);
-
-    try {
-      const res = await simulateFullEmqPurchaseTest({
-        metaTestCode: formData.meta_test_event_code,
-        tiktokTestCode: tiktokData.tiktok_test_event_code,
-        customerName: simTestParams.customerName,
-        phone: simTestParams.phone,
-        email: simTestParams.email,
-        city: simTestParams.city,
-        total: simTestParams.total,
-      });
-      setSimResult(res);
-    } catch (err: any) {
-      setSimResult({
-        success: false,
-        error: err.message || "Simulation failed",
-      });
-    } finally {
-      setRunningEmqSim(false);
     }
   };
 
@@ -891,226 +855,6 @@ export default function AdminMetaSettingsPage() {
                   </label>
                 </div>
               </div>
-            </div>
-
-            {/* 2. EMQ 9.0+ Parameter Compliance Matrix */}
-            <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
-              <div className="border-b border-border pb-3 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                    EMQ 9.0+ Parameter Compliance Matrix
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Official Meta &amp; TikTok match quality parameters automatically captured and hashed for every order.
-                  </p>
-                </div>
-                <div className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                  100% SHA-256 Compliant
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                {/* Meta 13 Parameters */}
-                <div className="rounded-2xl border border-blue-100 bg-blue-50/20 p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-blue-900 flex items-center gap-1">
-                      <Sparkles className="h-3.5 w-3.5 text-blue-600" />
-                      Meta CAPI (13 Parameters)
-                    </span>
-                    <span className="text-[10px] font-black bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                      EMQ 9.0+ Target
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      "em (Email)",
-                      "ph (Phone E.164)",
-                      "fn (First Name)",
-                      "ln (Last Name)",
-                      "ct (City/District)",
-                      "st (State/Division)",
-                      "zp (Zip Code)",
-                      "country (BD)",
-                      "external_id",
-                      "fbp (Browser Cookie)",
-                      "fbc (Meta Click ID)",
-                      "client_ip_address",
-                      "client_user_agent",
-                    ].map((p, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1 bg-white border border-blue-200 text-blue-900 px-2 py-1 rounded-lg text-[11px] font-medium shadow-2xs"
-                      >
-                        <CheckCircle className="h-3 w-3 text-emerald-500" />
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* TikTok 7 Parameters */}
-                <div className="rounded-2xl border border-purple-100 bg-purple-50/20 p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-purple-900 flex items-center gap-1">
-                      <Video className="h-3.5 w-3.5 text-purple-600" />
-                      TikTok Events API (7 Parameters)
-                    </span>
-                    <span className="text-[10px] font-black bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
-                      Match Rate: High
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      "email (SHA-256)",
-                      "phone_number (E.164)",
-                      "external_id (User ID)",
-                      "ttclid (TikTok Click ID)",
-                      "ttp (TikTok Pixel Cookie)",
-                      "ip (Client IP Address)",
-                      "user_agent (Client UA)",
-                    ].map((p, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1 bg-white border border-purple-200 text-purple-900 px-2 py-1 rounded-lg text-[11px] font-medium shadow-2xs"
-                      >
-                        <CheckCircle className="h-3 w-3 text-emerald-500" />
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Live EMQ Simulator & Test Dispatcher */}
-            <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
-              <div className="border-b border-border pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-amber-500" />
-                    Live EMQ 9.0+ Full-Funnel Purchase Diagnostic Simulator
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Simulate an order purchase with all 13 Meta and 7 TikTok advanced parameters to inspect exact hashes and verify live API acceptance.
-                  </p>
-                </div>
-
-                <Button
-                  type="button"
-                  onClick={handleRunEmqSimulation}
-                  disabled={runningEmqSim || !formData.meta_capi_token}
-                  className="bg-gray-900 hover:bg-black text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
-                >
-                  <PlayCircle className={`h-3.5 w-3.5 mr-1.5 ${runningEmqSim ? "animate-spin" : ""}`} />
-                  {runningEmqSim ? "Executing Simulation..." : "⚡ Run Live EMQ 9.0+ Test"}
-                </Button>
-              </div>
-
-              {/* Input Simulator Parameters */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Customer Name</label>
-                  <input
-                    type="text"
-                    value={simTestParams.customerName}
-                    onChange={(e) => setSimTestParams({ ...simTestParams, customerName: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-1.5 font-medium text-xs focus:outline-none focus:ring-1 focus:ring-[#e91e63]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">BD Phone</label>
-                  <input
-                    type="text"
-                    value={simTestParams.phone}
-                    onChange={(e) => setSimTestParams({ ...simTestParams, phone: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-1.5 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#e91e63]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">Email</label>
-                  <input
-                    type="text"
-                    value={simTestParams.email}
-                    onChange={(e) => setSimTestParams({ ...simTestParams, email: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#e91e63]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-gray-700 mb-1">City / District</label>
-                  <input
-                    type="text"
-                    value={simTestParams.city}
-                    onChange={(e) => setSimTestParams({ ...simTestParams, city: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#e91e63]"
-                  />
-                </div>
-              </div>
-
-              {/* Simulation Output Card */}
-              {simResult && (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 space-y-4 animate-in fade-in-0">
-                  <div className="flex items-center justify-between border-b border-emerald-200/60 pb-3">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                      <div>
-                        <div className="text-xs font-bold text-emerald-900">
-                          EMQ 9.0+ Full-Funnel Purchase Simulation Dispatched!
-                        </div>
-                        <div className="text-[11px] text-emerald-700">
-                          Meta Graph API v21.0 &amp; TikTok Events API v1.3 Verified
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-[11px] font-mono text-gray-600">
-                      {simResult.details?.meta?.fbTraceId && (
-                        <span className="bg-white px-2 py-1 rounded-md border border-blue-200 text-blue-800">
-                          Meta Trace: {simResult.details.meta.fbTraceId}
-                        </span>
-                      )}
-                      {simResult.details?.tiktok?.requestId && (
-                        <span className="bg-white px-2 py-1 rounded-md border border-purple-200 text-purple-800">
-                          TikTok Req: {simResult.details.tiktok.requestId}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Dispatched Parameters Table */}
-                  <div className="space-y-2">
-                    <div className="text-xs font-bold text-gray-900 flex items-center justify-between">
-                      <span>Dispatched Meta CAPI 13 Advanced Parameters (SHA-256):</span>
-                      <span className="text-[11px] text-emerald-700 font-black">Score: 10/10 Excellent</span>
-                    </div>
-
-                    <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
-                      <table className="w-full text-left text-[11px]">
-                        <thead className="bg-gray-50 text-gray-600 border-b border-gray-200">
-                          <tr>
-                            <th className="px-3 py-2 font-bold">Parameter Key</th>
-                            <th className="px-3 py-2 font-bold">Raw Value</th>
-                            <th className="px-3 py-2 font-bold">Processed / SHA-256 Hash</th>
-                            <th className="px-3 py-2 font-bold">Validation</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100 font-mono">
-                          {simResult.parametersDispatched?.meta_parameters?.map((p: any, idx: number) => (
-                            <tr key={idx} className="hover:bg-gray-50">
-                              <td className="px-3 py-1.5 font-bold text-blue-900">{p.key}</td>
-                              <td className="px-3 py-1.5 text-gray-700 truncate max-w-[120px]">{p.raw}</td>
-                              <td className="px-3 py-1.5 text-gray-500 truncate max-w-[200px]">
-                                {p.hashed ? p.hashed.slice(0, 24) + "..." : p.raw}
-                              </td>
-                              <td className="px-3 py-1.5 text-emerald-600 font-sans font-bold">{p.status}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="flex justify-end">
