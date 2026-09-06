@@ -16,12 +16,76 @@ import {
   ChevronRight,
   AlertTriangle,
   Inbox,
+  Volume2,
+  VolumeX,
+  Laptop,
+  Sparkles,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   getAdminNotifications,
   type AdminNotification,
 } from "@/features/admin/notifications-actions";
+import { createClient } from "@/lib/supabase/client";
+
+// Web Audio API Synthetic Chime
+function playNotificationChime() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const now = ctx.currentTime;
+
+    // Note 1: 587.33 Hz (D5)
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = "sine";
+    osc1.frequency.setValueAtTime(587.33, now);
+    gain1.gain.setValueAtTime(0.18, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.3);
+
+    // Note 2: 880 Hz (A5)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = "sine";
+    osc2.frequency.setValueAtTime(880, now + 0.12);
+    gain2.gain.setValueAtTime(0.22, now + 0.12);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.12);
+    osc2.stop(now + 0.55);
+  } catch {
+    // Graceful fallback
+  }
+}
+
+// Native PC / Desktop Browser Push Notification
+function sendDesktopNotification(title: string, body: string, url: string) {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+
+  if (Notification.permission === "granted") {
+    try {
+      const notif = new Notification(title, {
+        body,
+        icon: "/favicon.ico",
+        badge: "/favicon.ico",
+        tag: `order-${Date.now()}`,
+      });
+      notif.onclick = () => {
+        window.focus();
+        window.location.href = url;
+      };
+    } catch {
+      // Ignore
+    }
+  }
+}
 
 export function AdminNotificationsPopover() {
   const router = useRouter();
@@ -30,19 +94,63 @@ export function AdminNotificationsPopover() {
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<"all" | "orders" | "stock" | "system">("all");
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [desktopPermission, setDesktopPermission] = useState<NotificationPermission>("default");
+  const [liveToast, setLiveToast] = useState<AdminNotification | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  // Load read status from localStorage
+  // Check desktop notification permission on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setDesktopPermission(Notification.permission);
+    }
+  }, []);
+
+  const requestDesktopPermission = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      alert("Desktop notifications are not supported in this browser.");
+      return;
+    }
+    try {
+      const perm = await Notification.requestPermission();
+      setDesktopPermission(perm);
+      if (perm === "granted") {
+        sendDesktopNotification(
+          "🔔 Desktop Alerts Activated!",
+          "You will receive instant pop-up notifications on your PC whenever a new order is placed.",
+          "/admin/orders"
+        );
+        playNotificationChime();
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
+  // Load read status & sound settings from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem("ecomx_admin_read_notifs");
       if (saved) {
         setReadIds(new Set(JSON.parse(saved)));
       }
+      const savedSound = localStorage.getItem("ecomx_admin_notif_sound");
+      if (savedSound !== null) {
+        setSoundEnabled(savedSound === "true");
+      }
     } catch {
       // Ignore storage errors
     }
   }, []);
+
+  const toggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    try {
+      localStorage.setItem("ecomx_admin_notif_sound", String(next));
+    } catch {}
+    if (next) playNotificationChime();
+  };
 
   // Fetch notifications on mount and set up periodic refresh
   const fetchNotifications = async () => {
@@ -59,10 +167,63 @@ export function AdminNotificationsPopover() {
 
   useEffect(() => {
     fetchNotifications();
-    // Poll every 60 seconds
-    const interval = setInterval(fetchNotifications, 60000);
+    // Poll every 45 seconds as backup
+    const interval = setInterval(fetchNotifications, 45000);
     return () => clearInterval(interval);
   }, []);
+
+  // Supabase Real-Time WebSocket Channel: Listens for INSTANT New Orders
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel("admin-live-orders-channel")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "orders" },
+        (payload) => {
+          const newOrder = payload.new as any;
+          const orderNum = newOrder.order_number || (newOrder.id ? newOrder.id.slice(0, 8).toUpperCase() : "NEW");
+          const name = newOrder.shipping_address_snapshot?.name || newOrder.guest_name || newOrder.customer_name || "New Customer";
+          const total = newOrder.total ? `৳${Number(newOrder.total).toLocaleString("en-BD")}` : "";
+          const method = (newOrder.payment_method || "COD").toUpperCase();
+
+          const notif: AdminNotification = {
+            id: `realtime-ord-${newOrder.id || Date.now()}`,
+            title: `🛍️ New Order #${orderNum}`,
+            message: `${name} placed an order for ${total} via ${method}.`,
+            type: "order",
+            link: `/admin/orders/${newOrder.id}`,
+            createdAt: new Date().toISOString(),
+            read: false,
+            priority: "high",
+          };
+
+          // 1. Insert into notifications list
+          setNotifications((prev) => [notif, ...prev]);
+
+          // 2. Play subtle audio chime
+          if (soundEnabled) {
+            playNotificationChime();
+          }
+
+          // 3. Trigger PC Desktop Web Notification
+          sendDesktopNotification(
+            `🛍️ New Order #${orderNum} Received!`,
+            `${name} • ${total} (${method})`,
+            `/admin/orders/${newOrder.id}`
+          );
+
+          // 4. Show real-time floating in-app toast
+          setLiveToast(notif);
+          setTimeout(() => setLiveToast(null), 8000);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [soundEnabled]);
 
   // Click outside to close
   useEffect(() => {
@@ -114,6 +275,28 @@ export function AdminNotificationsPopover() {
     if (notif.link) {
       router.push(notif.link);
     }
+  };
+
+  const handleSendTestAlert = () => {
+    playNotificationChime();
+    sendDesktopNotification(
+      "🛍️ New Order #ORD-2026-9821 (Test)",
+      "Customer: Tanvir Ahmed • BDT 1,420 (Cash on Delivery)",
+      "/admin/orders"
+    );
+    const testNotif: AdminNotification = {
+      id: `test-ord-${Date.now()}`,
+      title: "🛍️ New Order #ORD-2026-9821 (Test)",
+      message: "Tanvir Ahmed placed an order for BDT 1,420 via COD.",
+      type: "order",
+      link: "/admin/orders",
+      createdAt: new Date().toISOString(),
+      read: false,
+      priority: "high",
+    };
+    setNotifications((prev) => [testNotif, ...prev]);
+    setLiveToast(testNotif);
+    setTimeout(() => setLiveToast(null), 8000);
   };
 
   // Format relative timestamp
@@ -210,6 +393,19 @@ export function AdminNotificationsPopover() {
 
             <div className="flex items-center gap-1.5">
               <button
+                onClick={toggleSound}
+                title={soundEnabled ? "Sound alerts enabled. Click to mute." : "Sound alerts muted. Click to enable."}
+                className={cn(
+                  "rounded-md p-1.5 transition-colors",
+                  soundEnabled
+                    ? "text-emerald-700 hover:bg-emerald-50"
+                    : "text-gray-400 hover:bg-gray-100"
+                )}
+              >
+                {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+              </button>
+
+              <button
                 onClick={fetchNotifications}
                 title="Refresh notifications"
                 className="rounded-md p-1.5 text-text-muted hover:bg-white hover:text-text transition-colors"
@@ -226,6 +422,35 @@ export function AdminNotificationsPopover() {
                 </button>
               )}
             </div>
+          </div>
+
+          {/* PC Desktop & Sound Status Banner */}
+          <div className="bg-gray-50/90 border-b border-border px-3 py-1.5 flex items-center justify-between text-[11px]">
+            <div className="flex items-center gap-1.5">
+              {desktopPermission === "granted" ? (
+                <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md font-bold flex items-center gap-1">
+                  <Laptop className="h-3 w-3 text-emerald-600" />
+                  PC Alerts Active ✓
+                </span>
+              ) : (
+                <button
+                  onClick={requestDesktopPermission}
+                  className="text-[10px] text-pink-700 bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 hover:bg-pink-100 transition-colors cursor-pointer"
+                  title="Click to allow Windows / Mac desktop notifications"
+                >
+                  <Laptop className="h-3 w-3 text-[#e91e63]" />
+                  Enable PC Alerts
+                </button>
+              )}
+            </div>
+
+            <button
+              onClick={handleSendTestAlert}
+              className="text-[10px] text-text-muted hover:text-text font-bold underline cursor-pointer"
+              title="Test chime sound and desktop notification"
+            >
+              Test Alert
+            </button>
           </div>
 
           {/* Filter Tabs */}
@@ -381,6 +606,44 @@ export function AdminNotificationsPopover() {
             >
               Activity Audit <ChevronRight className="h-3 w-3" />
             </Link>
+          </div>
+        </div>
+      )}
+      {/* Floating Live In-App Toast for Instant New Orders */}
+      {liveToast && (
+        <div className="fixed bottom-6 right-6 z-9999 max-w-sm w-full bg-white border border-pink-200 rounded-2xl shadow-2xl p-4 animate-in slide-in-from-bottom-5 fade-in duration-200 flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e91e63]/10 text-[#e91e63]">
+            <ShoppingBag className="h-5 w-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-[#e91e63] flex items-center gap-1">
+                <Sparkles className="h-3 w-3" /> Real-time Alert
+              </span>
+              <button
+                onClick={() => setLiveToast(null)}
+                className="text-gray-400 hover:text-gray-600 rounded p-0.5"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <p className="text-sm font-bold text-gray-900 mt-0.5">{liveToast.title}</p>
+            <p className="text-xs text-gray-600 line-clamp-2 mt-0.5 leading-relaxed">{liveToast.message}</p>
+            <div className="mt-2.5 flex items-center gap-2">
+              <Link
+                href={liveToast.link || "/admin/orders"}
+                onClick={() => setLiveToast(null)}
+                className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#e91e63] hover:bg-[#d81b60] px-3 py-1.5 rounded-lg shadow-sm transition-all"
+              >
+                View Order <ChevronRight className="h-3 w-3" />
+              </Link>
+              <button
+                onClick={() => setLiveToast(null)}
+                className="text-xs text-gray-500 hover:text-gray-800 font-medium px-2 py-1"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         </div>
       )}
