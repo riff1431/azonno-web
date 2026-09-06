@@ -37,6 +37,7 @@ import {
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { ModuleCard, type ModuleCardItem } from "@/components/admin/module-settings/module-card";
 import { toggleModuleStatus, type SystemModule } from "@/features/modules/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 const ICON_MAP: Record<string, any> = {
   Shield,
@@ -98,6 +99,7 @@ interface ModulesClientProps {
 }
 
 export function ModulesClient({ initialModules }: ModulesClientProps) {
+  const { t } = useAdminLang();
   const [modules, setModules] = useState<SystemModule[]>(initialModules);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -152,8 +154,8 @@ export function ModulesClient({ initialModules }: ModulesClientProps) {
   return (
     <div className="space-y-6 max-w-7xl">
       <ModuleHeader
-        title="Dynamic Feature Modules & Integrations"
-        description="Enable, disable, and configure system modules, payment gateways, couriers, and third-party SaaS connections from one unified control plane."
+        title={t("modules_title")}
+        description={t("modules_desc")}
         icon={Blocks}
         badgeLabel={`${totalEnabled} Active / ${modules.length} Total`}
       />
@@ -222,9 +224,9 @@ export function ModulesClient({ initialModules }: ModulesClientProps) {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-secondary text-text-muted">
             <Filter className="h-6 w-6" />
           </div>
-          <h3 className="text-sm font-bold text-text">No modules match your query</h3>
+          <h3 className="text-sm font-bold text-text">{t("no_dues_found")}</h3>
           <p className="text-xs text-text-secondary max-w-sm mx-auto">
-            Try clearing your search query or selecting another category filter.
+            {t("filter_label")} {t("all_categories_btn")}
           </p>
         </div>
       )}

@@ -138,15 +138,15 @@ export function DataTable<T>({
   return (
     <div className="rounded-xl border border-border bg-white shadow-card">
       {/* Toolbar */}
-      <div className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <div className="relative max-w-xs flex-1">
+      <div className="flex flex-col gap-3 border-b border-border p-3.5 sm:p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64 sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
             <Input
               placeholder={searchPlaceholder}
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9 pr-8 h-9"
+              className="pl-9 pr-8 h-9 w-full"
             />
             {search && (
               <button
@@ -164,7 +164,7 @@ export function DataTable<T>({
             </div>
           )}
         </div>
-        {headerActions && <div className="flex items-center gap-2">{headerActions}</div>}
+        {headerActions && <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">{headerActions}</div>}
       </div>
 
       {/* Table */}
@@ -260,26 +260,26 @@ export function DataTable<T>({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between border-t border-border px-4 py-3">
-        <p className="text-xs text-text-muted">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border px-4 py-3">
+        <p className="text-xs text-text-muted text-center sm:text-left">
           {sorted.length === 0
             ? t("no_data")
             : `${t("showing")} ${page * pageSize + 1}–${Math.min((page + 1) * pageSize, sorted.length)} ${t("of")} ${sorted.length}`}
         </p>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={() => setPage(0)} disabled={page === 0}>
+          <Button variant="ghost" size="icon" className="hidden sm:inline-flex" onClick={() => setPage(0)} disabled={page === 0}>
             <ChevronsLeft className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon" onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="px-2 text-xs text-text-secondary">
+          <span className="px-2 text-xs text-text-secondary font-medium">
             {page + 1} / {totalPages}
           </span>
           <Button variant="ghost" size="icon" onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}>
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => setPage(totalPages - 1)} disabled={page >= totalPages - 1}>
+          <Button variant="ghost" size="icon" className="hidden sm:inline-flex" onClick={() => setPage(totalPages - 1)} disabled={page >= totalPages - 1}>
             <ChevronsRight className="h-4 w-4" />
           </Button>
         </div>

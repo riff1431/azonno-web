@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import { fetchBDCourierReport, type BDCourierReport } from "./bdcourier-service";
 import { addBlacklistEntry } from "./actions";
+import { CourierBrandLogo } from "@/components/shared/courier-logo";
 
 interface BDCourierHistoryCardProps {
   phone: string;
@@ -121,11 +122,22 @@ export function BDCourierHistoryCard({
     },
   }[color];
 
+  // Safely extract string verdict
+  const safeVerdict =
+    typeof report?.risk_verdict === "string"
+      ? report.risk_verdict
+      : report?.raw_risk_verdict?.action || "Customer profile evaluated across courier networks.";
+
+  // Extract all supported courier stats (Pathao, SteadFast, RedX, PaperFly, CarryBee, ParcelDex, CourrierFast)
+  const allCouriers = report?.courier_details
+    ? Object.entries(report.courier_details).filter(([_, c]) => Boolean(c))
+    : [];
+
   return (
     <div className={`rounded-3xl border ${colorStyles.border} ${colorStyles.bg} p-5 sm:p-6 shadow-xs space-y-4`}>
       {/* Card Header */}
       <div className="flex items-center justify-between border-b border-gray-200/60 pb-3">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <div className="p-2 rounded-xl bg-white shadow-2xs border border-gray-100">
             <Truck className="h-4 w-4 text-primary-600" />
           </div>
@@ -133,7 +145,7 @@ export function BDCourierHistoryCard({
             <h3 className="text-sm font-black text-gray-900 flex items-center gap-1.5">
               <span>BDCourier Fraud & Delivery Intelligence</span>
             </h3>
-            <p className="text-[11px] text-gray-500 font-mono">Phone: {phone}</p>
+            <p className="text-[11px] text-gray-500 font-mono">Customer Mobile: {phone}</p>
           </div>
         </div>
 
@@ -143,7 +155,7 @@ export function BDCourierHistoryCard({
             onClick={loadReport}
             disabled={loading}
             className="p-1.5 rounded-xl bg-white hover:bg-gray-100 text-gray-600 border border-gray-200 shadow-2xs transition-colors"
-            title="Refresh BDCourier data"
+            title="Refresh BDCourier live data"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-primary-600" : ""}`} />
           </button>
@@ -159,7 +171,7 @@ export function BDCourierHistoryCard({
 
       {blockSuccessMsg && (
         <div className="p-3 bg-emerald-100 border border-emerald-300 rounded-2xl text-xs font-bold text-emerald-900 flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 text-emerald-700" />
+          <CheckCircle2 className="h-4 w-4 text-emerald-700 shrink-0" />
           <span>{blockSuccessMsg}</span>
         </div>
       )}
@@ -176,7 +188,7 @@ export function BDCourierHistoryCard({
             <div className="flex items-center justify-between">
               <span className="font-bold text-gray-700">Delivery Success Ratio:</span>
               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black border ${colorStyles.badge}`}>
-                {report.total_parcel === 0 ? "New Buyer (0 History)" : `${report.success_ratio}% Success`}
+                {report.total_parcel === 0 ? "New Buyer (0 Records)" : `${report.success_ratio}% Success`}
               </span>
             </div>
 
@@ -184,13 +196,13 @@ export function BDCourierHistoryCard({
             <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden border border-gray-200/50">
               <div
                 className={`h-full ${colorStyles.bar} transition-all duration-500 rounded-full`}
-                style={{ width: `${report.total_parcel === 0 ? 100 : report.success_ratio}%` }}
+                style={{ width: `${report.total_parcel === 0 ? 100 : Math.min(100, Math.max(5, report.success_ratio))}%` }}
               />
             </div>
 
             {/* Verdict Note */}
             <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
-              {report.risk_verdict}
+              {safeVerdict}
             </p>
           </div>
 
@@ -198,90 +210,117 @@ export function BDCourierHistoryCard({
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-white p-3 rounded-2xl border border-gray-200/80 text-center">
               <span className="text-[10px] uppercase font-bold text-gray-400 block">Total Parcels</span>
-              <span className="text-base font-black text-gray-900 block mt-0.5">{report.total_parcel}</span>
+              <span className="text-base font-black text-gray-900 block mt-0.5">{report.total_parcel.toLocaleString()}</span>
             </div>
             <div className="bg-white p-3 rounded-2xl border border-emerald-200/80 text-center">
-              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Received</span>
-              <span className="text-base font-black text-emerald-700 block mt-0.5">{report.success_parcel}</span>
+              <span className="text-[10px] uppercase font-bold text-emerald-700 block">Delivered</span>
+              <span className="text-base font-black text-emerald-700 block mt-0.5">{report.success_parcel.toLocaleString()}</span>
             </div>
             <div className="bg-white p-3 rounded-2xl border border-red-200/80 text-center">
               <span className="text-[10px] uppercase font-bold text-red-700 block">Cancelled/RTO</span>
-              <span className="text-base font-black text-red-700 block mt-0.5">{report.cancelled_parcel}</span>
+              <span className="text-base font-black text-red-700 block mt-0.5">{report.cancelled_parcel.toLocaleString()}</span>
             </div>
           </div>
 
-          {/* Multi-Courier Breakdown (SteadFast, Pathao, RedX, Paperfly) */}
-          {report.courier_details && Object.keys(report.courier_details).length > 0 && (
+          {/* Multi-Courier Breakdown (All Supported Couriers: Pathao, SteadFast, RedX, Paperfly, Carrybee, CourrierFast, ParcelDex) */}
+          {allCouriers.length > 0 && (
             <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-2xs space-y-2.5">
-              <span className="font-bold text-gray-800 text-[11px] uppercase tracking-wider block border-b border-gray-100 pb-1.5">
-                Courier Provider Breakdown
-              </span>
+              <div className="flex items-center justify-between border-b border-gray-100 pb-1.5">
+                <span className="font-bold text-gray-800 text-[11px] uppercase tracking-wider block">
+                  Supported Courier Services ({allCouriers.length})
+                </span>
+                <span className="text-[10px] text-gray-400 font-medium">
+                  {allCouriers.filter(([_, c]) => c && c.total > 0).length} Active Provider(s)
+                </span>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-                {report.courier_details.steadfast && (
-                  <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 space-y-1">
-                    <div className="font-bold text-gray-900 flex justify-between">
-                      <span>SteadFast</span>
-                      <span className="font-black text-emerald-700">{report.courier_details.steadfast.ratio}%</span>
-                    </div>
-                    <div className="text-[10px] text-gray-500 flex justify-between">
-                      <span>Success: {report.courier_details.steadfast.success}</span>
-                      <span>Return: {report.courier_details.steadfast.cancelled}</span>
-                    </div>
-                  </div>
-                )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 text-[11px]">
+                {allCouriers.map(([key, courier]) => {
+                  if (!courier) return null;
+                  const hasActivity = courier.total > 0;
+                  const ratioColor =
+                    courier.ratio >= 80
+                      ? "text-emerald-700"
+                      : courier.ratio >= 50
+                      ? "text-amber-700"
+                      : "text-red-700";
 
-                {report.courier_details.pathao && (
-                  <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 space-y-1">
-                    <div className="font-bold text-gray-900 flex justify-between">
-                      <span>Pathao</span>
-                      <span className="font-black text-emerald-700">{report.courier_details.pathao.ratio}%</span>
+                  return (
+                    <div
+                      key={key}
+                      className={`p-2.5 rounded-xl border space-y-1 transition-all ${
+                        hasActivity
+                          ? "bg-gray-50/90 border-gray-200 shadow-2xs"
+                          : "bg-gray-50/40 border-gray-200/60 opacity-70"
+                      }`}
+                    >
+                      <div className="font-bold text-gray-900 flex justify-between items-center">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <CourierBrandLogo name={courier.name} logoUrl={courier.logo} className="h-4 w-4" />
+                          <span className="truncate max-w-27.5">{courier.name}</span>
+                        </div>
+                        {hasActivity ? (
+                          <span className={`font-black ${ratioColor}`}>{courier.ratio}%</span>
+                        ) : (
+                          <span className="text-[10px] font-bold text-gray-400">0 Parcels</span>
+                        )}
+                      </div>
+                      <div className="text-[10px] text-gray-500 flex justify-between font-mono">
+                        {hasActivity ? (
+                          <>
+                            <span>Tot: {courier.total.toLocaleString()}</span>
+                            <span>Del: {courier.success.toLocaleString()}</span>
+                            <span>Can: {courier.cancelled.toLocaleString()}</span>
+                          </>
+                        ) : (
+                          <span className="text-gray-400 italic text-[10px]">No delivery history recorded</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-[10px] text-gray-500 flex justify-between">
-                      <span>Success: {report.courier_details.pathao.success}</span>
-                      <span>Return: {report.courier_details.pathao.cancelled}</span>
-                    </div>
-                  </div>
-                )}
-
-                {report.courier_details.redx && (
-                  <div className="p-2.5 rounded-xl bg-gray-50 border border-gray-200 space-y-1">
-                    <div className="font-bold text-gray-900 flex justify-between">
-                      <span>RedX</span>
-                      <span className="font-black text-emerald-700">{report.courier_details.redx.ratio}%</span>
-                    </div>
-                    <div className="text-[10px] text-gray-500 flex justify-between">
-                      <span>Success: {report.courier_details.redx.success}</span>
-                      <span>Return: {report.courier_details.redx.cancelled}</span>
-                    </div>
-                  </div>
-                )}
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {/* Warning Reports from other merchants if any */}
+          {/* Warning Reports from merchant community if any */}
           {report.reports && report.reports.length > 0 && (
-            <div className="bg-red-50 p-3.5 rounded-2xl border border-red-200 space-y-1.5">
-              <span className="font-bold text-red-900 text-[11px] flex items-center gap-1.5">
-                <AlertTriangle className="h-3.5 w-3.5 text-red-600" />
-                <span>Reported Incident Flags ({report.reports.length})</span>
-              </span>
-              <ul className="space-y-1 text-[11px] text-red-800 list-disc list-inside">
+            <div className="bg-red-50 p-4 rounded-2xl border border-red-200 space-y-2.5">
+              <div className="flex items-center justify-between border-b border-red-200/60 pb-1.5">
+                <span className="font-black text-red-900 text-xs flex items-center gap-1.5">
+                  <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
+                  <span>Reported Incident Flags ({report.reports.length})</span>
+                </span>
+                <span className="text-[10px] font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded-full">
+                  High Fraud Alert
+                </span>
+              </div>
+
+              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
                 {report.reports.map((r, i) => (
-                  <li key={i}>{r.reason} {r.courier ? `(${r.courier})` : ""}</li>
+                  <div key={i} className="p-2.5 bg-white/90 rounded-xl border border-red-100 text-[11px] text-red-950 space-y-1">
+                    <div className="flex items-center justify-between text-[10px] text-gray-500">
+                      <span className="font-bold text-red-800 flex items-center gap-1.5">
+                        <CourierBrandLogo name={r.courier || "SteadFast"} logoUrl={r.courierLogo} className="h-4 w-4" />
+                        <span>{r.courier || "SteadFast"}</span>
+                        {r.name && <span className="text-gray-400 font-normal">({r.name})</span>}
+                      </span>
+                      {r.date && <span>{new Date(r.date).toLocaleDateString()}</span>}
+                    </div>
+                    <p className="font-medium text-red-900 leading-snug">{r.reason}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
 
-          {/* Quick Fraud Action Buttons */}
+          {/* Quick Fraud Action Buttons & Source Tag */}
           <div className="flex items-center justify-between pt-1">
-            <span className="text-[10px] text-gray-400">
-              Source: {report.source === "live_api" ? "BDCourier Live API" : "BDCourier Intelligence Engine"}
+            <span className="text-[10px] text-gray-400 font-mono">
+              Source: {report.source === "live_api" ? "BDCourier Live API" : report.source === "cached" ? "BDCourier Cache" : "Simulation Engine"}
             </span>
 
-            {report.risk_level === "critical" || report.risk_level === "high" ? (
+            {report.risk_level === "critical" || report.risk_level === "high" || (report.reports && report.reports.length > 0) ? (
               <button
                 type="button"
                 onClick={handleBlockCustomer}

@@ -20,6 +20,7 @@ import { Label } from "@/components/shared/ui/label";
 import { DataTable, RowActions, RowAction, type Column } from "@/components/admin/data-table";
 import { getInventory, adjustStock, getInventoryMovements } from "@/features/inventory/actions";
 import { cn } from "@/lib/utils";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface InventoryRow {
   id: string;
@@ -59,6 +60,7 @@ interface MovementRow {
 }
 
 export default function InventoryListClient() {
+  const { t } = useAdminLang();
   const [inventory, setInventory] = useState<InventoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<"all" | "in_stock" | "low_stock" | "out_of_stock">("all");
@@ -76,7 +78,7 @@ export default function InventoryListClient() {
   const [movements, setMovements] = useState<MovementRow[]>([]);
   const [loadingMovements, setLoadingMovements] = useState(false);
 
-  const fetchData = async () => {
+  const fetchInventory = async () => {
     setLoading(true);
     const data = await getInventory({
       stock_status: statusFilter === "all" ? undefined : statusFilter,
@@ -86,28 +88,24 @@ export default function InventoryListClient() {
   };
 
   useEffect(() => {
-    fetchData();
+    fetchInventory();
   }, [statusFilter]);
 
-  const handleAdjustSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!adjustTarget) return;
-    if (adjustQty === 0) {
-      setAdjustError("Quantity change cannot be 0.");
-      return;
-    }
+  const handleAdjustSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!adjustTarget || adjustQty === 0) return;
     setAdjusting(true);
     setAdjustError("");
 
-    const result = await adjustStock({
+    const res = await adjustStock({
       inventory_id: adjustTarget.id,
       type: adjustType,
       quantity_change: adjustQty,
       notes: adjustNotes || undefined,
     });
 
-    if (result.error) {
-      setAdjustError(result.error);
+    if (res.error) {
+      setAdjustError(res.error);
       setAdjusting(false);
       return;
     }
@@ -116,7 +114,7 @@ export default function InventoryListClient() {
     setAdjustTarget(null);
     setAdjustQty(0);
     setAdjustNotes("");
-    fetchData();
+    fetchInventory();
   };
 
   const openMovements = async (row: InventoryRow) => {
@@ -135,7 +133,7 @@ export default function InventoryListClient() {
   const columns: Column<InventoryRow>[] = [
     {
       key: "product",
-      header: "Product / Variant",
+      header: t("column_product"),
       sortable: true,
       cell: (row) => (
         <div className="flex items-center gap-3">
@@ -153,18 +151,19 @@ export default function InventoryListClient() {
     },
     {
       key: "on_hand",
-      header: "On Hand",
+      header: t("column_on_hand"),
       sortable: true,
       cell: (row) => <span className="font-medium text-text">{row.on_hand}</span>,
     },
     {
       key: "reserved",
-      header: "Reserved",
+      header: t("column_reserved"),
+      sortable: true,
       cell: (row) => <span className="text-text-secondary">{row.reserved}</span>,
     },
     {
       key: "available",
-      header: "Available",
+      header: t("column_available"),
       sortable: true,
       cell: (row) => {
         const isOut = row.available <= 0;
@@ -188,7 +187,7 @@ export default function InventoryListClient() {
     },
     {
       key: "damaged",
-      header: "Damaged",
+      header: t("damage"),
       cell: (row) => (
         <span className={cn(row.damaged > 0 ? "text-red-600 font-medium" : "text-text-muted")}>
           {row.damaged}
@@ -197,7 +196,7 @@ export default function InventoryListClient() {
     },
     {
       key: "sold",
-      header: "Sold",
+      header: t("column_orders_count"),
       cell: (row) => <span className="text-text-secondary">{row.sold}</span>,
     },
   ];
@@ -206,9 +205,9 @@ export default function InventoryListClient() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text">Inventory Management</h1>
+        <h1 className="text-2xl font-bold text-text">{t("inventory_management")}</h1>
         <p className="mt-1 text-sm text-text-secondary">
-          Track stock levels, reserve inventory, and audit stock movements.
+          {t("inventory_desc")}
         </p>
       </div>
 
@@ -216,45 +215,62 @@ export default function InventoryListClient() {
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-border bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-text-secondary">Total On Hand</span>
+            <span className="text-sm font-medium text-text-secondary">{t("column_on_hand")}</span>
             <Boxes className="h-5 w-5 text-primary-600" />
           </div>
           <p className="mt-2 text-2xl font-bold text-text">{totalOnHand}</p>
-          <span className="text-xs text-text-muted">Total physical inventory units</span>
+          <span className="text-xs text-text-muted">{t("column_available")}</span>
         </div>
 
         <div className="rounded-xl border border-border bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-text-secondary">Low Stock Alerts</span>
+            <span className="text-sm font-medium text-text-secondary">{t("filter_low_stock")}</span>
             <AlertTriangle className="h-5 w-5 text-amber-500" />
           </div>
           <p className="mt-2 text-2xl font-bold text-amber-600">{lowStockCount}</p>
-          <span className="text-xs text-text-muted">Products at or below threshold</span>
+          <span className="text-xs text-text-muted">{t("column_threshold")}</span>
         </div>
 
         <div className="rounded-xl border border-border bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-text-secondary">Out of Stock</span>
+            <span className="text-sm font-medium text-text-secondary">{t("filter_out_of_stock")}</span>
             <XCircle className="h-5 w-5 text-red-500" />
           </div>
           <p className="mt-2 text-2xl font-bold text-red-600">{outOfStockCount}</p>
-          <span className="text-xs text-text-muted">Products unavailable for order</span>
+          <span className="text-xs text-text-muted">{t("filter_out_of_stock")}</span>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex items-center gap-2">
-        {(["all", "in_stock", "low_stock", "out_of_stock"] as const).map((filterKey) => (
-          <Button
-            key={filterKey}
-            size="sm"
-            variant={statusFilter === filterKey ? "default" : "outline"}
-            onClick={() => setStatusFilter(filterKey)}
-            className="capitalize"
-          >
-            {filterKey.replace("_", " ")}
-          </Button>
-        ))}
+        <Button
+          size="sm"
+          variant={statusFilter === "all" ? "default" : "outline"}
+          onClick={() => setStatusFilter("all")}
+        >
+          {t("filter_all")}
+        </Button>
+        <Button
+          size="sm"
+          variant={statusFilter === "in_stock" ? "default" : "outline"}
+          onClick={() => setStatusFilter("in_stock")}
+        >
+          {t("filter_in_stock")}
+        </Button>
+        <Button
+          size="sm"
+          variant={statusFilter === "low_stock" ? "default" : "outline"}
+          onClick={() => setStatusFilter("low_stock")}
+        >
+          {t("filter_low_stock")}
+        </Button>
+        <Button
+          size="sm"
+          variant={statusFilter === "out_of_stock" ? "default" : "outline"}
+          onClick={() => setStatusFilter("out_of_stock")}
+        >
+          {t("filter_out_of_stock")}
+        </Button>
       </div>
 
       {/* DataTable */}
@@ -262,17 +278,17 @@ export default function InventoryListClient() {
         columns={columns}
         data={inventory}
         loading={loading}
-        searchPlaceholder="Search by product or SKU..."
+        searchPlaceholder={t("search_inventory")}
         getRowId={(row) => row.id}
-        emptyMessage="No inventory records found."
+        emptyMessage={t("no_inventory")}
         emptyIcon={<Boxes className="h-6 w-6" />}
         actions={(row) => (
           <RowActions>
             <RowAction onClick={() => { setAdjustTarget(row); setAdjustQty(0); setAdjustError(""); }}>
-              <Sliders className="h-3.5 w-3.5" /> Adjust Stock
+              <Sliders className="h-3.5 w-3.5" /> {t("adjust_stock")}
             </RowAction>
             <RowAction onClick={() => openMovements(row)}>
-              <History className="h-3.5 w-3.5" /> View Ledger
+              <History className="h-3.5 w-3.5" /> {t("stock_history")}
             </RowAction>
           </RowActions>
         )}

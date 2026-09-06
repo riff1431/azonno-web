@@ -7,12 +7,14 @@ import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { saveSupplier, deleteSupplier, type SupplierItem } from "./actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface SupplierListClientProps {
   initialSuppliers: SupplierItem[];
 }
 
 export function SupplierListClient({ initialSuppliers }: SupplierListClientProps) {
+  const { t } = useAdminLang();
   const [suppliers, setSuppliers] = useState<SupplierItem[]>(initialSuppliers);
   const [showModal, setShowModal] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<SupplierItem | null>(null);
@@ -104,7 +106,7 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
   const columns: Column<SupplierItem>[] = [
     {
       key: "company",
-      header: "Supplier & Company",
+      header: t("supplier_name"),
       sortable: true,
       cell: (row) => (
         <div>
@@ -112,13 +114,13 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
             <Building className="h-3.5 w-3.5 text-primary-600 shrink-0" />
             {row.company}
           </span>
-          <span className="text-[11px] text-text-muted">Contact: {row.name}</span>
+          <span className="text-[11px] text-text-muted">{t("contact_person")}: {row.name}</span>
         </div>
       ),
     },
     {
       key: "phone",
-      header: "Contact Details",
+      header: t("column_phone"),
       cell: (row) => (
         <div className="text-xs space-y-0.5">
           <span className="flex items-center gap-1 text-text">
@@ -134,7 +136,7 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
     },
     {
       key: "address",
-      header: "Origin & Logistics Hub",
+      header: t("store_address"),
       cell: (row) => (
         <span className="text-xs text-text-secondary flex items-center gap-1">
           <MapPin className="h-3.5 w-3.5 text-text-muted shrink-0" />
@@ -144,7 +146,7 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
     },
     {
       key: "notes",
-      header: "Procurement Scope",
+      header: t("payment_terms"),
       cell: (row) => (
         <p className="max-w-70 text-xs text-text-secondary leading-relaxed">
           {row.notes}
@@ -153,7 +155,8 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
     },
     {
       key: "status",
-      header: "Status",
+      header: t("column_status"),
+      sortable: true,
       cell: (row) => (
         <span
           className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase border ${
@@ -162,19 +165,19 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
               : "bg-gray-100 text-gray-600 border-gray-200"
           }`}
         >
-          {row.status}
+          {row.status === "active" ? t("active") : row.status}
         </span>
       ),
     },
     {
       key: "id",
-      header: "Actions",
+      header: t("column_actions"),
       cell: (row) => (
         <div className="flex items-center gap-1">
           <button
             onClick={() => openEditModal(row)}
             className="text-text-muted hover:text-primary-600 transition-colors p-1"
-            title="Edit Supplier"
+            title={t("action_edit")}
           >
             <Edit2 className="h-4 w-4" />
           </button>
@@ -182,7 +185,7 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
             onClick={() => handleDeleteSupplier(row.id)}
             disabled={deletingId === row.id}
             className="text-text-muted hover:text-red-600 transition-colors p-1"
-            title="Delete Supplier"
+            title={t("action_delete")}
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -195,15 +198,15 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
     <div className="space-y-6 max-w-6xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-text">Procurement & Suppliers</h1>
+          <h1 className="text-2xl font-bold text-text">{t("supplier_management")}</h1>
           <p className="text-sm text-text-secondary mt-0.5">
-            Directory of international skincare distributors, authentic brand importers, and origin hubs.
+            {t("supplier_desc")}
           </p>
         </div>
 
         <Button onClick={openAddModal} size="sm" className="shrink-0 text-xs">
           <Plus className="h-4 w-4 mr-1.5" />
-          Add New Supplier
+          {t("add_supplier")}
         </Button>
       </div>
 
@@ -211,8 +214,8 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
         columns={columns}
         data={suppliers}
         searchKey="company"
-        searchPlaceholder="Search supplier or company..."
-        emptyMessage="No suppliers registered yet. Click Add New Supplier above."
+        searchPlaceholder={t("search_table")}
+        emptyMessage={t("no_suppliers")}
       />
 
       {/* Add / Edit Supplier Modal */}

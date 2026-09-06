@@ -6,6 +6,7 @@ import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { saveThemeSettings, type ThemeSettings } from "@/features/settings/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface ThemeClientProps {
   initialSettings: ThemeSettings;
@@ -19,6 +20,7 @@ const THEMES = [
 ];
 
 export function ThemeClient({ initialSettings }: ThemeClientProps) {
+  const { t } = useAdminLang();
   const [themeColor, setThemeColor] = useState(initialSettings.themeColor || "rose");
   const [announcement, setAnnouncement] = useState(initialSettings.announcement || "100% Authentic Korean & UK Skincare | Free Delivery over ৳2,500!");
   const [insideDhakaFree, setInsideDhakaFree] = useState(initialSettings.insideDhakaFree || 2500);
@@ -46,7 +48,7 @@ export function ThemeClient({ initialSettings }: ThemeClientProps) {
       setSaved(true);
       setTimeout(() => setSaved(false), 4000);
     } catch (err: any) {
-      setError(err.message || "Failed to save theme settings");
+      setError(err.message || t("err_failed_save_account"));
     } finally {
       setSaving(false);
     }
@@ -55,9 +57,9 @@ export function ThemeClient({ initialSettings }: ThemeClientProps) {
   return (
     <div className="space-y-8 max-w-4xl">
       <div className="border-b border-border pb-4">
-        <h1 className="text-2xl font-bold text-text">Storefront Theme & Branding Customizer</h1>
+        <h1 className="text-2xl font-bold text-text">{t("theme_title")}</h1>
         <p className="text-sm text-text-secondary mt-0.5">
-          Live customization of your storefront brand palette, top announcement banner, and free delivery thresholds.
+          {t("theme_desc")}
         </p>
       </div>
 
@@ -182,7 +184,7 @@ export function ThemeClient({ initialSettings }: ThemeClientProps) {
         <div className="flex items-center justify-between pt-2">
           {saved ? (
             <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
-              <CheckCircle2 className="h-4 w-4" /> Theme preferences saved to Supabase!
+              <CheckCircle2 className="h-4 w-4" /> {t("store_settings_success")}
             </span>
           ) : (
             <div />
@@ -190,7 +192,7 @@ export function ThemeClient({ initialSettings }: ThemeClientProps) {
 
           <Button type="submit" size="sm" disabled={saving} className="text-xs">
             <Save className="h-3.5 w-3.5 mr-1" />
-            {saving ? "Saving..." : "Save Storefront Theme"}
+            {saving ? t("saving_changes_btn") : t("save_theme_btn")}
           </Button>
         </div>
       </form>

@@ -1547,6 +1547,58 @@ export default function AdminHomepageManagerPage() {
               </div>
             </div>
 
+            {/* Section 1D: Admin Dashboard Sidebar Logo */}
+            <div className="rounded-2xl border-2 border-[#e91e63]/20 bg-linear-to-br from-pink-50 to-white p-6 shadow-xs space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#e91e63]/10">
+                  <ShieldCheck className="h-5 w-5 text-[#e91e63]" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                    4. Admin Dashboard Sidebar Logo
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Logo displayed in the <strong>Admin Panel sidebar</strong> — separate from the storefront logo. Recommended: transparent PNG or SVG, min 280×70px.
+                    If left empty, the storefront header logo is used as fallback.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 items-end">
+                <div className="sm:col-span-2">
+                  <HomepageImageField
+                    label="Admin Sidebar Logo Image"
+                    recommendedSize="280 × 70 px"
+                    aspectRatioLabel="4:1 Transparent PNG/SVG (white or light logo recommended)"
+                    placeholder="e.g. /logos/admin-logo-white.png"
+                    value={config.headerConfig?.adminLogoImageUrl ?? ""}
+                    onChange={(url) =>
+                      setConfig({
+                        ...config,
+                        headerConfig: {
+                          ...(config.headerConfig || DEFAULT_HOMEPAGE_CONFIG.headerConfig),
+                          adminLogoImageUrl: url,
+                        },
+                      })
+                    }
+                    folder="logos"
+                    previewHeightClass="h-10 w-32"
+                  />
+                </div>
+              </div>
+
+              {config.headerConfig?.adminLogoImageUrl && (
+                <div className="flex items-center gap-3 rounded-xl bg-gray-900 px-4 py-3">
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider shrink-0">Preview in dark sidebar:</span>
+                  <img
+                    src={config.headerConfig.adminLogoImageUrl}
+                    alt="Admin logo preview"
+                    className="h-8 max-w-40 object-contain"
+                  />
+                </div>
+              )}
+            </div>
+
             {/* Section 2: Search Bar Animated Cycling Terms */}
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>

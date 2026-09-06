@@ -4,12 +4,14 @@ import { useState } from "react";
 import { ToggleRight, CheckCircle2, ShieldAlert, Sparkles, Sliders } from "lucide-react";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { toggleModuleStatus, type SystemModule } from "@/features/modules/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface FeaturesClientProps {
   initialModules: SystemModule[];
 }
 
 export function FeaturesClient({ initialModules }: FeaturesClientProps) {
+  const { t } = useAdminLang();
   const [modules, setModules] = useState<SystemModule[]>(initialModules);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
 
@@ -46,8 +48,8 @@ export function FeaturesClient({ initialModules }: FeaturesClientProps) {
   return (
     <div className="space-y-6 max-w-5xl">
       <ModuleHeader
-        title="Storefront Feature Flags"
-        description="Instantly toggle customer-facing features like Reviews, Wishlists, Loyalty Points, Abandoned Cart Recovery, and SMS notifications without code deployments."
+        title={t("features_title")}
+        description={t("features_desc")}
         icon={Sliders}
         badgeLabel={`${activeCount} of ${featureModules.length} Active`}
       />
@@ -66,11 +68,11 @@ export function FeaturesClient({ initialModules }: FeaturesClientProps) {
                 </span>
                 {item.is_enabled ? (
                   <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    Live on Storefront
+                    {t("feature_enabled_label")}
                   </span>
                 ) : (
                   <span className="text-[10px] font-medium text-text-muted bg-surface-secondary px-2 py-0.5 rounded">
-                    Disabled
+                    {t("feature_disabled_label")}
                   </span>
                 )}
               </div>
@@ -88,7 +90,7 @@ export function FeaturesClient({ initialModules }: FeaturesClientProps) {
                   onChange={(e) => handleToggle(item.key, e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-surface-tertiary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
+                <div className="w-11 h-6 bg-surface-tertiary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
               </label>
             </div>
           </div>

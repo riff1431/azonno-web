@@ -6,20 +6,23 @@ import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { updateStaffRole, addStaffMember, type TeamMember } from "@/features/users/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface TeamClientProps {
   initialUsers: TeamMember[];
 }
 
 const ROLES = [
-  { value: "admin", label: "Super Admin", desc: "Full access to settings, finance, products, orders & team" },
-  { value: "moderator", label: "Moderator", desc: "Catalog, reviews moderation, customer Q&A, and orders" },
-  { value: "catalog_manager", label: "Catalog Manager", desc: "Products, categories, brands, inventory & media" },
-  { value: "logistics_coordinator", label: "Logistics Coordinator", desc: "Orders, courier consignment booking, SMS dispatch" },
-  { value: "staff", label: "Support Staff", desc: "Customer profiles, order tracking & returns" },
+  { value: "admin", label: "Super Admin", labelBn: "সুপার অ্যাডমিন", desc: "Full access to settings, finance, products, orders & team", descBn: "সেটিংস, ফিন্যান্স, পণ্য, অর্ডার ও টিমের পূর্ণ অ্যাক্সেস" },
+  { value: "moderator", label: "Moderator", labelBn: "মডারেটর", desc: "Catalog, reviews moderation, customer Q&A, and orders", descBn: "ক্যাটালগ, রিভিউ মডারেশন, প্রশ্নোত্তর ও অর্ডার" },
+  { value: "catalog_manager", label: "Catalog Manager", labelBn: "ক্যাটালগ ম্যানেজার", desc: "Products, categories, brands, inventory & media", descBn: "পণ্য, ক্যাটাগরি, ব্র্যান্ড, ইনভেন্টরি ও মিডিয়া" },
+  { value: "logistics_coordinator", label: "Logistics Coordinator", labelBn: "লজিস্টিকস সমন্বয়ক", desc: "Orders, courier consignment booking, SMS dispatch", descBn: "অর্ডার, কুরিয়ার পার্সেল বুকিং ও এসএমএস প্রেরণ" },
+  { value: "staff", label: "Support Staff", labelBn: "সাপোর্ট স্টাফ", desc: "Customer profiles, order tracking & returns", descBn: "গ্রাহক প্রোফাইল, অর্ডার ট্র্যাকিং ও রিটার্ন" },
 ];
 
 export function TeamClient({ initialUsers }: TeamClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [users, setUsers] = useState<TeamMember[]>(initialUsers);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
@@ -44,7 +47,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
         );
         setEditingUserId(null);
       } else {
-        alert("Failed to update role: " + res.error);
+        alert((isBn ? "ভূমিকা পরিবর্তন ব্যর্থ হয়েছে: " : "Failed to update role: ") + res.error);
       }
     } finally {
       setSavingRoleId(null);
@@ -54,7 +57,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
   const handleAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      setError("Please enter an email address");
+      setError(isBn ? "অনুগ্রহ করে একটি ইমেইল অ্যাড্রেস লিখুন" : "Please enter an email address");
       return;
     }
 
@@ -76,9 +79,9 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
             name: name || email.split("@")[0],
             email,
             role,
-            permissions: ROLES.find((r) => r.value === role)?.desc || "Staff access",
+            permissions: (isBn ? ROLES.find((r) => r.value === role)?.descBn : ROLES.find((r) => r.value === role)?.desc) || "Staff access",
             status: "Active",
-            lastLogin: "Pending Invite",
+            lastLogin: isBn ? "আমন্ত্রণ পাঠানো হয়েছে" : "Pending Invite",
             createdAt: new Date().toISOString(),
           },
           ...prev,
@@ -88,7 +91,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
         setEmail("");
         setPhone("");
       } else {
-        setError(res.error || "Failed to add team member");
+        setError(res.error || (isBn ? "টিম মেম্বার যুক্ত করতে ব্যর্থ হয়েছে" : "Failed to add team member"));
       }
     } finally {
       setSubmitting(false);
@@ -99,35 +102,43 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
     <div className="space-y-8 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-text">Team Roles & Access Permissions</h1>
+          <h1 className="text-2xl font-bold text-text">
+            {isBn ? "টিম ভূমিকা ও অ্যাক্সেস পারমিশন" : "Team Roles & Access Permissions"}
+          </h1>
           <p className="text-sm text-text-secondary mt-0.5">
-            Manage administrative staff, granular role permissions, and system access levels in Supabase.
+            {isBn
+              ? "অ্যাডমিনিস্ট্রেটিভ কর্মী, দায়িত্ব ভিত্তিক অ্যাক্সেস নিয়ন্ত্রণ এবং সিস্টেম পারমিশন পরিচালনা করুন।"
+              : "Manage administrative staff, granular role permissions, and system access levels in Supabase."}
           </p>
         </div>
 
         <Button onClick={() => setShowAddModal(true)} size="sm" className="shrink-0 text-xs">
           <Plus className="h-4 w-4 mr-1.5" />
-          Add / Invite Team Member
+          {isBn ? "টিম মেম্বার যুক্ত করুন" : "Add / Invite Team Member"}
         </Button>
       </div>
 
       {/* Users Table */}
       <div className="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">Administrative Staff Directory</h2>
-          <span className="text-xs text-text-muted">{users.length} members</span>
+          <h2 className="text-base font-bold text-text">
+            {isBn ? "প্রশাসনিক কর্মী তালিকা" : "Administrative Staff Directory"}
+          </h2>
+          <span className="text-xs text-text-muted">
+            {users.length} {isBn ? "জন সদস্য" : "members"}
+          </span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-surface-secondary/60 text-text-muted uppercase font-bold border-b border-border">
               <tr>
-                <th className="px-4 py-3">Team Member</th>
-                <th className="px-4 py-3">Assigned Role</th>
-                <th className="px-4 py-3">Access Scope</th>
-                <th className="px-4 py-3">Last Active</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-4 py-3">{isBn ? "টিম মেম্বার" : "Team Member"}</th>
+                <th className="px-4 py-3">{isBn ? "নির্ধারিত ভূমিকা" : "Assigned Role"}</th>
+                <th className="px-4 py-3">{isBn ? "অ্যাক্সেস পরিধি" : "Access Scope"}</th>
+                <th className="px-4 py-3">{isBn ? "সর্বশেষ সক্রিয়" : "Last Active"}</th>
+                <th className="px-4 py-3">{isBn ? "স্ট্যাটাস" : "Status"}</th>
+                <th className="px-4 py-3 text-right">{isBn ? "অ্যাকশন" : "Actions"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -158,7 +169,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
                         >
                           {ROLES.map((r) => (
                             <option key={r.value} value={r.value}>
-                              {r.label}
+                              {isBn ? r.labelBn : r.label}
                             </option>
                           ))}
                         </select>
@@ -202,7 +213,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
 
                   <td className="px-4 py-3">
                     <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      {user.status}
+                      {user.status === "Active" ? (isBn ? "সক্রিয়" : "Active") : user.status}
                     </span>
                   </td>
 
@@ -214,7 +225,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
                           setSelectedRole(user.role);
                         }}
                         className="text-text-muted hover:text-primary-600 transition-colors p-1"
-                        title="Change user role"
+                        title={isBn ? "ভূমিকা পরিবর্তন করুন" : "Change user role"}
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
@@ -234,7 +245,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <UserCheck className="h-4 w-4 text-primary-600" />
-                Add Administrative Team Member
+                {isBn ? "প্রশাসনিক টিম মেম্বার যোগ করুন" : "Add Administrative Team Member"}
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -253,10 +264,10 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
 
             <form onSubmit={handleAddMember} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="mem-name">Full Name</Label>
+                <Label htmlFor="mem-name">{isBn ? "পূর্ণ নাম" : "Full Name"}</Label>
                 <Input
                   id="mem-name"
-                  placeholder="e.g. Nusrat Jahan"
+                  placeholder={isBn ? "যেমন: নুসরাত জাহান" : "e.g. Nusrat Jahan"}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -264,11 +275,11 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="mem-email">Work Email</Label>
+                <Label htmlFor="mem-email">{isBn ? "কর্মক্ষেত্রের ইমেইল" : "Work Email"}</Label>
                 <Input
                   id="mem-email"
                   type="email"
-                  placeholder="e.g. nusrat@ecomxbangladesh.com"
+                  placeholder={isBn ? "যেমন: nusrat@ecomxbd.com" : "e.g. nusrat@ecomxbangladesh.com"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -276,7 +287,9 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="mem-role">Administrative Role & Scope</Label>
+                <Label htmlFor="mem-role">
+                  {isBn ? "প্রশাসনিক ভূমিকা ও দায়িত্বের পরিধি" : "Administrative Role & Scope"}
+                </Label>
                 <select
                   id="mem-role"
                   value={role}
@@ -285,14 +298,14 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
                 >
                   {ROLES.map((r) => (
                     <option key={r.value} value={r.value}>
-                      {r.label} — {r.desc}
+                      {isBn ? `${r.labelBn} — ${r.descBn}` : `${r.label} — ${r.desc}`}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="mem-phone">Phone Number (Optional)</Label>
+                <Label htmlFor="mem-phone">{isBn ? "ফোন নম্বর (ঐচ্ছিক)" : "Phone Number (Optional)"}</Label>
                 <Input
                   id="mem-phone"
                   placeholder="e.g. +880 17XXXXXXXX"
@@ -308,10 +321,12 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
                   size="sm"
                   onClick={() => setShowAddModal(false)}
                 >
-                  Cancel
+                  {isBn ? "বাতিল" : "Cancel"}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
-                  {submitting ? "Adding..." : "Add Team Member"}
+                  {submitting
+                    ? (isBn ? "যোগ হচ্ছে..." : "Adding...")
+                    : (isBn ? "টিম মেম্বার যুক্ত করুন" : "Add Team Member")}
                 </Button>
               </div>
             </form>

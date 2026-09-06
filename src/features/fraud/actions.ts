@@ -53,44 +53,17 @@ export interface AbandonedLead {
 const FRAUD_STORE_KEY = "fraud_profiles_store";
 const LEADS_STORE_KEY = "abandoned_checkouts_store";
 
-const DEFAULT_FRAUD_PROFILES: FraudProfile[] = [
-  {
-    id: "fp-1",
-    identifier_type: "phone",
-    identifier_value: "01999999999",
-    risk_score: 95,
-    cancellation_count: 6,
-    rejected_delivery_count: 4,
-    return_abuse_count: 2,
-    is_blacklisted: true,
-    blacklist_reason: "Repeated doorstep rejection across courier hubs",
-    notes: "Courier returned 4 parcels with 'Customer Unreachable'",
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "fp-2",
-    identifier_type: "phone",
-    identifier_value: "01888888888",
-    risk_score: 75,
-    cancellation_count: 3,
-    rejected_delivery_count: 2,
-    return_abuse_count: 1,
-    is_blacklisted: false,
-    blacklist_reason: "",
-    notes: "Requires advance delivery fee verification before shipping",
-    updated_at: new Date().toISOString(),
-  },
-];
+const DEFAULT_FRAUD_PROFILES: FraudProfile[] = [];
 
 async function getStoredFraudProfiles(): Promise<FraudProfile[]> {
   try {
     const supabase = createAdminClient();
     const { data } = await supabase.from("store_settings").select("value").eq("key", FRAUD_STORE_KEY).single();
-    if (data && Array.isArray(data.value) && data.value.length > 0) {
+    if (data && Array.isArray(data.value)) {
       return data.value as FraudProfile[];
     }
   } catch {}
-  return DEFAULT_FRAUD_PROFILES;
+  return [];
 }
 
 async function saveStoredFraudProfiles(profiles: FraudProfile[]) {
@@ -127,44 +100,7 @@ async function saveStoredLeads(leads: AbandonedLead[]) {
 }
 
 // In-memory abandoned leads store
-let memoryAbandonedCheckouts: AbandonedLead[] = [
-  {
-    id: "ab-1",
-    customer_name: "Farhan Kabir",
-    customer_phone: "01788776655",
-    customer_email: "farhan.k@gmail.com",
-    district: "Dhaka",
-    address: "Dhanmondi 27, House 14, Flat 4B",
-    cart_items: [
-      {
-        name: "COSRX Advanced Snail 96 Mucin Power Essence",
-        quantity: 1,
-        price: 1365,
-      },
-    ],
-    cart_total: 1365,
-    recovery_status: "abandoned",
-    last_active_at: new Date(Date.now() - 1800000).toISOString(),
-  },
-  {
-    id: "ab-2",
-    customer_name: "Sumaiya Rahman",
-    customer_phone: "01611223344",
-    customer_email: "sumaiya.r@yahoo.com",
-    district: "Chattogram",
-    address: "GEC Circle, Nasirabad Housing",
-    cart_items: [
-      {
-        name: "CeraVe Hydrating Facial Cleanser 236ml",
-        quantity: 2,
-        price: 1850,
-      },
-    ],
-    cart_total: 3700,
-    recovery_status: "sms_sent",
-    last_active_at: new Date(Date.now() - 7200000).toISOString(),
-  },
-];
+let memoryAbandonedCheckouts: AbandonedLead[] = [];
 
 /**
  * 1. Evaluate Comprehensive Order Risk & Courier Delivery Return Ratio
@@ -225,14 +161,32 @@ export async function evaluateOrderRisk({
   const returnedCount = orderList.filter((o) => ["cancelled", "returned", "failed"].includes(o.status)).length;
   const totalCompleted = deliveredCount + returnedCount;
 
-  let courierSuccessRate = "98%";
+  let courierSuccessRate = "No Past History";
   if (totalCompleted > 0) {
     const rate = Math.round((deliveredCount / totalCompleted) * 100);
-    courierSuccessRate = `${rate}%`;
+    courierSuccessRate = `${rate}% (Store)`;
     if (rate < 80) {
       riskScore += 35;
-      reasons.push(`Low historical delivery success rate (${courierSuccessRate} delivered, ${returnedCount} returns).`);
+      reasons.push(`Low store delivery success rate (${courierSuccessRate}, ${returnedCount} returns).`);
     }
+  }
+
+  // Real-time BDCourier multi-courier network check
+  if (cleanPhone.length >= 10) {
+    try {
+      const { fetchBDCourierReport } = await import("@/features/fraud/bdcourier-service");
+      const bdReport = await fetchBDCourierReport(cleanPhone);
+      if (bdReport.success && bdReport.total_parcel > 0) {
+        courierSuccessRate = `${bdReport.success_ratio}% (${bdReport.success_parcel}/${bdReport.total_parcel} delivered across BD Couriers)`;
+        if (bdReport.risk_level === "critical" || bdReport.success_ratio < 40) {
+          riskScore += 50;
+          reasons.push(`Critical courier cancellation history: ${bdReport.cancelled_parcel} returns across courier networks (${bdReport.success_ratio}% success).`);
+        } else if (bdReport.risk_level === "high" || bdReport.success_ratio < 70) {
+          riskScore += 30;
+          reasons.push(`High return risk across BD couriers (${bdReport.success_ratio}% delivery ratio, ${bdReport.cancelled_parcel} cancellations).`);
+        }
+      }
+    } catch {}
   }
 
   // 3. Duplicate / Rapid Multiple Orders Check (within last 10 minutes)

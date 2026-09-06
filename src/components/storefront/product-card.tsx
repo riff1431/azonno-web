@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Heart, Star, Check, Zap, ShoppingBag } from "lucide-react";
+import { Heart, Star, Check, ShoppingBag } from "lucide-react";
 import { formatPrice, cn } from "@/lib/utils";
 import { useWishlist } from "@/context/wishlist-context";
 import { useCart } from "@/context/cart-context";
@@ -361,8 +361,7 @@ export function ProductCard({
                   : "btn-order-now-action"
               )}
             >
-              <Zap className="h-3 w-3 fill-current text-amber-400" />
-              <span>{language === "bn" ? "এখনই অর্ডার" : (cardSettings?.orderNowText || "ORDER NOW")}</span>
+              <span>{language === "bn" ? "অর্ডার করুন" : (cardSettings?.orderNowText || "ORDER NOW")}</span>
             </button>
           </div>
         </div>

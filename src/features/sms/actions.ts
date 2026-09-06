@@ -35,7 +35,7 @@ let memorySmsLogs: SmsLogItem[] = [
 const DEFAULT_TEMPLATES: SmsTemplate[] = [
   {
     id: "t0",
-    name: "ফোন ভেরিফিকেশন ওটিপি (Phone OTP Verification)",
+    name: "ফোন ভেরিফিকেশন ওটিপি",
     event_type: "order_otp",
     template: "প্রিয় {{customer_name}}, {{store_name}}-এ আপনার ওটিপি কোড হলো {{otp_code}}। এটি ৫ মিনিটের জন্য প্রযোজ্য। কোডটি গোপন রাখুন।",
     variables: ["otp_code", "store_name", "customer_name"],
@@ -43,7 +43,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t1",
-    name: "অর্ডার গ্রহণ ও কনফার্মেশন (Order Placed & Confirmed)",
+    name: "অর্ডার গ্রহণ ও কনফার্মেশন",
     event_type: "order_created",
     template: "প্রিয় {{customer_name}}, {{store_name}}-এ আপনার অর্ডার #{{order_number}} সফলভাবে গ্রহণ করা হয়েছে (বিল: ৳{{total}})। দ্রুত পার্সেল ডেলিভারি করা হবে। লাইভ ট্র্যাক: {{tracking_url}}",
     variables: ["customer_name", "order_number", "total", "store_name", "tracking_url"],
@@ -51,7 +51,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t2",
-    name: "কুরিয়ারে হস্তান্তর ও ট্র্যাকিং (Consignment Shipped)",
+    name: "কুরিয়ারে হস্তান্তর ও ট্র্যাকিং",
     event_type: "order_shipped",
     template: "প্রিয় {{customer_name}}, আপনার পার্সেলটি (#{{order_number}}) {{courier_name}} কুরিয়ারে তুলে দেওয়া হয়েছে। ট্র্যাকিং আইডি: {{tracking_id}}। ট্র্যাক করুন: {{tracking_url}}",
     variables: ["customer_name", "order_number", "courier_name", "tracking_id", "tracking_url"],
@@ -59,7 +59,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t3",
-    name: "ডেলিভারি সম্পন্ন নিশ্চিতকরণ (Order Delivered)",
+    name: "ডেলিভারি সম্পন্ন নিশ্চিতকরণ",
     event_type: "order_delivered",
     template: "প্রিয় {{customer_name}}, {{store_name}}-এর অর্ডার #{{order_number}} সফলভাবে ডেলিভারি হয়েছে। আমাদের সাথে থাকার জন্য আন্তরিক ধন্যবাদ!",
     variables: ["customer_name", "order_number", "store_name"],
@@ -67,7 +67,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t4",
-    name: "অসম্পূর্ণ চেকআউট রিকভারি (Abandoned Cart Recovery)",
+    name: "অসম্পূর্ণ চেকআউট রিকভারি",
     event_type: "abandoned_cart",
     template: "প্রিয় {{customer_name}}, {{store_name}}-এ আপনার পছন্দের প্রোডাক্টগুলো কার্টে রাখা আছে। এখনই অর্ডারটি কনফার্ম করতে ভিজিট করুন: {{checkout_url}}",
     variables: ["customer_name", "store_name", "checkout_url", "discount_code"],
@@ -75,7 +75,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t5",
-    name: "অর্ডার বাতিল সংক্রান্ত তথ্য (Order Cancelled)",
+    name: "অর্ডার বাতিল সংক্রান্ত তথ্য",
     event_type: "order_cancelled",
     template: "প্রিয় {{customer_name}}, আপনার অর্ডার #{{order_number}} বাতিল করা হয়েছে। যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন। ধন্যবাদ।",
     variables: ["customer_name", "order_number", "store_name"],
@@ -83,7 +83,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t6",
-    name: "অগ্রিম ডেলিভারি চার্জ অনুরোধ (Advance Delivery Fee)",
+    name: "অগ্রিম ডেলিভারি চার্জ অনুরোধ",
     event_type: "advance_requested",
     template: "প্রিয় {{customer_name}}, অর্ডার #{{order_number}}-এর ডেলিভারি চার্জ বাবদ ৳{{advance_amount}} অগ্রিম পাঠানোর অনুরোধ করছি। বাকি টাকা ক্যাশ অন ডেলিভারিতে দিন।",
     variables: ["customer_name", "order_number", "advance_amount"],
@@ -91,7 +91,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t7",
-    name: "রিভিউ ও ফিডব্যাক অনুরোধ (Review & Feedback)",
+    name: "রিভিউ ও ফিডব্যাক অনুরোধ",
     event_type: "review_request",
     template: "প্রিয় {{customer_name}}, আশা করি {{store_name}}-এর প্রোডাক্টগুলো আপনার পছন্দ হয়েছে। আপনার মূল্যবান রিভিউ ও মতামত আমাদের জানান: {{store_url}}",
     variables: ["customer_name", "store_name", "store_url"],
@@ -99,7 +99,7 @@ const DEFAULT_TEMPLATES: SmsTemplate[] = [
   },
   {
     id: "t8",
-    name: "প্রমোশনাল ভাউচার ও ডিসকাউন্ট (Promotional Offer)",
+    name: "প্রমোশনাল ভাউচার ও ডিসকাউন্ট",
     event_type: "promotional",
     template: "বিশেষ অফার! {{store_name}}-এ কেনাকাটায় {{discount}} ছাড় পেতে ব্যবহার করুন প্রোমোকোড {{coupon_code}}। এখনই কিনুন: {{store_url}}",
     variables: ["coupon_code", "discount", "store_name", "store_url"],

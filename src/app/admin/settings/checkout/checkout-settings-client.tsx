@@ -19,12 +19,14 @@ import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
 import { saveCheckoutSettings } from "@/features/settings/actions";
 import { saveCheckoutAndFraudSettings } from "@/features/settings/checkout-settings-actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface CheckoutSettingsClientProps {
   initialSettings: Record<string, any>;
 }
 
 export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClientProps) {
+  const { t } = useAdminLang();
   const [formData, setFormData] = useState({
     // Basic Access
     guest_checkout_enabled: initialSettings.guest_checkout_enabled ?? true,
@@ -110,8 +112,8 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
   return (
     <div className="space-y-6 max-w-4xl">
       <ModuleHeader
-        title="Checkout, Delivery Rates & Anti-Fraud Shield"
-        description="Configure Bangladesh location-based shipping charges, free delivery thresholds, COD SMS OTP verification, and abandoned cart capture."
+        title={t("checkout_settings_title")}
+        description={t("checkout_settings_desc")}
         icon={ShoppingCart}
         isCore
       />
@@ -119,7 +121,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
       {successMsg && (
         <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-semibold text-emerald-800 animate-in fade-in-0">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>Checkout, delivery rates and anti-fraud rules saved successfully!</span>
+          <span>{t("store_settings_success")}</span>
         </div>
       )}
 
@@ -504,7 +506,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
             className="rounded-2xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold px-8 py-3 text-xs shadow-lg transition-all active:scale-95"
           >
             <Save className="h-4 w-4 mr-1.5" />
-            {saving ? "Saving Changes..." : "Save All Checkout & Anti-Fraud Rules"}
+            {saving ? t("saving_changes_btn") : t("save_checkout_btn")}
           </Button>
         </div>
       </form>

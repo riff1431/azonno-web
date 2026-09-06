@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, Send, CheckCircle2, Phone, Sparkles, Loader2 } from "lucide-react";
+import { MessageSquare, Send, Phone, Loader2 } from "lucide-react";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { Button } from "@/components/shared/ui/button";
 import { sendSmsNotification } from "./actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface SmsManagerClientProps {
   initialTemplates: any[];
@@ -12,6 +13,7 @@ interface SmsManagerClientProps {
 }
 
 export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerClientProps) {
+  const { t } = useAdminLang();
   const [templates] = useState(initialTemplates);
   const [logs, setLogs] = useState(initialLogs);
   const [testPhone, setTestPhone] = useState("01712345678");
@@ -37,7 +39,7 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
 
     if (res.success && res.log) {
       setLogs([res.log, ...logs]);
-      setMsg("Test SMS dispatched successfully via BulkSMSBD gateway!");
+      setMsg(t("sms_dispatch_success"));
     }
     setSending(false);
   };
@@ -45,7 +47,7 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
   const logColumns: Column<any>[] = [
     {
       key: "recipient",
-      header: "Recipient Phone",
+      header: t("recipient_phone_col"),
       sortable: true,
       cell: (row: any) => (
         <span className="font-mono font-bold text-text text-xs flex items-center gap-1.5">
@@ -56,16 +58,16 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
     },
     {
       key: "message",
-      header: "Message Body",
+      header: t("message_body_col"),
       cell: (row: any) => (
-        <p className="max-w-[400px] text-xs text-text-secondary leading-relaxed">
+        <p className="max-w-100 text-xs text-text-secondary leading-relaxed">
           {row.message}
         </p>
       ),
     },
     {
       key: "provider",
-      header: "Gateway",
+      header: t("gateway_col"),
       cell: (row: any) => (
         <span className="text-xs font-semibold text-text">
           {row.provider || "BulkSMSBD"}
@@ -74,7 +76,7 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
     },
     {
       key: "status",
-      header: "Status",
+      header: t("column_status"),
       cell: (row: any) => (
         <span className="rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-[10px] font-bold uppercase border border-emerald-200">
           {row.status}
@@ -83,7 +85,7 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
     },
     {
       key: "time",
-      header: "Sent Timestamp",
+      header: t("sent_at_col"),
       sortable: true,
       cell: (row: any) => (
         <span className="text-xs text-text-muted">
@@ -102,10 +104,8 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
     <div className="space-y-8">
       {/* Header */}
       <div className="border-b border-border pb-4">
-        <h1 className="text-2xl font-bold text-text">SMS Notification Gateway</h1>
-        <p className="text-sm text-text-secondary mt-0.5">
-          Manage automated transaction SMS alerts (Order Confirmation, Delivery Tracking) and broadcast logs.
-        </p>
+        <h1 className="text-2xl font-bold text-text">{t("sms_gateway_title")}</h1>
+        <p className="text-sm text-text-secondary mt-0.5">{t("sms_gateway_desc")}</p>
       </div>
 
       {/* Templates & Quick Test */}
@@ -114,7 +114,7 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-base font-bold text-text flex items-center gap-2">
             <MessageSquare className="h-4 w-4 text-primary-600" />
-            Active SMS Notification Templates
+            {t("active_templates_title")}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -153,13 +153,13 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
         <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-4 text-xs">
           <h2 className="text-base font-bold text-text flex items-center gap-2 border-b border-border pb-2">
             <Send className="h-4 w-4 text-primary-600" />
-            Send Test Transaction SMS
+            {t("send_test_sms_title")}
           </h2>
 
           <form onSubmit={handleSendTestSms} className="space-y-3">
             <div>
               <label className="block font-semibold text-text mb-1">
-                Recipient Bangladesh Mobile
+                {t("recipient_mobile_label")}
               </label>
               <input
                 type="tel"
@@ -170,19 +170,15 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
               />
             </div>
 
-            <p className="text-[11px] text-text-muted">
-              Sends an automated Order Confirmed notification through the configured SMS gateway.
-            </p>
+            <p className="text-[11px] text-text-muted">{t("sms_gateway_note")}</p>
 
             {msg && (
-              <span className="text-xs font-semibold text-emerald-600 block">
-                {msg}
-              </span>
+              <span className="text-xs font-semibold text-emerald-600 block">{msg}</span>
             )}
 
             <Button type="submit" disabled={sending} className="w-full text-xs">
               {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Send className="h-3.5 w-3.5 mr-1" />}
-              Dispatch Test SMS
+              {t("dispatch_test_btn")}
             </Button>
           </form>
         </div>
@@ -190,14 +186,14 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
 
       {/* Dispatch History Table */}
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-text">SMS Transmission History</h2>
+        <h2 className="text-lg font-bold text-text">{t("sms_history_title")}</h2>
 
         <DataTable
           columns={logColumns}
           data={logs}
           searchKey="recipient_phone"
-          searchPlaceholder="Search phone number..."
-          emptyMessage="No SMS messages logged yet."
+          searchPlaceholder={t("search_sms_phone")}
+          emptyMessage={t("no_sms_logged")}
         />
       </div>
     </div>

@@ -42,13 +42,13 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
       return language === "bn" ? "ক্যাশ অন ডেলিভারি" : "Cash on Delivery";
     }
     if (method === "bkash") {
-      return "bKash (MFS Instant)";
+      return language === "bn" ? "বিকাশ ইনস্ট্যান্ট পেমেন্ট" : "bKash Instant Payment";
     }
     if (method === "sslcommerz") {
-      return language === "bn" ? "অনলাইন কার্ড / নেট ব্যাংকিং (SSLCommerz)" : "SSLCommerz (Cards & Net Banking)";
+      return language === "bn" ? "অনলাইন কার্ড ও নেট ব্যাংকিং" : "Online Cards & Net Banking";
     }
     if (method === "nagad") {
-      return "Nagad";
+      return language === "bn" ? "নগদ পেমেন্ট" : "Nagad Payment";
     }
     return method || (language === "bn" ? "ক্যাশ অন ডেলিভারি" : "Cash on Delivery");
   };

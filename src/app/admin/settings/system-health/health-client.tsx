@@ -5,12 +5,14 @@ import { Activity, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Database, Sh
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
 import { runSystemHealthCheck, type ServiceHealthItem } from "@/features/system/health-actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface HealthClientProps {
   initialChecks: ServiceHealthItem[];
 }
 
 export function HealthClient({ initialChecks }: HealthClientProps) {
+  const { t } = useAdminLang();
   const [checks, setChecks] = useState<ServiceHealthItem[]>(initialChecks);
   const [loading, setLoading] = useState(false);
   const [lastRun, setLastRun] = useState<string>(new Date().toLocaleTimeString());
@@ -50,7 +52,7 @@ export function HealthClient({ initialChecks }: HealthClientProps) {
           className="text-xs shrink-0"
         >
           <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${loading ? "animate-spin" : ""}`} />
-          Run Health Check
+          {t("run_health_check_btn")}
         </Button>
       </div>
 
@@ -58,7 +60,7 @@ export function HealthClient({ initialChecks }: HealthClientProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted">Healthy Services</span>
+            <span className="text-xs font-semibold text-text-muted">{t("health_healthy_label")}</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
           </div>
           <p className="text-2xl font-extrabold text-emerald-600">{healthyCount}</p>
@@ -67,7 +69,7 @@ export function HealthClient({ initialChecks }: HealthClientProps) {
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted">Warnings / Partial</span>
+            <span className="text-xs font-semibold text-text-muted">{t("health_warning_label")}</span>
             <AlertTriangle className="h-4 w-4 text-amber-600" />
           </div>
           <p className="text-2xl font-extrabold text-amber-600">{warningCount}</p>
@@ -76,7 +78,7 @@ export function HealthClient({ initialChecks }: HealthClientProps) {
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted">Critical Errors</span>
+            <span className="text-xs font-semibold text-text-muted">{t("health_error_label")}</span>
             <XCircle className="h-4 w-4 text-red-600" />
           </div>
           <p className="text-2xl font-extrabold text-red-600">{errorCount}</p>

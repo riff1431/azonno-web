@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import { formatPrice } from "@/lib/utils";
-import { AlertTriangle, CheckCircle2, Clock, Plus, DollarSign, Trash2, X, AlertCircle, Building2, Truck } from "lucide-react";
+import { CheckCircle2, Clock, Plus, DollarSign, Trash2, X, AlertCircle, Building2, Truck } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { addDue, settleDue, deleteDue, type DueItem } from "@/features/finance/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface DuesClientProps {
   initialDues: DueItem[];
 }
 
 export function DuesClient({ initialDues }: DuesClientProps) {
+  const { t } = useAdminLang();
   const [dues, setDues] = useState<DueItem[]>(initialDues);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -50,11 +52,11 @@ export function DuesClient({ initialDues }: DuesClientProps) {
   const handleAddDue = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!entity.trim()) {
-      setError("Please provide an entity / vendor name");
+      setError(t("err_enter_entity_name"));
       return;
     }
     if (!amount || Number(amount) <= 0) {
-      setError("Please enter a valid amount");
+      setError(t("err_enter_valid_amount"));
       return;
     }
 
@@ -74,7 +76,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
       setAmount("");
       setNotes("");
     } catch (err: any) {
-      setError(err.message || "Failed to create due entry");
+      setError(err.message || t("err_failed_create_due"));
     } finally {
       setSubmitting(false);
     }
@@ -84,7 +86,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
     e.preventDefault();
     if (!settlingItem) return;
     if (!paymentAmount || Number(paymentAmount) <= 0) {
-      setError("Please enter a valid payment amount");
+      setError(t("err_enter_valid_payment"));
       return;
     }
 
@@ -101,20 +103,20 @@ export function DuesClient({ initialDues }: DuesClientProps) {
       setPaymentAmount("");
       setSettlementNote("");
     } catch (err: any) {
-      setError(err.message || "Failed to record settlement");
+      setError(err.message || t("err_failed_settlement"));
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDeleteDue = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this due record?")) return;
+    if (!confirm(t("confirm_delete_due"))) return;
     setDeletingId(id);
     try {
       const updated = await deleteDue(id);
       setDues(updated);
     } catch (err: any) {
-      alert("Failed to delete record: " + err.message);
+      alert(t("err_failed_delete_due") + ": " + err.message);
     } finally {
       setDeletingId(null);
     }
@@ -124,36 +126,34 @@ export function DuesClient({ initialDues }: DuesClientProps) {
     <div className="space-y-8 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-text">Dues & Settlements Manager</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Track pending Cash on Delivery remittances from courier partners and upcoming supplier payments.
-          </p>
+          <h1 className="text-2xl font-bold text-text">{t("dues_title")}</h1>
+          <p className="text-sm text-text-secondary mt-0.5">{t("dues_desc")}</p>
         </div>
 
         <Button onClick={() => setShowAddModal(true)} size="sm" className="shrink-0 text-xs">
           <Plus className="h-4 w-4 mr-1.5" />
-          Record New Due / Remittance
+          {t("record_due_btn")}
         </Button>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Pending Courier COD</span>
+          <span className="text-xs text-text-muted font-medium">{t("pending_courier_cod_label")}</span>
           <p className="text-2xl font-extrabold text-emerald-700">+{formatPrice(totalReceivablesDue)}</p>
-          <span className="text-[11px] text-text-muted">Unremitted funds from deliveries</span>
+          <span className="text-[11px] text-text-muted">{t("unremitted_deliveries_label")}</span>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Supplier Payables Due</span>
+          <span className="text-xs text-text-muted font-medium">{t("supplier_payables_label")}</span>
           <p className="text-2xl font-extrabold text-red-600">-{formatPrice(totalPayablesDue)}</p>
-          <span className="text-[11px] text-text-muted">Pending overseas procurement</span>
+          <span className="text-[11px] text-text-muted">{t("pending_procurement_label")}</span>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Fully Settled Volume</span>
+          <span className="text-xs text-text-muted font-medium">{t("fully_settled_label")}</span>
           <p className="text-2xl font-extrabold text-text">{formatPrice(totalSettled)}</p>
-          <span className="text-[11px] text-emerald-600 font-semibold">Cleared obligations</span>
+          <span className="text-[11px] text-emerald-600 font-semibold">{t("cleared_obligations_label")}</span>
         </div>
       </div>
 
@@ -177,29 +177,29 @@ export function DuesClient({ initialDues }: DuesClientProps) {
       {/* Dues Table */}
       <div className="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">Active Dues & Remittances</h2>
-          <span className="text-xs text-text-muted">{filteredDues.length} entries</span>
+          <h2 className="text-base font-bold text-text">{t("active_dues_title")}</h2>
+          <span className="text-xs text-text-muted">{filteredDues.length} {t("due_entries_label")}</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-surface-secondary/60 text-text-muted uppercase font-bold border-b border-border">
               <tr>
-                <th className="px-4 py-3">Party / Entity</th>
-                <th className="px-4 py-3">Type</th>
-                <th className="px-4 py-3">Total Amount</th>
-                <th className="px-4 py-3">Settled</th>
-                <th className="px-4 py-3">Due Balance</th>
-                <th className="px-4 py-3">Due Date</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-4 py-3">{t("col_party_entity")}</th>
+                <th className="px-4 py-3">{t("col_type")}</th>
+                <th className="px-4 py-3">{t("col_total_amount")}</th>
+                <th className="px-4 py-3">{t("col_settled")}</th>
+                <th className="px-4 py-3">{t("col_due_balance")}</th>
+                <th className="px-4 py-3">{t("col_due_date")}</th>
+                <th className="px-4 py-3">{t("column_status")}</th>
+                <th className="px-4 py-3 text-right">{t("column_actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredDues.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-8 text-center text-text-muted text-xs">
-                    No records found for this filter.
+                    {t("no_dues_found")}
                   </td>
                 </tr>
               ) : (
@@ -277,14 +277,13 @@ export function DuesClient({ initialDues }: DuesClientProps) {
                             className="text-xs h-7 px-2.5 text-primary-600 hover:text-primary-700 hover:bg-primary-50"
                           >
                             <DollarSign className="h-3 w-3 mr-0.5" />
-                            Settle
+                            {t("settle_btn")}
                           </Button>
                         )}
                         <button
                           onClick={() => handleDeleteDue(due.id)}
                           disabled={deletingId === due.id}
                           className="text-text-muted hover:text-red-600 transition-colors p-1 align-middle"
-                          title="Delete entry"
                         >
                           <Trash2 className="h-4 w-4 inline" />
                         </button>
@@ -305,7 +304,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary-600" />
-                Record Due / Remittance
+                {t("record_due_modal_title")}
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -324,10 +323,10 @@ export function DuesClient({ initialDues }: DuesClientProps) {
 
             <form onSubmit={handleAddDue} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="due-entity">Party / Entity Name</Label>
+                <Label htmlFor="due-entity">{t("due_entity_label")}</Label>
                 <Input
                   id="due-entity"
-                  placeholder="e.g. SteadFast Courier or Seoul Cosmetics Wholesale"
+                  placeholder={t("due_entity_placeholder")}
                   value={entity}
                   onChange={(e) => setEntity(e.target.value)}
                   required
@@ -335,7 +334,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="due-type">Type</Label>
+                <Label htmlFor="due-type">{t("due_type_label")}</Label>
                 <select
                   id="due-type"
                   value={type}
@@ -350,7 +349,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="due-amount">Total Due Amount (BDT)</Label>
+                <Label htmlFor="due-amount">{t("due_amount_label")}</Label>
                 <Input
                   id="due-amount"
                   type="number"
@@ -363,7 +362,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="due-date">Due Date</Label>
+                <Label htmlFor="due-date">{t("due_date_label")}</Label>
                 <Input
                   id="due-date"
                   type="date"
@@ -374,11 +373,11 @@ export function DuesClient({ initialDues }: DuesClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="due-notes">Notes / Consignment Reference</Label>
+                <Label htmlFor="due-notes">{t("due_notes_label")}</Label>
                 <textarea
                   id="due-notes"
                   rows={2}
-                  placeholder="e.g. COD collection for delivered skincare parcels..."
+                  placeholder={t("due_notes_placeholder")}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   className="w-full rounded-xl border border-border bg-white p-2.5 text-xs text-text focus:border-primary-500 focus:outline-none resize-none"
@@ -392,10 +391,10 @@ export function DuesClient({ initialDues }: DuesClientProps) {
                   size="sm"
                   onClick={() => setShowAddModal(false)}
                 >
-                  Cancel
+                  {t("cancel_btn")}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
-                  {submitting ? "Saving..." : "Save Due Record"}
+                  {submitting ? t("saving_due_btn") : t("save_due_btn")}
                 </Button>
               </div>
             </form>
@@ -410,7 +409,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-emerald-600" />
-                Record Settlement / Payment
+                {t("settle_payment_modal_title")}
               </h3>
               <button
                 onClick={() => setSettlingItem(null)}
@@ -423,11 +422,11 @@ export function DuesClient({ initialDues }: DuesClientProps) {
             <div className="p-3 bg-surface-secondary rounded-xl border border-border text-xs space-y-1">
               <p className="font-bold text-text">{settlingItem.entity}</p>
               <div className="flex justify-between text-text-secondary">
-                <span>Total Due: {formatPrice(settlingItem.amount)}</span>
-                <span>Already Paid: {formatPrice(settlingItem.paid)}</span>
+                <span>{t("settle_total_due_label")} {formatPrice(settlingItem.amount)}</span>
+                <span>{t("settle_already_paid_label")} {formatPrice(settlingItem.paid)}</span>
               </div>
               <p className="font-extrabold text-red-600 pt-1 border-t border-border">
-                Remaining Balance: {formatPrice(settlingItem.amount - settlingItem.paid)}
+                {t("settle_remaining_label")} {formatPrice(settlingItem.amount - settlingItem.paid)}
               </p>
             </div>
 
@@ -440,7 +439,7 @@ export function DuesClient({ initialDues }: DuesClientProps) {
 
             <form onSubmit={handleSettleDue} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="settle-amount">Amount Received / Paid (BDT)</Label>
+                <Label htmlFor="settle-amount">{t("settle_amount_label")}</Label>
                 <Input
                   id="settle-amount"
                   type="number"
@@ -453,10 +452,10 @@ export function DuesClient({ initialDues }: DuesClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="settle-notes">Settlement Reference / Bank Cheque No</Label>
+                <Label htmlFor="settle-notes">{t("settle_ref_label")}</Label>
                 <Input
                   id="settle-notes"
-                  placeholder="e.g. Received via BRAC Bank corporate deposit or bKash"
+                  placeholder={t("settle_ref_placeholder")}
                   value={settlementNote}
                   onChange={(e) => setSettlementNote(e.target.value)}
                 />
@@ -469,10 +468,10 @@ export function DuesClient({ initialDues }: DuesClientProps) {
                   size="sm"
                   onClick={() => setSettlingItem(null)}
                 >
-                  Cancel
+                  {t("cancel_btn")}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
-                  {submitting ? "Processing..." : "Confirm Settlement"}
+                  {submitting ? t("processing_btn") : t("confirm_settlement_btn")}
                 </Button>
               </div>
             </form>

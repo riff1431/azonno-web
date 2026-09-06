@@ -53,25 +53,25 @@ export function SkincareQuizClient() {
         : "How does your face feel midway through the day in Bangladesh climate?",
       options: [
         {
-          label: language === "bn" ? "শুষ্ক ও টানটান ত্বক (Dry & Dehydrated)" : "Dry & Dehydrated",
+          label: language === "bn" ? "শুষ্ক ও টানটান ত্বক" : "Dry & Dehydrated Skin",
           desc: language === "bn" ? "মুখ ধোয়ার পর ত্বক টানটান, খসখসে বা রুক্ষ লাগে" : "Feels tight, flaky, or rough after cleansing",
           icon: Droplets,
           value: "dry",
         },
         {
-          label: language === "bn" ? "তৈলাক্ত ও চকচকে ত্বক (Oily & Shiny)" : "Oily & Shiny",
+          label: language === "bn" ? "তৈলাক্ত ও চকচকে ত্বক" : "Oily & Shiny Skin",
           desc: language === "bn" ? "T-জোনে অতিরিক্ত তেল জমে, ব্রণ হওয়ার প্রবণতা বেশি" : "Excess sebum around T-zone, prone to breakouts",
           icon: Sparkles,
           value: "oily",
         },
         {
-          label: language === "bn" ? "মিশ্র ত্বক (Combination)" : "Combination",
+          label: language === "bn" ? "মিশ্র ত্বক" : "Combination Skin",
           desc: language === "bn" ? "কপাল ও নাক তৈলাক্ত, কিন্তু গাল স্বাভাবিক বা শুষ্ক" : "Oily forehead and nose, normal/dry cheeks",
           icon: Scale,
           value: "combo",
         },
         {
-          label: language === "bn" ? "সংবেদনশীল ও সংবেদনপ্রবণ ত্বক (Sensitive)" : "Sensitive & Reactive",
+          label: language === "bn" ? "সংবেদনশীল ত্বক" : "Sensitive & Reactive Skin",
           desc: language === "bn" ? "সহজেই লালচে ভাব, চুলকানি বা নতুন পণ্যে জ্বালাপোড়া হয়" : "Easily irritated, redness, stung by harsh products",
           icon: ShieldCheck,
           value: "sensitive",
@@ -125,7 +125,7 @@ export function SkincareQuizClient() {
           value: "outdoor",
         },
         {
-          label: language === "bn" ? "এসি (AC) রুমে দীর্ঘক্ষণ থাকা" : "Air Conditioned Indoors",
+          label: language === "bn" ? "শীতাতপ নিয়ন্ত্রিত রুমে থাকা" : "Air Conditioned Indoors",
           desc: language === "bn" ? "অফিস বা পড়ার রুমে ৮+ ঘণ্টা এসির ঠাণ্ডায় থাকা (ত্বক শুষ্ক করে)" : "8+ hours in AC office or study room (dehydrating)",
           icon: Wind,
           value: "indoor",

@@ -24,18 +24,26 @@ const AdminLangContext = createContext<AdminLangContextValue>({
   t: (key) => key as string,
 });
 
-export function AdminLanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<AdminLang>("en");
+export function AdminLanguageProvider({
+  children,
+  initialLang = "en",
+}: {
+  children: ReactNode;
+  initialLang?: AdminLang;
+}) {
+  const [lang, setLangState] = useState<AdminLang>(initialLang);
 
-  // Load persisted preference on mount
+  // Load persisted preference on mount, falling back to initialLang
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as AdminLang | null;
       if (saved === "en" || saved === "bn") {
         setLangState(saved);
+      } else if (initialLang) {
+        setLangState(initialLang);
       }
     } catch {}
-  }, []);
+  }, [initialLang]);
 
   const setLang = useCallback((newLang: AdminLang) => {
     setLangState(newLang);

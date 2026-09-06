@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { formatPrice } from "@/lib/utils";
-import { Receipt, DollarSign, Plus, Trash2, X, AlertCircle, Tag, Calendar, Layers } from "lucide-react";
+import { Receipt, Plus, Trash2, X, AlertCircle, Tag, Calendar, Layers } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { addExpense, deleteExpense, type ExpenseItem } from "@/features/finance/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 const CATEGORIES = [
   "Freight & Customs",
@@ -24,6 +25,7 @@ interface CostsClientProps {
 }
 
 export function CostsClient({ initialExpenses }: CostsClientProps) {
+  const { t } = useAdminLang();
   const [expenses, setExpenses] = useState<ExpenseItem[]>(initialExpenses);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [showModal, setShowModal] = useState(false);
@@ -65,11 +67,11 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
   const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!amount || Number(amount) <= 0) {
-      setError("Please enter a valid expense amount");
+      setError(t("err_enter_valid_amount"));
       return;
     }
     if (!description.trim()) {
-      setError("Please provide an expense description");
+      setError(t("err_enter_description"));
       return;
     }
 
@@ -88,20 +90,20 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
       setAmount("");
       setDate(new Date().toISOString().split("T")[0]);
     } catch (err: any) {
-      setError(err.message || "Failed to record expense");
+      setError(err.message || t("err_failed_record_expense"));
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDeleteExpense = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this expense record?")) return;
+    if (!confirm(t("confirm_delete_expense"))) return;
     setDeletingId(id);
     try {
       const updated = await deleteExpense(id);
       setExpenses(updated);
     } catch (err: any) {
-      alert("Failed to delete expense: " + err.message);
+      alert(t("err_failed_delete_expense") + ": " + err.message);
     } finally {
       setDeletingId(null);
     }
@@ -111,47 +113,45 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
     <div className="space-y-8 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-text">Operational Costs & Expenses</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Track product import freight, custom duty, packaging, SMS gateway, and operational overheads.
-          </p>
+          <h1 className="text-2xl font-bold text-text">{t("costs_title")}</h1>
+          <p className="text-sm text-text-secondary mt-0.5">{t("costs_desc")}</p>
         </div>
 
         <Button onClick={() => setShowModal(true)} size="sm" className="shrink-0 text-xs">
           <Plus className="h-4 w-4 mr-1.5" />
-          Record New Expense
+          {t("record_expense_btn")}
         </Button>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Total Operational Expenses</span>
+          <span className="text-xs text-text-muted font-medium">{t("total_expenses_label")}</span>
           <p className="text-2xl font-extrabold text-red-600">-{formatPrice(totalCost)}</p>
           <span className="text-[11px] text-text-muted">
-            {selectedCategory === "All" ? "Across all categories" : `Filtered: ${selectedCategory}`}
+            {selectedCategory === "All" ? t("all_categories_label") : `${t("filtered_category_label")} ${selectedCategory}`}
           </span>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Largest Cost Driver</span>
+          <span className="text-xs text-text-muted font-medium">{t("largest_cost_driver_label")}</span>
           <p className="text-lg font-bold text-text">
             {largestCatName} {largestCatPct > 0 ? `(${largestCatPct}%)` : ""}
           </p>
-          <span className="text-[11px] text-text-muted">Top spending category</span>
+          <span className="text-[11px] text-text-muted">{t("top_spending_label")}</span>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Expense Entries</span>
-          <p className="text-2xl font-extrabold text-text">{filteredExpenses.length} records</p>
-          <span className="text-[11px] text-emerald-600 font-semibold">Live updated in Supabase</span>
+          <span className="text-xs text-text-muted font-medium">{t("expense_entries_label")}</span>
+          <p className="text-2xl font-extrabold text-text">{filteredExpenses.length} {t("expense_records_label")}</p>
+          <span className="text-[11px] text-emerald-600 font-semibold">{t("live_updated_label")}</span>
         </div>
       </div>
 
       {/* Filter Chips */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 text-xs">
         <span className="text-text-muted font-medium shrink-0 flex items-center gap-1">
-          <Layers className="h-3.5 w-3.5" /> Filter:
+          <Layers className="h-3.5 w-3.5" /> {t("filter_label")}
         </span>
         <button
           onClick={() => setSelectedCategory("All")}
@@ -161,7 +161,7 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
               : "bg-surface-secondary text-text-secondary hover:bg-surface-secondary/80 border border-border"
           }`}
         >
-          All Categories
+          {t("all_categories_btn")}
         </button>
         {CATEGORIES.map((cat) => (
           <button
@@ -181,26 +181,26 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
       {/* Costs Ledger */}
       <div className="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">Expense Ledger</h2>
-          <span className="text-xs text-text-muted">Showing {filteredExpenses.length} entries</span>
+          <h2 className="text-base font-bold text-text">{t("expense_ledger_title")}</h2>
+          <span className="text-xs text-text-muted">{filteredExpenses.length} {t("showing_entries_label")}</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-surface-secondary/60 text-text-muted uppercase font-bold border-b border-border">
               <tr>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Description</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3 text-right">Amount</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-4 py-3">{t("col_category")}</th>
+                <th className="px-4 py-3">{t("col_description")}</th>
+                <th className="px-4 py-3">{t("col_date")}</th>
+                <th className="px-4 py-3 text-right">{t("col_amount")}</th>
+                <th className="px-4 py-3 text-right">{t("column_actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredExpenses.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-text-muted text-xs">
-                    No expense records found. Click &quot;Record New Expense&quot; above to add one.
+                    {t("no_expense_records")}
                   </td>
                 </tr>
               ) : (
@@ -229,7 +229,6 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
                         onClick={() => handleDeleteExpense(exp.id)}
                         disabled={deletingId === exp.id}
                         className="text-text-muted hover:text-red-600 transition-colors p-1"
-                        title="Delete record"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -249,7 +248,7 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <Receipt className="h-4 w-4 text-primary-600" />
-                Record Operational Expense
+                {t("record_expense_modal_title")}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -268,7 +267,7 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
 
             <form onSubmit={handleAddExpense} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="exp-cat">Expense Category</Label>
+                <Label htmlFor="exp-cat">{t("exp_category_label")}</Label>
                 <select
                   id="exp-cat"
                   value={category}
@@ -284,7 +283,7 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="exp-amount">Amount (BDT)</Label>
+                <Label htmlFor="exp-amount">{t("exp_amount_label")}</Label>
                 <Input
                   id="exp-amount"
                   type="number"
@@ -297,7 +296,7 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="exp-date">Expense Date</Label>
+                <Label htmlFor="exp-date">{t("exp_date_label")}</Label>
                 <Input
                   id="exp-date"
                   type="date"
@@ -308,11 +307,11 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="exp-desc">Description & Purpose</Label>
+                <Label htmlFor="exp-desc">{t("exp_desc_label")}</Label>
                 <textarea
                   id="exp-desc"
                   rows={3}
-                  placeholder="e.g. Incheon air cargo freight clearance for 300x Korean skincare serums..."
+                  placeholder={t("exp_desc_placeholder")}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full rounded-xl border border-border bg-white p-2.5 text-xs text-text focus:border-primary-500 focus:outline-none resize-none"
@@ -327,10 +326,10 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
                   size="sm"
                   onClick={() => setShowModal(false)}
                 >
-                  Cancel
+                  {t("cancel_btn")}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
-                  {submitting ? "Saving..." : "Save Expense"}
+                  {submitting ? t("saving_expense_btn") : t("save_expense_btn")}
                 </Button>
               </div>
             </form>

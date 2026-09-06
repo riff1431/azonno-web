@@ -8,6 +8,7 @@ import { Button } from "@/components/shared/ui/button";
 import { DataTable, RowActions, RowAction, type Column } from "@/components/admin/data-table";
 import { getBrands, deleteBrand } from "@/features/brands/actions";
 import { cn } from "@/lib/utils";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface BrandRow {
   id: string;
@@ -20,6 +21,7 @@ interface BrandRow {
 
 export default function BrandListClient() {
   const router = useRouter();
+  const { t } = useAdminLang();
   const [brands, setBrands] = useState<BrandRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +44,7 @@ export default function BrandListClient() {
   const columns: Column<BrandRow>[] = [
     {
       key: "name",
-      header: "Brand",
+      header: t("column_brand"),
       sortable: true,
       cell: (row) => (
         <div className="flex items-center gap-3">
@@ -62,14 +64,14 @@ export default function BrandListClient() {
     },
     {
       key: "status",
-      header: "Status",
+      header: t("column_status"),
       sortable: true,
       cell: (row) => (
         <span className={cn(
           "inline-flex rounded-full px-2 py-0.5 text-xs font-medium",
           row.status === "active" ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
         )}>
-          {row.status}
+          {row.status === "active" ? t("active") : row.status}
         </span>
       ),
     },
@@ -78,30 +80,30 @@ export default function BrandListClient() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-text">Brands</h1>
-        <p className="mt-1 text-sm text-text-secondary">Manage product brands</p>
+        <h1 className="text-2xl font-bold text-text">{t("brands")}</h1>
+        <p className="mt-1 text-sm text-text-secondary">{t("brand_desc")}</p>
       </div>
       <DataTable
         columns={columns}
         data={brands}
         loading={loading}
-        searchPlaceholder="Search brands..."
+        searchPlaceholder={t("search_table")}
         searchKey="name"
         getRowId={(row) => row.id}
-        emptyMessage="No brands found."
+        emptyMessage={t("no_brands")}
         emptyIcon={<Tag className="h-6 w-6" />}
         headerActions={
           <Link href="/admin/brands/create">
-            <Button><Plus className="h-4 w-4" /> Add Brand</Button>
+            <Button><Plus className="h-4 w-4" /> {t("add_brand")}</Button>
           </Link>
         }
         actions={(row) => (
           <RowActions>
             <RowAction onClick={() => router.push(`/admin/brands/${row.id}/edit`)}>
-              <Pencil className="h-3.5 w-3.5" /> Edit
+              <Pencil className="h-3.5 w-3.5" /> {t("action_edit")}
             </RowAction>
             <RowAction variant="danger" onClick={() => handleDelete(row.id, row.name)}>
-              <Trash2 className="h-3.5 w-3.5" /> Delete
+              <Trash2 className="h-3.5 w-3.5" /> {t("action_delete")}
             </RowAction>
           </RowActions>
         )}

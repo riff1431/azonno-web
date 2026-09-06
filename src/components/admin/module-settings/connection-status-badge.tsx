@@ -1,5 +1,8 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { CheckCircle2, XCircle, AlertTriangle, HelpCircle, Shield, Wifi, WifiOff } from "lucide-react";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 export type ConnectionStatus =
   | "connected"
@@ -22,6 +25,8 @@ export function ConnectionStatusBadge({
   className,
   showIcon = true,
 }: ConnectionStatusBadgeProps) {
+  const { lang } = useAdminLang();
+  const isBn = lang === "bn";
   const normStatus = (status || "").toLowerCase();
 
   switch (normStatus) {
@@ -35,7 +40,11 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />}
-          <span>{normStatus === "connected" ? "Connected" : "Active"}</span>
+          <span>
+            {normStatus === "connected"
+              ? (isBn ? "সংযুক্ত" : "Connected")
+              : (isBn ? "সক্রিয়" : "Active")}
+          </span>
         </span>
       );
 
@@ -48,7 +57,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <Wifi className="h-3.5 w-3.5 text-emerald-600" />}
-          <span>Live Mode</span>
+          <span>{isBn ? "লাইভ মোড" : "Live Mode"}</span>
         </span>
       );
 
@@ -61,7 +70,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />}
-          <span>Sandbox / Test</span>
+          <span>{isBn ? "স্যান্ডবক্স / টেস্ট" : "Sandbox / Test"}</span>
         </span>
       );
 
@@ -74,7 +83,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <XCircle className="h-3.5 w-3.5 text-red-600" />}
-          <span>Error</span>
+          <span>{isBn ? "ত্রুটি" : "Error"}</span>
         </span>
       );
 
@@ -88,7 +97,11 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <WifiOff className="h-3.5 w-3.5 text-text-muted" />}
-          <span>{normStatus === "disconnected" ? "Disconnected" : "Disabled"}</span>
+          <span>
+            {normStatus === "disconnected"
+              ? (isBn ? "বিচ্ছিন্ন" : "Disconnected")
+              : (isBn ? "নিষ্ক্রিয়" : "Disabled")}
+          </span>
         </span>
       );
 
@@ -102,7 +115,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <HelpCircle className="h-3.5 w-3.5 text-text-muted" />}
-          <span>Not Configured</span>
+          <span>{isBn ? "কনফিগার করা হয়নি" : "Not Configured"}</span>
         </span>
       );
   }

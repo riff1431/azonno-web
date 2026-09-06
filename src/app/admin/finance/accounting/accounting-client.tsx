@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { formatPrice } from "@/lib/utils";
-import { Landmark, Wallet, ArrowDownRight, ArrowUpRight, Scale, Plus, Edit2, Trash2, X, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Landmark, ArrowDownRight, ArrowUpRight, Plus, Edit2, Trash2, X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { saveAccount, deleteAccount, type AccountItem } from "@/features/finance/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 const ACCOUNT_TYPES = [
   "Asset (Bank)",
@@ -21,6 +22,7 @@ interface AccountingClientProps {
 }
 
 export function AccountingClient({ initialAccounts }: AccountingClientProps) {
+  const { t } = useAdminLang();
   const [accounts, setAccounts] = useState<AccountItem[]>(initialAccounts);
   const [showModal, setShowModal] = useState(false);
   const [editingAccount, setEditingAccount] = useState<AccountItem | null>(null);
@@ -69,11 +71,11 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
   const handleSaveAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError("Please enter an account name");
+      setError(t("err_enter_account_name"));
       return;
     }
     if (balance === "" || isNaN(Number(balance))) {
-      setError("Please enter a valid numeric balance");
+      setError(t("err_enter_valid_balance"));
       return;
     }
 
@@ -90,20 +92,20 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
       setAccounts(updated);
       setShowModal(false);
     } catch (err: any) {
-      setError(err.message || "Failed to save account");
+      setError(err.message || t("err_failed_save_account"));
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDeleteAccount = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this financial account?")) return;
+    if (!confirm(t("confirm_delete_account"))) return;
     setDeletingId(id);
     try {
       const updated = await deleteAccount(id);
       setAccounts(updated);
     } catch (err: any) {
-      alert("Failed to delete account: " + err.message);
+      alert(t("err_failed_delete_account") + ": " + err.message);
     } finally {
       setDeletingId(null);
     }
@@ -113,42 +115,36 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
     <div className="space-y-8 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold text-text">Chart of Accounts & Liquid Balances</h1>
-          <p className="text-sm text-text-secondary mt-0.5">
-            Live overview of corporate bank balances, mobile wallets (bKash/Nagad), COD receivables, and supplier liabilities.
-          </p>
+          <h1 className="text-2xl font-bold text-text">{t("accounting_title")}</h1>
+          <p className="text-sm text-text-secondary mt-0.5">{t("accounting_desc")}</p>
         </div>
 
         <Button onClick={openAddModal} size="sm" className="shrink-0 text-xs">
           <Plus className="h-4 w-4 mr-1.5" />
-          Add Account / Balance
+          {t("add_account_btn")}
         </Button>
       </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Total Liquid Assets</span>
+          <span className="text-xs text-text-muted font-medium">{t("total_liquid_assets_label")}</span>
           <p className="text-2xl font-extrabold text-text">{formatPrice(totalAssets)}</p>
           <span className="text-[11px] text-emerald-600 font-semibold flex items-center">
             <ArrowUpRight className="h-3.5 w-3.5 mr-0.5" />
-            {accounts.filter((a) => a.balance > 0).length} Active Asset Accounts
+            {accounts.filter((a) => a.balance > 0).length} {t("active_asset_accounts_label")}
           </span>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Outstanding Payables</span>
+          <span className="text-xs text-text-muted font-medium">{t("outstanding_payables_label")}</span>
           <p className="text-2xl font-extrabold text-red-600">-{formatPrice(totalLiabilities)}</p>
-          <span className="text-[11px] text-text-muted">Supplier procurement balances</span>
+          <span className="text-[11px] text-text-muted">{t("supplier_procurement_label")}</span>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
-          <span className="text-xs text-text-muted font-medium">Net Working Capital</span>
-          <p
-            className={`text-2xl font-extrabold ${
-              netWorth >= 0 ? "text-emerald-700" : "text-red-600"
-            }`}
-          >
+          <span className="text-xs text-text-muted font-medium">{t("net_working_capital_label")}</span>
+          <p className={`text-2xl font-extrabold ${netWorth >= 0 ? "text-emerald-700" : "text-red-600"}`}>
             {formatPrice(netWorth)}
           </p>
           <span
@@ -158,7 +154,7 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
                 : "text-red-700 bg-red-50 border-red-200"
             }`}
           >
-            {netWorth >= 0 ? "Positive Cash Flow" : "Working Capital Deficit"}
+            {netWorth >= 0 ? t("positive_cash_flow_label") : t("working_capital_deficit_label")}
           </span>
         </div>
       </div>
@@ -166,26 +162,26 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
       {/* Accounts Table */}
       <div className="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">Account Balances Ledger</h2>
-          <span className="text-xs text-text-muted">{accounts.length} active ledger records</span>
+          <h2 className="text-base font-bold text-text">{t("account_balances_ledger_title")}</h2>
+          <span className="text-xs text-text-muted">{accounts.length} {t("ledger_records_label")}</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-surface-secondary/60 text-text-muted uppercase font-bold border-b border-border">
               <tr>
-                <th className="px-4 py-3">Account Entity</th>
-                <th className="px-4 py-3">Classification</th>
-                <th className="px-4 py-3">Account / Ref Number</th>
-                <th className="px-4 py-3 text-right">Current Balance</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+                <th className="px-4 py-3">{t("col_account_entity")}</th>
+                <th className="px-4 py-3">{t("col_classification")}</th>
+                <th className="px-4 py-3">{t("col_account_ref")}</th>
+                <th className="px-4 py-3 text-right">{t("col_current_balance")}</th>
+                <th className="px-4 py-3 text-right">{t("column_actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {accounts.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-text-muted text-xs">
-                    No accounts registered yet.
+                    {t("no_accounts_yet")}
                   </td>
                 </tr>
               ) : (
@@ -220,7 +216,7 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
                       <button
                         onClick={() => openEditModal(acc)}
                         className="text-text-muted hover:text-primary-600 transition-colors p-1"
-                        title="Edit Account or Balance"
+                        title={t("edit_account_modal_title")}
                       >
                         <Edit2 className="h-4 w-4 inline" />
                       </button>
@@ -228,7 +224,7 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
                         onClick={() => handleDeleteAccount(acc.id)}
                         disabled={deletingId === acc.id}
                         className="text-text-muted hover:text-red-600 transition-colors p-1"
-                        title="Delete account"
+                        title={t("column_actions")}
                       >
                         <Trash2 className="h-4 w-4 inline" />
                       </button>
@@ -248,7 +244,7 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <Landmark className="h-4 w-4 text-primary-600" />
-                {editingAccount ? "Edit Account / Update Balance" : "Register Financial Account"}
+                {editingAccount ? t("edit_account_modal_title") : t("add_account_modal_title")}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -267,10 +263,10 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
 
             <form onSubmit={handleSaveAccount} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="acc-name">Account Title / Entity Name</Label>
+                <Label htmlFor="acc-name">{t("acc_name_label")}</Label>
                 <Input
                   id="acc-name"
-                  placeholder="e.g. BRAC Bank Corporate or bKash Merchant"
+                  placeholder={t("acc_name_placeholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -278,41 +274,39 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="acc-type">Account Classification</Label>
+                <Label htmlFor="acc-type">{t("acc_type_label")}</Label>
                 <select
                   id="acc-type"
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                   className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-text focus:border-primary-500 focus:outline-none"
                 >
-                  {ACCOUNT_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
+                  {ACCOUNT_TYPES.map((tp) => (
+                    <option key={tp} value={tp}>
+                      {tp}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="acc-balance">Current Balance (BDT)</Label>
+                <Label htmlFor="acc-balance">{t("acc_balance_label")}</Label>
                 <Input
                   id="acc-balance"
                   type="number"
-                  placeholder="Positive for asset, negative for payable (e.g. 50000 or -20000)"
+                  placeholder={t("acc_balance_placeholder")}
                   value={balance}
                   onChange={(e) => setBalance(e.target.value)}
                   required
                 />
-                <p className="text-[10px] text-text-muted">
-                  Use positive numbers for liquid funds or receivables. Use negative numbers for debts or supplier payables.
-                </p>
+                <p className="text-[10px] text-text-muted">{t("acc_balance_hint")}</p>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="acc-no">Account Number / Masked Reference</Label>
+                <Label htmlFor="acc-no">{t("acc_number_label")}</Label>
                 <Input
                   id="acc-no"
-                  placeholder="e.g. 1501-XXXX-XXXX-001 or SF-M-8823"
+                  placeholder={t("acc_number_placeholder")}
                   value={accountNo}
                   onChange={(e) => setAccountNo(e.target.value)}
                 />
@@ -325,10 +319,10 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
                   size="sm"
                   onClick={() => setShowModal(false)}
                 >
-                  Cancel
+                  {t("cancel_btn")}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
-                  {submitting ? "Saving..." : "Save Account"}
+                  {submitting ? t("saving_account_btn") : t("save_account_btn")}
                 </Button>
               </div>
             </form>

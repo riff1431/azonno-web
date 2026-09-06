@@ -22,12 +22,14 @@ import {
   type BlogAuthor,
 } from "@/features/blog/actions";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface AuthorManagerProps {
   initialAuthors: BlogAuthor[];
 }
 
 export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
+  const { t } = useAdminLang();
   const [authors, setAuthors] = useState<BlogAuthor[]>(initialAuthors);
   const [editingAuthor, setEditingAuthor] = useState<Partial<BlogAuthor> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -65,7 +67,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
         setAuthors([...authors, saved]);
       }
       setEditingAuthor(null);
-      setFeedback("Author profile saved successfully!");
+      setFeedback(t("author_saved_success"));
       setTimeout(() => setFeedback(null), 3000);
     } catch (err: any) {
       setFeedback(`Error: ${err.message}`);
@@ -75,7 +77,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this author?")) return;
+    if (!confirm(t("confirm_delete_author"))) return;
     try {
       await deleteBlogAuthor(id);
       setAuthors(authors.filter((a) => a.id !== id));
@@ -115,7 +117,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
           onClick={handleCreateNew}
           className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
         >
-          <Plus className="h-3.5 w-3.5 mr-1.5" /> Add New Author
+          <Plus className="h-3.5 w-3.5 mr-1.5" /> {t("add_author_btn")}
         </Button>
       </div>
 
@@ -291,7 +293,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
                 onClick={() => setEditingAuthor(null)}
                 className="text-xs font-bold rounded-xl"
               >
-                Cancel
+                {t("cancel_btn")}
               </Button>
               <Button
                 type="submit"
@@ -299,7 +301,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
                 className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className="h-3.5 w-3.5 mr-1.5" />
-                {saving ? "Saving..." : "Save Author"}
+                {saving ? t("saving_changes_btn") : t("save_author_btn")}
               </Button>
             </div>
           </form>

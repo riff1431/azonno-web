@@ -19,12 +19,14 @@ import {
   deleteBlogCategory,
   type BlogCategory,
 } from "@/features/blog/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface CategoryManagerProps {
   initialCategories: BlogCategory[];
 }
 
 export function CategoryManagerClient({ initialCategories }: CategoryManagerProps) {
+  const { t } = useAdminLang();
   const [categories, setCategories] = useState<BlogCategory[]>(initialCategories);
   const [editingCategory, setEditingCategory] = useState<Partial<BlogCategory> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -54,7 +56,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
         setCategories([...categories, saved]);
       }
       setEditingCategory(null);
-      setFeedback("Category saved successfully!");
+      setFeedback(t("category_saved_success"));
       setTimeout(() => setFeedback(null), 3000);
     } catch (err: any) {
       setFeedback(`Error: ${err.message}`);
@@ -64,7 +66,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this category?")) return;
+    if (!confirm(t("confirm_delete_category"))) return;
     try {
       await deleteBlogCategory(id);
       setCategories(categories.filter((c) => c.id !== id));
@@ -98,7 +100,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
           onClick={handleCreateNew}
           className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
         >
-          <Plus className="h-3.5 w-3.5 mr-1.5" /> Add New Category
+          <Plus className="h-3.5 w-3.5 mr-1.5" /> {t("add_category_btn")}
         </Button>
       </div>
 
@@ -181,7 +183,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
                 onClick={() => setEditingCategory(null)}
                 className="text-xs font-bold rounded-xl"
               >
-                Cancel
+                {t("cancel_btn")}
               </Button>
               <Button
                 type="submit"
@@ -189,7 +191,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
                 className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className="h-3.5 w-3.5 mr-1.5" />
-                {saving ? "Saving..." : "Save Category"}
+                {saving ? t("saving_changes_btn") : t("save_category_btn")}
               </Button>
             </div>
           </form>

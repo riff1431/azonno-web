@@ -7,12 +7,15 @@ import { ModuleTabs } from "@/components/admin/module-settings/module-tabs";
 import { SecretField } from "@/components/admin/module-settings/secret-field";
 import { Button } from "@/components/shared/ui/button";
 import { savePathaoSettings, testPathaoConnection, fetchPathaoStoresAction } from "@/features/logistics/courier-settings-actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface PathaoClientProps {
   initialSettings: any;
 }
 
 export function PathaoClient({ initialSettings }: PathaoClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [activeTab, setActiveTab] = useState("general");
   const [formData, setFormData] = useState(initialSettings);
   const [saving, setSaving] = useState(false);
@@ -23,10 +26,10 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
   const [successMsg, setSuccessMsg] = useState(false);
 
   const tabs = [
-    { id: "general", label: "General & Store" },
-    { id: "credentials", label: "API Credentials (OAuth2)" },
-    { id: "automation", label: "Automation Rules" },
-    { id: "webhook", label: "Status Webhook" },
+    { id: "general", label: isBn ? "সাধারণ ও স্টোর" : "General & Store" },
+    { id: "credentials", label: isBn ? "এপিআই ক্রেডেনশিয়াল" : "API Credentials (OAuth2)" },
+    { id: "automation", label: isBn ? "অটোমেশন নিয়ম" : "Automation Rules" },
+    { id: "webhook", label: isBn ? "স্ট্যাটাস ওয়েবহুক" : "Status Webhook" },
   ];
 
   const handleSave = async (e: React.FormEvent) => {
@@ -67,9 +70,9 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
         if (res.stores.length > 0 && !formData.store_id) {
           setFormData({ ...formData, store_id: String(res.stores[0].store_id || res.stores[0].id) });
         }
-        alert(`Successfully fetched ${res.stores.length} store(s) from Pathao!`);
+        alert(isBn ? `সফলভাবে পাঠাও থেকে ${res.stores.length} টি স্টোর পাওয়া গেছে!` : `Successfully fetched ${res.stores.length} store(s) from Pathao!`);
       } else {
-        alert(res.error || "Failed to fetch stores. Please verify your Pathao API credentials.");
+        alert(res.error || (isBn ? "স্টোর আনতে ব্যর্থ হয়েছে। পাঠাও এপিআই তথ্য যাচাই করুন।" : "Failed to fetch stores. Please verify your Pathao API credentials."));
       }
     } finally {
       setFetchingStores(false);
@@ -79,8 +82,12 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
   return (
     <div className="space-y-6 max-w-4xl">
       <ModuleHeader
-        title="Pathao Courier Integration"
-        description="Connect Pathao Hermes merchant API for on-demand express parcels and Cash on Delivery delivery fulfillment."
+        title={isBn ? "পাঠাও কুরিয়ার ইন্টিগ্রেশন" : "Pathao Courier Integration"}
+        description={
+          isBn
+            ? "পাঠাও অন-ডিমান্ড ডেলিভারি এপিআই, স্বয়ংক্রিয় পার্সেল ট্র্যাকিং ও সিওডি রিকনসিলিয়েশন সংযোগ করুন।"
+            : "Pathao on-demand delivery API, automated parcel tracking, and Cash on Delivery reconciliation for Bangladesh."
+        }
         icon={Truck}
         status={formData.client_id ? "connected" : "not_configured"}
         backHref="/admin/shipping"

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getFraudProfiles } from "@/features/fraud/actions";
 import { getBDCourierSettings } from "@/features/fraud/bdcourier-service";
 import FraudBlacklistClient from "./fraud-blacklist-client";
@@ -13,10 +14,11 @@ export default async function AdminFraudPage() {
   ]);
 
   return (
-    <FraudBlacklistClient
-      initialProfiles={profiles}
-      initialBDCourierSettings={bdcourierSettings}
-    />
+    <Suspense fallback={<div className="p-6 text-sm text-gray-500 font-bold">Loading Fraud Prevention Hub...</div>}>
+      <FraudBlacklistClient
+        initialProfiles={profiles}
+        initialBDCourierSettings={bdcourierSettings}
+      />
+    </Suspense>
   );
 }
-

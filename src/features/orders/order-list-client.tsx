@@ -780,7 +780,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     { label: t("tab_all"), value: "all", count: orders.length },
     { label: t("tab_pending"), value: "pending", count: orders.filter((o) => o.status === "pending").length },
     { label: t("tab_processing"), value: "processing", count: orders.filter((o) => o.status === "processing" || o.status === "confirmed").length },
-    { label: "On Hold", value: "on-hold", count: orders.filter((o) => o.status === "on-hold").length },
+    { label: t("tab_on_hold", "On Hold"), value: "on-hold", count: orders.filter((o) => o.status === "on-hold").length },
     { label: t("tab_delivered"), value: "completed", count: orders.filter((o) => o.status === "completed" || o.status === "delivered" || o.status === "shipped").length },
     { label: t("tab_cancelled"), value: "cancelled", count: orders.filter((o) => o.status === "cancelled").length },
     {
@@ -791,7 +791,6 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     { label: t("tab_returned"), value: "failed", count: orders.filter((o) => o.status === "failed" || o.status === "returned" || o.status === "refunded").length },
   ];
 
-
   return (
     <div className="space-y-6 pb-20">
       {/* Top Header Card */}
@@ -800,11 +799,11 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
             <h1 className="text-xl sm:text-2xl font-black text-gray-900">
-              Orders & 1-Click Automation Hub
+              {t("orders_hub_title", "Orders & 1-Click Automation Hub")}
             </h1>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
-            Instant 1-Click SteadFast / Pathao dispatch, phone/IP blocklist, dynamic WhatsApp templates, and 4×6 thermal labels.
+            {t("orders_hub_desc", "Instant 1-Click SteadFast / Pathao dispatch, phone/IP blocklist, dynamic WhatsApp templates, and 4×6 thermal labels.")}
           </p>
         </div>
 
@@ -816,7 +815,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
             className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl shadow-xs"
           >
             <Plus className="h-3.5 w-3.5 mr-1" />
-            Create Order
+            {t("create_order_btn", "Create Order")}
           </Button>
 
           {/* Export CSV */}
@@ -828,24 +827,24 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
             title="Export filtered orders to CSV"
           >
             <Download className="h-3.5 w-3.5 mr-1 text-gray-600" />
-            Export CSV
+            {t("export_csv_btn", "Export CSV")}
           </Button>
 
           <Link href="/admin/orders/incomplete">
             <Button variant="outline" size="sm" className="text-xs font-bold rounded-xl border-gray-300">
               <Sparkles className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
-              Incomplete Leads
+              {t("incomplete_leads_btn", "Incomplete Leads")}
             </Button>
           </Link>
           <Link href="/admin/orders/fraud">
             <Button variant="outline" size="sm" className="text-xs font-bold rounded-xl border-red-200 text-red-700 hover:bg-red-50">
               <ShieldAlert className="h-3.5 w-3.5 mr-1 text-red-600" />
-              Fraud & Blocklist
+              {t("fraud_blocklist_btn", "Fraud & Blocklist")}
             </Button>
           </Link>
           <Link href="/admin/orders/settings">
             <Button variant="outline" size="sm" className="text-xs font-bold rounded-xl border-gray-300">
-              Automation Rules
+              {t("automation_rules_btn", "Automation Rules")}
             </Button>
           </Link>
         </div>
@@ -964,24 +963,24 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-xs space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           {/* Status Tabs */}
-          <div className="flex flex-wrap gap-1.5">
-            {tabs.map((t) => (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:flex-wrap">
+            {tabs.map((tab) => (
               <button
-                key={t.value}
-                onClick={() => setActiveTab(t.value)}
-                className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
-                  activeTab === t.value
+                key={tab.value}
+                onClick={() => setActiveTab(tab.value)}
+                className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all shrink-0 ${
+                  activeTab === tab.value
                     ? "bg-[#e91e63] text-white shadow-xs"
                     : "bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                <span>{t.label}</span>
+                <span>{tab.label}</span>
                 <span
                   className={`rounded-full px-1.5 py-0.2 text-[10px] ${
-                    activeTab === t.value ? "bg-white/25 text-white" : "bg-gray-200 text-gray-700"
+                    activeTab === tab.value ? "bg-white/25 text-white" : "bg-gray-200 text-gray-700"
                   }`}
                 >
-                  {t.count}
+                  {tab.count}
                 </span>
               </button>
             ))}
@@ -1018,7 +1017,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 </th>
                 <th className="px-4 py-3.5">{t("column_order")}</th>
                 <th className="px-4 py-3.5">{t("column_customer")}</th>
-                <th className="px-4 py-3.5">{t("column_status")}</th>
+                <th className="px-4 py-3.5">{t("column_items", "Address & Items")}</th>
                 <th className="px-4 py-3.5">{t("column_amount")}</th>
                 <th className="px-4 py-3.5">{t("column_status")}</th>
                 <th className="px-4 py-3.5 text-center">
@@ -2011,7 +2010,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       {/* Modal 1: Quick View Order Drawer */}
       {quickViewOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in-0">
-          <div className="relative w-full max-w-2xl rounded-3xl border border-border bg-white p-6 shadow-2xl space-y-5 animate-in zoom-in-95">
+          <div className="relative w-full max-w-2xl rounded-3xl border border-border bg-white p-6 shadow-2xl space-y-5 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div>
                 <span className="font-mono font-black text-lg text-[#e91e63]">
@@ -2179,7 +2178,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       {/* Modal 2: Create Manual Order Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in-0">
-          <div className="relative w-full max-w-xl rounded-3xl border border-border bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95">
+          <div className="relative w-full max-w-xl rounded-3xl border border-border bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Plus className="h-5 w-5 text-[#e91e63]" />
@@ -2341,7 +2340,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       {/* Modal 3: Batch Dispatch Summary Report & Thermal Label Print Trigger */}
       {batchSummaryReport && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs animate-in fade-in-0">
-          <div className="relative w-full max-w-2xl rounded-3xl border border-gray-200 bg-white p-6 shadow-2xl space-y-5 animate-in zoom-in-95">
+          <div className="relative w-full max-w-2xl rounded-3xl border border-gray-200 bg-white p-6 shadow-2xl space-y-5 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <span className="font-black text-base text-gray-900 flex items-center gap-2">
@@ -2448,7 +2447,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       {/* Modal 4: Admin State Machine Override Confirmation Modal */}
       {overrideModalOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs animate-in fade-in-0">
-          <div className="relative w-full max-w-lg rounded-3xl border border-amber-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95">
+          <div className="relative w-full max-w-lg rounded-3xl border border-amber-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
                 <span className="p-2 rounded-xl bg-amber-100 text-amber-800">
@@ -2500,7 +2499,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 </select>
               </div>
 
-              <div>
+            <div>
                 <label className="block font-bold text-gray-800 mb-1">
                   Reason for Override <span className="text-gray-400 font-normal">(Logged in audit history)</span>
                 </label>
@@ -2544,7 +2543,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       {/* Modal 5: Anti-Fraud Customer Blacklist Confirmation Modal */}
       {blockModalOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs animate-in fade-in-0">
-          <div className="relative w-full max-w-lg rounded-3xl border border-red-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95">
+          <div className="relative w-full max-w-lg rounded-3xl border border-red-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
                 <span className="p-2 rounded-xl bg-red-100 text-red-700">
@@ -2615,7 +2614,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       {/* Modal 6: Single Order Custom Courier Dispatch Modal (Edit COD Amount & Note) */}
       {customDispatchModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs animate-in fade-in-0">
-          <div className="relative w-full max-w-lg rounded-3xl border border-gray-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95">
+          <div className="relative w-full max-w-lg rounded-3xl border border-gray-200 bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
                 <span className="p-2 rounded-xl bg-emerald-100 text-emerald-700">

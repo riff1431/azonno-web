@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
+import { useAdminLang } from "@/lib/admin-lang-context";
 import {
   saveWhatsAppTemplates,
   resetWhatsAppTemplatesToDefault,
@@ -43,6 +44,7 @@ const AVAILABLE_VARIABLES = [
 ];
 
 export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesClientProps) {
+  const { t } = useAdminLang();
   const [templates, setTemplates] = useState<WhatsAppTemplate[]>(initialTemplates);
   const [selectedId, setSelectedId] = useState<string>(initialTemplates[0]?.id || "wa-0");
   const [testPhone, setTestPhone] = useState<string>("01700000000");
@@ -94,14 +96,14 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
       setSuccessMsg(true);
       setTimeout(() => setSuccessMsg(false), 4000);
     } catch (err) {
-      alert("Failed to save templates. Please try again.");
+      alert(t("err_failed_record_expense"));
     } finally {
       setSaving(false);
     }
   };
 
   const handleReset = async () => {
-    if (confirm("Reset all WhatsApp templates back to default humanized Bangla wording?")) {
+    if (confirm(t("whatsapp_templates_desc"))) {
       setSaving(true);
       try {
         const res = await resetWhatsAppTemplatesToDefault();
@@ -122,8 +124,8 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <ModuleHeader
-          title="WhatsApp 1-Click Message Templates"
-          description="Customize the humanized Bangla text, dynamic tags, advance delivery amounts, and status triggers for all WhatsApp actions in order and abandoned cart management."
+          title={t("whatsapp_templates_title")}
+          description={t("whatsapp_templates_desc")}
           icon={PhoneCall}
           backHref="/admin/communication/notifications"
         />
@@ -138,7 +140,7 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
             className="text-xs"
           >
             <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-            Reset Defaults
+            {t("restore_defaults_btn")}
           </Button>
 
           <Button
@@ -149,7 +151,7 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
             className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
           >
             <Save className="h-3.5 w-3.5 mr-1.5" />
-            {saving ? "Saving Changes..." : "Save All Templates"}
+            {saving ? t("saving_changes_btn") : t("save_template_btn")}
           </Button>
         </div>
       </div>
@@ -157,7 +159,7 @@ export function WhatsAppTemplatesClient({ initialTemplates }: WhatsAppTemplatesC
       {successMsg && (
         <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-semibold text-emerald-800 animate-in fade-in-0">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>WhatsApp templates successfully saved! Active templates are now live in Orders & Customer views.</span>
+          <span>{t("store_settings_success")}</span>
         </div>
       )}
 

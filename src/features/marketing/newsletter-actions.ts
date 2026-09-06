@@ -10,11 +10,11 @@ export interface SubscribeResult {
 /**
  * Persists a subscriber's email to the database and ensures it's available for admin marketing/export.
  */
-export async function subscribeNewsletter(email: string): Promise<SubscribeResult> {
+export async function subscribeNewsletter(email: string, lang: "en" | "bn" = "bn"): Promise<SubscribeResult> {
   if (!email || !email.includes("@") || email.length < 5) {
     return {
       success: false,
-      message: "অনুগ্রহ করে একটি সঠিক ইমেইল ঠিকানা দিন। (Please enter a valid email address)",
+      message: lang === "bn" ? "অনুগ্রহ করে একটি সঠিক ইমেইল ঠিকানা দিন।" : "Please enter a valid email address.",
     };
   }
 
@@ -39,7 +39,7 @@ export async function subscribeNewsletter(email: string): Promise<SubscribeResul
       if (!insertErr) {
         return {
           success: true,
-          message: "অভিনন্দন! আপনার সাবস্ক্রিপশন সফলভাবে সম্পন্ন হয়েছে।",
+          message: lang === "bn" ? "অভিনন্দন! আপনার সাবস্ক্রিপশন সফলভাবে সম্পন্ন হয়েছে।" : "Congratulations! You have successfully subscribed.",
         };
       }
     } catch {
@@ -78,13 +78,13 @@ export async function subscribeNewsletter(email: string): Promise<SubscribeResul
 
     return {
       success: true,
-      message: "অভিনন্দন! আপনার সাবস্ক্রিপশন সফলভাবে সম্পন্ন হয়েছে।",
+      message: lang === "bn" ? "অভিনন্দন! আপনার সাবস্ক্রিপশন সফলভাবে সম্পন্ন হয়েছে।" : "Congratulations! You have successfully subscribed.",
     };
   } catch (error: any) {
     console.error("Newsletter subscription error:", error);
     return {
       success: false,
-      message: "কিছু ভুল হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।",
+      message: lang === "bn" ? "কিছু ভুল হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।" : "Something went wrong. Please try again shortly.",
     };
   }
 }

@@ -73,6 +73,7 @@ export interface HeaderConfig {
   mobileLogoImageUrl?: string;
   drawerLogoText?: string;
   drawerLogoImageUrl?: string;
+  adminLogoImageUrl?: string;
   searchPlaceholders: string[];
   navCategories: HeaderNavCategory[];
 }
@@ -216,6 +217,7 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
     mobileLogoImageUrl: "",
     drawerLogoText: "Blush & Budget",
     drawerLogoImageUrl: "",
+    adminLogoImageUrl: "",
     searchPlaceholders: [
       "Ordinary",
       "COSRX Snail Mucin",

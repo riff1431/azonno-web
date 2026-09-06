@@ -140,7 +140,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
 
     try {
       trackSubscribe("newsletter", newsletterEmail);
-      const res = await subscribeNewsletter(newsletterEmail);
+      const res = await subscribeNewsletter(newsletterEmail, language === "bn" ? "bn" : "en");
       setSubscribeStatus(res);
       if (res.success) {
         setNewsletterEmail("");
@@ -383,9 +383,12 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
 
           {/* Column 2: Categories (Tablet: col-span-1, Laptop/PC: col-span-2) */}
           <div className="sm:col-span-1 lg:col-span-2">
-            <h3 className="mb-4 text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
-              {t("header", "categories")}
-            </h3>
+            <div className="mb-4">
+              <h3 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
+                {t("header", "categories")}
+              </h3>
+              <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
+            </div>
             <ul className="space-y-2.5 text-xs sm:text-sm text-zinc-300 font-medium">
               {categoryLinks.map((cat, idx) => (
                 <li key={cat.href || idx}>
@@ -405,9 +408,12 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
 
           {/* Column 3: Customer Care & Policies (Tablet: col-span-1, Laptop/PC: col-span-3) */}
           <div className="sm:col-span-1 lg:col-span-3">
-            <h3 className="mb-4 text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
-              {t("footer", "customerCare")}
-            </h3>
+            <div className="mb-4">
+              <h3 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
+                {t("footer", "customerCare")}
+              </h3>
+              <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
+            </div>
             <ul className="space-y-2.5 text-xs sm:text-sm text-zinc-300 font-medium">
               {customerCareLinks.map((link, idx) => (
                 <li key={link.href || idx}>
@@ -428,9 +434,12 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
           {/* Column 4: Contact Info & Payment Methods (Tablet: col-span-2, Laptop/PC: col-span-3) */}
           <div className="sm:col-span-2 lg:col-span-3 space-y-6">
             <div>
-              <h3 className="mb-4 text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
-                {language === "bn" ? "যোগাযোগ করুন" : "Contact Us"}
-              </h3>
+              <div className="mb-4">
+                <h3 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
+                  {language === "bn" ? "যোগাযোগ করুন" : "Contact Us"}
+                </h3>
+                <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
+              </div>
               <div className="space-y-3.5 text-xs sm:text-sm text-zinc-300 font-medium">
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-pink-500 to-rose-600 text-white shadow-sm shadow-pink-500/30 mt-0.5">

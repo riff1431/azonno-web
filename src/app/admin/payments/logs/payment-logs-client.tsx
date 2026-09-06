@@ -32,6 +32,7 @@ import {
   verifyPaymentLiveWithGateway,
   manuallyMarkOrderPaymentVerified,
 } from "@/features/payments/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface PaymentLogsClientProps {
   initialItems: PaymentVerificationItem[];
@@ -39,6 +40,8 @@ interface PaymentLogsClientProps {
 }
 
 export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [items, setItems] = useState<PaymentVerificationItem[]>(initialItems);
   const [activeTab, setActiveTab] = useState<"verifications" | "rawLogs">("verifications");
 
@@ -214,7 +217,9 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted">Total Paid Revenue</span>
+            <span className="text-xs font-semibold text-text-muted">
+              {isBn ? "পরিশোধিত মোট রাজস্ব" : "Total Paid Revenue"}
+            </span>
             <div className="h-8 w-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
               <DollarSign className="h-4 w-4" />
             </div>
@@ -223,75 +228,89 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
             ৳{totalVerifiedRevenue.toLocaleString("en-BD")}
           </div>
           <p className="mt-1 text-[11px] text-text-muted">
-            Across {items.filter((i) => i.paymentStatus === "paid").length} completed orders
+            {isBn
+              ? `${items.filter((i) => i.paymentStatus === "paid").length} টি সম্পন্ন অর্ডারের মাধ্যমে`
+              : `Across ${items.filter((i) => i.paymentStatus === "paid").length} completed orders`}
           </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted">Pending Verification</span>
+            <span className="text-xs font-semibold text-text-muted">
+              {isBn ? "যাচাই অপেক্ষমাণ" : "Pending Verification"}
+            </span>
             <div className="h-8 w-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
               <Clock className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-2 text-2xl font-bold text-amber-600">{pendingCount}</div>
-          <p className="mt-1 text-[11px] text-text-muted">Awaiting manual or PGW confirmation</p>
+          <p className="mt-1 text-[11px] text-text-muted">
+            {isBn ? "ম্যানুয়াল বা গেটওয়ে নিশ্চিতকরণের অপেক্ষায়" : "Awaiting manual or PGW confirmation"}
+          </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted">bKash Tokenized</span>
+            <span className="text-xs font-semibold text-text-muted">
+              {isBn ? "বিকাশ টোকেনাইজড" : "bKash Tokenized"}
+            </span>
             <div className="h-8 w-8 rounded-xl bg-[#e2136e]/10 text-[#e2136e] flex items-center justify-center border border-[#e2136e]/20">
               <Smartphone className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-2 text-2xl font-bold text-text">{bkashTransactions.length}</div>
           <p className="mt-1 text-[11px] text-emerald-600 font-medium">
-            {bkashPaidCount} verified & paid successfully
+            {isBn
+              ? `${bkashPaidCount} টি সফলভাবে ভেরিফায়েড ও পেইড`
+              : `${bkashPaidCount} verified & paid successfully`}
           </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-muted">Audit Trail Records</span>
+            <span className="text-xs font-semibold text-text-muted">
+              {isBn ? "অডিট ট্রেল রেকর্ড" : "Audit Trail Records"}
+            </span>
             <div className="h-8 w-8 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center border border-primary-100">
               <ShieldCheck className="h-4 w-4" />
             </div>
           </div>
           <div className="mt-2 text-2xl font-bold text-text">{rawLogs.length}</div>
-          <p className="mt-1 text-[11px] text-text-muted">Immutable webhook & API events logged</p>
+          <p className="mt-1 text-[11px] text-text-muted">
+            {isBn ? "ওয়েবহুক ও এপিআই ইভেন্ট সংরক্ষিত" : "Immutable webhook & API events logged"}
+          </p>
         </div>
       </div>
 
       {/* Main View Toggle & Search Header */}
       <div className="rounded-2xl border border-border bg-white shadow-card p-5 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b border-border pb-4">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveTab("verifications")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 activeTab === "verifications"
                   ? "bg-primary-600 text-white shadow-sm"
                   : "bg-surface-secondary text-text-muted hover:text-text"
               }`}
             >
               <ShieldCheck className="h-4 w-4" />
-              Payment Verifications & Audit ({filteredItems.length})
+              {isBn ? "পেমেন্ট ভেরিফিকেশন ও অডিট" : "Payment Verifications & Audit"} ({filteredItems.length})
             </button>
             <button
               onClick={() => setActiveTab("rawLogs")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                 activeTab === "rawLogs"
                   ? "bg-primary-600 text-white shadow-sm"
                   : "bg-surface-secondary text-text-muted hover:text-text"
               }`}
             >
               <FileText className="h-4 w-4" />
-              Gateway Event Logs ({rawLogs.length})
+              {isBn ? "গেটওয়ে ইভেন্ট লগ" : "Gateway Event Logs"} ({rawLogs.length})
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => {
                 setInspectItem({
@@ -314,7 +333,7 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary-200 bg-primary-50 text-primary-700 text-xs font-bold hover:bg-primary-100 transition-colors"
             >
               <Search className="h-3.5 w-3.5" />
-              Live bKash PGW Query
+              {isBn ? "লাইভ বিকাশ পিজিডব্লিউ অনুসন্ধান" : "Live bKash PGW Query"}
             </button>
           </div>
         </div>
@@ -327,7 +346,11 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
                 <input
                   type="text"
-                  placeholder="Search by User Name, Phone (017...), Email, TrxID, PaymentID, or Order #..."
+                  placeholder={
+                    isBn
+                      ? "গ্রাহকের নাম, ফোন (০১...), ইমেইল, TrxID, PaymentID অথবা অর্ডার নম্বর দিয়ে খুঁজুন..."
+                      : "Search by User Name, Phone (017...), Email, TrxID, PaymentID, or Order #..."
+                  }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-border bg-surface-secondary/40 text-xs text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
@@ -337,7 +360,7 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
                     onClick={() => setSearchQuery("")}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-text-muted hover:text-text font-bold"
                   >
-                    Clear
+                    {isBn ? "মুছুন" : "Clear"}
                   </button>
                 )}
               </div>
@@ -349,11 +372,11 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
                   onChange={(e) => setProviderFilter(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl border border-border bg-surface-secondary/40 text-xs text-text font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 >
-                  <option value="ALL">All Gateways / Methods</option>
-                  <option value="BKASH">bKash (Tokenized MFS)</option>
-                  <option value="SSLCOMMERZ">SSLCommerz (Cards/NetBanking)</option>
-                  <option value="NAGAD">Nagad (Direct / MFS)</option>
-                  <option value="COD">Cash on Delivery (COD)</option>
+                  <option value="ALL">{isBn ? "সকল গেটওয়ে ও মাধ্যম" : "All Gateways / Methods"}</option>
+                  <option value="BKASH">{isBn ? "বিকাশ পেমেন্ট" : "bKash (Tokenized MFS)"}</option>
+                  <option value="SSLCOMMERZ">{isBn ? "এসএসএলকমার্স" : "SSLCommerz (Cards/NetBanking)"}</option>
+                  <option value="NAGAD">{isBn ? "নগদ পেমেন্ট" : "Nagad (Direct / MFS)"}</option>
+                  <option value="COD">{isBn ? "ক্যাশ অন ডেলিভারি" : "Cash on Delivery (COD)"}</option>
                   <option value="STRIPE">Stripe</option>
                 </select>
               </div>
@@ -365,11 +388,11 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="w-full px-3 py-2.5 rounded-xl border border-border bg-surface-secondary/40 text-xs text-text font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 >
-                  <option value="ALL">All Payment Statuses</option>
-                  <option value="PAID">Paid (Verified)</option>
-                  <option value="PENDING">Pending Verification</option>
-                  <option value="FAILED">Failed</option>
-                  <option value="REFUNDED">Refunded</option>
+                  <option value="ALL">{isBn ? "সকল পেমেন্ট স্ট্যাটাস" : "All Payment Statuses"}</option>
+                  <option value="PAID">{isBn ? "পরিশোধিত" : "Paid (Verified)"}</option>
+                  <option value="PENDING">{isBn ? "যাচাই অপেক্ষমাণ" : "Pending Verification"}</option>
+                  <option value="FAILED">{isBn ? "ব্যর্থ" : "Failed"}</option>
+                  <option value="REFUNDED">{isBn ? "রিফান্ডেড" : "Refunded"}</option>
                 </select>
               </div>
             </div>
@@ -380,13 +403,13 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
                 <table className="w-full text-left text-xs">
                   <thead className="bg-surface-secondary/70 text-text-muted uppercase font-bold border-b border-border">
                     <tr>
-                      <th className="px-4 py-3">Order Details</th>
-                      <th className="px-4 py-3">Customer / User</th>
-                      <th className="px-4 py-3">Payment Method</th>
-                      <th className="px-4 py-3">Transaction ID (TrxID)</th>
-                      <th className="px-4 py-3">Amount</th>
-                      <th className="px-4 py-3">Payment Status</th>
-                      <th className="px-4 py-3 text-right">Verification Actions</th>
+                      <th className="px-4 py-3">{isBn ? "অর্ডারের বিবরণ" : "Order Details"}</th>
+                      <th className="px-4 py-3">{isBn ? "গ্রাহক ও ব্যবহারকারী" : "Customer / User"}</th>
+                      <th className="px-4 py-3">{isBn ? "পেমেন্ট মাধ্যম" : "Payment Method"}</th>
+                      <th className="px-4 py-3">{isBn ? "ট্রানজেকশন আইডি" : "Transaction ID (TrxID)"}</th>
+                      <th className="px-4 py-3">{isBn ? "টাকার পরিমাণ" : "Amount"}</th>
+                      <th className="px-4 py-3">{isBn ? "পেমেন্ট স্ট্যাটাস" : "Payment Status"}</th>
+                      <th className="px-4 py-3 text-right">{isBn ? "ভেরিফিকেশন অ্যাকশন" : "Verification Actions"}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
@@ -394,9 +417,15 @@ export function PaymentLogsClient({ initialItems, rawLogs }: PaymentLogsClientPr
                       <tr>
                         <td colSpan={7} className="px-4 py-12 text-center text-text-muted">
                           <AlertCircle className="h-8 w-8 mx-auto mb-2 text-text-muted/60" />
-                          <p className="font-semibold text-text">No payment records found matching query</p>
+                          <p className="font-semibold text-text">
+                            {isBn
+                              ? "অনুসন্ধানের সাথে মিলে এমন কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি"
+                              : "No payment records found matching query"}
+                          </p>
                           <p className="text-[11px] mt-1">
-                            Try adjusting your search terms or gateway filter.
+                            {isBn
+                              ? "অনুগ্রহ করে ফিল্টার অথবা সার্চ কিওয়ার্ড পরিবর্তন করে চেষ্টা করুন।"
+                              : "Try adjusting your search terms or gateway filter."}
                           </p>
                         </td>
                       </tr>

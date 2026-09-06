@@ -14,6 +14,7 @@ import {
   deleteAttribute,
 } from "@/features/attributes/actions";
 import { generateSlug } from "@/lib/utils";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface AttrRow {
   id: string;
@@ -32,6 +33,7 @@ interface AttrRow {
 
 export default function AttributeListClient() {
   const router = useRouter();
+  const { t } = useAdminLang();
   const [attrs, setAttrs] = useState<AttrRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -113,7 +115,7 @@ export default function AttributeListClient() {
   const columns: Column<AttrRow>[] = [
     {
       key: "name",
-      header: "Attribute",
+      header: t("attributes"),
       sortable: true,
       cell: (row) => (
         <div>
@@ -152,8 +154,8 @@ export default function AttributeListClient() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-text">Product Attributes</h1>
-        <p className="mt-1 text-sm text-text-secondary">Manage attributes like Color, Size, Material, etc.</p>
+        <h1 className="text-2xl font-bold text-text">{t("attribute_management")}</h1>
+        <p className="mt-1 text-sm text-text-secondary">{t("attribute_desc")}</p>
       </div>
 
       {/* Inline Create/Edit Form */}
@@ -251,25 +253,25 @@ export default function AttributeListClient() {
         columns={columns}
         data={attrs}
         loading={loading}
-        searchPlaceholder="Search attributes..."
+        searchPlaceholder={t("search_table")}
         searchKey="name"
         getRowId={(row) => row.id}
-        emptyMessage="No attributes found."
+        emptyMessage={t("no_attributes")}
         emptyIcon={<Palette className="h-6 w-6" />}
         headerActions={
           !showForm ? (
             <Button onClick={() => setShowForm(true)}>
-              <Plus className="h-4 w-4" /> Add Attribute
+              <Plus className="h-4 w-4" /> {t("add_attribute")}
             </Button>
           ) : null
         }
         actions={(row) => (
           <RowActions>
             <RowAction onClick={() => startEdit(row)}>
-              <Pencil className="h-3.5 w-3.5" /> Edit
+              <Pencil className="h-3.5 w-3.5" /> {t("action_edit")}
             </RowAction>
             <RowAction variant="danger" onClick={() => handleDelete(row.id, row.name)}>
-              <Trash2 className="h-3.5 w-3.5" /> Delete
+              <Trash2 className="h-3.5 w-3.5" /> {t("action_delete")}
             </RowAction>
           </RowActions>
         )}

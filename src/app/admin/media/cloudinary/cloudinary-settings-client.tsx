@@ -10,12 +10,14 @@ import {
   saveCloudinaryModuleSettings,
   testCloudinaryConnection,
 } from "@/features/media/cloudinary-settings-actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface CloudinarySettingsClientProps {
   initialSettings: any;
 }
 
 export function CloudinarySettingsClient({ initialSettings }: CloudinarySettingsClientProps) {
+  const { t } = useAdminLang();
   const [activeTab, setActiveTab] = useState("general");
   const [formData, setFormData] = useState(initialSettings);
   const [saving, setSaving] = useState(false);
@@ -77,7 +79,7 @@ export function CloudinarySettingsClient({ initialSettings }: CloudinarySettings
           className="text-xs shrink-0"
         >
           <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${testing ? "animate-spin" : ""}`} />
-          {testing ? "Testing..." : "Test Connection"}
+          {testing ? t("testing_connection_btn") : t("test_connection_btn")}
         </Button>
       </div>
 
@@ -101,7 +103,7 @@ export function CloudinarySettingsClient({ initialSettings }: CloudinarySettings
       {successMsg && (
         <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-semibold text-emerald-800">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>Cloudinary configuration saved and cached in database!</span>
+          <span>{t("store_settings_success")}</span>
         </div>
       )}
 
@@ -281,7 +283,7 @@ export function CloudinarySettingsClient({ initialSettings }: CloudinarySettings
         <div className="flex justify-end">
           <Button type="submit" disabled={saving} size="sm" className="text-xs">
             <Save className="h-3.5 w-3.5 mr-1.5" />
-            {saving ? "Saving Changes..." : "Save Cloudinary Settings"}
+            {saving ? t("saving_changes_btn") : t("save_cloudinary_btn")}
           </Button>
         </div>
       </form>

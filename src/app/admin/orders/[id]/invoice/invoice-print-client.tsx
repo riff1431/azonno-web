@@ -885,7 +885,7 @@ export default function InvoicePrintClient({
                 <span className="uppercase" style={{ color: accentColor }}>
                   {isCod
                     ? lang === "bn"
-                      ? "ক্যাশ অন ডেলিভারি (COD)"
+                      ? "ক্যাশ অন ডেলিভারি"
                       : "Cash on Delivery (COD)"
                     : order.payment_method}
                 </span>

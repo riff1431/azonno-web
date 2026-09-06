@@ -148,6 +148,14 @@ export async function evaluateCheckoutFraudRisk(params: {
           `Customer courier delivery success ratio is ${courierReport.success_ratio}% (below ${threshold}% safety threshold). Phone verification required.`
         );
       }
+
+      if (courierReport && courierReport.reports_count > 0) {
+        requiresOtp = true;
+        riskScore += 50;
+        reasons.push(
+          `Customer has ${courierReport.reports_count} courier fraud report(s) flagged across courier hubs. Phone verification required before COD approval.`
+        );
+      }
     } catch (e) {
       // Fallback gracefully
     }

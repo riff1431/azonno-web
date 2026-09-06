@@ -6,12 +6,14 @@ import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
 import { saveSeoSettings } from "@/features/settings/actions";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface SeoSettingsClientProps {
   initialSettings: Record<string, any>;
 }
 
 export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
+  const { t } = useAdminLang();
   const [formData, setFormData] = useState({
     meta_title: initialSettings.meta_title || "ecomXbangladesh — Premium E-Commerce Platform",
     meta_description:
@@ -44,8 +46,8 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
   return (
     <div className="space-y-6 max-w-4xl">
       <ModuleHeader
-        title="Search Engine Optimization (SEO) & Social Meta"
-        description="Configure default meta titles, descriptions, OpenGraph social sharing images, and canonical URL structure for search crawlers."
+        title={t("seo_settings_title")}
+        description={t("seo_settings_desc")}
         icon={Globe}
         isCore
       />
@@ -53,7 +55,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
       {successMsg && (
         <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-semibold text-emerald-800">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>SEO settings updated and cached successfully!</span>
+          <span>{t("store_settings_success")}</span>
         </div>
       )}
 
@@ -155,7 +157,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
         <div className="flex justify-end">
           <Button type="submit" disabled={saving} size="sm" className="text-xs">
             <Save className="h-3.5 w-3.5 mr-1.5" />
-            {saving ? "Saving Changes..." : "Save SEO Settings"}
+            {saving ? t("saving_changes_btn") : t("save_seo_btn")}
           </Button>
         </div>
       </form>

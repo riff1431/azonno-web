@@ -8,6 +8,7 @@ import { Button } from "@/components/shared/ui/button";
 import { DataTable, RowActions, RowAction, type Column } from "@/components/admin/data-table";
 import { getCategories, deleteCategory } from "@/features/categories/actions";
 import { cn } from "@/lib/utils";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface CategoryRow {
   id: string;
@@ -22,6 +23,7 @@ interface CategoryRow {
 
 export default function CategoryListClient() {
   const router = useRouter();
+  const { t } = useAdminLang();
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +55,7 @@ export default function CategoryListClient() {
   const columns: Column<CategoryRow>[] = [
     {
       key: "name",
-      header: "Category",
+      header: t("column_category"),
       sortable: true,
       cell: (row) => (
         <div className="flex items-center gap-3">
@@ -84,7 +86,7 @@ export default function CategoryListClient() {
     },
     {
       key: "status",
-      header: "Status",
+      header: t("column_status"),
       sortable: true,
       cell: (row) => (
         <span
@@ -95,7 +97,7 @@ export default function CategoryListClient() {
               : "bg-gray-100 text-gray-600"
           )}
         >
-          {row.status}
+          {row.status === "active" ? t("active") : row.status}
         </span>
       ),
     },
@@ -105,9 +107,9 @@ export default function CategoryListClient() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text">Categories</h1>
+          <h1 className="text-2xl font-bold text-text">{t("categories")}</h1>
           <p className="mt-1 text-sm text-text-secondary">
-            Manage product categories and hierarchy
+            {t("category_desc")}
           </p>
         </div>
       </div>
@@ -116,16 +118,16 @@ export default function CategoryListClient() {
         columns={columns}
         data={categories}
         loading={loading}
-        searchPlaceholder="Search categories..."
+        searchPlaceholder={t("search_table")}
         searchKey="name"
         getRowId={(row) => row.id}
-        emptyMessage="No categories found. Create your first category."
+        emptyMessage={t("no_categories")}
         emptyIcon={<FolderTree className="h-6 w-6" />}
         headerActions={
           <Link href="/admin/categories/create">
             <Button>
               <Plus className="h-4 w-4" />
-              Add Category
+              {t("add_category")}
             </Button>
           </Link>
         }
@@ -133,11 +135,11 @@ export default function CategoryListClient() {
           <RowActions>
             <RowAction onClick={() => router.push(`/admin/categories/${row.id}/edit`)}>
               <Pencil className="h-3.5 w-3.5" />
-              Edit
+              {t("action_edit")}
             </RowAction>
             <RowAction variant="danger" onClick={() => handleDelete(row.id, row.name)}>
               <Trash2 className="h-3.5 w-3.5" />
-              Delete
+              {t("action_delete")}
             </RowAction>
           </RowActions>
         )}

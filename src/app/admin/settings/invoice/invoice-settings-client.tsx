@@ -17,12 +17,14 @@ import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
 import { saveInvoiceSettings, type InvoiceSettings } from "@/features/settings/actions";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface InvoiceSettingsClientProps {
   initialSettings: InvoiceSettings;
 }
 
 export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClientProps) {
+  const { t } = useAdminLang();
   const [formData, setFormData] = useState<InvoiceSettings>({
     ...initialSettings,
   });
@@ -95,8 +97,8 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <ModuleHeader
-          title="Invoice & Thermal Print Customizer"
-          description="Control branding, logo, company details, colors, terms, barcodes, and thermal label layout across all customer and admin printouts."
+          title={t("invoice_settings_title")}
+          description={t("invoice_settings_desc")}
           icon={Printer}
           isCore
         />
@@ -119,7 +121,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
             className="bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold shadow-sm"
           >
             <Save className="h-3.5 w-3.5 mr-1.5" />
-            {saving ? "Saving..." : "Save Changes"}
+            {saving ? t("saving_changes_btn") : t("save_invoice_btn")}
           </Button>
         </div>
       </div>
@@ -128,7 +130,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
       {successMsg && (
         <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-bold text-emerald-800 animate-in fade-in-0">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>Invoice and thermal settings updated and applied live across all orders!</span>
+          <span>{t("store_settings_success")}</span>
         </div>
       )}
 
@@ -569,7 +571,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                 className="bg-primary-600 hover:bg-primary-700 text-white font-black text-xs px-6 py-2.5 rounded-xl shadow-md transition-all active:scale-95"
               >
                 <Save className="h-4 w-4 mr-1.5" />
-                {saving ? "Saving Changes..." : "Save Invoice Settings"}
+                {saving ? t("saving_changes_btn") : t("save_invoice_btn")}
               </Button>
             </div>
           </form>

@@ -32,6 +32,7 @@ import {
   savePathaoSettings,
   testPathaoConnection,
 } from "@/features/logistics/courier-settings-actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 export default function OrderAutomationSettingsClient({
   initialConfig,
@@ -42,6 +43,7 @@ export default function OrderAutomationSettingsClient({
   initialSteadfast: any;
   initialPathao: any;
 }) {
+  const { t } = useAdminLang();
   const [form, setForm] = useState<PostPurchaseConfig>(initialConfig);
   const [sfForm, setSfForm] = useState(initialSteadfast);
   const [pathaoForm, setPathaoForm] = useState(initialPathao);
@@ -80,7 +82,7 @@ export default function OrderAutomationSettingsClient({
 
       setMsg({
         type: "success",
-        text: "Order automation rules & Courier API credentials saved successfully!",
+        text: t("store_settings_success"),
       });
       setTimeout(() => setMsg(null), 4000);
     } catch (err: any) {
@@ -123,7 +125,7 @@ export default function OrderAutomationSettingsClient({
           <div className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-[#e91e63]" />
             <h1 className="text-xl sm:text-2xl font-black text-gray-900">
-              Order Automation & Courier Control Hub
+              {t("order_automation_title")}
             </h1>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -142,7 +144,7 @@ export default function OrderAutomationSettingsClient({
           ) : (
             <Save className="h-4 w-4 mr-2" />
           )}
-          Save All Configurations
+          {t("save_all_configs_btn")}
         </Button>
       </div>
 

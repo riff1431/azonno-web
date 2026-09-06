@@ -151,12 +151,14 @@ export interface LocalizationSettings {
   default_language: "bn" | "en";
   enable_language_switcher: boolean;
   show_homepage_language_bar: boolean;
+  admin_default_language?: "bn" | "en";
 }
 
 const DEFAULT_LOCALIZATION_SETTINGS: LocalizationSettings = {
   default_language: "bn",
   enable_language_switcher: true,
   show_homepage_language_bar: true,
+  admin_default_language: "en",
 };
 
 export async function getLocalizationSettings(): Promise<LocalizationSettings> {
@@ -166,6 +168,7 @@ export async function getLocalizationSettings(): Promise<LocalizationSettings> {
       default_language: settings.default_language === "en" ? "en" : "bn",
       enable_language_switcher: settings.enable_language_switcher !== false,
       show_homepage_language_bar: settings.show_homepage_language_bar !== false,
+      admin_default_language: settings.admin_default_language === "bn" ? "bn" : "en",
     };
   } catch {
     return DEFAULT_LOCALIZATION_SETTINGS;

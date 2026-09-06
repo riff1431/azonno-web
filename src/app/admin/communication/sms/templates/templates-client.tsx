@@ -7,6 +7,7 @@ import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { saveSmsTemplate, deleteSmsTemplate, resetSmsTemplatesToDefault, type SmsTemplate } from "@/features/sms/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 const COMMON_VARIABLES = [
   "customer_name",
@@ -29,6 +30,8 @@ interface TemplatesClientProps {
 }
 
 export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [templates, setTemplates] = useState<SmsTemplate[]>(initialTemplates);
   const [showModal, setShowModal] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<SmsTemplate | null>(null);
@@ -132,8 +135,12 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <ModuleHeader
-          title="SMS Notification Templates & Dynamic Variables"
-          description="Manage automated message content for OTP verification, order placements, courier dispatches, abandoned carts, and delivery confirmations in humanized Bangla."
+          title={isBn ? "এসএমএস নোটিফিকেশন টেমপ্লেট ও ভেরিয়েবল" : "SMS Notification Templates & Dynamic Variables"}
+          description={
+            isBn
+              ? "ওটিপি যাচাই, অর্ডার কনফার্মেশন, কুরিয়ার বুকিং, ইনভয়েস এবং ডেলিভারির জন্য স্বয়ংক্রিয় বাংলা বার্তা পরিচালনা করুন।"
+              : "Manage automated message content for OTP verification, order placements, courier dispatches, abandoned carts, and delivery confirmations in humanized Bangla."
+          }
           iconName="MessageSquare"
           backHref="/admin/communication/sms"
         />
@@ -147,12 +154,12 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
             className="text-xs shrink-0"
           >
             <RotateCcw className={`h-3.5 w-3.5 mr-1 ${resetting ? "animate-spin" : ""}`} />
-            Reset Defaults
+            {isBn ? "ডিফল্ট রিস্টোর করুন" : "Reset Defaults"}
           </Button>
 
           <Button onClick={openAddModal} size="sm" className="text-xs shrink-0">
             <Plus className="h-3.5 w-3.5 mr-1" />
-            Create Template
+            {isBn ? "নতুন টেমপ্লেট তৈরি" : "Create Template"}
           </Button>
         </div>
       </div>
@@ -179,13 +186,13 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
                   className="text-xs h-7 px-2.5"
                 >
                   <Edit2 className="h-3 w-3 mr-1 text-primary-600" />
-                  Edit
+                  {isBn ? "সম্পাদনা" : "Edit"}
                 </Button>
                 <button
                   onClick={() => handleDeleteTemplate(tpl.id)}
                   disabled={deletingId === tpl.id}
                   className="text-text-muted hover:text-red-600 p-1 transition-colors"
-                  title="Delete template"
+                  title={isBn ? "টেমপ্লেট মুছুন" : "Delete template"}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -199,7 +206,7 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
             <div className="flex items-center gap-2 flex-wrap text-[11px]">
               <span className="text-text-muted font-medium flex items-center gap-1">
                 <Code className="h-3 w-3" />
-                Variables:
+                {isBn ? "ভেরিয়েবল:" : "Variables:"}
               </span>
               {tpl.variables?.map((v: string) => (
                 <span
@@ -223,7 +230,9 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 text-primary-600" />
-                {editingTemplate ? "Edit SMS Template" : "Create SMS Notification Template"}
+                {editingTemplate
+                  ? (isBn ? "এসএমএস টেমপ্লেট সম্পাদনা" : "Edit SMS Template")
+                  : (isBn ? "নতুন এসএমএস টেমপ্লেট তৈরি" : "Create SMS Notification Template")}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -242,10 +251,10 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
 
             <form onSubmit={handleSaveTemplate} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="tpl-name">Template Name</Label>
+                <Label htmlFor="tpl-name">{isBn ? "টেমপ্লেটের নাম" : "Template Name"}</Label>
                 <Input
                   id="tpl-name"
-                  placeholder="e.g. Order Placed Confirmation"
+                  placeholder={isBn ? "যেমন: নতুন অর্ডার নিশ্চিতকরণ" : "e.g. Order Placed Confirmation"}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -253,30 +262,30 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="tpl-event">Event Trigger</Label>
+                <Label htmlFor="tpl-event">{isBn ? "ইভেন্ট ট্রিগার" : "Event Trigger"}</Label>
                 <select
                   id="tpl-event"
                   value={eventType}
                   onChange={(e) => setEventType(e.target.value)}
                   className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-text focus:border-primary-500 focus:outline-none"
                 >
-                  <option value="order_created">অর্ডার গ্রহণ ও কনফার্মেশন (order_created)</option>
-                  <option value="order_shipped">কুরিয়ারে হস্তান্তর ও ট্র্যাকিং (order_shipped)</option>
-                  <option value="order_delivered">ডেলিভারি সম্পন্ন নিশ্চিতকরণ (order_delivered)</option>
-                  <option value="abandoned_cart">অসম্পূর্ণ চেকআউট রিকভারি (abandoned_cart)</option>
-                  <option value="order_cancelled">অর্ডার বাতিল তথ্য (order_cancelled)</option>
-                  <option value="advance_requested">অগ্রিম ডেলিভারি চার্জ অনুরোধ (advance_requested)</option>
-                  <option value="review_request">রিভিউ ও ফিডব্যাক অনুরোধ (review_request)</option>
-                  <option value="order_otp">ফোন ওটিপি ভেরিফিকেশন (order_otp)</option>
-                  <option value="promotional">প্রমোশনাল অফার ও ভাউচার (promotional)</option>
+                  <option value="order_created">{isBn ? "অর্ডার গ্রহণ ও কনফার্মেশন" : "Order Placed & Confirmed"}</option>
+                  <option value="order_shipped">{isBn ? "কুরিয়ারে হস্তান্তর ও ট্র্যাকিং" : "Consignment Shipped & Tracking"}</option>
+                  <option value="order_delivered">{isBn ? "ডেলিভারি সম্পন্ন নিশ্চিতকরণ" : "Order Delivered Confirmation"}</option>
+                  <option value="abandoned_cart">{isBn ? "অসম্পূর্ণ চেকআউট রিকভারি" : "Abandoned Checkout Recovery"}</option>
+                  <option value="order_cancelled">{isBn ? "অর্ডার বাতিল তথ্য" : "Order Cancelled Notification"}</option>
+                  <option value="advance_requested">{isBn ? "অগ্রিম ডেলিভারি চার্জ অনুরোধ" : "Advance Delivery Charge Request"}</option>
+                  <option value="review_request">{isBn ? "রিভিউ ও ফিডব্যাক অনুরোধ" : "Review & Feedback Request"}</option>
+                  <option value="order_otp">{isBn ? "ফোন ওটিপি ভেরিফিকেশন" : "Phone OTP Verification"}</option>
+                  <option value="promotional">{isBn ? "প্রমোশনাল অফার ও ভাউচার" : "Promotional Offer & Voucher"}</option>
                 </select>
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="tpl-body">Message Template</Label>
+                  <Label htmlFor="tpl-body">{isBn ? "মেসেজ টেমপ্লেট" : "Message Template"}</Label>
                   <span className="text-[10px] text-text-muted">
-                    {templateBody.length} chars (approx {Math.ceil(templateBody.length / 160) || 1} SMS)
+                    {templateBody.length} {isBn ? "টি অক্ষর" : "chars"} (approx {Math.ceil(templateBody.length / 160) || 1} SMS)
                   </span>
                 </div>
                 <textarea
@@ -292,7 +301,7 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
 
               {/* Click to Insert Variables */}
               <div className="space-y-1.5">
-                <Label>Click to insert dynamic variable:</Label>
+                <Label>{isBn ? "ক্লিক করে ডাইনামিক ভেরিয়েবল যোগ করুন:" : "Click to insert dynamic variable:"}</Label>
                 <div className="flex flex-wrap gap-1.5">
                   {COMMON_VARIABLES.map((v) => (
                     <button
@@ -314,10 +323,12 @@ export function TemplatesClient({ initialTemplates }: TemplatesClientProps) {
                   size="sm"
                   onClick={() => setShowModal(false)}
                 >
-                  Cancel
+                  {isBn ? "বাতিল" : "Cancel"}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
-                  {submitting ? "Saving..." : "Save Template"}
+                  {submitting
+                    ? (isBn ? "সংরক্ষণ হচ্ছে..." : "Saving...")
+                    : (isBn ? "টেমপ্লেট সংরক্ষণ করুন" : "Save Template")}
                 </Button>
               </div>
             </form>

@@ -7,12 +7,15 @@ import { ModuleTabs } from "@/components/admin/module-settings/module-tabs";
 import { SecretField } from "@/components/admin/module-settings/secret-field";
 import { Button } from "@/components/shared/ui/button";
 import { saveSteadfastSettings, testSteadfastConnection } from "@/features/logistics/courier-settings-actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface SteadfastClientProps {
   initialSettings: any;
 }
 
 export function SteadfastClient({ initialSettings }: SteadfastClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [activeTab, setActiveTab] = useState("general");
   const [formData, setFormData] = useState(initialSettings);
   const [saving, setSaving] = useState(false);
@@ -21,10 +24,10 @@ export function SteadfastClient({ initialSettings }: SteadfastClientProps) {
   const [successMsg, setSuccessMsg] = useState(false);
 
   const tabs = [
-    { id: "general", label: "General & Service" },
-    { id: "credentials", label: "API Credentials" },
-    { id: "automation", label: "Automation Rules" },
-    { id: "webhook", label: "Status Webhook" },
+    { id: "general", label: isBn ? "সাধারণ ও সেবা" : "General & Service" },
+    { id: "credentials", label: isBn ? "এপিআই ক্রেডেনশিয়াল" : "API Credentials" },
+    { id: "automation", label: isBn ? "অটোমেশন নিয়ম" : "Automation Rules" },
+    { id: "webhook", label: isBn ? "স্ট্যাটাস ওয়েবহুক" : "Status Webhook" },
   ];
 
   const handleSave = async (e: React.FormEvent) => {
@@ -56,8 +59,12 @@ export function SteadfastClient({ initialSettings }: SteadfastClientProps) {
   return (
     <div className="space-y-6 max-w-4xl">
       <ModuleHeader
-        title="SteadFast Courier Integration"
-        description="Automated consignment dispatch, Cash on Delivery remittance reconciliation, and tracking barcode generation across Bangladesh."
+        title={isBn ? "স্টিডফাস্ট কুরিয়ার ইন্টিগ্রেশন" : "SteadFast Courier Integration"}
+        description={
+          isBn
+            ? "বাংলাদেশজুড়ে স্বয়ংক্রিয় পার্সেল বুকিং, ক্যাশ অন ডেলিভারি রেমিট্যান্স এবং ট্র্যাকিং কোড তৈরি পরিচালনা করুন।"
+            : "Automated consignment dispatch, Cash on Delivery remittance reconciliation, and tracking barcode generation across Bangladesh."
+        }
         icon={Truck}
         status={formData.api_key ? "connected" : "not_configured"}
         backHref="/admin/shipping"

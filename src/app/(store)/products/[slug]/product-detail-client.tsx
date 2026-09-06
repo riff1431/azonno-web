@@ -27,6 +27,11 @@ import {
   Calendar,
   Layers,
   Award,
+  ChevronDown,
+  FileText,
+  BookOpen,
+  FlaskConical,
+  MessageSquare,
 } from "lucide-react";
 import { formatPrice, cn } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
@@ -50,6 +55,8 @@ interface ProductDetailClientProps {
   relatedProducts: any[];
   bundleData?: any;
   featureSettings?: StoreFeatureSettings;
+  initialReviewsCount?: number;
+  initialAverageRating?: number;
 }
 
 export function ProductDetailClient({
@@ -57,6 +64,8 @@ export function ProductDetailClient({
   relatedProducts,
   bundleData,
   featureSettings,
+  initialReviewsCount = 0,
+  initialAverageRating = 0,
 }: ProductDetailClientProps) {
   const router = useRouter();
   const { language, t, toBn, formatPriceBn } = useLanguage();
@@ -66,7 +75,42 @@ export function ProductDetailClient({
   const [copied, setCopied] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const inWishlist = isWishlisted(product.id);
-  const [activeTab, setActiveTab] = useState<"description" | "benefits" | "usage" | "ingredients" | "authenticity" | "warranty" | "reviews">("description");
+  const [reviewsCount, setReviewsCount] = useState(initialReviewsCount);
+  const [averageRating, setAverageRating] = useState(initialAverageRating);
+
+  // Fake live viewer counting simulation for social proof & FOMO
+  const [liveViewers, setLiveViewers] = useState(16);
+
+  useEffect(() => {
+    // Generate a consistent starting point based on product id
+    const seed = product?.id
+      ? product.id.split("").reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0)
+      : 16;
+    const initialViewers = 14 + (seed % 15); // e.g. 14 to 28
+    setLiveViewers(initialViewers);
+
+    // Gently fluctuate every 6-8 seconds
+    const interval = setInterval(() => {
+      setLiveViewers((prev) => {
+        const delta = Math.random() > 0.45 ? (Math.random() > 0.5 ? 1 : 2) : (Math.random() > 0.5 ? -1 : -2);
+        const next = prev + delta;
+        return Math.min(38, Math.max(12, next));
+      });
+    }, 7000);
+
+    return () => clearInterval(interval);
+  }, [product?.id]);
+
+  const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({
+    description: true, // First section opened by default as requested
+  });
+
+  const toggleAccordion = (id: string) => {
+    setOpenAccordions((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   const [selectedVariant, setSelectedVariant] = useState<any>(
     product.product_variants?.[0] || null
@@ -463,19 +507,47 @@ export function ProductDetailClient({
 
             {/* Rating and Share Bar */}
             <div className="mt-2.5 flex items-center justify-between border-b border-border pb-3 text-xs">
-              <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenAccordions((prev) => ({ ...prev, reviews: true }));
+                  const reviewsEl = document.getElementById("accordion-item-reviews");
+                  if (reviewsEl) {
+                    reviewsEl.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="flex items-center gap-2 text-left cursor-pointer hover:opacity-85 transition-opacity group"
+              >
                 <div className="flex items-center text-amber-400">
-                  <Star className="h-4 w-4 fill-current" />
-                  <Star className="h-4 w-4 fill-current" />
-                  <Star className="h-4 w-4 fill-current" />
-                  <Star className="h-4 w-4 fill-current" />
-                  <Star className="h-4 w-4 fill-current" />
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={cn(
+                        "h-4 w-4",
+                        reviewsCount > 0 && star <= Math.round(averageRating)
+                          ? "fill-current text-amber-400"
+                          : "text-zinc-300 fill-none"
+                      )}
+                    />
+                  ))}
                 </div>
-                <span className="font-bold text-text">{toBn(5.0)}</span>
-                <span className="text-text-muted font-medium">
-                  {language === "bn" ? "(২৪ টি ভেরিফাইড বায়ার রিভিউ)" : "(24 Verified Buyer Reviews)"}
-                </span>
-              </div>
+                {reviewsCount > 0 ? (
+                  <>
+                    <span className="font-bold text-text">{toBn(averageRating.toFixed(1))}</span>
+                    <span className="text-text-muted font-medium group-hover:text-[#e91e63] group-hover:underline transition-colors">
+                      {language === "bn"
+                        ? `(${toBn(reviewsCount)} টি ভেরিফাইড বায়ার রিভিউ)`
+                        : `(${reviewsCount} Verified Buyer ${reviewsCount === 1 ? "Review" : "Reviews"})`}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-text-muted font-medium group-hover:text-[#e91e63] group-hover:underline transition-colors">
+                    {language === "bn"
+                      ? "(এখনো কোনো রিভিউ নেই — প্রথম রিভিউ দিন)"
+                      : "(No reviews yet — be the first to review)"}
+                  </span>
+                )}
+              </button>
 
               <button
                 onClick={handleShare}
@@ -493,6 +565,25 @@ export function ProductDetailClient({
                   </>
                 )}
               </button>
+            </div>
+
+            {/* Fake Live View Counting & Social Proof */}
+            <div className="mt-3 flex items-center gap-2.5 rounded-2xl bg-linear-to-r from-amber-500/10 via-pink-500/10 to-rose-500/5 border border-amber-300/40 px-3.5 py-2 text-xs shadow-2xs">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600"></span>
+              </span>
+              <span className="text-gray-800 font-bold flex items-center gap-1.5 flex-wrap">
+                <span className="text-base leading-none">🔥</span>
+                <strong className="text-gray-950 font-black text-sm tracking-tight">
+                  {toBn(liveViewers)}
+                </strong>
+                <span className="text-gray-700 font-semibold">
+                  {language === "bn"
+                    ? "জন ক্রেতা এখন এই পণ্যটি দেখছেন"
+                    : "people are currently looking at this product"}
+                </span>
+              </span>
             </div>
           </div>
 
@@ -682,8 +773,7 @@ export function ProductDetailClient({
               }}
               className="ripple-container w-full h-11 rounded-xl font-extrabold text-xs sm:text-sm bg-accent-500 hover:bg-accent-600 text-white shadow-md transition-all active:scale-95 hover:shadow-[0_8px_20px_-4px_rgba(249,115,22,0.4)]"
             >
-              <Zap className="h-4 w-4 fill-current mr-1.5" />
-              {t("productDetail", "orderNow")} ({t("checkout", "cod")})
+              {t("productDetail", "orderNow")}
             </Button>
           </div>
 
@@ -749,192 +839,263 @@ export function ProductDetailClient({
         <FrequentlyBoughtTogether bundleData={bundleData} />
       )}
 
-      {/* 3. Structured Information Tabs */}
-      <div className="rounded-3xl border border-border bg-white shadow-xs overflow-hidden">
-        <div className="flex border-b border-border overflow-x-auto no-scrollbar bg-surface-secondary/40">
-          {[
-            { id: "description", label: t("productDetail", "tabDescription") },
-            { id: "benefits", label: t("productDetail", "tabBenefits") },
-            { id: "usage", label: t("productDetail", "tabUsage") },
-            { id: "ingredients", label: t("productDetail", "tabIngredients") },
-            { id: "authenticity", label: t("productDetail", "tabAuthenticity") },
-            { id: "warranty", label: language === "bn" ? "ডেলিভারি ও রিটার্ন" : "Delivery & Returns" },
-            { id: "reviews", label: language === "bn" ? "রিভিউ ও প্রশ্নোত্তর" : "Customer Reviews & Q&A" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={cn(
-                "px-5 py-3.5 text-xs font-extrabold transition-all whitespace-nowrap border-b-2 btn-soft-fill",
-                activeTab === tab.id
-                  ? "border-[#e91e63] text-[#e91e63] bg-white shadow-xs"
-                  : "border-transparent text-text-secondary hover:text-text hover:bg-surface-secondary/80"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="p-6 sm:p-8 text-xs sm:text-sm text-text-secondary leading-relaxed">
-          {activeTab === "description" && (
-            <div className="space-y-4 max-w-3xl">
-              {product.description ? (
-                <div
-                  className="prose prose-sm prose-pink max-w-full font-medium leading-relaxed [&_img]:rounded-2xl [&_img]:border [&_img]:border-gray-100 [&_img]:my-3 [&_a]:text-[#e91e63] [&_a]:underline"
-                  dangerouslySetInnerHTML={{ __html: product.description }}
-                />
-              ) : (
-                <p>{product.short_description || "Certified authentic beauty product directly imported from brand manufacturers."}</p>
-              )}
-            </div>
-          )}
-
-          {activeTab === "benefits" && (
-            <div className="space-y-3 max-w-3xl">
-              {product.benefits ? (
-                <div
-                  className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed [&_img]:rounded-xl"
-                  dangerouslySetInnerHTML={{ __html: product.benefits }}
-                />
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
-                    <span>Deeply nourishes and restores healthy skin barrier hydration.</span>
+      {/* 3. Structured Information - Responsive Accordion */}
+      <div className="rounded-3xl border border-gray-200/90 bg-white shadow-xs overflow-hidden divide-y divide-gray-100">
+        {[
+          {
+            id: "description",
+            label: t("productDetail", "tabDescription"),
+            icon: FileText,
+            badge: null,
+            content: (
+              <div className="space-y-4 max-w-3xl">
+                {product.description ? (
+                  <div
+                    className="prose prose-sm prose-pink max-w-full font-medium leading-relaxed [&_img]:rounded-2xl [&_img]:border [&_img]:border-gray-100 [&_img]:my-3 [&_a]:text-[#e91e63] [&_a]:underline"
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                  />
+                ) : (
+                  <p>{product.short_description || "Certified authentic beauty product directly imported from brand manufacturers."}</p>
+                )}
+              </div>
+            ),
+          },
+          {
+            id: "benefits",
+            label: t("productDetail", "tabBenefits"),
+            icon: Sparkles,
+            badge: null,
+            content: (
+              <div className="space-y-3 max-w-3xl">
+                {product.benefits ? (
+                  <div
+                    className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed [&_img]:rounded-xl"
+                    dangerouslySetInnerHTML={{ __html: product.benefits }}
+                  />
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+                      <span>Deeply nourishes and restores healthy skin barrier hydration.</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+                      <span>Formulated without parabens, synthetic dyes, or harsh sulfates.</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+                      <span>Certified gentle and skin-friendly for sensitive skin types.</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            ),
+          },
+          {
+            id: "usage",
+            label: t("productDetail", "tabUsage"),
+            icon: BookOpen,
+            badge: null,
+            content: (
+              <div className="space-y-3 max-w-3xl">
+                {product.usage ? (
+                  <div
+                    className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed [&_img]:rounded-xl"
+                    dangerouslySetInnerHTML={{ __html: product.usage }}
+                  />
+                ) : (
+                  <>
+                    <p className="font-bold text-text">Recommended Beauty Routine Step:</p>
+                    <p className="text-[#e91e63] font-bold pb-2">
+                      {product.routine_step ? `Step: ${product.routine_step}` : "Daily Skincare Routine"}
+                    </p>
+                    <ol className="list-decimal list-inside space-y-1.5 pl-1">
+                      <li>Cleanse skin thoroughly with warm water.</li>
+                      <li>Dispense appropriate amount onto fingertips or palms.</li>
+                      <li>Gently massage over face and neck in circular upward motions.</li>
+                      <li>Follow with sunscreen during daytime.</li>
+                    </ol>
+                  </>
+                )}
+              </div>
+            ),
+          },
+          {
+            id: "ingredients",
+            label: t("productDetail", "tabIngredients"),
+            icon: FlaskConical,
+            badge: keyActives.length > 0 ? `${keyActives.length} Actives` : null,
+            content: (
+              <div className="space-y-3 max-w-3xl">
+                {keyActives.length > 0 && (
+                  <div className="space-y-1.5 pb-2">
+                    <span className="font-bold text-gray-900 block">Key Active Formulations:</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {keyActives.map((ka: string) => (
+                        <span
+                          key={ka}
+                          className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800"
+                        >
+                          <Zap className="h-2.5 w-2.5 shrink-0" />
+                          <span>{ka}</span>
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
-                    <span>Formulated without parabens, synthetic dyes, or harsh sulfates.</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
-                    <span>Certified gentle and skin-friendly for sensitive skin types.</span>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+                )}
 
-          {activeTab === "usage" && (
-            <div className="space-y-3 max-w-3xl">
-              {product.usage ? (
-                <div
-                  className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed [&_img]:rounded-xl"
-                  dangerouslySetInnerHTML={{ __html: product.usage }}
-                />
-              ) : (
-                <>
-                  <p className="font-bold text-text">Recommended Beauty Routine Step:</p>
-                  <p className="text-[#e91e63] font-bold pb-2">
-                    {product.routine_step ? `Step: ${product.routine_step}` : "Daily Skincare Routine"}
-                  </p>
-                  <ol className="list-decimal list-inside space-y-1.5 pl-1">
-                    <li>Cleanse skin thoroughly with warm water.</li>
-                    <li>Dispense appropriate amount onto fingertips or palms.</li>
-                    <li>Gently massage over face and neck in circular upward motions.</li>
-                    <li>Follow with sunscreen during daytime.</li>
-                  </ol>
-                </>
-              )}
-            </div>
-          )}
-
-          {activeTab === "ingredients" && (
-            <div className="space-y-3 max-w-3xl">
-              {keyActives.length > 0 && (
-                <div className="space-y-1.5 pb-2">
-                  <span className="font-bold text-gray-900 block">Key Active Formulations:</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {keyActives.map((ka: string) => (
-                      <span
-                        key={ka}
-                        className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800"
-                      >
-                        <Zap className="h-2.5 w-2.5 shrink-0" />
-                        <span>{ka}</span>
-                      </span>
-                    ))}
+                {product.ingredients_specifications ? (
+                  <div
+                    className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: product.ingredients_specifications }}
+                  />
+                ) : (
+                  <>
+                    <p className="font-bold text-text">Full Ingredient List (INCI):</p>
+                    <p className="font-mono text-xs text-text-muted bg-surface-secondary p-4 rounded-2xl border border-border">
+                      Aqua/Water/Eau, Glycerin, Niacinamide, Hyaluronic Acid, Centella Asiatica Extract, Tocopheryl Acetate (Vitamin E), Panthenol (Pro-Vitamin B5), Phenoxyethanol, Ethylhexylglycerin.
+                    </p>
+                  </>
+                )}
+              </div>
+            ),
+          },
+          {
+            id: "authenticity",
+            label: t("productDetail", "tabAuthenticity"),
+            icon: ShieldCheck,
+            badge: language === "bn" ? "১০০% খাঁটি" : "100% Genuine",
+            content: (
+              <div className="space-y-4 max-w-3xl">
+                <div className="flex items-center gap-3 p-4 rounded-2xl bg-pink-50/60 border border-pink-200">
+                  <ShieldCheck className="h-8 w-8 text-[#e91e63] shrink-0" />
+                  <div>
+                    <h4 className="font-black text-gray-900 text-sm">
+                      {language === "bn" ? "১০০% গ্যারান্টিযুক্ত ব্র্যান্ড অথেন্টিসিটি" : "100% Guaranteed Brand Authenticity"}
+                    </h4>
+                    <p className="text-xs text-gray-600">
+                      {language === "bn"
+                        ? `সরাসরি ${originCountry}-এর অথরাইজড প্রস্তুতকারক থেকে আমদানিকৃত। কোনো রেপ্লিকা বা মেয়াদোত্তীর্ণ পণ্যের সুযোগ নেই।`
+                        : `Imported directly from authorized manufacturers in ${originCountry}. Zero replicas or expired stock guaranteed.`}
+                    </p>
                   </div>
                 </div>
-              )}
 
-              {product.ingredients_specifications ? (
-                <div
-                  className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: product.ingredients_specifications }}
-                />
-              ) : (
-                <>
-                  <p className="font-bold text-text">Full Ingredient List (INCI):</p>
-                  <p className="font-mono text-xs text-text-muted bg-surface-secondary p-4 rounded-2xl border border-border">
-                    Aqua/Water/Eau, Glycerin, Niacinamide, Hyaluronic Acid, Centella Asiatica Extract, Tocopheryl Acetate (Vitamin E), Panthenol (Pro-Vitamin B5), Phenoxyethanol, Ethylhexylglycerin.
-                  </p>
-                </>
-              )}
-            </div>
-          )}
-
-          {activeTab === "authenticity" && (
-            <div className="space-y-4 max-w-3xl">
-              <div className="flex items-center gap-3 p-4 rounded-2xl bg-pink-50/60 border border-pink-200">
-                <ShieldCheck className="h-8 w-8 text-[#e91e63] shrink-0" />
-                <div>
-                  <h4 className="font-black text-gray-900 text-sm">
-                    {language === "bn" ? "১০০% গ্যারান্টিযুক্ত ব্র্যান্ড অথেন্টিসিটি" : "100% Guaranteed Brand Authenticity"}
-                  </h4>
-                  <p className="text-xs text-gray-600">
-                    {language === "bn"
-                      ? `সরাসরি ${originCountry}-এর অথরাইজড প্রস্তুতকারক থেকে আমদানিকৃত। কোনো রেপ্লিকা বা মেয়াদোত্তীর্ণ পণ্যের সুযোগ নেই।`
-                      : `Imported directly from authorized manufacturers in ${originCountry}. Zero replicas or expired stock guaranteed.`}
-                  </p>
+                <div className="grid gap-3 sm:grid-cols-2 text-xs">
+                  <div className="p-3.5 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
+                    <span className="font-bold text-gray-900 block">{language === "bn" ? "ব্যাচ কোড:" : "Batch Code:"}</span>
+                    <span className="font-mono text-gray-700">{product.batch_number || "LOT2024BD01"}</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
+                    <span className="font-bold text-gray-900 block">{language === "bn" ? "মেয়াদ:" : "Freshness Shelf-Life:"}</span>
+                    <span className="text-emerald-700 font-bold">
+                      {product.expiry_date ? `Exp: ${product.expiry_date}` : (language === "bn" ? "খোলার পর ২৪ মাস ব্যবহারযোগ্য" : "24 Months After Opening (PAO)")}
+                    </span>
+                  </div>
                 </div>
               </div>
+            ),
+          },
+          {
+            id: "warranty",
+            label: language === "bn" ? "ডেলিভারি ও রিটার্ন" : "Delivery & Returns",
+            icon: Truck,
+            badge: null,
+            content: (
+              <div className="space-y-3 max-w-3xl">
+                <p className="font-bold text-text">
+                  {language === "bn" ? "সারা দেশে ডেলিভারি ও রিটার্ন পলিসি:" : "Nationwide Shipping & Returns Policy:"}
+                </p>
+                <p>
+                  {language === "bn"
+                    ? "• ঢাকার ভেতরে: দ্রুততম কুরিয়ারে ২৪–৪৮ ঘণ্টার মধ্যে ডেলিভারি।"
+                    : "• Inside Dhaka: Delivered within 24–48 hours via fast courier (Steadfast / Pathao)."}
+                </p>
+                <p>
+                  {language === "bn"
+                    ? "• ঢাকার বাইরে: ৩-৫ কার্যদিবসে সারা দেশে হোম ডেলিভারি ও ক্যাশ অন ডেলিভারি সুবিধা।"
+                    : "• Outside Dhaka: Delivered in 2–4 business days with Cash on Delivery available nationwide."}
+                </p>
+                <p>
+                  {language === "bn"
+                    ? "• ৭ দিনের সহজ রিটার্ন: পণ্য অক্ষত ও সিলযুক্ত অবস্থায় ৭ দিনের মধ্যে সহজ এক্সচেঞ্জ ও রিটার্ন।"
+                    : "• 7-Day Return Guarantee: Returns accepted if package is unopened and intact."}
+                </p>
+              </div>
+            ),
+          },
+          {
+            id: "reviews",
+            label: language === "bn" ? "রিভিউ ও প্রশ্নোত্তর" : "Customer Reviews & Q&A",
+            icon: MessageSquare,
+            badge: null,
+            content: <ProductReviewsQA productId={product.id} />,
+          },
+        ].map((item) => {
+          const isOpen = !!openAccordions[item.id];
+          const Icon = item.icon;
 
-              <div className="grid gap-3 sm:grid-cols-2 text-xs">
-                <div className="p-3.5 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
-                  <span className="font-bold text-gray-900 block">{language === "bn" ? "ব্যাচ কোড:" : "Batch Code:"}</span>
-                  <span className="font-mono text-gray-700">{product.batch_number || "LOT2024BD01"}</span>
-                </div>
-                <div className="p-3.5 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
-                  <span className="font-bold text-gray-900 block">{language === "bn" ? "মেয়াদ:" : "Freshness Shelf-Life:"}</span>
-                  <span className="text-emerald-700 font-bold">
-                    {product.expiry_date ? `Exp: ${product.expiry_date}` : (language === "bn" ? "খোলার পর ২৪ মাস ব্যবহারযোগ্য" : "24 Months After Opening (PAO)")}
+          return (
+            <div key={item.id} id={`accordion-item-${item.id}`} className="transition-colors">
+              <button
+                type="button"
+                onClick={() => toggleAccordion(item.id)}
+                aria-expanded={isOpen}
+                className={cn(
+                  "w-full flex items-center justify-between gap-3 px-5 sm:px-7 py-4 text-left transition-all duration-200 group select-none",
+                  isOpen
+                    ? "bg-pink-50/20 text-[#e91e63]"
+                    : "bg-white hover:bg-gray-50/70 text-gray-900"
+                )}
+              >
+                <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                  <div
+                    className={cn(
+                      "h-8 w-8 sm:h-9 sm:w-9 rounded-xl flex items-center justify-center transition-all shrink-0",
+                      isOpen
+                        ? "bg-[#e91e63] text-white shadow-xs"
+                        : "bg-gray-100 text-gray-600 group-hover:bg-pink-100/60 group-hover:text-[#e91e63]"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <span
+                    className={cn(
+                      "text-xs sm:text-sm font-extrabold tracking-tight truncate",
+                      isOpen ? "text-[#e91e63]" : "text-gray-900 group-hover:text-[#e91e63]"
+                    )}
+                  >
+                    {item.label}
                   </span>
+                  {item.badge && (
+                    <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100/70 text-[#e91e63] border border-pink-200">
+                      {item.badge}
+                    </span>
+                  )}
                 </div>
-              </div>
-            </div>
-          )}
 
-          {activeTab === "warranty" && (
-            <div className="space-y-3 max-w-3xl">
-              <p className="font-bold text-text">
-                {language === "bn" ? "সারা দেশে ডেলিভারি ও রিটার্ন পলিসি:" : "Nationwide Shipping & Returns Policy:"}
-              </p>
-              <p>
-                {language === "bn"
-                  ? "• ঢাকার ভেতরে: দ্রুততম কুরিয়ারে ২৪–৪৮ ঘণ্টার মধ্যে ডেলিভারি।"
-                  : "• Inside Dhaka: Delivered within 24–48 hours via fast courier (Steadfast / Pathao)."}
-              </p>
-              <p>
-                {language === "bn"
-                  ? "• ঢাকার বাইরে: ৩-৫ কার্যদিবসে সারা দেশে হোম ডেলিভারি ও ক্যাশ অন ডেলিভারি সুবিধা।"
-                  : "• Outside Dhaka: Delivered in 2–4 business days with Cash on Delivery available nationwide."}
-              </p>
-              <p>
-                {language === "bn"
-                  ? "• ৭ দিনের সহজ রিটার্ন: পণ্য অক্ষত ও সিলযুক্ত অবস্থায় ৭ দিনের মধ্যে সহজ এক্সচেঞ্জ ও রিটার্ন।"
-                  : "• 7-Day Return Guarantee: Returns accepted if package is unopened and intact."}
-              </p>
-            </div>
-          )}
+                <div className="flex items-center gap-2 shrink-0">
+                  <div
+                    className={cn(
+                      "h-7 w-7 rounded-full flex items-center justify-center transition-transform duration-200",
+                      isOpen
+                        ? "bg-pink-100 text-[#e91e63] rotate-180"
+                        : "bg-gray-100 text-gray-400 group-hover:bg-gray-200 group-hover:text-gray-700"
+                    )}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </div>
+              </button>
 
-          {activeTab === "reviews" && (
-            <ProductReviewsQA
-              productId={product.id}
-            />
-          )}
-        </div>
+              {isOpen && (
+                <div className="px-5 sm:px-8 pt-3 pb-6 sm:pb-8 text-xs sm:text-sm text-text-secondary leading-relaxed border-t border-pink-100/40 bg-white animate-in fade-in-50 duration-200">
+                  {item.content}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* 4. Related Products Section */}

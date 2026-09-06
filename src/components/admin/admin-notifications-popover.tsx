@@ -476,7 +476,7 @@ export function AdminNotificationsPopover() {
 
       {/* Popover Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-xl border border-border bg-white shadow-2xl z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+        <div className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 w-auto sm:w-96 rounded-xl border border-border bg-white shadow-2xl z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150 max-h-[85vh] flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border bg-gray-50/70 px-4 py-3">
             <div className="flex items-center gap-2">

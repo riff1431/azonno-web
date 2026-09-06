@@ -8,6 +8,7 @@ import { ConnectionStatusBadge } from "@/components/admin/module-settings/connec
 import { Button } from "@/components/shared/ui/button";
 import { toggleModuleStatus } from "@/features/modules/actions";
 import { type PaymentMethodItem } from "@/features/payments/actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 const ICON_MAP: Record<string, any> = {
   Banknote,
@@ -21,6 +22,7 @@ interface PaymentsClientProps {
 }
 
 export function PaymentsClient({ initialMethods }: PaymentsClientProps) {
+  const { t } = useAdminLang();
   const [methods, setMethods] = useState<PaymentMethodItem[]>(initialMethods);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
 
@@ -50,15 +52,15 @@ export function PaymentsClient({ initialMethods }: PaymentsClientProps) {
     <div className="space-y-6 max-w-6xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <ModuleHeader
-          title="Payment Methods & Gateway Hub"
+          title={t("payment_methods")}
           description="Manage Cash on Delivery (COD), local MFS mobile wallets (bKash, Nagad), SSLCommerz, and global credit card processors."
           icon={CreditCard}
-          badgeLabel={`${activeCount} Active / ${methods.length} Total`}
+          badgeLabel={`${activeCount} ${t("active")} / ${methods.length} ${t("all")}`}
         />
 
         <Link href="/admin/payments/logs">
           <Button variant="outline" size="sm" className="text-xs shrink-0">
-            Payment Verification &rarr;
+            {t("payment_verification")} &rarr;
           </Button>
         </Link>
       </div>
@@ -105,14 +107,14 @@ export function PaymentsClient({ initialMethods }: PaymentsClientProps) {
                   />
                   <div className="w-8 h-4 bg-surface-tertiary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-border after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600"></div>
                   <span className="ml-2 text-[11px] font-medium text-text-muted">
-                    {method.isEnabled ? "Active" : "Disabled"}
+                    {method.isEnabled ? t("active") : t("disabled")}
                   </span>
                 </label>
 
                 <Link href={method.settingsHref}>
                   <Button variant="outline" size="sm" className="text-xs h-7 px-2.5">
                     <Settings className="h-3 w-3 mr-1 text-primary-600" />
-                    Configure
+                    {t("action_edit")}
                   </Button>
                 </Link>
               </div>

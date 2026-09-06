@@ -6,12 +6,14 @@ import { DataTable, type Column } from "@/components/admin/data-table";
 import { Button } from "@/components/shared/ui/button";
 import { formatPrice } from "@/lib/utils";
 import { createCoupon, deleteCoupon } from "./actions";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface CouponListClientProps {
   initialCoupons: any[];
 }
 
 export function CouponListClient({ initialCoupons }: CouponListClientProps) {
+  const { t } = useAdminLang();
   const [coupons, setCoupons] = useState(initialCoupons);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -55,7 +57,7 @@ export function CouponListClient({ initialCoupons }: CouponListClientProps) {
   const columns: Column<any>[] = [
     {
       key: "code",
-      header: "Code",
+      header: t("column_code"),
       sortable: true,
       cell: (row: any) => (
         <span className="font-mono font-extrabold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-lg border border-primary-200">
@@ -65,38 +67,38 @@ export function CouponListClient({ initialCoupons }: CouponListClientProps) {
     },
     {
       key: "type",
-      header: "Discount Type",
+      header: t("discount_type"),
       cell: (row: any) => (
         <span className="text-xs font-semibold capitalize text-text">
           {row.type === "percentage"
             ? `${row.value}% OFF`
             : row.type === "fixed"
             ? `৳${row.value} Fixed`
-            : "Free Shipping"}
+            : t("free_shipping_label")}
         </span>
       ),
     },
     {
       key: "min_order",
-      header: "Min Order",
+      header: t("min_order"),
       cell: (row: any) => (
         <span className="text-xs text-text-muted">
-          {row.min_cart_amount ? formatPrice(row.min_cart_amount) : "No minimum"}
+          {row.min_cart_amount ? formatPrice(row.min_cart_amount) : "—"}
         </span>
       ),
     },
     {
       key: "max_discount",
-      header: "Max Cap",
+      header: t("max_discount"),
       cell: (row: any) => (
         <span className="text-xs text-text-muted">
-          {row.max_discount ? formatPrice(row.max_discount) : "No cap"}
+          {row.max_discount ? formatPrice(row.max_discount) : "—"}
         </span>
       ),
     },
     {
       key: "usage",
-      header: "Redemptions",
+      header: t("column_usage"),
       cell: (row: any) => (
         <span className="text-xs font-semibold text-text">
           {row.usage_count || 0} / {row.usage_limit || "∞"}
@@ -105,7 +107,7 @@ export function CouponListClient({ initialCoupons }: CouponListClientProps) {
     },
     {
       key: "status",
-      header: "Status",
+      header: t("column_status"),
       cell: (row: any) => (
         <span
           className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
@@ -120,12 +122,12 @@ export function CouponListClient({ initialCoupons }: CouponListClientProps) {
     },
     {
       key: "actions",
-      header: "Actions",
+      header: t("column_actions"),
       cell: (row: any) => (
         <button
           onClick={() => handleDelete(row.id)}
           className="p-1 text-text-muted hover:text-red-600 transition-colors"
-          title="Delete coupon"
+          title={t("delete")}
         >
           <Trash2 className="h-4 w-4" />
         </button>
@@ -138,14 +140,14 @@ export function CouponListClient({ initialCoupons }: CouponListClientProps) {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text">Coupons & Promotions</h1>
+          <h1 className="text-2xl font-bold text-text">{t("coupon_management")}</h1>
           <p className="text-sm text-text-secondary">
-            Manage promotional discount vouchers, free shipping codes, and limits.
+            {t("coupon_desc")}
           </p>
         </div>
         <Button onClick={() => setShowModal(true)}>
           <Plus className="h-4 w-4 mr-1.5" />
-          Create Coupon
+          {t("create_coupon")}
         </Button>
       </div>
 
@@ -153,8 +155,8 @@ export function CouponListClient({ initialCoupons }: CouponListClientProps) {
         columns={columns}
         data={coupons}
         searchKey="code"
-        searchPlaceholder="Search coupon code..."
-        emptyMessage="No promotional coupons found."
+        searchPlaceholder={t("search_coupons")}
+        emptyMessage={t("no_coupons")}
       />
 
       {/* Modal */}

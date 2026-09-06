@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProductDetailClient } from "./product-detail-client";
 import { getFrequentlyBoughtTogetherBundle } from "@/features/products/combo-actions";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
+import { getProductReviews } from "@/features/reviews/actions";
 import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { getBaseUrl } from "@/lib/utils";
 
@@ -66,8 +67,8 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  // Fetch related products and frequently bought together combo bundle
-  const [{ data: related }, bundleData] = await Promise.all([
+  // Fetch related products, combo bundle, and verified real reviews
+  const [{ data: related }, bundleData, productReviews] = await Promise.all([
     supabase
       .from("products")
       .select("id, name, slug, regular_price, sale_price, og_image_url, brands(name)")
@@ -75,7 +76,14 @@ export default async function ProductDetailPage({
       .eq("status", "active")
       .limit(4),
     getFrequentlyBoughtTogetherBundle(product.id),
+    getProductReviews(product.id),
   ]);
+
+  const realReviewsCount = productReviews?.length || 0;
+  const realAverageRating =
+    realReviewsCount > 0
+      ? productReviews.reduce((sum: number, r: any) => sum + (Number(r.rating) || 5), 0) / realReviewsCount
+      : 0;
 
   const baseUrl = getBaseUrl();
   const productUrl = `${baseUrl}/products/${product.slug}`;
@@ -119,8 +127,8 @@ export default async function ProductDetailPage({
             : "OutOfStock"
         }
         url={productUrl}
-        ratingValue={product.average_rating ? Number(product.average_rating) : 5.0}
-        reviewCount={product.total_reviews ? Number(product.total_reviews) : 1}
+        ratingValue={realReviewsCount > 0 ? Number(realAverageRating.toFixed(1)) : 5.0}
+        reviewCount={realReviewsCount > 0 ? realReviewsCount : 1}
       />
       <BreadcrumbJsonLd items={breadcrumbItems} />
 
@@ -156,6 +164,8 @@ export default async function ProductDetailPage({
         relatedProducts={related || []}
         bundleData={bundleData}
         featureSettings={featureSettings}
+        initialReviewsCount={realReviewsCount}
+        initialAverageRating={realAverageRating}
       />
     </div>
   );

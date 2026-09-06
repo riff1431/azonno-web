@@ -36,6 +36,8 @@ import {
   updateStoreFeatureSettings,
 } from "@/features/settings/feature-settings-actions";
 import Link from "next/link";
+import { useAdminLang } from "@/lib/admin-lang-context";
+import { BDCourierBadge } from "@/features/fraud/bdcourier-badge";
 
 interface ReturnsClientProps {
   initialReturns: ReturnRequest[];
@@ -43,6 +45,7 @@ interface ReturnsClientProps {
 }
 
 export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClientProps) {
+  const { t } = useAdminLang();
   const [returnsList, setReturnsList] = useState<ReturnRequest[]>(initialReturns);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -175,31 +178,31 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
       case "pending":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700 border border-amber-200">
-            <Clock className="h-3 w-3" /> Pending Review
+            <Clock className="h-3 w-3" /> {t("return_status_pending")}
           </span>
         );
       case "approved":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200">
-            <CheckCircle2 className="h-3 w-3" /> Return Approved
+            <CheckCircle2 className="h-3 w-3" /> {t("return_status_approved")}
           </span>
         );
       case "item_received":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700 border border-indigo-200">
-            <Package className="h-3 w-3" /> Item Received at Hub
+            <Package className="h-3 w-3" /> {t("returned_stock")}
           </span>
         );
       case "refunded":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
-            <Check className="h-3 w-3" /> Refunded
+            <Check className="h-3 w-3" /> {t("column_refund")}
           </span>
         );
       case "rejected":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-700 border border-red-200">
-            <XCircle className="h-3 w-3" /> Rejected
+            <XCircle className="h-3 w-3" /> {t("return_status_rejected")}
           </span>
         );
     }
@@ -211,10 +214,10 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
     <div className="space-y-6 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <ModuleHeader
-          title="Customer Returns & RMA Management"
-          description="Review customer return requests, inspect evidence photos, dispatch 1-click reverse courier pickups (SteadFast/Pathao), and authorize refunds."
+          title={t("return_management")}
+          description={t("return_desc")}
           icon={RotateCcw}
-          badgeLabel={`${pendingCount} Pending Action`}
+          badgeLabel={`${pendingCount} ${t("filter_pending")}`}
         />
         <div className="shrink-0 flex items-center gap-2">
           <Button
@@ -224,7 +227,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
             className="gap-2 text-xs font-bold border-border hover:border-[#e91e63] hover:text-[#e91e63] bg-white rounded-xl shadow-xs py-2.5 px-4 h-auto"
           >
             <Settings className="h-4 w-4" />
-            RMA & Courier Policy
+            {t("return_policy")}
           </Button>
         </div>
       </div>
@@ -247,7 +250,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
 
 
       {/* Stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
           <span className="text-xs font-semibold text-text-muted">Total Requests</span>
           <p className="text-2xl font-extrabold text-text mt-1">{returnsList.length}</p>
@@ -333,7 +336,10 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                   <td className="px-5 py-4">
                     <div className="font-bold text-text">{item.customer?.full_name || "Customer"}</div>
                     <p className="text-[11px] text-text-muted font-mono">{item.order?.order_number}</p>
-                    <p className="text-[11px] text-text-secondary">{item.customer?.phone}</p>
+                    <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                      <p className="text-[11px] text-text-secondary">{item.customer?.phone}</p>
+                      {item.customer?.phone && <BDCourierBadge phone={item.customer.phone} />}
+                    </div>
                   </td>
                   <td className="px-5 py-4 max-w-xs">
                     <p className="line-clamp-2 text-text font-medium">{item.reason}</p>
@@ -447,7 +453,10 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
               </div>
               <div className="space-y-1">
                 <span className="text-text-muted">Contact Phone:</span>
-                <p className="font-bold text-text">{selectedReturn.customer?.phone}</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-bold text-text">{selectedReturn.customer?.phone}</p>
+                  {selectedReturn.customer?.phone && <BDCourierBadge phone={selectedReturn.customer.phone} />}
+                </div>
               </div>
               <div className="space-y-1">
                 <span className="text-text-muted">Refund Amount:</span>
@@ -573,7 +582,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
       {/* Standalone 1-Click Reverse Courier Dispatch Modal */}
       {reverseModalReturn && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-border shadow-2xl max-w-lg w-full p-6 space-y-5 animate-in fade-in-0">
+          <div className="bg-white rounded-3xl border border-border shadow-2xl max-w-lg w-full p-6 space-y-5 animate-in fade-in-0 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
                 <div className="flex items-center gap-1.5">
@@ -687,7 +696,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
       {/* RMA Policy & Reverse Courier Settings Modal */}
       {showSettingsModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl border border-border shadow-2xl max-w-lg w-full p-6 space-y-5 animate-in fade-in-0">
+          <div className="bg-white rounded-3xl border border-border shadow-2xl max-w-lg w-full p-6 space-y-5 animate-in fade-in-0 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
                 <div className="flex items-center gap-1.5">

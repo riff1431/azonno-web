@@ -23,11 +23,18 @@ export async function submitReview(input: {
   const { data: authData } = await supabase.auth.getUser();
   const user = authData?.user;
 
+  if (!user) {
+    return {
+      error: "Please log in to submit a review.",
+      requireLogin: true,
+    };
+  }
+
   const adminClient = createAdminClient();
 
   // Check if user has purchased this product for verified badge
   let orderItemId: string | null = null;
-  if (user) {
+  try {
     const { data: orderItem } = await adminClient
       .from("order_items")
       .select("id, order_id, orders!inner(user_id)")
@@ -37,17 +44,35 @@ export async function submitReview(input: {
       .maybeSingle();
 
     orderItemId = orderItem?.id || null;
+  } catch (err) {
+    console.error("Verified purchase lookup error:", err);
   }
 
-  const reviewStatus = featureSettings.auto_approve_reviews ? "approved" : "pending";
+  // Fetch customer profile to get their full name
+  const { data: profile } = await adminClient
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const reviewerName =
+    input.reviewer_name?.trim() ||
+    profile?.full_name ||
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.email?.split("@")[0] ||
+    "Verified Customer";
+
+  // Logged-in user reviews are published immediately so customer sees their review instantly
+  const reviewStatus = "approved";
 
   const { data: review, error } = await adminClient
     .from("reviews")
     .insert({
       product_id: input.product_id,
-      user_id: user?.id || null,
+      user_id: user.id,
       order_item_id: orderItemId,
-      rating: input.rating,
+      rating: Math.min(5, Math.max(1, Number(input.rating) || 5)),
       title: input.title?.trim() || null,
       comment: input.comment?.trim() || null,
       status: reviewStatus,
@@ -63,8 +88,14 @@ export async function submitReview(input: {
   revalidatePath(`/products`);
   return {
     success: true,
-    review: reviewStatus === "approved" ? review : null,
-    pendingModeration: reviewStatus === "pending",
+    review: {
+      ...review,
+      profiles: {
+        full_name: reviewerName,
+        email: user.email,
+      },
+    },
+    pendingModeration: false,
   };
 }
 
@@ -78,16 +109,18 @@ export async function getProductReviews(productId: string) {
       rating,
       title,
       comment,
+      status,
       admin_reply,
       created_at,
       order_item_id,
+      user_id,
       profiles (
         full_name,
         email
       )
     `)
     .eq("product_id", productId)
-    .eq("status", "approved")
+    .in("status", ["approved", "pending"])
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -158,5 +191,16 @@ export async function moderateReview(
   if (error) return { error: error.message };
 
   revalidatePath("/admin/reviews");
+  revalidatePath("/products");
   return { success: true, review: data };
+}
+
+export async function deleteReview(reviewId: string) {
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.from("reviews").delete().eq("id", reviewId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/reviews");
+  revalidatePath("/products");
+  return { success: true };
 }

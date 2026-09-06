@@ -21,6 +21,7 @@ import {
   deleteMediaRecord,
 } from "@/features/media/actions";
 import MediaDropzone from "@/features/media/components/media-dropzone";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface MediaItem {
   id: string;
@@ -38,6 +39,7 @@ interface MediaItem {
 }
 
 export default function MediaListClient() {
+  const { t } = useAdminLang();
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -88,7 +90,7 @@ export default function MediaListClient() {
 
   const handleDeleteMedia = async () => {
     if (!selectedMedia) return;
-    if (!confirm("Are you sure you want to delete this media item?")) return;
+    if (!confirm(t("delete_confirm_media"))) return;
 
     await deleteMediaRecord(selectedMedia.id, selectedMedia.public_id);
     setSelectedMedia(null);
@@ -113,10 +115,8 @@ export default function MediaListClient() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text">Media Library</h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            Upload and manage assets stored in Cloudinary & Supabase.
-          </p>
+          <h1 className="text-2xl font-bold text-text">{t("media_library_title")}</h1>
+          <p className="mt-1 text-sm text-text-secondary">{t("media_library_desc")}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -127,12 +127,12 @@ export default function MediaListClient() {
             {showDropzone ? (
               <>
                 <X className="h-4 w-4" />
-                Close Uploader
+                {t("close_uploader_btn")}
               </>
             ) : (
               <>
                 <Upload className="h-4 w-4" />
-                Upload Assets
+                {t("upload_assets_btn")}
               </>
             )}
           </Button>
@@ -172,7 +172,7 @@ export default function MediaListClient() {
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search media..."
+            placeholder={t("search_media_placeholder")}
             className="pl-9 pr-4 h-9"
           />
         </form>
@@ -182,7 +182,7 @@ export default function MediaListClient() {
       {loading ? (
         <div className="py-16 text-center">
           <Loader2 className="mx-auto h-8 w-8 animate-spin text-text-muted" />
-          <p className="mt-2 text-sm text-text-muted">Loading media assets...</p>
+          <p className="mt-2 text-sm text-text-muted">{t("loading_media")}</p>
         </div>
       ) : mediaItems.length === 0 ? (
         <div
@@ -193,16 +193,14 @@ export default function MediaListClient() {
           className="rounded-xl border border-dashed border-border bg-white p-16 text-center transition-all hover:border-primary-400"
         >
           <ImageIcon className="mx-auto h-12 w-12 text-text-muted" />
-          <h3 className="mt-3 text-base font-semibold text-text">No media assets found</h3>
-          <p className="mt-1 text-sm text-text-secondary">
-            Drag & drop images or videos anywhere, or upload directly to see them here.
-          </p>
+          <h3 className="mt-3 text-base font-semibold text-text">{t("no_media_found_title")}</h3>
+          <p className="mt-1 text-sm text-text-secondary">{t("no_media_found_desc")}</p>
           <Button
             onClick={() => setShowDropzone(true)}
             variant="outline"
             className="mt-4"
           >
-            <Upload className="h-4 w-4" /> Upload Now
+            <Upload className="h-4 w-4" /> {t("upload_now_btn")}
           </Button>
         </div>
       ) : (
@@ -243,7 +241,7 @@ export default function MediaListClient() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-2xl rounded-xl border border-border bg-white p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
-              <h2 className="text-lg font-bold text-text">Media Details</h2>
+              <h2 className="text-lg font-bold text-text">{t("media_details_title")}</h2>
               <button
                 onClick={() => setSelectedMedia(null)}
                 className="rounded-lg p-1 text-text-muted hover:bg-surface-secondary"
@@ -268,7 +266,7 @@ export default function MediaListClient() {
                     onClick={() => copyUrl(selectedMedia.secure_url)}
                   >
                     {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                    {copied ? "Copied!" : "Copy URL"}
+                    {copied ? t("copied") : t("copy_url_btn")}
                   </Button>
                   <Button
                     size="sm"
@@ -284,46 +282,46 @@ export default function MediaListClient() {
               <div className="space-y-4 text-xs">
                 <div className="rounded-lg border border-border p-3 space-y-1.5 bg-surface-secondary/40">
                   <div className="flex justify-between">
-                    <span className="text-text-muted">Public ID:</span>
-                    <span className="font-mono text-text truncate max-w-[160px]">
+                    <span className="text-text-muted">{t("public_id_label")}:</span>
+                    <span className="font-mono text-text truncate max-w-40">
                       {selectedMedia.public_id}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-text-muted">Dimensions:</span>
+                    <span className="text-text-muted">{t("dimensions_label")}:</span>
                     <span className="text-text">
                       {selectedMedia.width ? `${selectedMedia.width} × ${selectedMedia.height} px` : "—"}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-text-muted">Format:</span>
+                    <span className="text-text-muted">{t("format_label")}:</span>
                     <span className="uppercase text-text">{selectedMedia.format}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-text-muted">Size:</span>
+                    <span className="text-text-muted">{t("size_label")}:</span>
                     <span className="text-text">{formatBytes(selectedMedia.bytes)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-text-muted">Folder:</span>
+                    <span className="text-text-muted">{t("folder_label")}:</span>
                     <span className="text-text">{selectedMedia.folder}</span>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Alt Text</Label>
+                  <Label>{t("alt_text_label")}</Label>
                   <Input
                     value={altText}
                     onChange={(e) => setAltText(e.target.value)}
-                    placeholder="Descriptive alt text for SEO"
+                    placeholder={t("alt_text_placeholder")}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Caption</Label>
+                  <Label>{t("caption_label")}</Label>
                   <Input
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
-                    placeholder="Optional image caption"
+                    placeholder={t("caption_placeholder")}
                   />
                 </div>
 
@@ -333,11 +331,11 @@ export default function MediaListClient() {
                     size="sm"
                     onClick={handleDeleteMedia}
                   >
-                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                    <Trash2 className="h-3.5 w-3.5" /> {t("delete_media_btn")}
                   </Button>
 
                   <Button size="sm" onClick={handleSaveMetadata} disabled={savingMeta}>
-                    {savingMeta ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Save Changes"}
+                    {savingMeta ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : t("save_changes_btn")}
                   </Button>
                 </div>
               </div>

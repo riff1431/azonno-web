@@ -19,12 +19,15 @@ import { Button } from "@/components/shared/ui/button";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { saveCMSPage, togglePageStatus, type CMSPageItem } from "@/features/pages/actions";
 import Link from "next/link";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface PagesClientProps {
   initialPages: CMSPageItem[];
 }
 
 export function PagesClient({ initialPages }: PagesClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [pages, setPages] = useState<CMSPageItem[]>(initialPages);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingPage, setEditingPage] = useState<Partial<CMSPageItem> | null>(null);
@@ -78,10 +81,18 @@ export function PagesClient({ initialPages }: PagesClientProps) {
     <div className="space-y-6 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <ModuleHeader
-          title="CMS Static Content & Legal Pages"
-          description="Create, edit, and publish rich content pages like About Us, Privacy Policy, Terms, FAQ, and custom landing pages."
+          title={isBn ? "সিএমএস স্ট্যাটিক ও লিগ্যাল পেজ" : "CMS Static Content & Legal Pages"}
+          description={
+            isBn
+              ? "আমাদের সম্পর্কে, প্রাইভেসী পলিসি, শর্তাবলী, প্রশ্নোত্তর এবং কাস্টম ল্যান্ডিং পেজ তৈরি ও প্রকাশ করুন।"
+              : "Create, edit, and publish rich content pages like About Us, Privacy Policy, Terms, FAQ, and custom landing pages."
+          }
           icon={FileText}
-          badgeLabel={`${pages.filter((p) => p.status === "published").length} Published / ${pages.length} Total`}
+          badgeLabel={
+            isBn
+              ? `${pages.filter((p) => p.status === "published").length} টি প্রকাশিত / ${pages.length} টি সর্বমোট`
+              : `${pages.filter((p) => p.status === "published").length} Published / ${pages.length} Total`
+          }
         />
 
         <Button
@@ -99,14 +110,14 @@ export function PagesClient({ initialPages }: PagesClientProps) {
           className="text-xs shrink-0 self-start sm:self-auto"
         >
           <Plus className="h-3.5 w-3.5 mr-1.5" />
-          Create New Page
+          {isBn ? "নতুন পেজ তৈরি করুন" : "Create New Page"}
         </Button>
       </div>
 
       {successToast && (
         <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-semibold text-emerald-800">
           <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-          <span>Page saved successfully!</span>
+          <span>{isBn ? "পেজটি সফলভাবে সংরক্ষণ করা হয়েছে!" : "Page saved successfully!"}</span>
         </div>
       )}
 
@@ -116,7 +127,7 @@ export function PagesClient({ initialPages }: PagesClientProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
           <input
             type="text"
-            placeholder="Search pages by title or slug..."
+            placeholder={isBn ? "শিরোনাম বা স্লাগ দিয়ে পেজ খুঁজুন..." : "Search pages by title or slug..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded-xl border border-border bg-surface-secondary/50 pl-9 pr-4 py-2 text-xs text-text placeholder:text-text-muted focus:outline-none"
@@ -130,11 +141,11 @@ export function PagesClient({ initialPages }: PagesClientProps) {
           <table className="w-full text-left text-xs text-text">
             <thead className="bg-surface-secondary/60 text-[11px] font-bold uppercase tracking-wider text-text-muted border-b border-border">
               <tr>
-                <th className="px-5 py-3.5">Page Title & Slug</th>
-                <th className="px-5 py-3.5">SEO Meta Title</th>
-                <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5">Last Updated</th>
-                <th className="px-5 py-3.5 text-right">Actions</th>
+                <th className="px-5 py-3.5">{isBn ? "পেজের শিরোনাম ও স্লাগ" : "Page Title & Slug"}</th>
+                <th className="px-5 py-3.5">{isBn ? "এসইও মেটা টাইটেল" : "SEO Meta Title"}</th>
+                <th className="px-5 py-3.5">{isBn ? "স্ট্যাটাস" : "Status"}</th>
+                <th className="px-5 py-3.5">{isBn ? "সর্বশেষ আপডেট" : "Last Updated"}</th>
+                <th className="px-5 py-3.5 text-right">{isBn ? "অ্যাকশন" : "Actions"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -161,11 +172,11 @@ export function PagesClient({ initialPages }: PagesClientProps) {
                     >
                       {item.status === "published" ? (
                         <>
-                          <CheckCircle2 className="h-3 w-3" /> Published
+                          <CheckCircle2 className="h-3 w-3" /> {isBn ? "প্রকাশিত" : "Published"}
                         </>
                       ) : (
                         <>
-                          <Clock className="h-3 w-3" /> Draft
+                          <Clock className="h-3 w-3" /> {isBn ? "ড্রাফট" : "Draft"}
                         </>
                       )}
                     </button>
@@ -176,7 +187,7 @@ export function PagesClient({ initialPages }: PagesClientProps) {
                   <td className="px-5 py-4 text-right">
                     <div className="flex items-center justify-end gap-1.5">
                       <Link href={`/${item.slug}`} target="_blank">
-                        <Button variant="ghost" size="sm" className="text-xs h-7 px-2">
+                        <Button variant="ghost" size="sm" className="text-xs h-7 px-2" title={isBn ? "প্রিভিউ দেখুন" : "View Preview"}>
                           <Eye className="h-3.5 w-3.5 text-text-muted" />
                         </Button>
                       </Link>
@@ -187,7 +198,7 @@ export function PagesClient({ initialPages }: PagesClientProps) {
                         className="text-xs h-7 px-2.5"
                       >
                         <Edit2 className="h-3.5 w-3.5 mr-1 text-primary-600" />
-                        Edit
+                        {isBn ? "সম্পাদনা" : "Edit"}
                       </Button>
                     </div>
                   </td>
@@ -200,8 +211,12 @@ export function PagesClient({ initialPages }: PagesClientProps) {
         {filteredPages.length === 0 && (
           <div className="p-12 text-center space-y-2">
             <FileText className="h-8 w-8 text-text-muted mx-auto" />
-            <h3 className="text-sm font-bold text-text">No pages found</h3>
-            <p className="text-xs text-text-secondary">Click "Create New Page" to add content.</p>
+            <h3 className="text-sm font-bold text-text">
+              {isBn ? "কোনো পেজ পাওয়া যায়নি" : "No pages found"}
+            </h3>
+            <p className="text-xs text-text-secondary">
+              {isBn ? '"নতুন পেজ তৈরি করুন" বাটনে ক্লিক করে পেজ যোগ করুন।' : 'Click "Create New Page" to add content.'}
+            </p>
           </div>
         )}
       </div>
@@ -213,10 +228,12 @@ export function PagesClient({ initialPages }: PagesClientProps) {
             <div className="flex items-start justify-between border-b border-border pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-primary-600">
-                  {editingPage.id ? "Edit Page Content" : "Create New Static Page"}
+                  {editingPage.id
+                    ? (isBn ? "পেজের বিবরণ সম্পাদনা" : "Edit Page Content")
+                    : (isBn ? "নতুন স্ট্যাটিক পেজ তৈরি" : "Create New Static Page")}
                 </span>
                 <h2 className="text-lg font-bold text-text">
-                  {editingPage.title || "Untitled Page"}
+                  {editingPage.title || (isBn ? "শিরোনামহীন পেজ" : "Untitled Page")}
                 </h2>
               </div>
               <button
@@ -230,19 +247,23 @@ export function PagesClient({ initialPages }: PagesClientProps) {
             <form onSubmit={handleSave} className="space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-semibold text-text mb-1">Page Title</label>
+                  <label className="block font-semibold text-text mb-1">
+                    {isBn ? "পেজের শিরোনাম" : "Page Title"}
+                  </label>
                   <input
                     type="text"
                     required
                     value={editingPage.title || ""}
                     onChange={(e) => setEditingPage({ ...editingPage, title: e.target.value })}
-                    placeholder="e.g. About Our Company"
+                    placeholder={isBn ? "যেমন: আমাদের সম্পর্কে" : "e.g. About Our Company"}
                     className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-text mb-1">URL Slug</label>
+                  <label className="block font-semibold text-text mb-1">
+                    {isBn ? "ইউআরএল স্লাগ" : "URL Slug"}
+                  </label>
                   <input
                     type="text"
                     required
@@ -255,36 +276,48 @@ export function PagesClient({ initialPages }: PagesClientProps) {
               </div>
 
               <div>
-                <label className="block font-semibold text-text mb-1">Page Body Content</label>
+                <label className="block font-semibold text-text mb-1">
+                  {isBn ? "পেজের বডি কন্টেন্ট" : "Page Body Content"}
+                </label>
                 <textarea
                   rows={8}
                   value={editingPage.content || ""}
                   onChange={(e) => setEditingPage({ ...editingPage, content: e.target.value })}
-                  placeholder="Enter markdown or plain text page content here..."
+                  placeholder={
+                    isBn
+                      ? "এখানে পেজের বিস্তারিত টেক্সট বা মার্কডাউন কন্টেন্ট লিখুন..."
+                      : "Enter markdown or plain text page content here..."
+                  }
                   className="w-full rounded-xl border border-border bg-white p-3.5 text-xs font-mono leading-relaxed focus:outline-none"
                 />
               </div>
 
               <div className="bg-surface-secondary/40 rounded-2xl p-4 border border-border space-y-3">
-                <h4 className="font-bold text-text text-xs uppercase tracking-wider">SEO Metadata</h4>
+                <h4 className="font-bold text-text text-xs uppercase tracking-wider">
+                  {isBn ? "এসইও মেটাডাটা" : "SEO Metadata"}
+                </h4>
                 <div className="space-y-3">
                   <div>
-                    <label className="block font-semibold text-text mb-1">SEO Meta Title</label>
+                    <label className="block font-semibold text-text mb-1">
+                      {isBn ? "এসইও মেটা টাইটেল" : "SEO Meta Title"}
+                    </label>
                     <input
                       type="text"
                       value={editingPage.seo_title || ""}
                       onChange={(e) => setEditingPage({ ...editingPage, seo_title: e.target.value })}
-                      placeholder="e.g. About Us — ecomXbangladesh"
+                      placeholder={isBn ? "যেমন: আমাদের সম্পর্কে — ecomXbd" : "e.g. About Us — ecomXbangladesh"}
                       className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-text mb-1">SEO Meta Description</label>
+                    <label className="block font-semibold text-text mb-1">
+                      {isBn ? "এসইও মেটা ডেসক্রিপশন" : "SEO Meta Description"}
+                    </label>
                     <textarea
                       rows={2}
                       value={editingPage.seo_description || ""}
                       onChange={(e) => setEditingPage({ ...editingPage, seo_description: e.target.value })}
-                      placeholder="Brief search engine summary..."
+                      placeholder={isBn ? "সংক্ষিপ্ত সার্চ ইঞ্জিন বিবরণ..." : "Brief search engine summary..."}
                       className="w-full rounded-xl border border-border bg-white p-3 text-xs focus:outline-none"
                     />
                   </div>
@@ -293,24 +326,28 @@ export function PagesClient({ initialPages }: PagesClientProps) {
 
               <div className="flex items-center justify-between pt-4 border-t border-border">
                 <div className="flex items-center gap-2">
-                  <label className="font-semibold text-text">Status:</label>
+                  <label className="font-semibold text-text">
+                    {isBn ? "স্ট্যাটাস:" : "Status:"}
+                  </label>
                   <select
                     value={editingPage.status || "published"}
                     onChange={(e) => setEditingPage({ ...editingPage, status: e.target.value as any })}
                     className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs focus:outline-none"
                   >
-                    <option value="published">Published</option>
-                    <option value="draft">Draft</option>
+                    <option value="published">{isBn ? "প্রকাশিত" : "Published"}</option>
+                    <option value="draft">{isBn ? "ড্রাফট" : "Draft"}</option>
                   </select>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setEditingPage(null)}>
-                    Cancel
+                    {isBn ? "বাতিল" : "Cancel"}
                   </Button>
                   <Button type="submit" size="sm" disabled={saving}>
                     <Save className="h-3.5 w-3.5 mr-1.5" />
-                    {saving ? "Saving..." : "Save Page"}
+                    {saving
+                      ? (isBn ? "সংরক্ষণ হচ্ছে..." : "Saving...")
+                      : (isBn ? "পেজ সংরক্ষণ করুন" : "Save Page")}
                   </Button>
                 </div>
               </div>

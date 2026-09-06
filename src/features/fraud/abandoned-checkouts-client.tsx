@@ -25,12 +25,16 @@ import { sendSmsNotification } from "@/features/sms/actions";
 import { createOrderFromAbandonedLead, getAbandonedCheckouts } from "@/features/fraud/actions";
 import { generateWhatsAppAbandonedMessage } from "@/types/orders";
 import { getWhatsAppTemplates, type WhatsAppTemplate } from "@/features/communication/whatsapp-actions";
+import { BDCourierBadge } from "@/features/fraud/bdcourier-badge";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface AbandonedCheckoutsClientProps {
   initialCheckouts: any[];
 }
 
 export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckoutsClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [checkouts, setCheckouts] = useState(initialCheckouts);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [convertingId, setConvertingId] = useState<string | null>(null);
@@ -109,7 +113,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
   const columns: Column<any>[] = [
     {
       key: "customer",
-      header: "Lead Contact",
+      header: isBn ? "কাস্টমার যোগাযোগ" : "Lead Contact",
       sortable: true,
       cell: (row) => {
         const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
@@ -118,10 +122,11 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
         return (
           <div className="space-y-1">
             <span className="font-bold text-gray-900 text-xs block">{row.customer_name}</span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <span className="font-mono text-xs text-gray-700 font-bold">{row.customer_phone}</span>
               {row.customer_phone && row.customer_phone !== "Not Provided" && (
                 <>
+                  <BDCourierBadge phone={row.customer_phone} />
                   <a
                     href={whatsappUrl}
                     target="_blank"
@@ -150,7 +155,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "location",
-      header: "Location",
+      header: isBn ? "ঠিকানা ও জেলা" : "Location",
       cell: (row) => (
         <div className="text-xs space-y-0.5">
           <span className="font-bold text-gray-900 flex items-center gap-1">
@@ -164,7 +169,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "cart",
-      header: "Products in Cart & Price",
+      header: isBn ? "কার্টের পণ্য ও মূল্য" : "Products in Cart & Price",
       cell: (row) => (
         <div className="text-xs space-y-1.5">
           <div className="flex items-center gap-2">
@@ -195,7 +200,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "status",
-      header: "Status",
+      header: isBn ? "স্ট্যাটাস" : "Status",
       cell: (row) => (
         <span
           className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase border ${
@@ -212,7 +217,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "actions",
-      header: "Recovery & Actions",
+      header: isBn ? "রিকভারি ও অ্যাকশন" : "Recovery & Actions",
       cell: (row) => {
         const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
         const whatsappUrl = generateWhatsAppAbandonedMessage(row, origin, waTemplates);
@@ -231,7 +236,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
               ) : (
                 <Zap className="h-3 w-3 mr-1" />
               )}
-              Create Order
+              {isBn ? "অর্ডারে কনভার্ট" : "Create Order"}
             </Button>
 
             <a
@@ -270,14 +275,16 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
             <span className="text-[11px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200 uppercase">
-              Instant Live Lead Capture
+              {isBn ? "লাইভ লিড ক্যাপচার" : "Instant Live Lead Capture"}
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-gray-900 mt-1">
-            Abandoned & Incomplete Checkouts
+            {isBn ? "অসম্পূর্ণ ও পরিত্যক্ত চেকআউট" : "Abandoned & Incomplete Checkouts"}
           </h1>
           <p className="text-xs text-gray-500 mt-0.5">
-            Auto-captured customer leads who typed their phone, name, email, or address on the checkout page with their exact cart products and prices.
+            {isBn
+              ? "গ্রাহক চেকআউটে ফোন, নাম বা ঠিকানা দেওয়ার পর ড্রপ করলে কার্টের সম্পূর্ণ আইটেম সহ রিয়েল-টাইম সংগৃহীত লিড।"
+              : "Auto-captured customer leads who typed their phone, name, email, or address on the checkout page with their exact cart products and prices."}
           </p>
         </div>
 
@@ -289,7 +296,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
           className="text-xs font-bold rounded-xl shrink-0"
         >
           <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
-          {refreshing ? "Refreshing..." : "Refresh Leads"}
+          {refreshing ? (isBn ? "রিফ্রেশ হচ্ছে..." : "Refreshing...") : (isBn ? "লিড রিফ্রেশ করুন" : "Refresh Leads")}
         </Button>
       </div>
 

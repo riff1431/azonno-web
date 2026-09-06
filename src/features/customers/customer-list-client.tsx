@@ -35,12 +35,15 @@ import {
   type AdminCustomer,
 } from "./actions";
 import { BDCourierBadge } from "@/features/fraud/bdcourier-badge";
+import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface CustomerListClientProps {
   initialCustomers: AdminCustomer[];
 }
 
 export function CustomerListClient({ initialCustomers }: CustomerListClientProps) {
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const [customers, setCustomers] = useState<AdminCustomer[]>(initialCustomers);
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "blocked">("all");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -187,7 +190,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
   const columns: Column<AdminCustomer>[] = [
     {
       key: "name",
-      header: "Customer",
+      header: t("column_customer"),
       sortable: true,
       cell: (row) => (
         <div className="flex items-center gap-3">
@@ -219,7 +222,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
                   type="button"
                   onClick={() => copyToClipboard(row.email, `email-${row.id}`)}
                   className="text-text-muted hover:text-text opacity-70 hover:opacity-100"
-                  title="Copy email"
+                  title={t("copy")}
                 >
                   {copiedId === `email-${row.id}` ? (
                     <Check className="h-3 w-3 text-emerald-600" />
@@ -235,7 +238,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
     },
     {
       key: "phone",
-      header: "Phone",
+      header: t("column_phone"),
       cell: (row) => (
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1.5">
@@ -246,7 +249,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
                 type="button"
                 onClick={() => copyToClipboard(row.phone || "", `phone-${row.id}`)}
                 className="text-text-muted hover:text-text opacity-70 hover:opacity-100"
-                title="Copy phone"
+                title={t("copy")}
               >
                 {copiedId === `phone-${row.id}` ? (
                   <Check className="h-3 w-3 text-emerald-600" />
@@ -266,14 +269,14 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
     },
     {
       key: "status",
-      header: "Status",
+      header: t("column_status"),
       sortable: true,
       cell: (row) => (
         <div>
           {row.is_blocked ? (
             <div className="flex flex-col gap-0.5">
               <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase bg-red-50 text-red-700 border border-red-200">
-                <ShieldAlert className="h-3 w-3 text-red-600" /> Fraud Blocked
+                <ShieldAlert className="h-3 w-3 text-red-600" /> {t("customer_blocked")}
               </span>
               {row.blacklist_reason && (
                 <span className="text-[10px] text-red-600 max-w-40 truncate" title={row.blacklist_reason}>
@@ -283,7 +286,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
             </div>
           ) : (
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <ShieldCheck className="h-3 w-3 text-emerald-600" /> Active
+              <ShieldCheck className="h-3 w-3 text-emerald-600" /> {t("customer_active")}
             </span>
           )}
         </div>
@@ -291,7 +294,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
     },
     {
       key: "role",
-      header: "Role",
+      header: t("column_role"),
       cell: (row) => (
         <span
           className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase border ${
@@ -306,17 +309,17 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
     },
     {
       key: "orders",
-      header: "Orders",
+      header: t("column_orders_count"),
       sortable: true,
       cell: (row) => (
         <span className="text-xs font-bold text-text">
-          {row.order_count} {row.order_count === 1 ? "order" : "orders"}
+          {row.order_count}
         </span>
       ),
     },
     {
       key: "spent",
-      header: "Total Spent",
+      header: t("column_total_spent"),
       sortable: true,
       cell: (row) => (
         <span className="text-xs font-black text-primary-700">
@@ -326,7 +329,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
     },
     {
       key: "joined",
-      header: "Registered",
+      header: t("column_joined"),
       sortable: true,
       cell: (row) => (
         <span className="text-xs text-text-muted">
@@ -340,7 +343,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
     },
     {
       key: "actions",
-      header: "Controls",
+      header: t("column_actions"),
       cell: (row) => (
         <div className="flex items-center gap-1.5">
           {/* Set Password Action */}
@@ -356,7 +359,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
             title="Set New Password for Customer"
           >
             <KeyRound className="h-3.5 w-3.5 text-amber-600" />
-            <span>Set Password</span>
+            <span>{t("customer_set_password")}</span>
           </button>
 
           {/* Block / Unblock Action */}
@@ -368,7 +371,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
               title="Unblock Customer & Remove from Blacklist"
             >
               <Unlock className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Unblock</span>
+              <span>{t("customer_unblock")}</span>
             </button>
           ) : (
             <button
@@ -381,7 +384,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
               title="Block Customer & Push to Fraud Blacklist"
             >
               <Ban className="h-3.5 w-3.5 text-red-600" />
-              <span>Block</span>
+              <span>{t("customer_block")}</span>
             </button>
           )}
         </div>
@@ -420,10 +423,10 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
         <div>
           <div className="flex items-center gap-2">
             <Users className="h-6 w-6 text-primary-600" />
-            <h1 className="text-xl sm:text-2xl font-black text-text">Customer Directory & Security</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-text">{t("customer_management")}</h1>
           </div>
           <p className="text-xs sm:text-sm text-text-secondary mt-1">
-            Manage customer accounts, update passwords directly, and enforce automatic Fraud Blacklist order blocking.
+            {t("customer_list_desc")}
           </p>
         </div>
 
@@ -433,7 +436,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 transition-all shadow-xs"
           >
             <ShieldAlert className="h-4 w-4 text-red-600" />
-            <span>Fraud Engine Hub</span>
+            <span>{isBn ? "ফ্রড ইঞ্জিন হাব" : "Fraud Engine Hub"}</span>
             <ExternalLink className="h-3 w-3 text-zinc-400" />
           </Link>
         </div>
@@ -443,51 +446,51 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-border shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">Total Customers</span>
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">{t("filter_all")}</span>
             <div className="p-2 bg-zinc-100 text-zinc-600 rounded-xl">
               <User className="h-4 w-4" />
             </div>
           </div>
           <div className="text-2xl font-black text-text mt-2">{totalCount}</div>
-          <p className="text-[11px] text-text-muted mt-1">Registered customer profiles</p>
+          <p className="text-[11px] text-text-muted mt-1">{t("customers")}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-border shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Active Accounts</span>
+            <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">{t("customer_active")}</span>
             <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
               <ShieldCheck className="h-4 w-4" />
             </div>
           </div>
           <div className="text-2xl font-black text-emerald-700 mt-2">{activeCount}</div>
-          <p className="text-[11px] text-emerald-600/80 mt-1">Able to place orders seamlessly</p>
+          <p className="text-[11px] text-emerald-600/80 mt-1">{t("customer_active")}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-border shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-red-700 uppercase tracking-wider">Fraud Blocked</span>
+            <span className="text-xs font-bold text-red-700 uppercase tracking-wider">{t("customer_blocked")}</span>
             <div className="p-2 bg-red-50 text-red-600 rounded-xl">
               <ShieldAlert className="h-4 w-4" />
             </div>
           </div>
           <div className="text-2xl font-black text-red-700 mt-2">{blockedCount}</div>
-          <p className="text-[11px] text-red-600/80 mt-1">Auto-restricted on checkout</p>
+          <p className="text-[11px] text-red-600/80 mt-1">{t("customer_blocked")}</p>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-border shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-primary-700 uppercase tracking-wider">Customer Spend</span>
+            <span className="text-xs font-bold text-primary-700 uppercase tracking-wider">{t("column_total_spent")}</span>
             <div className="p-2 bg-primary-50 text-primary-600 rounded-xl">
               <CreditCard className="h-4 w-4" />
             </div>
           </div>
           <div className="text-2xl font-black text-primary-700 mt-2">{formatPrice(totalRevenue)}</div>
-          <p className="text-[11px] text-primary-600/80 mt-1">Total lifetime customer revenue</p>
+          <p className="text-[11px] text-primary-600/80 mt-1">{t("revenue")}</p>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-border pb-3">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border pb-3">
         <button
           type="button"
           onClick={() => setStatusFilter("all")}
@@ -497,7 +500,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
               : "bg-white text-text-secondary hover:bg-zinc-100 border border-border"
           }`}
         >
-          All Customers ({totalCount})
+          {t("filter_all")} ({totalCount})
         </button>
         <button
           type="button"
@@ -508,7 +511,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
               : "bg-white text-emerald-700 hover:bg-emerald-50 border border-emerald-200"
           }`}
         >
-          Active ({activeCount})
+          {t("filter_active")} ({activeCount})
         </button>
         <button
           type="button"
@@ -519,7 +522,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
               : "bg-white text-red-700 hover:bg-red-50 border border-red-200"
           }`}
         >
-          Blocked & Fraud Blacklisted ({blockedCount})
+          {t("filter_blocked")} ({blockedCount})
         </button>
       </div>
 
@@ -528,18 +531,14 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
         columns={columns}
         data={filteredCustomers}
         searchKey="full_name"
-        searchPlaceholder="Search by customer name, email or phone..."
-        emptyMessage={
-          statusFilter === "blocked"
-            ? "No customers are currently blocked."
-            : "No customer accounts found."
-        }
+        searchPlaceholder={t("search_customers")}
+        emptyMessage={t("no_customers")}
       />
 
       {/* Modal 1: Set New Password Modal */}
       {passwordModalCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-border shadow-2xl w-full max-w-md p-6 space-y-5 animate-in zoom-in-95">
+          <div className="bg-white rounded-3xl border border-border shadow-2xl w-full max-w-md p-6 space-y-5 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-amber-50 text-amber-700 rounded-2xl border border-amber-200">
@@ -652,7 +651,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
       {/* Modal 2: Block Customer & Add to Fraud Blacklist Modal */}
       {blockModalCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-red-200 shadow-2xl w-full max-w-md p-6 space-y-5 animate-in zoom-in-95">
+          <div className="bg-white rounded-3xl border border-red-200 shadow-2xl w-full max-w-md p-6 space-y-5 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-red-50 text-red-700 rounded-2xl border border-red-200">
@@ -742,7 +741,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
       {/* Modal 3: Unblock Customer Modal */}
       {unblockModalCustomer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-emerald-200 shadow-2xl w-full max-w-md p-6 space-y-5 animate-in zoom-in-95">
+          <div className="bg-white rounded-3xl border border-emerald-200 shadow-2xl w-full max-w-md p-6 space-y-5 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-200">
