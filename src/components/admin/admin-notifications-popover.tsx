@@ -29,45 +29,91 @@ import {
 } from "@/features/admin/notifications-actions";
 import { createClient } from "@/lib/supabase/client";
 
-// Web Audio API Synthetic Chime
+// Web Audio API Global Context & Unlock Engine
+let sharedAudioCtx: AudioContext | null = null;
+
+function getAudioContext(): AudioContext | null {
+  if (typeof window === "undefined") return null;
+  const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+  if (!AudioContextClass) return null;
+  if (!sharedAudioCtx || sharedAudioCtx.state === "closed") {
+    sharedAudioCtx = new AudioContextClass();
+  }
+  if (sharedAudioCtx.state === "suspended") {
+    sharedAudioCtx.resume().catch(() => {});
+  }
+  return sharedAudioCtx;
+}
+
+// Global unlock listener on any user interaction
+if (typeof window !== "undefined") {
+  const unlockAudio = () => {
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
+  };
+  window.addEventListener("click", unlockAudio, { passive: true });
+  window.addEventListener("keydown", unlockAudio, { passive: true });
+  window.addEventListener("touchstart", unlockAudio, { passive: true });
+}
+
+// 3-Tone High-End Notification Chime: C5 (523Hz) -> E5 (659Hz) -> G5 (784Hz)
 function playNotificationChime() {
   try {
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    if (ctx.state === "suspended") {
+      ctx.resume().catch(() => {});
+    }
     const now = ctx.currentTime;
 
-    // Note 1: 587.33 Hz (D5)
-    const osc1 = ctx.createOscillator();
-    const gain1 = ctx.createGain();
-    osc1.type = "sine";
-    osc1.frequency.setValueAtTime(587.33, now);
-    gain1.gain.setValueAtTime(0.18, now);
-    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-    osc1.connect(gain1);
-    gain1.connect(ctx.destination);
-    osc1.start(now);
-    osc1.stop(now + 0.3);
+    const playTone = (freq: number, startOffset: number, duration: number, vol: number) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, now + startOffset);
+      gain.gain.setValueAtTime(vol, now + startOffset);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + startOffset + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + startOffset);
+      osc.stop(now + startOffset + duration);
+    };
 
-    // Note 2: 880 Hz (A5)
-    const osc2 = ctx.createOscillator();
-    const gain2 = ctx.createGain();
-    osc2.type = "sine";
-    osc2.frequency.setValueAtTime(880, now + 0.12);
-    gain2.gain.setValueAtTime(0.22, now + 0.12);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
-    osc2.connect(gain2);
-    gain2.connect(ctx.destination);
-    osc2.start(now + 0.12);
-    osc2.stop(now + 0.55);
-  } catch {
-    // Graceful fallback
+    playTone(523.25, 0.0, 0.22, 0.3);
+    playTone(659.25, 0.1, 0.25, 0.35);
+    playTone(783.99, 0.22, 0.55, 0.4);
+  } catch (e) {
+    console.warn("Audio chime error:", e);
   }
+}
+
+// Flashing browser tab title for background visibility
+let tabTitleTimer: NodeJS.Timeout | null = null;
+function flashTabTitle(alertText: string) {
+  if (typeof document === "undefined") return;
+  const original = document.title || "ecomX Admin";
+  if (tabTitleTimer) clearInterval(tabTitleTimer);
+  let isAlert = true;
+  let ticks = 0;
+  tabTitleTimer = setInterval(() => {
+    document.title = isAlert ? alertText : original;
+    isAlert = !isAlert;
+    ticks++;
+    if (ticks > 12) {
+      if (tabTitleTimer) clearInterval(tabTitleTimer);
+      document.title = original;
+    }
+  }, 900);
 }
 
 // Native PC / Desktop Browser Push Notification
 function sendDesktopNotification(title: string, body: string, url: string) {
-  if (typeof window === "undefined" || !("Notification" in window)) return;
+  if (typeof window === "undefined") return;
+  flashTabTitle("🔔 (1) NEW ORDER RECEIVED!");
+
+  if (!("Notification" in window)) return;
 
   if (Notification.permission === "granted") {
     try {
@@ -76,13 +122,14 @@ function sendDesktopNotification(title: string, body: string, url: string) {
         icon: "/favicon.ico",
         badge: "/favicon.ico",
         tag: `order-${Date.now()}`,
+        requireInteraction: true,
       });
       notif.onclick = () => {
         window.focus();
         window.location.href = url;
       };
     } catch {
-      // Ignore
+      // Fallback
     }
   }
 }
@@ -97,16 +144,22 @@ export function AdminNotificationsPopover() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [desktopPermission, setDesktopPermission] = useState<NotificationPermission>("default");
   const [liveToast, setLiveToast] = useState<AdminNotification | null>(null);
+  const [showPermBanner, setShowPermBanner] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   // Check desktop notification permission on mount
   useEffect(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
       setDesktopPermission(Notification.permission);
+      if (Notification.permission === "default") {
+        setShowPermBanner(true);
+      }
     }
   }, []);
 
   const requestDesktopPermission = async () => {
+    // Also unlock audio
+    getAudioContext();
     if (typeof window === "undefined" || !("Notification" in window)) {
       alert("Desktop notifications are not supported in this browser.");
       return;
@@ -115,6 +168,7 @@ export function AdminNotificationsPopover() {
       const perm = await Notification.requestPermission();
       setDesktopPermission(perm);
       if (perm === "granted") {
+        setShowPermBanner(false);
         sendDesktopNotification(
           "🔔 Desktop Alerts Activated!",
           "You will receive instant pop-up notifications on your PC whenever a new order is placed.",
@@ -138,9 +192,7 @@ export function AdminNotificationsPopover() {
       if (savedSound !== null) {
         setSoundEnabled(savedSound === "true");
       }
-    } catch {
-      // Ignore storage errors
-    }
+    } catch {}
   }, []);
 
   const toggleSound = () => {
@@ -206,8 +258,8 @@ export function AdminNotificationsPopover() {
 
   useEffect(() => {
     fetchNotifications();
-    // High-frequency polling (every 5 seconds) ensures 100% reliability across all devices
-    const interval = setInterval(fetchNotifications, 5000);
+    // High-frequency polling (every 3 seconds) ensures ultra-fast reaction across all external devices
+    const interval = setInterval(fetchNotifications, 3000);
     return () => clearInterval(interval);
   }, [soundEnabled]);
 
@@ -688,6 +740,28 @@ export function AdminNotificationsPopover() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Desktop Notification Enable Banner (Prompt once) */}
+      {showPermBanner && (
+        <div className="fixed top-4 right-20 z-999 bg-slate-900 text-white rounded-xl shadow-xl px-3.5 py-2 flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-top-3">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+            <span className="font-medium text-slate-200">Enable PC Order Alerts & Sound</span>
+          </div>
+          <button
+            onClick={requestDesktopPermission}
+            className="text-[11px] font-bold bg-[#e91e63] hover:bg-[#d81b60] text-white px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+          >
+            Enable Now
+          </button>
+          <button
+            onClick={() => setShowPermBanner(false)}
+            className="text-slate-400 hover:text-white p-0.5 rounded"
+          >
+            <X className="h-3 w-3" />
+          </button>
         </div>
       )}
     </div>
