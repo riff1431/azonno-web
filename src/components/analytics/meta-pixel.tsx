@@ -156,18 +156,13 @@ export function trackMetaEvent(
       undefined;
   }
 
-  // 4. Fire Browser Meta Pixel with explicit test_event_code support for instant Events Manager reception
+  // 4. Fire Browser Meta Pixel
   const fbq = getOrInitFbq();
   if (fbq) {
-    const trackOptions: Record<string, any> = { eventID: eventId };
-    if (testCode && testCode.trim().length > 0) {
-      trackOptions.test_event_code = testCode.trim();
-    }
-
     if (Object.keys(params).length > 0) {
-      fbq("track", eventName, params, trackOptions);
+      fbq("track", eventName, params, { eventID: eventId });
     } else {
-      fbq("track", eventName, {}, trackOptions);
+      fbq("track", eventName, {}, { eventID: eventId });
     }
   }
 

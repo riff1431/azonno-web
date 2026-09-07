@@ -786,6 +786,25 @@ export function trackViewCart(
     customer,
     eventId
   );
+
+  trackTikTokEvent(
+    "ViewCart",
+    {
+      content_id: contentIds[0],
+      content_ids: contentIds,
+      contents: items.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
+      value: totalValue,
+      currency,
+      quantity: totalQuantity,
+    },
+    customer,
+    eventId
+  );
 }
 
 // ============================================================================

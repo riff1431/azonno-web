@@ -9,6 +9,7 @@ import { Button } from "@/components/shared/ui/button";
 import { useCart } from "@/context/cart-context";
 import { useLanguage } from "@/context/language-context";
 import { triggerMicroRipple } from "@/lib/ui-effects";
+import { trackAddToCart } from "@/lib/analytics/datalayer";
 
 interface BundleProduct {
   id: string;
@@ -95,6 +96,16 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
   const handleAddBundleToCart = (e?: React.MouseEvent<HTMLElement>) => {
     if (e) triggerMicroRipple(e);
 
+    const bundleItems = selectedProducts.map((prod) => ({
+      item_id: prod.id,
+      item_name: prod.name,
+      item_brand: (prod.brands as any)?.name || undefined,
+      price: Number(prod.sale_price ?? prod.regular_price) || 0,
+      quantity: 1,
+    }));
+
+    trackAddToCart(bundleItems, finalBundleTotal);
+
     selectedProducts.forEach((prod) => {
       addItem({
         id: prod.id,
@@ -118,6 +129,16 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
   // One-click fast checkout with entire combo
   const handleBuyBundleNow = (e?: React.MouseEvent<HTMLElement>) => {
     if (e) triggerMicroRipple(e);
+
+    const bundleItems = selectedProducts.map((prod) => ({
+      item_id: prod.id,
+      item_name: prod.name,
+      item_brand: (prod.brands as any)?.name || undefined,
+      price: Number(prod.sale_price ?? prod.regular_price) || 0,
+      quantity: 1,
+    }));
+
+    trackAddToCart(bundleItems, finalBundleTotal);
 
     selectedProducts.forEach((prod) => {
       addItem({
