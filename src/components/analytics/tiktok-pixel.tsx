@@ -84,7 +84,7 @@ export function initTikTokPixel(pixelId: string) {
       }
     };
 
-    if (!document.getElementById("tiktok-pixel-events-script") || w.__TIKTOK_PIXEL_ID__ !== pixelId) {
+    if (!w.__TIKTOK_PIXEL_ID__ || w.__TIKTOK_PIXEL_ID__ !== pixelId) {
       ttq.load(pixelId);
       ttq.page();
       w.__TIKTOK_PIXEL_ID__ = pixelId;
