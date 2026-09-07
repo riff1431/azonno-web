@@ -162,7 +162,14 @@ export async function sendTikTokCapiEvent(input: {
       currency: input.properties?.currency || "BDT",
       value: input.properties?.value !== undefined ? Number(input.properties?.value) : undefined,
       content_type: input.properties?.content_type || "product",
-      contents: input.properties?.contents || undefined,
+      contents: Array.isArray(input.properties?.contents)
+        ? input.properties.contents.map((it: any) => ({
+            content_id: String(it.content_id || it.id || it.item_id),
+            content_name: it.content_name || it.item_name || it.title || undefined,
+            price: Number(it.price || it.item_price) || 0,
+            quantity: Number(it.quantity) || 1,
+          }))
+        : undefined,
       content_id: input.properties?.content_id || (input.properties?.content_ids?.[0]) || undefined,
       content_name: input.properties?.content_name || undefined,
       content_category: input.properties?.content_category || undefined,
@@ -172,7 +179,7 @@ export async function sendTikTokCapiEvent(input: {
           : input.properties?.num_items !== undefined
           ? Number(input.properties?.num_items)
           : Array.isArray(input.properties?.contents)
-          ? input.properties?.contents.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0)
+          ? input.properties.contents.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0)
           : undefined,
       order_id: input.properties?.order_id || input.properties?.transaction_id || undefined,
       query: input.properties?.search_string || input.properties?.query || undefined,
@@ -182,7 +189,11 @@ export async function sendTikTokCapiEvent(input: {
     },
   };
 
-  const testCode = input.testEventCode || config.tiktok_test_event_code;
+  const rawTestCode =
+    (input.testEventCode && input.testEventCode !== "undefined" && input.testEventCode !== "null"
+      ? input.testEventCode
+      : undefined) || config.tiktok_test_event_code;
+  const testCode = rawTestCode?.trim();
 
   const requestBody: Record<string, any> = {
     event_source: "web",
@@ -190,8 +201,8 @@ export async function sendTikTokCapiEvent(input: {
     data: [eventPayload],
   };
 
-  if (testCode && testCode.trim().length > 0) {
-    requestBody.test_event_code = testCode.trim();
+  if (testCode && testCode.length > 0) {
+    requestBody.test_event_code = testCode;
   }
 
   try {

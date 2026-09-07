@@ -243,18 +243,34 @@ export async function sendMetaCapiEvent(input: {
   };
 
   if (input.customData && Object.keys(input.customData).length > 0) {
+    const mappedContents = Array.isArray(input.customData.contents)
+      ? input.customData.contents.map((it: any) => ({
+          id: String(it.id || it.item_id),
+          quantity: Number(it.quantity) || 1,
+          item_price: Number(it.item_price || it.price) || 0,
+        }))
+      : undefined;
+
+    const mappedContentIds = Array.isArray(input.customData.content_ids)
+      ? input.customData.content_ids.map(String)
+      : input.customData.content_id
+      ? [String(input.customData.content_id)]
+      : mappedContents
+      ? mappedContents.map((it) => it.id)
+      : undefined;
+
     serverEvent.custom_data = {
       currency: input.customData.currency || "BDT",
       value: input.customData.value !== undefined ? Number(input.customData.value) : undefined,
       content_type: input.customData.content_type || "product",
-      contents: input.customData.contents || undefined,
-      content_ids: input.customData.content_ids || (input.customData.content_id ? [input.customData.content_id] : undefined),
+      contents: mappedContents,
+      content_ids: mappedContentIds,
       content_name: input.customData.content_name || undefined,
       num_items:
         input.customData.num_items !== undefined
           ? Number(input.customData.num_items)
-          : Array.isArray(input.customData.contents)
-          ? input.customData.contents.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0)
+          : mappedContents
+          ? mappedContents.reduce((sum: number, it: any) => sum + it.quantity, 0)
           : undefined,
       order_id: input.customData.order_id || input.customData.transaction_id || undefined,
       search_string: input.customData.search_string || input.customData.search_term || undefined,
@@ -262,14 +278,18 @@ export async function sendMetaCapiEvent(input: {
     };
   }
 
-  const testCode = input.testEventCode || config.meta_test_event_code;
+  const rawTestCode =
+    (input.testEventCode && input.testEventCode !== "undefined" && input.testEventCode !== "null"
+      ? input.testEventCode
+      : undefined) || config.meta_test_event_code;
+  const testCode = rawTestCode?.trim();
 
   const capiPayload: Record<string, any> = {
     data: [serverEvent],
   };
 
-  if (testCode && testCode.trim().length > 0) {
-    capiPayload.test_event_code = testCode.trim();
+  if (testCode && testCode.length > 0) {
+    capiPayload.test_event_code = testCode;
   }
 
   try {

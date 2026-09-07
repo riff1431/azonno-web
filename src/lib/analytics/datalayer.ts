@@ -311,6 +311,7 @@ export function trackPageView(pagePath: string, pageTitle?: string, customer?: C
   const title = pageTitle || (typeof document !== "undefined" ? document.title : "");
   const location = typeof window !== "undefined" ? window.location.href : "";
   const userData = normalizeCustomerData(customer);
+  const eventId = `pv_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
   pushToDataLayer({
     event: "page_view",
@@ -320,8 +321,8 @@ export function trackPageView(pagePath: string, pageTitle?: string, customer?: C
     user_data: userData,
   });
 
-  trackMetaEvent("PageView", {}, customer);
-  trackTikTokEvent("PageView", {}, customer);
+  trackMetaEvent("PageView", {}, customer, eventId);
+  trackTikTokEvent("PageView", {}, customer, eventId);
 }
 
 // ============================================================================
@@ -338,6 +339,7 @@ export function trackViewContent(
   const contents = formatMetaContents([item]);
   const formattedItems = formatGA4Items([item]);
   const userData = normalizeCustomerData(customer);
+  const eventId = `vc_${item.item_id}_${Date.now()}`;
 
   pushToDataLayer({
     event: "view_item",
@@ -376,7 +378,8 @@ export function trackViewContent(
       value,
       currency,
     },
-    customer
+    customer,
+    eventId
   );
 
   trackTikTokEvent(
@@ -398,7 +401,8 @@ export function trackViewContent(
       value,
       currency,
     },
-    customer
+    customer,
+    eventId
   );
 }
 
@@ -675,6 +679,7 @@ export function trackAddToCart(
   const contents = formatMetaContents(items);
   const firstItem = items[0];
   const userData = normalizeCustomerData(customer);
+  const eventId = `atc_${firstItem?.item_id || Date.now()}_${Date.now()}`;
 
   pushToDataLayer({
     event: "add_to_cart",
@@ -699,6 +704,7 @@ export function trackAddToCart(
   trackMetaEvent(
     "AddToCart",
     {
+      content_id: firstItem?.item_id,
       content_name: firstItem?.item_name,
       content_category: firstItem?.item_category,
       content_ids: contentIds,
@@ -707,7 +713,8 @@ export function trackAddToCart(
       currency,
       num_items: totalQuantity,
     },
-    customer
+    customer,
+    eventId
   );
 
   trackTikTokEvent(
@@ -728,7 +735,8 @@ export function trackAddToCart(
       currency,
       quantity: totalQuantity,
     },
-    customer
+    customer,
+    eventId
   );
 }
 
@@ -748,6 +756,7 @@ export function trackViewCart(
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const userData = normalizeCustomerData(customer);
+  const eventId = `vc_cart_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
   pushToDataLayer({
     event: "view_cart",
@@ -765,13 +774,18 @@ export function trackViewCart(
     },
   });
 
-  trackMetaEvent("ViewCart", {
-    content_ids: contentIds,
-    contents,
-    value: totalValue,
-    currency,
-    num_items: totalQuantity,
-  });
+  trackMetaEvent(
+    "ViewCart",
+    {
+      content_ids: contentIds,
+      contents,
+      value: totalValue,
+      currency,
+      num_items: totalQuantity,
+    },
+    customer,
+    eventId
+  );
 }
 
 // ============================================================================
@@ -790,6 +804,7 @@ export function trackRemoveFromCart(
   const contents = formatMetaContents(items);
   const firstItem = items[0];
   const userData = normalizeCustomerData(customer);
+  const eventId = `rfc_${firstItem?.item_id || Date.now()}_${Date.now()}`;
 
   pushToDataLayer({
     event: "remove_from_cart",
@@ -808,13 +823,18 @@ export function trackRemoveFromCart(
     },
   });
 
-  trackMetaEvent("RemoveFromCart", {
-    content_name: firstItem?.item_name,
-    content_ids: contentIds,
-    contents,
-    value: totalValue,
-    currency,
-  });
+  trackMetaEvent(
+    "RemoveFromCart",
+    {
+      content_name: firstItem?.item_name,
+      content_ids: contentIds,
+      contents,
+      value: totalValue,
+      currency,
+    },
+    customer,
+    eventId
+  );
 }
 
 // ============================================================================
@@ -862,6 +882,7 @@ export function trackInitiateCheckout(
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const userData = normalizeCustomerData(customer);
+  const eventId = `ic_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
   pushToDataLayer({
     event: "begin_checkout",
@@ -891,7 +912,8 @@ export function trackInitiateCheckout(
       currency: curr,
       num_items: totalQuantity,
     },
-    customer
+    customer,
+    eventId
   );
 
   trackTikTokEvent(
@@ -909,7 +931,8 @@ export function trackInitiateCheckout(
       currency: curr,
       quantity: totalQuantity,
     },
-    customer
+    customer,
+    eventId
   );
 }
 
@@ -967,6 +990,7 @@ export function trackAddShippingInfo(
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const userData = normalizeCustomerData(customer);
+  const eventId = `asi_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
   pushToDataLayer({
     event: "add_shipping_info",
@@ -997,7 +1021,8 @@ export function trackAddShippingInfo(
       currency: curr,
       shipping_tier: shippingTier,
     },
-    customer
+    customer,
+    eventId
   );
 }
 
@@ -1050,6 +1075,7 @@ export function trackAddPaymentInfo(
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const userData = normalizeCustomerData(customer);
+  const eventId = `api_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
   pushToDataLayer({
     event: "add_payment_info",
@@ -1079,7 +1105,8 @@ export function trackAddPaymentInfo(
       currency: curr,
       payment_type: paymentType,
     },
-    customer
+    customer,
+    eventId
   );
 
   trackTikTokEvent(
@@ -1088,7 +1115,8 @@ export function trackAddPaymentInfo(
       value: totalValue,
       currency: curr,
     },
-    customer
+    customer,
+    eventId
   );
 }
 
@@ -1117,6 +1145,7 @@ export function trackPurchase(params: PurchaseEventParams): void {
   const totalQuantity = params.items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const userData = normalizeCustomerData(params.customer);
   const txId = params.transaction_id || params.order_id;
+  const eventId = `order_${txId}`;
 
   pushToDataLayer({
     event: "purchase",
@@ -1159,7 +1188,8 @@ export function trackPurchase(params: PurchaseEventParams): void {
         num_items: totalQuantity,
         order_id: txId,
       },
-      params.customer
+      params.customer,
+      eventId
     );
   }
 
@@ -1181,7 +1211,8 @@ export function trackPurchase(params: PurchaseEventParams): void {
         quantity: totalQuantity,
         order_id: txId,
       },
-      params.customer
+      params.customer,
+      eventId
     );
   }
 }
