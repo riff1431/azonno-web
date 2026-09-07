@@ -131,13 +131,31 @@ export function trackMetaEvent(
   // 3. Generate deterministic matching eventID for Browser Pixel & Server CAPI deduplication
   const eventId = customEventId || `evt_${now}_${Math.random().toString(36).substring(2, 9)}`;
 
-  // 4. Fire Browser Meta Pixel (guaranteed queue buffer via getOrInitFbq)
+  // Extract effective Test Event Code (from window global, sessionStorage, cookie, or URL search query)
+  let testCode: string | undefined = undefined;
+  if (typeof window !== "undefined") {
+    const urlParams = new URLSearchParams(window.location.search);
+    testCode =
+      (window as any).__META_TEST_CODE__ ||
+      urlParams.get("test_event_code") ||
+      urlParams.get("meta_test_event_code") ||
+      sessionStorage.getItem("meta_test_event_code") ||
+      getCookie("meta_test_event_code") ||
+      undefined;
+  }
+
+  // 4. Fire Browser Meta Pixel with explicit test_event_code support for instant Events Manager reception
   const fbq = getOrInitFbq();
   if (fbq) {
+    const trackOptions: Record<string, any> = { eventID: eventId };
+    if (testCode && testCode.trim().length > 0) {
+      trackOptions.test_event_code = testCode.trim();
+    }
+
     if (Object.keys(params).length > 0) {
-      fbq("track", eventName, params, { eventID: eventId });
+      fbq("track", eventName, params, trackOptions);
     } else {
-      fbq("track", eventName, {}, { eventID: eventId });
+      fbq("track", eventName, {}, trackOptions);
     }
   }
 
@@ -154,7 +172,8 @@ export function trackMetaEvent(
         payload: {
           ...params,
           _event_source: "browser_fbq",
-          _meta_pixel_id: window.__META_PIXEL_ID__,
+          _meta_pixel_id: typeof window !== "undefined" ? window.__META_PIXEL_ID__ : undefined,
+          _test_event_code: testCode,
         },
         status: "success",
       }),
@@ -174,11 +193,6 @@ export function trackMetaEvent(
     }
 
     let fbc = getCookie("_fbc") || (typeof localStorage !== "undefined" ? localStorage.getItem("ecomx_fbc") || undefined : undefined);
-
-    const testCode =
-      (typeof sessionStorage !== "undefined" && sessionStorage.getItem("meta_test_event_code")) ||
-      getCookie("meta_test_event_code") ||
-      undefined;
 
     const userData = customerData
       ? {

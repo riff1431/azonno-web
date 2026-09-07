@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
       req.cookies.get("meta_test_event_code")?.value ||
       req.nextUrl.searchParams.get("test_event_code") ||
       req.nextUrl.searchParams.get("test_code") ||
+      process.env.META_CAPI_TEST_EVENT_CODE ||
       undefined;
 
     const result = await sendMetaCapiEvent({

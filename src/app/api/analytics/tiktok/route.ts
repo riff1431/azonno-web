@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
       req.nextUrl.searchParams.get("test_event_code") ||
       req.nextUrl.searchParams.get("tt_test_code") ||
       req.nextUrl.searchParams.get("test_code") ||
+      process.env.TIKTOK_TEST_EVENT_CODE ||
       undefined;
 
     const result = await sendTikTokCapiEvent({

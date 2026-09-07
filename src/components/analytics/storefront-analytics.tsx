@@ -11,9 +11,11 @@ export interface AnalyticsConfig {
   meta_pixel_id?: string;
   meta_capi_enabled?: boolean;
   meta_advanced_matching_enabled?: boolean;
+  meta_test_event_code?: string;
   tiktok_pixel_id?: string;
   tiktok_capi_enabled?: boolean;
   tiktok_advanced_matching_enabled?: boolean;
+  tiktok_test_event_code?: string;
   gtm_container_id?: string;
   ga4_measurement_id?: string;
 }
@@ -39,6 +41,22 @@ export function StorefrontAnalytics({
             ...prev,
             ...data,
           }));
+
+          if (data.meta_test_event_code && typeof window !== "undefined") {
+            (window as any).__META_TEST_CODE__ = data.meta_test_event_code;
+            try {
+              sessionStorage.setItem("meta_test_event_code", data.meta_test_event_code);
+              document.cookie = `meta_test_event_code=${data.meta_test_event_code};path=/;max-age=86400;SameSite=Lax`;
+            } catch (e) {}
+          }
+
+          if (data.tiktok_test_event_code && typeof window !== "undefined") {
+            (window as any).__TIKTOK_TEST_CODE__ = data.tiktok_test_event_code;
+            try {
+              sessionStorage.setItem("tiktok_test_event_code", data.tiktok_test_event_code);
+              document.cookie = `tiktok_test_event_code=${data.tiktok_test_event_code};path=/;max-age=86400;SameSite=Lax`;
+            } catch (e) {}
+          }
         }
       })
       .catch(() => {

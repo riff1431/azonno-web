@@ -150,6 +150,20 @@ export function trackTikTokEvent(
   // 3. Generate deterministic matching eventID
   const eventId = customEventId || `tt_evt_${now}_${Math.random().toString(36).substring(2, 9)}`;
 
+  // Extract effective Test Event Code (from window global, sessionStorage, cookie, or URL search query)
+  let testCode: string | undefined = undefined;
+  if (typeof window !== "undefined") {
+    const urlParams = new URLSearchParams(window.location.search);
+    testCode =
+      (window as any).__TIKTOK_TEST_CODE__ ||
+      urlParams.get("test_event_code") ||
+      urlParams.get("tiktok_test_event_code") ||
+      urlParams.get("tt_test_code") ||
+      sessionStorage.getItem("tiktok_test_event_code") ||
+      getCookie("tiktok_test_event_code") ||
+      undefined;
+  }
+
   // 4. Fire Browser TikTok Pixel (guaranteed queue buffer via getOrInitTtq)
   const ttq = getOrInitTtq();
   if (ttq) {
@@ -197,7 +211,8 @@ export function trackTikTokEvent(
         payload: {
           ...params,
           _event_source: "browser_ttq",
-          _tiktok_pixel_id: window.__TIKTOK_PIXEL_ID__,
+          _tiktok_pixel_id: typeof window !== "undefined" ? window.__TIKTOK_PIXEL_ID__ : undefined,
+          _test_event_code: testCode,
         },
         status: "success",
       }),
@@ -217,11 +232,6 @@ export function trackTikTokEvent(
     }
 
     const ttclid = getCookie("ttclid") || (typeof localStorage !== "undefined" ? localStorage.getItem("ecomx_ttclid") || undefined : undefined);
-
-    const testCode =
-      (typeof sessionStorage !== "undefined" && sessionStorage.getItem("tiktok_test_event_code")) ||
-      getCookie("tiktok_test_event_code") ||
-      undefined;
 
     const userData = customerData
       ? {
