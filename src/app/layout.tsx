@@ -8,6 +8,8 @@ import { getMarketingAnalyticsSettings } from "@/features/marketing/meta-actions
 import { getTikTokSettings } from "@/features/marketing/tiktok-actions";
 import { getStoreSettings, getSeoSettings } from "@/features/settings/actions";
 
+export const dynamic = "force-dynamic";
+
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",

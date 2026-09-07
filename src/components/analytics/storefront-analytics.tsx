@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { GoogleTagManager } from "./google-tag-manager";
 import { NavigationEvents } from "./navigation-events";
 import { MetaPixel } from "./meta-pixel";
-import { TikTokPixel } from "./tiktok-pixel";
+import { TikTokPixel, initTikTokPixel } from "./tiktok-pixel";
 
 export interface AnalyticsConfig {
   meta_pixel_id?: string;
@@ -41,6 +41,10 @@ export function StorefrontAnalytics({
             ...prev,
             ...data,
           }));
+
+          if (data.tiktok_pixel_id) {
+            initTikTokPixel(data.tiktok_pixel_id);
+          }
 
           if (data.meta_test_event_code && typeof window !== "undefined") {
             (window as any).__META_TEST_CODE__ = data.meta_test_event_code;
