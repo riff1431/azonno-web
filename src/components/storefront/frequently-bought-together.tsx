@@ -104,7 +104,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
       quantity: 1,
     }));
 
-    trackAddToCart(bundleItems, finalBundleTotal);
+    trackAddToCart(bundleItems, finalComboPrice);
 
     selectedProducts.forEach((prod) => {
       addItem({
@@ -138,7 +138,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
       quantity: 1,
     }));
 
-    trackAddToCart(bundleItems, finalBundleTotal);
+    trackAddToCart(bundleItems, finalComboPrice);
 
     selectedProducts.forEach((prod) => {
       addItem({
