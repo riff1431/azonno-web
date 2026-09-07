@@ -156,13 +156,35 @@ export function trackMetaEvent(
       undefined;
   }
 
-  // 4. Fire Browser Meta Pixel
+  // 4. Fire Browser Meta Pixel (using official track for standard events and trackCustom for custom events)
   const fbq = getOrInitFbq();
   if (fbq) {
+    const isStandardMetaEvent = [
+      "AddPaymentInfo",
+      "AddToCart",
+      "AddToWishlist",
+      "CompleteRegistration",
+      "Contact",
+      "CustomizeProduct",
+      "Donate",
+      "FindLocation",
+      "InitiateCheckout",
+      "Lead",
+      "PageView",
+      "Purchase",
+      "Schedule",
+      "Search",
+      "StartTrial",
+      "SubmitApplication",
+      "Subscribe",
+      "ViewContent",
+    ].includes(eventName);
+
+    const trackFn = isStandardMetaEvent ? "track" : "trackCustom";
     if (Object.keys(params).length > 0) {
-      fbq("track", eventName, params, { eventID: eventId });
+      fbq(trackFn, eventName, params, { eventID: eventId });
     } else {
-      fbq("track", eventName, {}, { eventID: eventId });
+      fbq(trackFn, eventName, {}, { eventID: eventId });
     }
   }
 
