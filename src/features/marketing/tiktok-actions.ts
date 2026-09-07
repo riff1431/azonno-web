@@ -153,37 +153,61 @@ export async function sendTikTokCapiEvent(input: {
   if (input.eventName === "Purchase") mappedEvent = "CompletePayment";
   if (input.eventName === "Lead") mappedEvent = "SubmitForm";
 
+  // Construct clean properties according to event type
+  const propertiesPayload: Record<string, any> = {};
+
+  if (mappedEvent !== "PageView") {
+    if (input.properties?.value !== undefined) {
+      propertiesPayload.value = Number(input.properties.value);
+    }
+    if (input.properties?.currency) {
+      propertiesPayload.currency = input.properties.currency;
+    } else if (input.properties?.value !== undefined || input.properties?.contents) {
+      propertiesPayload.currency = "BDT";
+    }
+    if (input.properties?.content_type) {
+      propertiesPayload.content_type = input.properties.content_type;
+    } else if (input.properties?.contents || input.properties?.content_id) {
+      propertiesPayload.content_type = "product";
+    }
+    if (Array.isArray(input.properties?.contents) && input.properties.contents.length > 0) {
+      propertiesPayload.contents = input.properties.contents.map((it: any) => ({
+        content_id: String(it.content_id || it.id || it.item_id),
+        content_name: it.content_name || it.item_name || it.title || undefined,
+        price: Number(it.price || it.item_price) || 0,
+        quantity: Number(it.quantity) || 1,
+      }));
+    }
+    if (input.properties?.content_id || input.properties?.content_ids?.[0]) {
+      propertiesPayload.content_id = input.properties?.content_id || input.properties?.content_ids?.[0];
+    }
+    if (input.properties?.content_name) {
+      propertiesPayload.content_name = input.properties.content_name;
+    }
+    if (input.properties?.content_category) {
+      propertiesPayload.content_category = input.properties.content_category;
+    }
+    if (input.properties?.quantity !== undefined) {
+      propertiesPayload.quantity = Number(input.properties.quantity);
+    } else if (input.properties?.num_items !== undefined) {
+      propertiesPayload.quantity = Number(input.properties.num_items);
+    } else if (Array.isArray(input.properties?.contents) && input.properties.contents.length > 0) {
+      propertiesPayload.quantity = input.properties.contents.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0);
+    }
+    if (input.properties?.order_id || input.properties?.transaction_id) {
+      propertiesPayload.order_id = input.properties?.order_id || input.properties?.transaction_id;
+    }
+    if (input.properties?.search_string || input.properties?.query) {
+      propertiesPayload.query = input.properties.search_string || input.properties.query;
+    }
+  }
+
   const eventPayload: Record<string, any> = {
     event: mappedEvent,
     event_time: Math.floor(Date.now() / 1000),
     event_id: input.eventId,
     user: userPayload,
-    properties: {
-      currency: input.properties?.currency || "BDT",
-      value: input.properties?.value !== undefined ? Number(input.properties?.value) : undefined,
-      content_type: input.properties?.content_type || "product",
-      contents: Array.isArray(input.properties?.contents)
-        ? input.properties.contents.map((it: any) => ({
-            content_id: String(it.content_id || it.id || it.item_id),
-            content_name: it.content_name || it.item_name || it.title || undefined,
-            price: Number(it.price || it.item_price) || 0,
-            quantity: Number(it.quantity) || 1,
-          }))
-        : undefined,
-      content_id: input.properties?.content_id || (input.properties?.content_ids?.[0]) || undefined,
-      content_name: input.properties?.content_name || undefined,
-      content_category: input.properties?.content_category || undefined,
-      quantity:
-        input.properties?.quantity !== undefined
-          ? Number(input.properties?.quantity)
-          : input.properties?.num_items !== undefined
-          ? Number(input.properties?.num_items)
-          : Array.isArray(input.properties?.contents)
-          ? input.properties.contents.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0)
-          : undefined,
-      order_id: input.properties?.order_id || input.properties?.transaction_id || undefined,
-      query: input.properties?.search_string || input.properties?.query || undefined,
-    },
+    properties: propertiesPayload,
     page: {
       url: input.eventSourceUrl || getBaseUrl() || undefined,
     },

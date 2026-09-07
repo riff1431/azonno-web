@@ -360,6 +360,16 @@ export async function syncLiveCourierStatus(orderId: string) {
     })
     .eq("id", orderId);
 
+  // Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger on status sync
+  if (mappedStatus === "completed" || mappedStatus === "delivered") {
+    try {
+      const { triggerStatusGatedPurchaseCapi } = await import("@/features/orders/actions");
+      await triggerStatusGatedPurchaseCapi(orderId, mappedStatus, order, null, supabase);
+    } catch (capiErr) {
+      console.warn("[Courier Sync CAPI Delivery Trigger]:", capiErr);
+    }
+  }
+
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
 

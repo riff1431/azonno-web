@@ -28,10 +28,12 @@ import {
   Send,
   Ban,
   X,
+  Target,
+  Sparkles,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
-import { updateAdminOrderFull } from "@/features/orders/actions";
+import { updateAdminOrderFull, triggerManualOrderCapiPurchase } from "@/features/orders/actions";
 import { bookCourierDelivery } from "@/features/logistics/actions";
 import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
 import { BDCourierHistoryCard } from "@/features/fraud/bdcourier-card";
@@ -88,6 +90,8 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ text: string; isError: boolean } | null>(null);
   const [copiedCode, setCopiedCode] = useState(false);
+  const [capiLoading, setCapiLoading] = useState(false);
+  const [capiMsg, setCapiMsg] = useState<{ text: string; isError: boolean } | null>(null);
 
   const items = order.order_items || [];
   const history = order.order_status_history || [];
@@ -1018,6 +1022,120 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                 </div>
               </div>
             )}
+          </div>
+
+          {/* 3. Meta & TikTok Conversions API (CAPI) Dispatch Manager */}
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4 text-xs">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2">
+                <Target className="h-4 w-4 text-[#e91e63]" /> Meta &amp; TikTok CAPI Purchase
+              </h2>
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-pink-100 text-[#e91e63]">
+                EMQ 9.0+
+              </span>
+            </div>
+
+            {capiMsg && (
+              <div
+                className={`p-3 rounded-xl text-xs font-bold border flex items-center gap-2 ${
+                  capiMsg.isError
+                    ? "bg-red-50 text-red-700 border-red-200"
+                    : "bg-emerald-50 text-emerald-800 border-emerald-200"
+                }`}
+              >
+                {capiMsg.isError ? <AlertCircle className="h-4 w-4 shrink-0" /> : <CheckCircle2 className="h-4 w-4 shrink-0" />}
+                <span>{capiMsg.text}</span>
+              </div>
+            )}
+
+            {(() => {
+              const addressSnap = order.shipping_address_snapshot || {};
+              const firedAt = addressSnap.purchase_capi_fired_at;
+              const results = addressSnap.purchase_capi_results;
+
+              return (
+                <div className="space-y-3">
+                  <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200/80 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-600 font-semibold">Server CAPI Status:</span>
+                      {firedAt ? (
+                        <span className="inline-flex items-center gap-1 font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-lg text-[10px] uppercase">
+                          <CheckCircle2 className="h-3 w-3" /> Dispatched
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-lg text-[10px] uppercase">
+                          Awaiting Status Trigger
+                        </span>
+                      )}
+                    </div>
+
+                    {firedAt && (
+                      <div className="text-[11px] text-gray-500 font-mono">
+                        Fired at: {new Date(firedAt).toLocaleString("en-GB")}
+                      </div>
+                    )}
+
+                    {results && (
+                      <div className="pt-2 border-t border-gray-200/60 grid grid-cols-2 gap-2 text-[11px]">
+                        <div>
+                          <span className="font-bold text-gray-700">Meta CAPI:</span>{" "}
+                          <span className={results.meta_success ? "text-emerald-700 font-bold" : "text-gray-500"}>
+                            {results.meta_success ? "Delivered ✓" : "Not Fired"}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="font-bold text-gray-700">TikTok CAPI:</span>{" "}
+                          <span className={results.tiktok_success ? "text-emerald-700 font-bold" : "text-gray-500"}>
+                            {results.tiktok_success ? "Delivered ✓" : "Not Fired"}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-[11px] text-gray-500 leading-relaxed">
+                    Under Status-Gated mode, Purchase CAPI automatically dispatches when order transitions to <strong>Completed / Delivered</strong>. You can also manually trigger it anytime below.
+                  </p>
+
+                  <Button
+                    onClick={async () => {
+                      setCapiLoading(true);
+                      setCapiMsg(null);
+                      try {
+                        const res = await triggerManualOrderCapiPurchase(order.id);
+                        if (res?.success) {
+                          setCapiMsg({
+                            text: "Server-side CAPI Purchase dispatched to Meta & TikTok with EMQ 9.0+ parameters!",
+                            isError: false,
+                          });
+                          router.refresh();
+                        } else {
+                          setCapiMsg({
+                            text: res?.error || "Failed to dispatch CAPI purchase.",
+                            isError: true,
+                          });
+                        }
+                      } catch (err: any) {
+                        setCapiMsg({ text: err?.message || "CAPI dispatch error", isError: true });
+                      } finally {
+                        setCapiLoading(false);
+                        setTimeout(() => setCapiMsg(null), 5000);
+                      }
+                    }}
+                    disabled={capiLoading}
+                    size="sm"
+                    className="w-full bg-linear-to-r from-[#e91e63] to-pink-700 hover:from-pink-600 hover:to-pink-800 text-white text-xs font-bold rounded-xl py-2.5 shadow-sm"
+                  >
+                    {capiLoading ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                    ) : (
+                      <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                    )}
+                    {firedAt ? "Re-Dispatch CAPI Purchase Event" : "Dispatch Server CAPI Purchase Now"}
+                  </Button>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>

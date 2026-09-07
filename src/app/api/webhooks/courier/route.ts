@@ -65,6 +65,14 @@ export async function POST(req: NextRequest) {
           console.log("Loyalty point credit note");
         }
       }
+
+      // 3. Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger on Courier Delivery
+      try {
+        const { triggerStatusGatedPurchaseCapi } = await import("@/features/orders/actions");
+        await triggerStatusGatedPurchaseCapi(order.id, "delivered", order, null, supabase);
+      } catch (capiErr) {
+        console.warn("[Courier Route CAPI Delivery Trigger]:", capiErr);
+      }
     } else if (["returned", "return", "cancelled", "rto", "failed"].includes(statusRaw)) {
       newStatus = "returned";
       noteText = `Parcel returned / RTO by courier. Auto-restocking inventory items.`;

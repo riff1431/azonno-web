@@ -680,7 +680,7 @@ export async function updateOrderStatus(
  * Dispatches Server-Side EMQ 9.0+ Purchase / CompletePayment to Meta CAPI & TikTok Events API
  * when order reaches the admin-configured trigger status (e.g. "completed" / "delivered").
  */
-async function triggerStatusGatedPurchaseCapi(
+export async function triggerStatusGatedPurchaseCapi(
   orderId: string,
   newStatus: string,
   orderData: any,

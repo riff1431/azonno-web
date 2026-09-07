@@ -104,6 +104,14 @@ export async function POST(req: NextRequest) {
             // Non-critical loyalty insertion
           }
         }
+
+        // Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger on Courier Delivery
+        try {
+          const { triggerStatusGatedPurchaseCapi } = await import("@/features/orders/actions");
+          await triggerStatusGatedPurchaseCapi(order.id, "delivered", order, null, supabase);
+        } catch (capiErr) {
+          console.warn("[SteadFast CAPI Delivery Trigger]:", capiErr);
+        }
       } else if (statusRaw === "cancelled" || statusRaw === "returned" || statusRaw === "failed") {
         await supabase
           .from("orders")

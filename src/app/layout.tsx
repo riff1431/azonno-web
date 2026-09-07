@@ -186,6 +186,7 @@ export default async function RootLayout({
                   }
                   
                   ttq.load('${initialConfig.tiktok_pixel_id}');
+                  ttq.page();
                   window.__TIKTOK_PIXEL_ID__ = '${initialConfig.tiktok_pixel_id}';
                 }(window, document, 'ttq');
               `,
