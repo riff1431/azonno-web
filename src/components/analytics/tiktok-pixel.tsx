@@ -31,10 +31,13 @@ export function TikTokPixel({ pixelId: propPixelId }: { pixelId?: string } = {})
   if (!pixelId) return null;
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.ttq) {
-      if (window.__TIKTOK_PIXEL_ID__ && window.__TIKTOK_PIXEL_ID__ !== pixelId) {
-        window.ttq.load(pixelId);
-        window.__TIKTOK_PIXEL_ID__ = pixelId;
+    if (typeof window !== "undefined" && pixelId) {
+      const ttq = getOrInitTtq();
+      if (ttq) {
+        if (!window.__TIKTOK_PIXEL_ID__ || window.__TIKTOK_PIXEL_ID__ !== pixelId) {
+          ttq.load(pixelId);
+          window.__TIKTOK_PIXEL_ID__ = pixelId;
+        }
       }
     }
   }, [pixelId]);

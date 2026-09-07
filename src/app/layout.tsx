@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Inter, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
+import { StorefrontAnalytics } from "@/components/analytics/storefront-analytics";
+import { CookieTracker } from "@/components/analytics/cookie-tracker";
+import { getMarketingAnalyticsSettings } from "@/features/marketing/meta-actions";
+import { getTikTokSettings } from "@/features/marketing/tiktok-actions";
+import { getStoreSettings, getSeoSettings } from "@/features/settings/actions";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,53 +21,50 @@ const hindSiliguri = Hind_Siliguri({
   variable: "--font-bengali",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Blush & Budget | Authentic Cosmetics & Beauty Shop in Bangladesh",
-    template: "%s | Blush & Budget",
-  },
-  description:
-    "Bangladesh's trusted e-commerce destination for 100% authentic international cosmetics, Korean skincare, makeup, and hair care. Nationwide Cash on Delivery across 64 districts.",
-  metadataBase: (() => {
-    const url =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
-    return url ? new URL(url) : undefined;
-  })(),
-  openGraph: {
-    type: "website",
-    locale: "en_BD",
-    siteName: "Blush & Budget",
-    title: "Blush & Budget | Authentic Cosmetics & Beauty Shop in Bangladesh",
-    description:
-      "Shop 100% genuine Korean skincare, makeup, and imported beauty products in Bangladesh with nationwide Cash on Delivery and doorstep parcel inspection.",
-  },
-  other: {
-    "og:category": "shopping.retail",
-    "product:retailer_category": "Cosmetics & Beauty",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [seo, store, headerList] = await Promise.all([
+    getSeoSettings().catch(() => ({} as Record<string, any>)),
+    getStoreSettings().catch(() => ({} as Record<string, any>)),
+    headers().catch(() => null),
+  ]);
 
-import { StorefrontAnalytics } from "@/components/analytics/storefront-analytics";
-import { CookieTracker } from "@/components/analytics/cookie-tracker";
-import { getMarketingAnalyticsSettings } from "@/features/marketing/meta-actions";
-import { getTikTokSettings } from "@/features/marketing/tiktok-actions";
+  const host = headerList?.get("x-forwarded-host") || headerList?.get("host") || "";
+  const proto = headerList?.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
+  const requestUrl = host ? `${proto}://${host}` : undefined;
 
-const storeSchema = {
-  "@context": "https://schema.org",
-  "@type": "OnlineStore",
-  name: "Blush & Budget",
-  description:
-    "Premier retail e-commerce shop for authentic cosmetics, skincare, and makeup products in Bangladesh.",
-  currenciesAccepted: "BDT",
-  paymentAccepted: "Cash on Delivery, bKash, Nagad, Visa, Mastercard",
-  priceRange: "৳৳",
-};
+  const siteUrl = seo?.canonical_url || store?.store_url || requestUrl || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://blushandbudget.com";
+  const storeName = store?.store_name || "Blush & Budget";
+  const title = seo?.meta_title || `${storeName} | Authentic Cosmetics & Beauty Shop in Bangladesh`;
+  const description =
+    seo?.meta_description ||
+    "Bangladesh's trusted e-commerce destination for 100% authentic international cosmetics, Korean skincare, makeup, and hair care. Nationwide Cash on Delivery across 64 districts.";
+  const ogImage = seo?.og_image_url || undefined;
+
+  return {
+    title: {
+      default: title,
+      template: `%s | ${storeName}`,
+    },
+    description,
+    metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+    openGraph: {
+      type: "website",
+      locale: "en_BD",
+      siteName: storeName,
+      title,
+      description,
+      images: ogImage ? [{ url: ogImage }] : undefined,
+    },
+    other: {
+      "og:category": "shopping.retail",
+      "product:retailer_category": "Cosmetics & Beauty",
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -81,11 +84,19 @@ export default async function RootLayout({
     ga4_measurement_id: process.env.NEXT_PUBLIC_GA4_ID || "",
   };
 
+  let storeName = "Blush & Budget";
+  let storeDesc = "Premier retail e-commerce shop for authentic cosmetics, skincare, and makeup products in Bangladesh.";
+  let storeCurrency = "BDT";
+
   try {
-    const [metaSettings, ttSettings] = await Promise.all([
+    const [metaSettings, ttSettings, storeSettings] = await Promise.all([
       getMarketingAnalyticsSettings().catch(() => null),
       getTikTokSettings().catch(() => null),
+      getStoreSettings().catch(() => null),
     ]);
+
+    if (storeSettings?.store_name) storeName = storeSettings.store_name;
+    if (storeSettings?.currency) storeCurrency = storeSettings.currency;
 
     initialConfig = {
       meta_pixel_id: metaSettings?.meta_pixel_id || initialConfig.meta_pixel_id,
@@ -102,6 +113,16 @@ export default async function RootLayout({
   } catch {
     // Non-blocking fallback to defaults
   }
+
+  const storeSchema = {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    name: storeName,
+    description: storeDesc,
+    currenciesAccepted: storeCurrency,
+    paymentAccepted: "Cash on Delivery, bKash, Nagad, Visa, Mastercard",
+    priceRange: "৳৳",
+  };
 
   return (
     <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} lang-bn`}>

@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getSettingsByGroup } from "@/lib/settings/config-service";
 
 export type FeedPlatform = "meta" | "tiktok" | "google";
 export type FeedFormat = "xml" | "csv";
@@ -45,8 +46,14 @@ function escapeCsv(val: string | number | null | undefined): string {
 /**
  * Fetch all active published products with enriched brand, category, and media data
  */
-async function fetchPublishedProducts(): Promise<ProductFeedItem[]> {
-  const supabase = createAdminClient();
+async function fetchPublishedProducts(): Promise<{ products: ProductFeedItem[]; storeName: string; currency: string }> {
+  const [supabase, generalSettings] = await Promise.all([
+    createAdminClient(),
+    getSettingsByGroup("general").catch(() => ({} as Record<string, any>)),
+  ]);
+
+  const defaultStoreName = generalSettings.store_name || "Blush & Budget";
+  const defaultCurrency = generalSettings.currency || "BDT";
 
   const { data: products, error } = await supabase
     .from("products")
@@ -73,11 +80,11 @@ async function fetchPublishedProducts(): Promise<ProductFeedItem[]> {
     .eq("status", "published");
 
   if (error || !products) {
-    return [];
+    return { products: [], storeName: defaultStoreName, currency: defaultCurrency };
   }
 
-  return products.map((p: any) => {
-    const brandName = p.brands?.name || "Blush & Budget";
+  const mapped = products.map((p: any) => {
+    const brandName = p.brands?.name || defaultStoreName;
     const categoryName = p.categories?.name || "Skincare & Cosmetics";
 
     return {
@@ -97,13 +104,15 @@ async function fetchPublishedProducts(): Promise<ProductFeedItem[]> {
       additional_images: [],
     };
   });
+
+  return { products: mapped, storeName: defaultStoreName, currency: defaultCurrency };
 }
 
 /**
  * Build Meta Commerce Manager Catalog (Facebook & Instagram Shop)
  */
 export async function generateMetaFeed(baseUrl: string, format: FeedFormat = "xml"): Promise<{ content: string; contentType: string; filename: string }> {
-  const products = await fetchPublishedProducts();
+  const { products, storeName, currency } = await fetchPublishedProducts();
 
   if (format === "csv") {
     const headers = [
@@ -125,8 +134,8 @@ export async function generateMetaFeed(baseUrl: string, format: FeedFormat = "xm
     ];
 
     const rows = products.map((p) => {
-      const priceStr = `${p.regular_price.toFixed(2)} BDT`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} BDT` : "";
+      const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
+      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
       const productUrl = `${baseUrl}/products/${p.slug}`;
       const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
 
@@ -160,8 +169,8 @@ export async function generateMetaFeed(baseUrl: string, format: FeedFormat = "xm
   // XML RSS 2.0 Meta Commerce Format
   const itemsXml = products
     .map((p) => {
-      const priceStr = `${p.regular_price.toFixed(2)} BDT`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} BDT` : null;
+      const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
+      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
       const productUrl = `${baseUrl}/products/${p.slug}`;
       const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
 
@@ -187,9 +196,9 @@ export async function generateMetaFeed(baseUrl: string, format: FeedFormat = "xm
   const xmlContent = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>Blush &amp; Budget Meta Product Catalog Feed</title>
+    <title>${storeName} Meta Product Catalog Feed</title>
     <link>${baseUrl}</link>
-    <description>Authentic Cosmetics &amp; Skincare Products in Bangladesh for Meta Commerce &amp; Instagram Shop</description>
+    <description>Authentic Products for Meta Commerce &amp; Instagram Shop</description>
 ${itemsXml}
   </channel>
 </rss>`;
@@ -205,7 +214,7 @@ ${itemsXml}
  * Build TikTok Catalog Manager Feed (TikTok Shop & Dynamic Showcase Ads)
  */
 export async function generateTikTokFeed(baseUrl: string, format: FeedFormat = "xml"): Promise<{ content: string; contentType: string; filename: string }> {
-  const products = await fetchPublishedProducts();
+  const { products, storeName, currency } = await fetchPublishedProducts();
 
   if (format === "csv") {
     const headers = [
@@ -226,8 +235,8 @@ export async function generateTikTokFeed(baseUrl: string, format: FeedFormat = "
     ];
 
     const rows = products.map((p) => {
-      const priceStr = `${p.regular_price.toFixed(2)} BDT`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} BDT` : "";
+      const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
+      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
       const productUrl = `${baseUrl}/products/${p.slug}`;
       const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
 
@@ -260,8 +269,8 @@ export async function generateTikTokFeed(baseUrl: string, format: FeedFormat = "
   // XML RSS 2.0 TikTok Spec
   const itemsXml = products
     .map((p) => {
-      const priceStr = `${p.regular_price.toFixed(2)} BDT`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} BDT` : null;
+      const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
+      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
       const productUrl = `${baseUrl}/products/${p.slug}`;
       const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
 
@@ -287,7 +296,7 @@ export async function generateTikTokFeed(baseUrl: string, format: FeedFormat = "
   const xmlContent = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>Blush &amp; Budget TikTok Product Catalog Feed</title>
+    <title>${storeName} TikTok Product Catalog Feed</title>
     <link>${baseUrl}</link>
     <description>TikTok Catalog Manager XML Data Feed for Video Shopping Ads &amp; Dynamic Showcase</description>
 ${itemsXml}
@@ -305,7 +314,7 @@ ${itemsXml}
  * Build Google Merchant Center Product Feed (Google Shopping & Free Listings)
  */
 export async function generateGoogleFeed(baseUrl: string, format: FeedFormat = "xml"): Promise<{ content: string; contentType: string; filename: string }> {
-  const products = await fetchPublishedProducts();
+  const { products, storeName, currency } = await fetchPublishedProducts();
 
   if (format === "csv") {
     const headers = [
@@ -328,8 +337,8 @@ export async function generateGoogleFeed(baseUrl: string, format: FeedFormat = "
     ];
 
     const rows = products.map((p) => {
-      const priceStr = `${p.regular_price.toFixed(2)} BDT`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} BDT` : "";
+      const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
+      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
       const productUrl = `${baseUrl}/products/${p.slug}`;
       const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
 
@@ -364,8 +373,8 @@ export async function generateGoogleFeed(baseUrl: string, format: FeedFormat = "
   // XML RSS 2.0 Google Merchant Center Format
   const itemsXml = products
     .map((p) => {
-      const priceStr = `${p.regular_price.toFixed(2)} BDT`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} BDT` : null;
+      const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
+      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
       const productUrl = `${baseUrl}/products/${p.slug}`;
       const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
 
@@ -392,7 +401,7 @@ export async function generateGoogleFeed(baseUrl: string, format: FeedFormat = "
   const xmlContent = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>Blush &amp; Budget Google Merchant Center Product Feed</title>
+    <title>${storeName} Google Merchant Center Product Feed</title>
     <link>${baseUrl}</link>
     <description>Google Merchant Product XML Data Feed for Shopping and Free Listings</description>
 ${itemsXml}

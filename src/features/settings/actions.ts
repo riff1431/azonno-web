@@ -17,9 +17,13 @@ export async function saveStoreSettings(settings: {
   currency: string;
   currency_symbol: string;
   timezone: string;
+  store_url?: string;
+  custom_domain?: string;
 }) {
   await updateGroupSettings("general", settings);
   revalidatePath("/admin/settings/store");
+  revalidatePath("/admin/settings/seo");
+  revalidatePath("/", "layout");
   revalidatePath("/");
   return { success: true };
 }

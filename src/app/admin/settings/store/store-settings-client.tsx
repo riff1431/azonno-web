@@ -20,6 +20,7 @@ export function StoreSettingsClient({
 
   const [formData, setFormData] = useState({
     store_name: initialSettings.store_name || "ecomXbangladesh",
+    store_url: initialSettings.store_url || (typeof window !== "undefined" ? window.location.origin : ""),
     store_email: initialSettings.store_email || "support@ecomxbangladesh.com",
     store_phone: initialSettings.store_phone || "+880 1700-000000",
     store_address: initialSettings.store_address || "Gulshan 2, Dhaka 1212, Bangladesh",
@@ -94,6 +95,20 @@ export function StoreSettingsClient({
                 onChange={(e) => setFormData({ ...formData, store_name: e.target.value })}
                 className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-text mb-1">Store URL / Primary Domain</label>
+              <input
+                type="url"
+                placeholder="https://yourbrand.com (Leave empty for auto-detect)"
+                value={formData.store_url}
+                onChange={(e) => setFormData({ ...formData, store_url: e.target.value })}
+                className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none"
+              />
+              <p className="text-[10px] text-text-muted mt-1">
+                Leave empty or set your custom domain. Auto-detects whatever domain visitors connect to.
+              </p>
             </div>
 
             <div>
