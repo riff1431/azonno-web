@@ -32,7 +32,39 @@ export function CookieTracker() {
         localStorage.setItem("ecomx_ttclid", ttclid);
       }
 
-      // 3. Persist existing cookies in localStorage as backup
+      // 3. Process Test Event Codes (test_event_code / test_code for Meta and TikTok diagnostics)
+      const testCode = urlParams.get("test_event_code") || urlParams.get("test_code") || urlParams.get("fb_test_code");
+      if (testCode) {
+        sessionStorage.setItem("meta_test_event_code", testCode);
+        document.cookie = `meta_test_event_code=${testCode};path=/;max-age=86400;SameSite=Lax`;
+      }
+
+      const ttTestCode = urlParams.get("tt_test_code") || urlParams.get("tiktok_test_code") || testCode;
+      if (ttTestCode) {
+        sessionStorage.setItem("tiktok_test_event_code", ttTestCode);
+        document.cookie = `tiktok_test_event_code=${ttTestCode};path=/;max-age=86400;SameSite=Lax`;
+      }
+
+      const getCookie = (name: string) => {
+        const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+        return match ? match[2] : null;
+      };
+
+      // Ensure Meta _fbp cookie is immediately present
+      if (!getCookie("_fbp")) {
+        const fbpVal = localStorage.getItem("ecomx_fbp") || `fb.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+        document.cookie = `_fbp=${fbpVal};path=/;max-age=7776000;SameSite=Lax`;
+        localStorage.setItem("ecomx_fbp", fbpVal);
+      }
+
+      // Ensure TikTok _ttp cookie is immediately present
+      if (!getCookie("_ttp")) {
+        const ttpVal = localStorage.getItem("ecomx_ttp") || `ttp.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+        document.cookie = `_ttp=${ttpVal};path=/;max-age=7776000;SameSite=Lax`;
+        localStorage.setItem("ecomx_ttp", ttpVal);
+      }
+
+      // 4. Persist existing cookies in localStorage as backup
       const cookies = document.cookie.split(";");
       cookies.forEach((c) => {
         const [k, v] = c.trim().split("=");

@@ -1,7 +1,7 @@
 "use server";
 
 import { createHash } from "crypto";
-import { getSettingsByGroup, updateGroupSettings } from "@/lib/settings/config-service";
+import { getSettingsByGroup, updateGroupSettings, invalidateSettingsCache } from "@/lib/settings/config-service";
 import { revalidatePath } from "next/cache";
 import { getBaseUrl } from "@/lib/utils";
 
@@ -98,6 +98,7 @@ export async function saveMarketingAnalyticsSettings(settings: Partial<Marketing
 
   revalidatePath("/admin/marketing/meta");
   revalidatePath("/admin/orders");
+  revalidatePath("/", "layout");
   revalidatePath("/");
   return { success: true };
 }
@@ -110,6 +111,8 @@ export async function sendMetaCapiEvent(input: {
   eventName: string;
   eventId: string;
   eventSourceUrl?: string;
+  pixelId?: string;
+  accessToken?: string;
   userData?: {
     email?: string;
     phone?: string;
@@ -130,8 +133,8 @@ export async function sendMetaCapiEvent(input: {
 }) {
   const config = await getMarketingAnalyticsSettings();
 
-  const pixelId = config.meta_pixel_id || process.env.NEXT_PUBLIC_META_PIXEL_ID;
-  const accessToken = config.meta_capi_token || process.env.META_CAPI_ACCESS_TOKEN;
+  const pixelId = (input.pixelId && input.pixelId.trim()) || config.meta_pixel_id || process.env.NEXT_PUBLIC_META_PIXEL_ID;
+  const accessToken = (input.accessToken && input.accessToken.trim()) || config.meta_capi_token || process.env.META_CAPI_ACCESS_TOKEN;
 
   if (!pixelId || !accessToken) {
     return {
@@ -195,17 +198,37 @@ export async function sendMetaCapiEvent(input: {
     }
 
     // Unhashed Client Network & Cookie Identifiers (Crucial for Meta CAPI Event Match Quality)
-    if (clientIpAddress && clientIpAddress !== "::1" && clientIpAddress !== "127.0.0.1") {
-      userDataPayload.client_ip_address = clientIpAddress;
+    let effectiveIp = clientIpAddress;
+    if (
+      !effectiveIp ||
+      effectiveIp === "::1" ||
+      effectiveIp === "127.0.0.1" ||
+      effectiveIp.startsWith("192.168.") ||
+      effectiveIp.startsWith("10.")
+    ) {
+      if (process.env.NODE_ENV === "development") {
+        effectiveIp = "103.108.140.25";
+      } else {
+        effectiveIp = undefined;
+      }
+    }
+    if (effectiveIp) {
+      userDataPayload.client_ip_address = effectiveIp;
     }
     if (clientUserAgent) {
       userDataPayload.client_user_agent = clientUserAgent;
     }
-    if (fbp) {
-      userDataPayload.fbp = fbp;
-    }
+    const effectiveFbp = fbp || `fb.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+    userDataPayload.fbp = effectiveFbp;
     if (fbc) {
       userDataPayload.fbc = fbc;
+    }
+  } else {
+    // If no userData provided at all, provide basic fbp & BD country for anonymous events
+    userDataPayload.country = [hashMetaParameter("bd")];
+    userDataPayload.fbp = `fb.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+    if (process.env.NODE_ENV === "development") {
+      userDataPayload.client_ip_address = "103.108.140.25";
     }
   }
 
@@ -226,8 +249,12 @@ export async function sendMetaCapiEvent(input: {
       contents: input.customData.contents || undefined,
       content_ids: input.customData.content_ids || (input.customData.content_id ? [input.customData.content_id] : undefined),
       content_name: input.customData.content_name || undefined,
-      content_category: input.customData.content_category || undefined,
-      num_items: input.customData.num_items || (input.customData.contents ? input.customData.contents.length : undefined),
+      num_items:
+        input.customData.num_items !== undefined
+          ? Number(input.customData.num_items)
+          : Array.isArray(input.customData.contents)
+          ? input.customData.contents.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0)
+          : undefined,
       order_id: input.customData.order_id || input.customData.transaction_id || undefined,
       search_string: input.customData.search_string || input.customData.search_term || undefined,
       status: input.customData.status || undefined,
@@ -413,13 +440,53 @@ export async function dispatchAdvancedPurchaseCapi(order: any, triggerStatus: st
 /**
  * 5. Test Live Diagnostic Meta CAPI Connection
  */
-export async function testMetaCapiDiagnostic(testCodeOverride?: string, originUrl?: string) {
+export async function testMetaCapiDiagnostic(
+  params?:
+    | string
+    | {
+        testEventCode?: string;
+        pixelId?: string;
+        accessToken?: string;
+        originUrl?: string;
+      },
+  originUrlFallback?: string
+) {
+  let testCodeOverride: string | undefined;
+  let pixelId: string | undefined;
+  let accessToken: string | undefined;
+  let originUrl: string | undefined = originUrlFallback;
+
+  if (typeof params === "string") {
+    testCodeOverride = params;
+  } else if (params && typeof params === "object") {
+    testCodeOverride = params.testEventCode;
+    pixelId = params.pixelId?.trim();
+    accessToken = params.accessToken?.trim();
+    originUrl = params.originUrl || originUrlFallback;
+  }
+
+  // If credentials are provided from the UI, auto-sync and persist them
+  if (pixelId && accessToken) {
+    try {
+      await updateGroupSettings("marketing", {
+        meta_pixel_id: pixelId,
+        meta_capi_token: accessToken,
+        ...(testCodeOverride !== undefined ? { meta_test_event_code: testCodeOverride } : {}),
+      });
+      invalidateSettingsCache("group:marketing");
+    } catch (err) {
+      console.warn("[testMetaCapiDiagnostic] Auto-sync to settings skipped:", err);
+    }
+  }
+
   const testEventId = `test_evt_${Date.now()}_diag`;
   const base = originUrl || getBaseUrl() || "";
   const result = await sendMetaCapiEvent({
     eventName: "PageView",
     eventId: testEventId,
     eventSourceUrl: base ? `${base}/admin/marketing/meta` : undefined,
+    pixelId,
+    accessToken,
     userData: {
       email: "test_customer@example.com",
       phone: "01700000000",

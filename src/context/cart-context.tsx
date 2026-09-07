@@ -116,10 +116,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const clearCart = () => {
-    setItems([]);
-    setCoupon(null);
-  };
+  const clearCart = React.useCallback(() => {
+    setItems((prev) => (prev.length === 0 ? prev : []));
+    setCoupon((prev) => (prev === null ? prev : null));
+  }, []);
 
   // Subtotal calculation
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);

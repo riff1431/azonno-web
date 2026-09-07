@@ -121,8 +121,25 @@ export default function AdminMetaSettingsPage() {
     setTestingCapi(true);
     setCapiTestResult(null);
 
+    const pixelId = formData.meta_pixel_id?.trim();
+    const token = formData.meta_capi_token?.trim();
+
+    if (!pixelId || !token) {
+      setCapiTestResult({
+        success: false,
+        message: "Please enter your Meta Pixel ID and CAPI Access Token first.",
+      });
+      setTestingCapi(false);
+      return;
+    }
+
     try {
-      const res = await testMetaCapiDiagnostic(formData.meta_test_event_code);
+      const res = await testMetaCapiDiagnostic({
+        pixelId,
+        accessToken: token,
+        testEventCode: formData.meta_test_event_code,
+        originUrl: typeof window !== "undefined" ? window.location.origin : undefined,
+      });
       if (res.success) {
         setCapiTestResult({
           success: true,
@@ -155,12 +172,29 @@ export default function AdminMetaSettingsPage() {
     setTestingTikTok(true);
     setTiktokTestResult(null);
 
+    const pixelId = tiktokData.tiktok_pixel_id?.trim();
+    const token = tiktokData.tiktok_access_token?.trim();
+
+    if (!pixelId || !token) {
+      setTiktokTestResult({
+        success: false,
+        message: "Please enter your TikTok Pixel Code and Access Token first.",
+      });
+      setTestingTikTok(false);
+      return;
+    }
+
     try {
-      const res = await testTikTokCapiDiagnostic(tiktokData.tiktok_test_event_code);
+      const res = await testTikTokCapiDiagnostic({
+        pixelId,
+        accessToken: token,
+        testEventCode: tiktokData.tiktok_test_event_code,
+        originUrl: typeof window !== "undefined" ? window.location.origin : undefined,
+      });
       if (res.success) {
         setTiktokTestResult({
           success: true,
-          message: `TikTok Business Events API Received 1 Diagnostic Event! ${res.message}`,
+          message: `TikTok Business Events API Received 1 Diagnostic Event! ${res.message || "OK"}`,
           requestId: res.requestId,
         });
       } else if (res.skipped) {
@@ -442,7 +476,7 @@ export default function AdminMetaSettingsPage() {
                 <Button
                   type="button"
                   onClick={handleTestCapiPing}
-                  disabled={testingCapi || !formData.meta_pixel_id}
+                  disabled={testingCapi || !formData.meta_pixel_id?.trim() || !formData.meta_capi_token?.trim()}
                   variant="outline"
                   size="sm"
                   className="text-xs font-bold rounded-xl shrink-0"
@@ -623,7 +657,7 @@ export default function AdminMetaSettingsPage() {
                 <Button
                   type="button"
                   onClick={handleTestTikTokPing}
-                  disabled={testingTikTok || !tiktokData.tiktok_pixel_id}
+                  disabled={testingTikTok || !tiktokData.tiktok_pixel_id?.trim() || !tiktokData.tiktok_access_token?.trim()}
                   variant="outline"
                   size="sm"
                   className="text-xs font-bold rounded-xl shrink-0"

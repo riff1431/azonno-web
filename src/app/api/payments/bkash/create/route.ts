@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createBkashPayment } from "@/lib/payments/bkash";
 import { logIntegrationEvent } from "@/features/modules/actions";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, getRequestBaseUrl } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Determine callback URL
-    const baseUrl = getBaseUrl();
+    // Determine dynamic callback URL matching the user's host (e.g. blushbudget.com, staging, or localhost)
+    const baseUrl = getRequestBaseUrl(req) || getBaseUrl();
     const callbackUrl = `${baseUrl}/api/payments/bkash/callback`;
 
     const paymentRes = await createBkashPayment({

@@ -12,7 +12,7 @@ export default async function AdminDashboardPage() {
   const supabase = createAdminClient();
 
   // Fetch complete orders, products with cost_price, inventory, batch & expiry, profiles, returns & leads
-  const [{ data: orders }, { data: products }, { data: profiles }, { data: returns }, abandonedCheckouts] =
+  const [ordersRes, productsRes, profilesRes, returnsRes, abandonedCheckouts] =
     await Promise.all([
       supabase
         .from("orders")
@@ -39,8 +39,6 @@ export default async function AdminDashboardPage() {
           regular_price,
           sale_price,
           cost_price,
-          batch_number,
-          expiry_date,
           status,
           og_image_url,
           inventory (
@@ -48,7 +46,7 @@ export default async function AdminDashboardPage() {
             on_hand,
             reserved,
             available,
-            safety_stock
+            low_stock_threshold
           )
         `),
       supabase.from("profiles").select("id, full_name, email, phone, role, created_at"),
@@ -56,13 +54,25 @@ export default async function AdminDashboardPage() {
       getAbandonedCheckouts().catch(() => []),
     ]);
 
+  if (productsRes?.error) {
+    console.error("Products query error in /admin:", productsRes.error);
+  }
+  if (ordersRes?.error) {
+    console.error("Orders query error in /admin:", ordersRes.error);
+  }
+
+  const orders = ordersRes?.data || [];
+  const products = productsRes?.data || [];
+  const profiles = profilesRes?.data || [];
+  const returns = returnsRes?.data || [];
+
   return (
     <Suspense>
       <AdminAnalyticsDashboard
-        orders={orders || []}
-        products={products || []}
-        profiles={profiles || []}
-        returns={returns || []}
+        orders={orders}
+        products={products}
+        profiles={profiles}
+        returns={returns}
         abandonedCheckouts={abandonedCheckouts || []}
       />
     </Suspense>

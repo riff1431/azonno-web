@@ -38,7 +38,7 @@ export const BKASH_SANDBOX_DEFAULTS: BkashConfig = {
 
 export async function getBkashConfig(): Promise<BkashConfig> {
   try {
-    const settings = await getModuleSettings("bkash", "all", false);
+    const settings = await getModuleSettings("bkash", "all", true);
     const env = (settings.environment === "live" ? "live" : "sandbox") as "sandbox" | "live";
 
     const config: BkashConfig = {
@@ -158,6 +158,10 @@ export async function createBkashPayment(params: {
 
   const baseUrl = getBaseUrl(cfg.environment);
   const formattedAmount = Number(params.amount).toFixed(2);
+  const sanitizedPayerRef =
+    (params.payerReference || params.orderNumber || "order")
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 20) || "customer";
 
   try {
     const res = await fetch(`${baseUrl}/tokenized/checkout/create`, {
@@ -170,7 +174,7 @@ export async function createBkashPayment(params: {
       },
       body: JSON.stringify({
         mode: "0011",
-        payerReference: params.payerReference || params.orderNumber,
+        payerReference: sanitizedPayerRef,
         callbackURL: params.callbackUrl,
         amount: formattedAmount,
         currency: "BDT",

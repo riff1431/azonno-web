@@ -39,8 +39,9 @@ import {
   CornerDownLeft,
   RefreshCw,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/utils";
-import { updateOrderStatus, createOrder } from "./actions";
+import { updateOrderStatus, createOrder, getAdminOrders } from "./actions";
 import { bookCourierDelivery, syncLiveCourierStatus } from "@/features/logistics/actions";
 import { addBlacklistEntry } from "@/features/fraud/actions";
 import { Button } from "@/components/shared/ui/button";
@@ -55,7 +56,53 @@ interface OrderListClientProps {
 }
 
 export function OrderListClient({ initialOrders }: OrderListClientProps) {
+  const router = useRouter();
   const [orders, setOrders] = useState(initialOrders);
+  const [isRefreshingOrders, setIsRefreshingOrders] = useState(false);
+
+  // Sync state whenever server re-renders initialOrders
+  useEffect(() => {
+    setOrders(initialOrders);
+  }, [initialOrders]);
+
+  // Periodic polling & window focus re-fetch to ensure newly paid orders show up instantly
+  useEffect(() => {
+    const fetchLatest = async () => {
+      try {
+        const latest = await getAdminOrders();
+        if (Array.isArray(latest)) {
+          setOrders(latest);
+        }
+      } catch (err) {
+        console.warn("Background orders sync:", err);
+      }
+    };
+
+    window.addEventListener("focus", fetchLatest);
+    const interval = setInterval(fetchLatest, 10000);
+    return () => {
+      window.removeEventListener("focus", fetchLatest);
+      clearInterval(interval);
+    };
+  }, []);
+
+  const handleRefreshOrders = async () => {
+    setIsRefreshingOrders(true);
+    try {
+      const latest = await getAdminOrders();
+      if (Array.isArray(latest)) {
+        setOrders(latest);
+      }
+      router.refresh();
+      setBannerMsg({ text: "Orders list updated with latest live transactions.", isError: false });
+    } catch {
+      setBannerMsg({ text: "Could not refresh orders list.", isError: true });
+    } finally {
+      setIsRefreshingOrders(false);
+      setTimeout(() => setBannerMsg(null), 3000);
+    }
+  };
+
   const [activeTab, setActiveTab] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useAdminLang();
@@ -128,10 +175,11 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     });
   }, []);
 
-  // Filter Orders  // Search & Tab Filtering
+  // Filter Orders // Search & Tab Filtering
   const filteredOrders = orders.filter((o) => {
     let matchesTab = true;
     if (activeTab === "all") matchesTab = true;
+    else if (activeTab === "paid-online") matchesTab = o.payment_status === "paid";
     else if (activeTab === "pending") matchesTab = o.status === "pending";
     else if (activeTab === "processing") matchesTab = o.status === "processing" || o.status === "confirmed";
     else if (activeTab === "on-hold") matchesTab = o.status === "on-hold";
@@ -152,12 +200,21 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     const name = o.shipping_address_snapshot?.name || o.guest_name || "";
     const orderNum = o.order_number || "";
     const district = o.shipping_address_snapshot?.district || "";
+    const paymentMethod = (o.payment_method || "").toLowerCase();
+    const paymentStatus = (o.payment_status || "").toLowerCase();
+    const note = (o.public_note || "").toLowerCase();
+    const query = searchQuery.toLowerCase();
+
     const matchesSearch =
       !searchQuery ||
-      orderNum.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      orderNum.toLowerCase().includes(query) ||
       phone.includes(searchQuery) ||
-      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      district.toLowerCase().includes(searchQuery.toLowerCase());
+      name.toLowerCase().includes(query) ||
+      district.toLowerCase().includes(query) ||
+      paymentMethod.includes(query) ||
+      paymentStatus.includes(query) ||
+      note.includes(query) ||
+      (o.consignment_id && o.consignment_id.toLowerCase().includes(query));
     return matchesTab && matchesSearch;
   });
 
@@ -778,6 +835,11 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
 
   const tabs = [
     { label: t("tab_all"), value: "all", count: orders.length },
+    {
+      label: "PAID ONLINE",
+      value: "paid-online",
+      count: orders.filter((o) => o.payment_status === "paid").length,
+    },
     { label: t("tab_pending"), value: "pending", count: orders.filter((o) => o.status === "pending").length },
     { label: t("tab_processing"), value: "processing", count: orders.filter((o) => o.status === "processing" || o.status === "confirmed").length },
     { label: t("tab_on_hold", "On Hold"), value: "on-hold", count: orders.filter((o) => o.status === "on-hold").length },
@@ -808,6 +870,19 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          {/* Real-time Refresh Orders Button */}
+          <Button
+            onClick={handleRefreshOrders}
+            disabled={isRefreshingOrders}
+            variant="outline"
+            size="sm"
+            className="text-xs font-bold rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
+            title="Refresh latest orders from database"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 mr-1 ${isRefreshingOrders ? "animate-spin text-[#e91e63]" : "text-gray-600"}`} />
+            {isRefreshingOrders ? "Refreshing..." : "Refresh"}
+          </Button>
+
           {/* + Create New Manual Order Button */}
           <Button
             onClick={() => setShowCreateModal(true)}
@@ -1102,6 +1177,19 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           })}
                         </span>
 
+                        <div className="flex items-center gap-1 mt-1 flex-wrap">
+                          {ord.payment_status === "paid" ? (
+                            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded text-[9px] font-black uppercase">
+                              <CheckCircle2 className="h-2.5 w-2.5 text-emerald-600" />
+                              <span>{ord.payment_method === "bkash" ? "bKash (PAID)" : "PAID"}</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 border border-gray-200 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase">
+                              {ord.payment_method === "cod" || !ord.payment_method ? "COD" : ord.payment_method}
+                            </span>
+                          )}
+                        </div>
+
                         {consignment && (
                           <div className="inline-flex items-center gap-1 mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold">
                             <span>{consignment}</span>
@@ -1310,52 +1398,82 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
 
                       {/* Amount Due & WooCommerce Status Subtext */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-black text-gray-900 text-sm tracking-tight block">
-                            {formatPrice(ord.amount_to_collect !== undefined ? ord.amount_to_collect : ord.total)}
-                          </span>
-                        </div>
-                        {Number(ord.advance_paid) > 0 && (
-                          <div className="inline-flex items-center gap-1 mt-1">
-                            <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded-md text-[9px] font-bold">
-                              ৳{ord.advance_paid} Advance Paid
-                            </span>
-                          </div>
-                        )}
                         {(() => {
-                          if (isRet) {
-                            return <span className="text-[10px] uppercase font-bold text-rose-700 block mt-1">COURIER RTO</span>;
-                          }
-                          if (isCanc) {
-                            return <span className="text-[10px] uppercase font-bold text-amber-700 block mt-1">COURIER CANCELLED</span>;
-                          }
-                          if (ord.status === "completed" || ord.status === "delivered") {
-                            return (
-                              <span className="inline-block mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase">
-                                {ord.payment_status === "paid" || Number(ord.amount_to_collect) === 0 ? "PAID" : "COD (COLLECTED)"}
-                              </span>
-                            );
-                          }
-                          if (ord.status === "on-hold") {
-                            return <span className="text-[10px] uppercase font-bold text-orange-600 block mt-1">AWAITING VERIFICATION</span>;
-                          }
-                          if (ord.status === "cancelled") {
-                            return <span className="text-[10px] uppercase font-bold text-gray-400 block mt-1">CANCELLED</span>;
-                          }
-                          if (ord.status === "refunded") {
-                            return <span className="text-[10px] uppercase font-bold text-purple-600 block mt-1">REFUNDED</span>;
-                          }
-                          if (ord.status === "failed" || ord.status === "returned") {
-                            return <span className="text-[10px] uppercase font-bold text-red-600 block mt-1">RTO (VOID)</span>;
-                          }
-                          if (ord.status === "processing" || ord.status === "confirmed") {
-                            return <span className="text-[10px] uppercase font-bold text-blue-600 block mt-1">COD (PENDING)</span>;
-                          }
-                          // pending
+                          const isPaid = ord.payment_status === "paid";
+                          const isBkash = ord.payment_method === "bkash" || Boolean(ord.public_note?.toLowerCase().includes("bkash"));
+                          const trxMatch =
+                            ord.public_note?.match(/TrxID:\s*([A-Za-z0-9]+)/i) ||
+                            (ord.order_status_history || [])
+                              .map((h: any) => h.note?.match(/TrxID:\s*([A-Za-z0-9]+)/i))
+                              .find(Boolean);
+                          const rowTrxId = trxMatch ? trxMatch[1] : null;
+
                           return (
-                            <span className="text-[10px] uppercase font-bold text-amber-600 block mt-1">
-                              {ord.payment_method === "cod" ? "COD (PENDING)" : "UNPAID"}
-                            </span>
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                {isPaid ? (
+                                  <div>
+                                    <span className="font-black text-emerald-700 text-sm tracking-tight block">
+                                      ৳0 (PAID)
+                                    </span>
+                                    <span className="text-[10px] text-gray-400 font-bold block">
+                                      Total: {formatPrice(ord.total)}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="font-black text-gray-900 text-sm tracking-tight block">
+                                    {formatPrice(ord.amount_to_collect !== undefined ? ord.amount_to_collect : ord.total)}
+                                  </span>
+                                )}
+                              </div>
+
+                              {Number(ord.advance_paid) > 0 && !isPaid && (
+                                <div className="inline-flex items-center gap-1 mt-1">
+                                  <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded-md text-[9px] font-bold">
+                                    ৳{ord.advance_paid} Advance Paid
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Status Subtext Badge */}
+                              {isPaid ? (
+                                <div className="mt-1 space-y-0.5">
+                                  <span className="inline-block bg-emerald-100 text-emerald-800 border border-emerald-300 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider">
+                                    ✓ PAID ONLINE ({isBkash ? "BKASH" : (ord.payment_method || "ONLINE").toUpperCase()})
+                                  </span>
+                                  {rowTrxId && (
+                                    <span
+                                      className="text-[8.5px] font-mono font-bold text-gray-500 block truncate max-w-36"
+                                      title={`bKash Transaction ID: ${rowTrxId}`}
+                                    >
+                                      Trx: {rowTrxId}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : isRet ? (
+                                <span className="text-[10px] uppercase font-bold text-rose-700 block mt-1">COURIER RTO</span>
+                              ) : isCanc ? (
+                                <span className="text-[10px] uppercase font-bold text-amber-700 block mt-1">COURIER CANCELLED</span>
+                              ) : ord.status === "completed" || ord.status === "delivered" ? (
+                                <span className="inline-block mt-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase">
+                                  COD (COLLECTED)
+                                </span>
+                              ) : ord.status === "on-hold" ? (
+                                <span className="text-[10px] uppercase font-bold text-orange-600 block mt-1">AWAITING VERIFICATION</span>
+                              ) : ord.status === "cancelled" ? (
+                                <span className="text-[10px] uppercase font-bold text-gray-400 block mt-1">CANCELLED</span>
+                              ) : ord.status === "refunded" ? (
+                                <span className="text-[10px] uppercase font-bold text-purple-600 block mt-1">REFUNDED</span>
+                              ) : ord.status === "failed" || ord.status === "returned" ? (
+                                <span className="text-[10px] uppercase font-bold text-red-600 block mt-1">RTO (VOID)</span>
+                              ) : ord.status === "processing" || ord.status === "confirmed" ? (
+                                <span className="text-[10px] uppercase font-bold text-blue-600 block mt-1">COD (PENDING)</span>
+                              ) : (
+                                <span className="text-[10px] uppercase font-bold text-amber-600 block mt-1">
+                                  {ord.payment_method === "cod" ? "COD (PENDING)" : "UNPAID"}
+                                </span>
+                              )}
+                            </div>
                           );
                         })()}
                       </td>
@@ -1834,15 +1952,28 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       <span className="text-[10px] text-gray-400 font-medium mt-0.5 block">{ord.order_items?.length || 1} Item(s)</span>
                     </div>
                     <div className="text-right">
-                      <span className="font-black text-gray-900 text-sm block">
-                        {formatPrice(ord.amount_to_collect !== undefined ? ord.amount_to_collect : ord.total)}
-                      </span>
-                      {Number(ord.advance_paid) > 0 ? (
-                        <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md">
-                          ৳{ord.advance_paid} Advance
-                        </span>
+                      {ord.payment_status === "paid" ? (
+                        <div>
+                          <span className="font-black text-emerald-700 text-sm block">
+                            ৳0 (PAID)
+                          </span>
+                          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md uppercase">
+                            {ord.payment_method === "bkash" ? "bKash Paid" : "Paid Online"}
+                          </span>
+                        </div>
                       ) : (
-                        <span className="text-[10px] uppercase font-bold text-gray-400">COD Due</span>
+                        <div>
+                          <span className="font-black text-gray-900 text-sm block">
+                            {formatPrice(ord.amount_to_collect !== undefined ? ord.amount_to_collect : ord.total)}
+                          </span>
+                          {Number(ord.advance_paid) > 0 ? (
+                            <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-md">
+                              ৳{ord.advance_paid} Advance
+                            </span>
+                          ) : (
+                            <span className="text-[10px] uppercase font-bold text-gray-400">COD Due</span>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>

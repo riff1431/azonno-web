@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useAdminLang } from "@/lib/admin-lang-context";
 import {
@@ -34,6 +34,7 @@ import {
   CreditCard,
   Tag,
   ShieldAlert,
+  ChevronLeft,
   ChevronRight,
   ShoppingCart,
 } from "lucide-react";
@@ -62,9 +63,15 @@ export default function AdminAnalyticsDashboard({
   const [customStart, setCustomStart] = useState("");
   const [customEnd, setCustomEnd] = useState("");
   const [expiryTab, setExpiryTab] = useState<ExpiryTab>("all");
-  const [topProductsLimit, setTopProductsLimit] = useState<5 | 10>(5);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(5);
   const { lang, t } = useAdminLang();
   const isBn = lang === "bn";
+
+  // Reset pagination to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [dateFilter, customStart, customEnd]);
 
   // Filter Orders based on Selected Date Range
   const filteredOrders = useMemo(() => {
@@ -161,16 +168,53 @@ export default function AdminAnalyticsDashboard({
       : "3.2";
   const returnRateNum = parseFloat(returnRate);
 
-  // Payment Method Breakdown: COD vs Digital/Prepaid
-  const codOrdersCount = useMemo(() => {
-    return filteredOrders.filter(
-      (o) => (o.payment_method || "").toLowerCase() === "cod"
-    ).length;
+  // Payment Method Breakdown: COD vs bKash vs Digital
+  const paymentBreakdown = useMemo(() => {
+    let codCount = 0;
+    let codTotal = 0;
+    let bkashCount = 0;
+    let bkashTotal = 0;
+    let otherCount = 0;
+    let otherTotal = 0;
+
+    filteredOrders.forEach((o) => {
+      const method = String(o.payment_method || "").toLowerCase().trim();
+      const amount = Number(o.total || 0);
+
+      if (method === "cod" || method.includes("cash")) {
+        codCount += 1;
+        codTotal += amount;
+      } else if (method.includes("bkash")) {
+        bkashCount += 1;
+        bkashTotal += amount;
+      } else {
+        otherCount += 1;
+        otherTotal += amount;
+      }
+    });
+
+    const total = filteredOrders.length;
+    const codPercent = total > 0 ? Math.round((codCount / total) * 100) : 0;
+    const bkashPercent = total > 0 ? Math.round((bkashCount / total) * 100) : 0;
+    const otherPercent = total > 0 ? Math.max(0, 100 - codPercent - bkashPercent) : 0;
+
+    return {
+      codCount,
+      codTotal,
+      codPercent,
+      bkashCount,
+      bkashTotal,
+      bkashPercent,
+      otherCount,
+      otherTotal,
+      otherPercent,
+      totalOrders: total,
+    };
   }, [filteredOrders]);
 
-  const codRatioPercent =
-    totalOrdersCount > 0 ? Math.round((codOrdersCount / totalOrdersCount) * 100) : 78;
-  const prepaidRatioPercent = 100 - codRatioPercent;
+  const codOrdersCount = paymentBreakdown.codCount;
+  const codRatioPercent = paymentBreakdown.codPercent;
+  const prepaidRatioPercent = paymentBreakdown.bkashPercent + paymentBreakdown.otherPercent;
 
   // Average Basket Size
   const avgBasketSize = useMemo(() => {
@@ -247,8 +291,14 @@ export default function AdminAnalyticsDashboard({
       else if (diffDays <= 90) expiryCategory = "critical";
       else if (diffDays <= 180) expiryCategory = "approaching";
 
-      const stockQty =
-        p.inventory?.on_hand ?? (p.sku ? (index % 4 === 0 ? 3 : 14) : 8);
+      const stockQty = Array.isArray(p.inventory)
+        ? p.inventory.reduce(
+            (sum: number, inv: any) => sum + Number(inv.on_hand ?? inv.available ?? 0),
+            0
+          )
+        : p.inventory && typeof p.inventory === "object"
+        ? Number((p.inventory as any).on_hand ?? (p.inventory as any).available ?? 0)
+        : (p.sku ? (index % 4 === 0 ? 3 : 14) : 8);
       const cost = p.cost_price
         ? Number(p.cost_price)
         : Math.round(Number(p.regular_price || p.sale_price || 1200) * 0.58);
@@ -269,54 +319,100 @@ export default function AdminAnalyticsDashboard({
 
   // Top Performing Products (সেরা বিক্রিত প্রোডাক্ট: নাম, ইউনিট সোল্ড, স্টক লেভেল এবং মোট প্রফিট)
   const topPerformingProducts = useMemo(() => {
-    const salesAgg = new Map<
+    // 1. Aggregate actual sales from non-cancelled/non-failed orders
+    const idSalesMap = new Map<
       string,
-      { unitsSold: number; revenue: number; profit: number; name: string }
+      { unitsSold: number; ordersCount: number; revenue: number; profit: number; name: string }
+    >();
+    const nameSalesMap = new Map<
+      string,
+      { unitsSold: number; ordersCount: number; revenue: number; profit: number; name: string }
     >();
 
     filteredOrders.forEach((order) => {
+      if (["cancelled", "failed"].includes(order.status)) return;
+
       const items = order.order_items || [];
       if (items.length > 0) {
+        const seenInOrder = new Set<string>();
+
         items.forEach((item: any) => {
-          const key = item.product_id || item.product_name_snapshot || "item";
+          const pid = item.product_id ? String(item.product_id).trim() : "";
+          const pname = item.product_name_snapshot
+            ? String(item.product_name_snapshot).trim().toLowerCase()
+            : "";
           const qty = Number(item.quantity || 1);
-          const rev = Number(item.total || Number(item.unit_price || 0) * qty);
+          const rev = Number(
+            item.total != null ? item.total : Number(item.unit_price || 0) * qty
+          );
           const unitCost =
-            productCostMap.get(item.product_id) ||
+            (pid && productCostMap.get(pid)) ||
             Math.round(Number(item.unit_price || 0) * 0.58);
           const itemProfit = Math.max(0, rev - unitCost * qty);
 
-          const existing = salesAgg.get(key) || {
-            unitsSold: 0,
-            revenue: 0,
-            profit: 0,
-            name: item.product_name_snapshot || "Product",
-          };
-          existing.unitsSold += qty;
-          existing.revenue += rev;
-          existing.profit += itemProfit;
-          salesAgg.set(key, existing);
+          const isNewOrderForProduct = pid ? !seenInOrder.has(pid) : !seenInOrder.has(pname);
+          if (pid) seenInOrder.add(pid);
+          if (pname) seenInOrder.add(pname);
+
+          if (pid) {
+            const existing = idSalesMap.get(pid) || {
+              unitsSold: 0,
+              ordersCount: 0,
+              revenue: 0,
+              profit: 0,
+              name: item.product_name_snapshot || "Product",
+            };
+            existing.unitsSold += qty;
+            if (isNewOrderForProduct) existing.ordersCount += 1;
+            existing.revenue += rev;
+            existing.profit += itemProfit;
+            idSalesMap.set(pid, existing);
+          }
+
+          if (pname) {
+            const existing = nameSalesMap.get(pname) || {
+              unitsSold: 0,
+              ordersCount: 0,
+              revenue: 0,
+              profit: 0,
+              name: item.product_name_snapshot || "Product",
+            };
+            existing.unitsSold += qty;
+            if (isNewOrderForProduct) existing.ordersCount += 1;
+            existing.revenue += rev;
+            existing.profit += itemProfit;
+            nameSalesMap.set(pname, existing);
+          }
         });
       }
     });
 
-    const list = enrichedProducts.map((p, idx) => {
-      const baselineUnits = Math.max(2, (p.name.length * 3 + idx * 2) % 28);
-      const stats = salesAgg.get(p.id) ||
-        salesAgg.get(p.name) || {
-          unitsSold: baselineUnits,
-          revenue:
-            (p.sale_price || p.regular_price || 1450) * baselineUnits,
-          profit:
-            ((p.sale_price || p.regular_price || 1450) - p.costPrice) *
-            baselineUnits,
+    // 2. Map all catalog products dynamically with their real sales performance
+    const list = enrichedProducts.map((p) => {
+      const pid = p.id ? String(p.id).trim() : "";
+      const pname = p.name ? String(p.name).trim().toLowerCase() : "";
+
+      const stats =
+        (pid ? idSalesMap.get(pid) : null) ||
+        (pname ? nameSalesMap.get(pname) : null) || {
+          unitsSold: 0,
+          ordersCount: 0,
+          revenue: 0,
+          profit: 0,
           name: p.name,
         };
+
+      const regularOrSale = Number(p.sale_price || p.regular_price || 0);
+      const defaultProfitPerUnit = Math.max(0, regularOrSale - Number(p.costPrice || 0));
+      const defaultMargin =
+        regularOrSale > 0
+          ? Math.round((defaultProfitPerUnit / regularOrSale) * 100)
+          : 40;
 
       const margin =
         stats.revenue > 0
           ? Math.round((stats.profit / stats.revenue) * 100)
-          : 42;
+          : defaultMargin;
 
       return {
         id: p.id,
@@ -330,16 +426,56 @@ export default function AdminAnalyticsDashboard({
         regularPrice: p.regular_price,
         salePrice: p.sale_price,
         unitsSold: stats.unitsSold,
+        ordersCount: stats.ordersCount,
         revenue: stats.revenue,
         profit: stats.profit,
         margin,
       };
     });
 
-    return list.sort(
-      (a, b) => b.unitsSold - a.unitsSold || b.profit - a.profit
-    );
+    // 3. Sort: Most ordered / highest units sold product is ALWAYS in the 1st position (#1)
+    return list.sort((a, b) => {
+      if (b.unitsSold !== a.unitsSold) {
+        return b.unitsSold - a.unitsSold;
+      }
+      if (b.ordersCount !== a.ordersCount) {
+        return b.ordersCount - a.ordersCount;
+      }
+      if (b.revenue !== a.revenue) {
+        return b.revenue - a.revenue;
+      }
+      if (b.stockQty !== a.stockQty) {
+        return b.stockQty - a.stockQty;
+      }
+      return a.name.localeCompare(b.name);
+    });
   }, [filteredOrders, enrichedProducts, productCostMap]);
+
+  // Pagination calculations for Top Performing Products
+  const totalProducts = topPerformingProducts.length;
+  const effectivePageSize = Math.max(1, pageSize);
+  const totalPages = Math.max(1, Math.ceil(totalProducts / effectivePageSize));
+  const activePage = Math.min(Math.max(1, currentPage), totalPages);
+
+  const startIndex = (activePage - 1) * effectivePageSize;
+  const endIndex = Math.min(startIndex + effectivePageSize, totalProducts);
+
+  const paginatedProducts = useMemo(() => {
+    return topPerformingProducts.slice(startIndex, endIndex);
+  }, [topPerformingProducts, startIndex, endIndex]);
+
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (activePage <= 4) {
+      return [1, 2, 3, 4, 5, "...", totalPages];
+    }
+    if (activePage >= totalPages - 3) {
+      return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    }
+    return [1, "...", activePage - 1, activePage, activePage + 1, "...", totalPages];
+  }, [totalPages, activePage]);
 
   // Low Stock & Hot Selling Stock-out Warning
   const lowStockAlertProducts = useMemo(() => {
@@ -699,36 +835,101 @@ export default function AdminAnalyticsDashboard({
 
       {/* 1.5 Secondary Ecommerce Operations Cards (COD vs Prepaid, Basket Size, Delivery Fulfillment, Leads) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
-        {/* COD vs Digital Prepaid Ratio */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-3">
+        {/* COD & bKash Payment Breakdown Card */}
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-3 hover:border-[#e2136e]/40 transition-all group">
+          {/* Card Header */}
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
-              <CreditCard className="h-4 w-4 text-[#e91e63]" /> {t("prepaid_ratio")}
+              <CreditCard className="h-4 w-4 text-[#e2136e]" />
+              {isBn ? "সিওডি ও বিকাশ পেমেন্ট" : "COD & bKash Orders"}
             </span>
-            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              {prepaidRatioPercent}% MFS
+            <span className="text-[10px] font-black text-[#e2136e] bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+              {paymentBreakdown.bkashCount + paymentBreakdown.codCount > 0
+                ? `${paymentBreakdown.bkashPercent}% bKash`
+                : "0%"}
             </span>
           </div>
-          <div>
-            <div className="flex justify-between items-baseline">
-              <span className="text-xs text-gray-700 font-bold">
-                {t("cod_ratio")}: <strong>{codRatioPercent}%</strong>
-              </span>
-              <span className="text-xs text-emerald-600 font-bold">
-                bKash / Cards: <strong>{prepaidRatioPercent}%</strong>
-              </span>
+
+          {/* Side-by-side COD and bKash Blocks */}
+          <div className="grid grid-cols-2 gap-2">
+            {/* COD Block */}
+            <div className="rounded-2xl bg-amber-50/70 border border-amber-200/80 p-2.5 space-y-0.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black text-amber-800 uppercase tracking-wider">
+                  COD
+                </span>
+                <span className="text-[10px] font-black text-amber-900 bg-amber-200/60 px-1.5 py-0.2 rounded-full font-mono">
+                  {paymentBreakdown.codPercent}%
+                </span>
+              </div>
+              <div className="text-base sm:text-lg font-black text-gray-900 leading-tight">
+                {paymentBreakdown.codCount}{" "}
+                <span className="text-[10px] font-bold text-gray-500">{isBn ? "অর্ডার" : "orders"}</span>
+              </div>
+              <div className="text-[11px] font-bold text-amber-900 font-mono truncate">
+                {formatPrice(paymentBreakdown.codTotal)}
+              </div>
             </div>
-            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mt-1.5 flex">
+
+            {/* bKash Block */}
+            <div className="rounded-2xl bg-pink-50/70 border border-pink-200/80 p-2.5 space-y-0.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black text-[#e2136e] uppercase tracking-wider flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#e2136e] animate-pulse shrink-0" />
+                  bKash
+                </span>
+                <span className="text-[10px] font-black text-[#e2136e] bg-pink-200/60 px-1.5 py-0.2 rounded-full font-mono">
+                  {paymentBreakdown.bkashPercent}%
+                </span>
+              </div>
+              <div className="text-base sm:text-lg font-black text-gray-900 leading-tight">
+                {paymentBreakdown.bkashCount}{" "}
+                <span className="text-[10px] font-bold text-pink-700">{isBn ? "অর্ডার" : "orders"}</span>
+              </div>
+              <div className="text-[11px] font-bold text-[#e2136e] font-mono truncate">
+                {formatPrice(paymentBreakdown.bkashTotal)}
+              </div>
+            </div>
+          </div>
+
+          {/* Multi-segment Progress Bar */}
+          <div>
+            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden flex">
               <div
-                className="bg-amber-400 h-full transition-all"
-                style={{ width: `${codRatioPercent}%` }}
-                title={`COD: ${codRatioPercent}%`}
+                className="bg-amber-400 h-full transition-all duration-300"
+                style={{ width: `${paymentBreakdown.codPercent}%` }}
+                title={`COD: ${paymentBreakdown.codCount}টি (${paymentBreakdown.codPercent}%)`}
               />
               <div
-                className="bg-emerald-500 h-full transition-all"
-                style={{ width: `${prepaidRatioPercent}%` }}
-                title={`Digital / MFS: ${prepaidRatioPercent}%`}
+                className="bg-[#e2136e] h-full transition-all duration-300"
+                style={{ width: `${paymentBreakdown.bkashPercent}%` }}
+                title={`bKash: ${paymentBreakdown.bkashCount}টি (${paymentBreakdown.bkashPercent}%)`}
               />
+              {paymentBreakdown.otherPercent > 0 && (
+                <div
+                  className="bg-indigo-500 h-full transition-all duration-300"
+                  style={{ width: `${paymentBreakdown.otherPercent}%` }}
+                  title={`Cards: ${paymentBreakdown.otherCount}টি (${paymentBreakdown.otherPercent}%)`}
+                />
+              )}
+            </div>
+
+            {/* Subtitle / Footer stats */}
+            <div className="flex justify-between items-center text-[10px] font-bold pt-1.5 text-gray-500">
+              <span className="flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
+                {isBn ? "ক্যাশ:" : "COD:"} {paymentBreakdown.codCount}টি
+              </span>
+              <span className="flex items-center gap-1 text-[#e2136e]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#e2136e] shrink-0" />
+                {isBn ? "বিকাশ:" : "bKash:"} {paymentBreakdown.bkashCount}টি
+              </span>
+              {paymentBreakdown.otherCount > 0 && (
+                <span className="flex items-center gap-1 text-indigo-600">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />
+                  {paymentBreakdown.otherCount}টি
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -1017,7 +1218,7 @@ export default function AdminAnalyticsDashboard({
         </div>
       </div>
 
-      {/* 4. Top Performing Products Table (সেরা ৫টি বেশি বিক্রীত প্রোডাক্ট) */}
+      {/* 4. Top Performing Products Table (সর্বোচ্চ বিক্রিত পণ্যসমূহ - ডায়নামিক পেজিনেশন) */}
       <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
           <div>
@@ -1029,44 +1230,60 @@ export default function AdminAnalyticsDashboard({
                 {t("top_performing")}
               </h2>
               <span className="rounded-full bg-pink-50 text-[#e91e63] border border-pink-200 px-2.5 py-0.5 text-[10px] font-black uppercase">
-                {isBn ? `সেরা ${topProductsLimit}টি পণ্য` : `Top ${topProductsLimit}`}
+                {isBn
+                  ? `মোট ${totalProducts}টি পণ্য (পৃষ্ঠা ${activePage}/${totalPages})`
+                  : `Total ${totalProducts} Products (Page ${activePage}/${totalPages})`}
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-1">
               {isBn
-                ? "পণ্য অনুযায়ী মোট ইউনিট বিক্রি, স্টক লেভেল, রাজস্ব এবং প্রফিট মার্জিন।"
-                : "Best selling cosmetics ranked by total units sold, live inventory stock level, and net profit generation."}
+                ? "অর্ডার সংখ্যা এবং বিক্রিত ইউনিটের ভিত্তিতে সাজানো। সর্বোচ্চ বিক্রিত পণ্য সর্বদা ১ম স্থানে থাকবে।"
+                : "Dynamic ranking of all products based on units sold and order volume. Most ordered product is always #1."}
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="inline-flex rounded-xl bg-gray-100 p-1 text-xs font-bold">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Page Size Selector */}
+            <div className="inline-flex items-center rounded-xl bg-gray-100 p-1 text-xs font-bold">
+              <span className="px-2 text-[10px] text-gray-500 uppercase tracking-wider hidden md:inline">
+                {isBn ? "প্রতি পেজে:" : "Per page:"}
+              </span>
+              {[5, 10, 20].map((size) => (
+                <button
+                  key={size}
+                  onClick={() => {
+                    setPageSize(size);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-3 py-1 rounded-lg transition-colors ${
+                    pageSize === size && pageSize < totalProducts
+                      ? "bg-white text-gray-900 shadow-xs"
+                      : "text-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
               <button
-                onClick={() => setTopProductsLimit(5)}
+                onClick={() => {
+                  setPageSize(Math.max(totalProducts, 9999));
+                  setCurrentPage(1);
+                }}
                 className={`px-3 py-1 rounded-lg transition-colors ${
-                  topProductsLimit === 5
+                  pageSize >= totalProducts
                     ? "bg-white text-gray-900 shadow-xs"
                     : "text-gray-500 hover:text-gray-900"
                 }`}
               >
-                Top 5
-              </button>
-              <button
-                onClick={() => setTopProductsLimit(10)}
-                className={`px-3 py-1 rounded-lg transition-colors ${
-                  topProductsLimit === 10
-                    ? "bg-white text-gray-900 shadow-xs"
-                    : "text-gray-500 hover:text-gray-900"
-                }`}
-              >
-                Top 10
+                {isBn ? "সব" : "All"}
               </button>
             </div>
+
             <Link href="/admin/products">
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs font-bold rounded-xl border-gray-200"
+                className="text-xs font-bold rounded-xl border-gray-200 hover:border-pink-300 hover:text-[#e91e63]"
               >
                 {t("view_all_products")} →
               </Button>
@@ -1088,141 +1305,233 @@ export default function AdminAnalyticsDashboard({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {topPerformingProducts.slice(0, topProductsLimit).map((p, idx) => {
-                const maxSold = topPerformingProducts[0]?.unitsSold || 25;
-                const soldProgress = Math.min(
-                  100,
-                  Math.round((p.unitsSold / maxSold) * 100)
-                );
+              {paginatedProducts.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-10 text-center text-gray-400 font-medium">
+                    {isBn ? "কোনো পণ্য পাওয়া যায়নি" : "No products found"}
+                  </td>
+                </tr>
+              ) : (
+                paginatedProducts.map((p, idx) => {
+                  const globalRank = startIndex + idx + 1;
+                  const maxSold = topPerformingProducts[0]?.unitsSold || 1;
+                  const soldProgress =
+                    maxSold > 0 ? Math.min(100, Math.round((p.unitsSold / maxSold) * 100)) : 0;
 
-                return (
-                  <tr
-                    key={p.id || idx}
-                    className="hover:bg-gray-50/70 transition-colors group"
-                  >
-                    {/* Rank Badge */}
-                    <td className="px-4 py-3 text-center">
-                      <span
-                        className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-black ${
-                          idx === 0
-                            ? "bg-amber-400 text-amber-950 shadow-xs"
-                            : idx === 1
-                            ? "bg-slate-300 text-slate-800"
-                            : idx === 2
-                            ? "bg-amber-700/80 text-white"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {idx + 1}
-                      </span>
-                    </td>
+                  return (
+                    <tr
+                      key={p.id || idx}
+                      className="hover:bg-gray-50/70 transition-colors group"
+                    >
+                      {/* Rank Badge */}
+                      <td className="px-4 py-3 text-center">
+                        <span
+                          className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-black ${
+                            globalRank === 1
+                              ? "bg-amber-400 text-amber-950 shadow-xs ring-2 ring-amber-200"
+                              : globalRank === 2
+                              ? "bg-slate-300 text-slate-800 ring-1 ring-slate-200"
+                              : globalRank === 3
+                              ? "bg-amber-700/80 text-white ring-1 ring-amber-600/30"
+                              : "bg-gray-100 text-gray-600 font-bold"
+                          }`}
+                        >
+                          {globalRank}
+                        </span>
+                      </td>
 
-                    {/* Product Name, Image, SKU, Batch */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3 min-w-48">
-                        <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
-                          {p.og_image_url ? (
-                            <img
-                              src={p.og_image_url}
-                              alt={p.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <Package className="h-5 w-5 text-gray-400" />
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <Link
-                            href={`/admin/products/${p.id}/edit`}
-                            className="font-bold text-gray-900 hover:text-[#e91e63] transition-colors block truncate max-w-64"
-                          >
-                            {p.name}
-                          </Link>
-                          <div className="flex items-center gap-2 text-[10px] text-gray-400 mt-0.5">
-                            {p.sku && <span>SKU: {p.sku}</span>}
-                            {p.batch_number && (
-                              <span className="rounded bg-gray-100 px-1.5 py-0.2 font-mono text-gray-600">
-                                {p.batch_number}
-                              </span>
+                      {/* Product Name, Image, SKU, Batch */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3 min-w-48">
+                          <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center">
+                            {p.og_image_url ? (
+                              <img
+                                src={p.og_image_url}
+                                alt={p.name}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <Package className="h-5 w-5 text-gray-400" />
                             )}
                           </div>
+                          <div className="min-w-0">
+                            <Link
+                              href={`/admin/products/${p.id}/edit`}
+                              className="font-bold text-gray-900 hover:text-[#e91e63] transition-colors block truncate max-w-64"
+                            >
+                              {p.name}
+                            </Link>
+                            <div className="flex items-center gap-2 text-[10px] text-gray-400 mt-0.5">
+                              {p.sku && <span>SKU: {p.sku}</span>}
+                              {p.batch_number && (
+                                <span className="rounded bg-gray-100 px-1.5 py-0.2 font-mono text-gray-600">
+                                  {p.batch_number}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Units Sold with Progress Bar */}
-                    <td className="px-4 py-3 text-center">
-                      <div className="inline-block text-center min-w-24">
-                        <span className="text-sm font-black text-gray-900 block">
-                          {p.unitsSold} {isBn ? "পিস" : "sold"}
-                        </span>
-                        <div className="w-20 mx-auto h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
-                          <div
-                            className="h-full bg-linear-to-r from-pink-500 to-[#e91e63] rounded-full"
-                            style={{ width: `${soldProgress}%` }}
-                          />
+                      {/* Units Sold with Progress Bar and Order Count */}
+                      <td className="px-4 py-3 text-center">
+                        <div className="inline-block text-center min-w-24">
+                          <span className="text-sm font-black text-gray-900 block">
+                            {p.unitsSold} {isBn ? "পিস" : "sold"}
+                          </span>
+                          {p.ordersCount > 0 ? (
+                            <span className="text-[10px] text-gray-500 font-semibold block">
+                              ({p.ordersCount} {isBn ? "টি অর্ডার" : "orders"})
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-gray-400 font-medium block">
+                              {isBn ? "(০ অর্ডার)" : "(0 orders)"}
+                            </span>
+                          )}
+                          <div className="w-20 mx-auto h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
+                            <div
+                              className="h-full bg-linear-to-r from-pink-500 to-[#e91e63] rounded-full"
+                              style={{ width: `${soldProgress}%` }}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Stock Level */}
-                    <td className="px-4 py-3 text-center">
-                      <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black ${
-                          p.stockQty <= 0
-                            ? "bg-red-100 text-red-800 border border-red-200"
-                            : p.stockQty <= 5
-                            ? "bg-amber-100 text-amber-800 border border-amber-200 animate-pulse"
-                            : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        }`}
-                      >
-                        {p.stockQty <= 0
-                          ? isBn
-                            ? "স্টক আউট (০)"
-                            : "Out of Stock (0)"
-                          : p.stockQty <= 5
-                          ? isBn
-                            ? `সীমিত স্টক (${p.stockQty})`
-                            : `Low: ${p.stockQty} left`
-                          : isBn
-                          ? `${p.stockQty}টি ইন-স্টক`
-                          : `${p.stockQty} in stock`}
-                      </span>
-                    </td>
-
-                    {/* Revenue */}
-                    <td className="px-4 py-3 text-right font-black text-gray-900">
-                      {formatPrice(p.revenue)}
-                    </td>
-
-                    {/* Profit & Margin */}
-                    <td className="px-4 py-3 text-right">
-                      <span className="font-black text-emerald-700 block">
-                        +{formatPrice(p.profit)}
-                      </span>
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded inline-block mt-0.5">
-                        {p.margin}% margin
-                      </span>
-                    </td>
-
-                    {/* Action */}
-                    <td className="px-4 py-3 text-center">
-                      <Link href={`/admin/products/${p.id}/edit`}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 text-[11px] font-bold text-[#e91e63] hover:bg-pink-50"
+                      {/* Stock Level */}
+                      <td className="px-4 py-3 text-center">
+                        <span
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black ${
+                            p.stockQty <= 0
+                              ? "bg-red-100 text-red-800 border border-red-200"
+                              : p.stockQty <= 5
+                              ? "bg-amber-100 text-amber-800 border border-amber-200 animate-pulse"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}
                         >
-                          {isBn ? "এডিট" : "Edit"}
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
+                          {p.stockQty <= 0
+                            ? isBn
+                              ? "স্টক আউট (০)"
+                              : "Out of Stock (0)"
+                            : p.stockQty <= 5
+                            ? isBn
+                              ? `সীমিত স্টক (${p.stockQty})`
+                              : `Low: ${p.stockQty} left`
+                            : isBn
+                            ? `${p.stockQty}টি ইন-স্টক`
+                            : `${p.stockQty} in stock`}
+                        </span>
+                      </td>
+
+                      {/* Revenue */}
+                      <td className="px-4 py-3 text-right font-black text-gray-900">
+                        {formatPrice(p.revenue)}
+                      </td>
+
+                      {/* Profit & Margin */}
+                      <td className="px-4 py-3 text-right">
+                        <span className="font-black text-emerald-700 block">
+                          +{formatPrice(p.profit)}
+                        </span>
+                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded inline-block mt-0.5">
+                          {p.margin}% margin
+                        </span>
+                      </td>
+
+                      {/* Action */}
+                      <td className="px-4 py-3 text-center">
+                        <Link href={`/admin/products/${p.id}/edit`}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-[11px] font-bold text-[#e91e63] hover:bg-pink-50"
+                          >
+                            {isBn ? "এডিট" : "Edit"}
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
+
+        {/* ── Pagination Footer ── */}
+        {totalProducts > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-100">
+            {/* Range description */}
+            <div className="text-xs text-gray-500 font-medium text-center sm:text-left">
+              {isBn ? (
+                <>
+                  মোট <span className="font-black text-gray-900">{totalProducts}</span>টি পণ্যের মধ্যে{" "}
+                  <span className="font-black text-gray-900">{startIndex + 1}</span> -{" "}
+                  <span className="font-black text-gray-900">{endIndex}</span> দেখানো হচ্ছে
+                </>
+              ) : (
+                <>
+                  Showing <span className="font-black text-gray-900">{startIndex + 1}</span> to{" "}
+                  <span className="font-black text-gray-900">{endIndex}</span> of{" "}
+                  <span className="font-black text-gray-900">{totalProducts}</span> products
+                </>
+              )}
+            </div>
+
+            {/* Page number buttons */}
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={activePage === 1}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  aria-label="Previous Page"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{isBn ? "আগের পেজ" : "Prev"}</span>
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {pageNumbers.map((num, i) => {
+                    if (num === "...") {
+                      return (
+                        <span key={`dots-${i}`} className="px-1.5 text-xs text-gray-400 font-bold select-none">
+                          ...
+                        </span>
+                      );
+                    }
+                    const isCurrent = num === activePage;
+                    return (
+                      <button
+                        key={`page-${num}`}
+                        type="button"
+                        onClick={() => setCurrentPage(num as number)}
+                        className={`min-w-8 h-8 px-2 rounded-xl text-xs font-black transition-all ${
+                          isCurrent
+                            ? "bg-[#e91e63] text-white shadow-xs shadow-pink-200"
+                            : "border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+                        }`}
+                      >
+                        {num}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={activePage === totalPages}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  aria-label="Next Page"
+                >
+                  <span className="hidden sm:inline">{isBn ? "পরের পেজ" : "Next"}</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 5. Inventory Risk & Health Hub: Batch & Expiry Alerts + Low Stock Hot-Selling Warnings */}

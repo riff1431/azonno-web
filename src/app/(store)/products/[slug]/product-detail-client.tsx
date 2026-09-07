@@ -45,7 +45,6 @@ import {
   trackViewItem,
   trackAddToCart as trackGA4AddToCart,
   trackAddToWishlist as trackGA4AddToWishlist,
-  trackInitiateCheckout,
 } from "@/lib/analytics/datalayer";
 import { type StoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { useLanguage } from "@/context/language-context";
@@ -125,9 +124,15 @@ export function ProductDetailClient({
   const categoryName =
     product.product_categories?.[0]?.categories?.name || product.categories?.name || undefined;
 
-  // Track view_item event on initial render or variant switch
+  const lastTrackedProductKey = useRef<string | null>(null);
+
+  // Track view_item event on initial render or variant switch (single fire per key)
   useEffect(() => {
     if (product) {
+      const trackingKey = `${product.id}_${selectedVariant?.id || "base"}_${effectivePrice}`;
+      if (lastTrackedProductKey.current === trackingKey) return;
+      lastTrackedProductKey.current = trackingKey;
+
       trackViewItem({
         item_id: product.id,
         item_name: product.name,
@@ -279,21 +284,6 @@ export function ProductDetailClient({
       ],
       effectivePrice * quantity
     );
-
-    trackInitiateCheckout({
-      items: [
-        {
-          item_id: product.id,
-          item_name: product.name,
-          item_brand: product.brands?.name || undefined,
-          item_category: categoryName,
-          item_variant: selectedVariant?.title || selectedVariant?.name || undefined,
-          price: effectivePrice,
-          quantity,
-        },
-      ],
-      value: effectivePrice * quantity,
-    });
 
     addItem(
       {

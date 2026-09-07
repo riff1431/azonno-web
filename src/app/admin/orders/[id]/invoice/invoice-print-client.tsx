@@ -83,7 +83,22 @@ export default function InvoicePrintClient({
   const hasAssignedCourier = Boolean(order.courier_name);
   const courier = order.courier_name || "Standard Delivery";
   const consignmentCode = order.consignment_id || order.order_number;
-  const isCod = order.payment_method === "cod" || !order.payment_method;
+  
+  // Dynamic payment verification
+  const isPaidOnline = order.payment_status === "paid";
+  const isCod = !isPaidOnline && (order.payment_method === "cod" || !order.payment_method);
+  const isBkash = order.payment_method === "bkash" || Boolean(order.public_note?.toLowerCase().includes("bkash"));
+  
+  // Extract TrxID
+  const trxMatch =
+    order.public_note?.match(/TrxID:\s*([A-Za-z0-9]+)/i) ||
+    (order.order_status_history || [])
+      .map((h: any) => h.note?.match(/TrxID:\s*([A-Za-z0-9]+)/i))
+      .find(Boolean);
+  const trxId = trxMatch ? trxMatch[1] : null;
+
+  const dueAmount = isPaidOnline ? 0 : (order.amount_to_collect !== undefined ? order.amount_to_collect : order.total);
+
   const baseUrl =
     typeof window !== "undefined" && window.location.origin
       ? window.location.origin
@@ -461,10 +476,15 @@ export default function InvoicePrintClient({
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
     doc.setTextColor(120, 120, 120);
-    doc.text("TOTAL DUE:", 166, 47, { align: "right" });
-    doc.setFontSize(12);
-    doc.setTextColor(233, 30, 99);
-    doc.text(`BDT ${order.total}`, 166, 56, { align: "right" });
+    doc.text(isPaidOnline ? "PAYMENT STATUS:" : "TOTAL DUE:", 166, 47, { align: "right" });
+    doc.setFontSize(11);
+    if (isPaidOnline) {
+      doc.setTextColor(5, 150, 105);
+      doc.text("BDT 0 (PAID)", 166, 56, { align: "right" });
+    } else {
+      doc.setTextColor(233, 30, 99);
+      doc.text(`BDT ${dueAmount}`, 166, 56, { align: "right" });
+    }
 
     // A4 QR Code
     if (qrCodeDataUrl) {
@@ -515,21 +535,37 @@ export default function InvoicePrintClient({
     doc.text("Delivery Charge:", 145, totalY + 6);
     doc.text(`BDT ${order.shipping_amount || 0}`, 190, totalY + 6, { align: "right" });
 
-    // Grand Total Box
-    doc.setFillColor(233, 30, 99);
-    doc.roundedRect(140, totalY + 11, 55, 9, 2, 2, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text("GRAND TOTAL", 144, totalY + 17);
-    doc.text(`BDT ${order.total}`, 192, totalY + 17, { align: "right" });
+    // Grand Total / Amount to Collect Box
+    if (isPaidOnline) {
+      doc.setFillColor(5, 150, 105);
+      doc.roundedRect(135, totalY + 11, 60, 9, 2, 2, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.text("COLLECT AT DELIVERY", 137, totalY + 17);
+      doc.text("BDT 0 (PAID)", 192, totalY + 17, { align: "right" });
+    } else {
+      doc.setFillColor(233, 30, 99);
+      doc.roundedRect(140, totalY + 11, 55, 9, 2, 2, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.text("GRAND TOTAL", 144, totalY + 17);
+      doc.text(`BDT ${dueAmount}`, 192, totalY + 17, { align: "right" });
+    }
 
     // Footer & Authorized Signature
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 100, 100);
+    doc.setTextColor(80, 80, 80);
     doc.setFontSize(8);
-    doc.text("Payment Method: " + (isCod ? "Cash on Delivery (COD)" : order.payment_method), 15, totalY + 10);
-    doc.text("Support: " + (invoiceSettings?.invoice_email || ""), 15, totalY + 16);
+    const pdfPaymentMethod = isPaidOnline
+      ? (isBkash ? "bKash Online Payment (PAID)" : "Online Payment (PAID)")
+      : "Cash on Delivery (COD)";
+    doc.text("Payment Method: " + pdfPaymentMethod, 15, totalY + 10);
+    if (trxId) {
+      doc.text("TrxID: " + trxId, 15, totalY + 15);
+    }
+    doc.text("Support: " + (invoiceSettings?.invoice_email || ""), 15, totalY + (trxId ? 20 : 16));
 
     doc.setFont("helvetica", "bold");
     doc.setTextColor(80, 80, 80);
@@ -804,16 +840,20 @@ export default function InvoicePrintClient({
           <div className="flex items-center justify-end gap-3 text-right">
             <div>
               <span className="font-bold text-[10px] uppercase text-gray-500 tracking-wider block">
-                {t.totalDue}
+                {isPaidOnline ? (lang === "bn" ? "পেমেন্ট স্ট্যাটাস:" : "PAYMENT STATUS:") : t.totalDue}
               </span>
               <span
-                className="text-xl font-black font-mono"
-                style={{ color: accentColor }}
+                className={`text-xl font-black font-mono ${isPaidOnline ? "text-emerald-700" : ""}`}
+                style={!isPaidOnline ? { color: accentColor } : undefined}
               >
-                {formatCurrency(order.total)}
+                {isPaidOnline ? (lang === "bn" ? "পরিশোধিত (৳০ বকেয়া)" : "PAID (৳0 DUE)") : formatCurrency(dueAmount)}
               </span>
             </div>
-            {invoiceSettings?.invoice_show_qr_code !== false && qrCodeDataUrl ? (
+            {isPaidOnline ? (
+              <div className="border-2 border-emerald-600 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1 shrink-0">
+                <span>✓ {lang === "bn" ? "বিকাশে পরিশোধিত" : "PAID ONLINE"}</span>
+              </div>
+            ) : invoiceSettings?.invoice_show_qr_code !== false && qrCodeDataUrl ? (
               <img
                 src={qrCodeDataUrl}
                 alt="Order QR Code"
@@ -882,18 +922,32 @@ export default function InvoicePrintClient({
               </span>
               <p className="text-gray-700 font-bold">
                 {t.mode}{" "}
-                <span className="uppercase" style={{ color: accentColor }}>
-                  {isCod
-                    ? lang === "bn"
-                      ? "ক্যাশ অন ডেলিভারি"
-                      : "Cash on Delivery (COD)"
-                    : order.payment_method}
+                <span className="uppercase font-black" style={{ color: isPaidOnline ? "#059669" : accentColor }}>
+                  {isPaidOnline
+                    ? (isBkash
+                        ? (lang === "bn" ? "বিকাশ ইনস্ট্যান্ট পেমেন্ট (পরিশোধিত)" : "bKash Online Payment (PAID)")
+                        : (lang === "bn" ? "অনলাইন পেমেন্ট (পরিশোধিত)" : "Online Payment (PAID)"))
+                    : (lang === "bn" ? "ক্যাশ অন ডেলিভারি (বকেয়া)" : "Cash on Delivery (COD)")}
                 </span>
               </p>
+              {trxId && (
+                <p className="text-emerald-800 font-mono font-bold text-[10.5px]">
+                  Transaction ID (TrxID): <span className="font-black">{trxId}</span>
+                </p>
+              )}
               <p className="text-gray-500 text-[10px]">
-                {t.status} <strong className="uppercase text-gray-800">{order.payment_status}</strong>
+                {t.status}{" "}
+                <strong className={`uppercase font-black ${isPaidOnline ? "text-emerald-700" : "text-amber-700"}`}>
+                  {isPaidOnline ? (lang === "bn" ? "পরিশোধিত (PAID ONLINE)" : "PAID ONLINE") : order.payment_status}
+                </strong>
               </p>
-              <p className="text-gray-400 text-[10px] italic leading-tight">{t.doorstepNotice}</p>
+              <p className="text-gray-400 text-[10px] italic leading-tight">
+                {isPaidOnline
+                  ? (lang === "bn"
+                      ? "* এই অর্ডারের সম্পূর্ণ মূল্য অনলাইনে বিকাশ এর মাধ্যমে পরিশোধ করা হয়েছে। ডেলিভারিতে কোন টাকা নেয়া যাবে না।"
+                      : "* This order is fully paid online. Do not collect any money upon delivery.")
+                  : t.doorstepNotice}
+              </p>
             </div>
 
             <div className="space-y-0.5 pt-2 border-t border-gray-200 text-[10px] text-gray-600">
@@ -940,18 +994,22 @@ export default function InvoicePrintClient({
 
             {/* Grand Total Solid Box */}
             <div
-              className="text-white p-2.5 rounded-xl flex justify-between items-center text-sm font-black shadow-xs mt-1"
-              style={{ backgroundColor: accentColor }}
+              className={`text-white p-2.5 rounded-xl flex justify-between items-center text-sm font-black shadow-xs mt-1 ${
+                isPaidOnline ? "bg-emerald-600" : ""
+              }`}
+              style={!isPaidOnline ? { backgroundColor: accentColor } : undefined}
             >
               <span className="uppercase tracking-wider">
-                {Number(order.advance_paid) > 0
-                  ? lang === "bn"
-                    ? "বকেয়া / COD বিল"
-                    : "Net COD Due"
+                {isPaidOnline
+                  ? (lang === "bn" ? "ডেলিভারিতে প্রদেয় (COD বিল)" : "Due at Delivery (COD)")
+                  : Number(order.advance_paid) > 0
+                  ? (lang === "bn" ? "বকেয়া / COD বিল" : "Net COD Due")
                   : t.grandTotal}
               </span>
               <span className="text-base font-mono font-black">
-                {formatCurrency(order.amount_to_collect !== undefined ? order.amount_to_collect : order.total)}
+                {isPaidOnline
+                  ? (lang === "bn" ? "০৳ (পরিশোধিত)" : "৳0 (PAID)")
+                  : formatCurrency(dueAmount)}
               </span>
             </div>
 
@@ -1037,20 +1095,28 @@ export default function InvoicePrintClient({
             </div>
           )}
 
-            {/* Prominent COD Badge */}
+            {/* Prominent COD or PAID Online Badge */}
           <div>
-            <span className="inline-block border-2 border-black px-2.5 py-0.5 font-black text-xs uppercase font-mono rounded bg-white text-black">
-              {isCod
-                ? `COD : ${formatCurrency(order.amount_to_collect !== undefined ? order.amount_to_collect : order.total)}`
-                : lang === "bn"
-                ? "পেইড (৳০)"
-                : "Non-COD (PAID ৳0)"}
+            <span
+              className={`inline-block border-2 px-3 py-1 font-black text-xs uppercase font-mono rounded ${
+                isPaidOnline ? "border-black bg-black text-white" : "border-black bg-white text-black"
+              }`}
+            >
+              {isPaidOnline
+                ? lang === "bn"
+                  ? "★ পেইড (৳০ প্রদেয়) • টাকা নিবেন না ★"
+                  : "★ NON-COD (PAID ৳0) • DO NOT COLLECT ★"
+                : `COD : ${formatCurrency(dueAmount)}`}
             </span>
-            {Number(order.advance_paid) > 0 && (
+            {isPaidOnline ? (
+              <span className="block text-[8.5px] font-mono font-bold text-gray-900 mt-0.5 uppercase">
+                Paid Online via {isBkash ? "bKash" : "PGW"} {trxId ? `• TrxID: ${trxId}` : ""}
+              </span>
+            ) : Number(order.advance_paid) > 0 ? (
               <span className="block text-[8px] font-mono font-bold text-gray-700 mt-0.5">
                 (৳{order.advance_paid} Advance Paid)
               </span>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -1213,8 +1279,12 @@ export default function InvoicePrintClient({
           <div className="min-w-0">
             <h2 className="text-xs sm:text-sm font-black text-gray-900 flex items-center gap-1.5 flex-wrap">
               <span className="truncate">{order.order_number}</span>
-              <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-pink-100 text-sg-pink font-bold whitespace-nowrap">
-                {isCod ? "Cash on Delivery" : "Online Paid"}
+              <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold whitespace-nowrap ${
+                isPaidOnline
+                  ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                  : "bg-pink-100 text-sg-pink"
+              }`}>
+                {isPaidOnline ? (isBkash ? "bKash Online (PAID)" : "Online Paid") : "Cash on Delivery"}
               </span>
             </h2>
             <p className="text-[11px] text-gray-500 truncate">

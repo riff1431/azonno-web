@@ -415,19 +415,23 @@ export async function createOrder(input: CreateOrderInput) {
 
     await supabaseAdmin.from("order_items").insert(itemsToInsert);
 
-    // 8. Reduce Stock for Processing COD Order
-    await reduceOrderStock(order.id, supabaseAdmin, itemsToInsert);
+    // 8. Reduce Stock for Confirmed COD Orders (Online orders will reduce upon verified payment)
+    if (selectedMethod === "cod") {
+      await reduceOrderStock(order.id, supabaseAdmin, itemsToInsert);
+    }
 
     // 9. Insert Initial Status History
     await supabaseAdmin.from("order_status_history").insert({
       order_id: order.id,
       status: initialStatus,
-      note: "Order placed via website (Cash on Delivery). Stock reduced.",
+      note:
+        selectedMethod === "cod"
+          ? "Order placed via website (Cash on Delivery). Stock reduced."
+          : `Order checkout initiated via website (${selectedMethod.toUpperCase()}). Awaiting customer online payment confirmation.`,
       created_by: user?.id || null,
     });
 
-
-    // 8. Update Coupon Usage if applicable
+    // 10. Update Coupon Usage if applicable
     if (appliedCoupon) {
       await supabaseAdmin.from("coupon_usage").insert({
         coupon_id: appliedCoupon.id,
@@ -442,9 +446,11 @@ export async function createOrder(input: CreateOrderInput) {
         .eq("id", appliedCoupon.id);
     }
 
-    // 9. Automated Transactional SMS Trigger (Admin Controlled)
+    // 11. Automated Transactional SMS Trigger (Admin Controlled)
+    // Only send confirmation SMS immediately for COD orders!
+    // Online payments (bKash/Nagad/SSLCommerz) send confirmation SMS once payment is actually verified and paid!
     const featureSettings = await getStoreFeatureSettings();
-    if (featureSettings.enable_order_placed_sms !== false && input.customer.phone) {
+    if (selectedMethod === "cod" && featureSettings.enable_order_placed_sms !== false && input.customer.phone) {
       sendSmsNotification({
         recipientPhone: input.customer.phone,
         eventType: "order_created",
@@ -499,7 +505,17 @@ export async function getOrderById(orderId: string) {
     .single();
 
   if (error || !order) return null;
-  return order;
+
+  const isPaid = order.payment_status === "paid";
+  const advancePaid = Number(order.advance_paid) || 0;
+  const total = Number(order.total) || 0;
+  const amountToCollect = isPaid ? 0 : Math.max(0, total - advancePaid);
+
+  return {
+    ...order,
+    advance_paid: advancePaid,
+    amount_to_collect: amountToCollect,
+  };
 }
 
 export async function getAdminOrders(statusFilter?: string) {
@@ -551,6 +567,9 @@ export async function getAdminOrders(statusFilter?: string) {
       advancePaid
     );
 
+    const isPaid = order.payment_status === "paid";
+    const amountToCollect = isPaid ? 0 : Math.max(0, grossTotal - advancePaid);
+
     const phone = order.shipping_address_snapshot?.phone || order.guest_phone || "";
     const riskProfile = computeCustomerRiskProfile({
       phone,
@@ -581,7 +600,7 @@ export async function getAdminOrders(statusFilter?: string) {
     return {
       ...order,
       advance_paid: advancePaid,
-      amount_to_collect: financials.amount_to_collect,
+      amount_to_collect: amountToCollect,
       payment_status: order.payment_status || financials.payment_status,
       risk_profile: riskProfile,
       courier_webhook_note: latestCourierHistory?.note || null,

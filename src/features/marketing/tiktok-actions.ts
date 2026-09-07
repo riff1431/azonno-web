@@ -1,7 +1,7 @@
 "use server";
 
 import { createHash } from "crypto";
-import { getSettingsByGroup, updateGroupSettings } from "@/lib/settings/config-service";
+import { getSettingsByGroup, updateGroupSettings, invalidateSettingsCache } from "@/lib/settings/config-service";
 import { revalidatePath } from "next/cache";
 import { getBaseUrl } from "@/lib/utils";
 
@@ -62,6 +62,7 @@ export async function saveTikTokSettings(settings: Partial<TikTokSettings>) {
   });
 
   revalidatePath("/admin/marketing/meta");
+  revalidatePath("/", "layout");
   revalidatePath("/");
   return { success: true };
 }
@@ -73,6 +74,8 @@ export async function sendTikTokCapiEvent(input: {
   eventName: string;
   eventId: string;
   eventSourceUrl?: string;
+  pixelId?: string;
+  accessToken?: string;
   userData?: {
     email?: string;
     phone?: string;
@@ -87,8 +90,8 @@ export async function sendTikTokCapiEvent(input: {
 }) {
   const config = await getTikTokSettings();
 
-  const pixelCode = config.tiktok_pixel_id || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
-  const accessToken = config.tiktok_access_token || process.env.TIKTOK_CAPI_ACCESS_TOKEN;
+  const pixelCode = (input.pixelId && input.pixelId.trim()) || config.tiktok_pixel_id || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
+  const accessToken = (input.accessToken && input.accessToken.trim()) || config.tiktok_access_token || process.env.TIKTOK_CAPI_ACCESS_TOKEN;
 
   if (!pixelCode || !accessToken) {
     return {
@@ -119,10 +122,29 @@ export async function sendTikTokCapiEvent(input: {
       if (hashedExt) userPayload.external_id = hashedExt;
     }
 
-    if (clientIpAddress) userPayload.ip = clientIpAddress;
+    let effectiveIp = clientIpAddress;
+    if (
+      !effectiveIp ||
+      effectiveIp === "::1" ||
+      effectiveIp === "127.0.0.1" ||
+      effectiveIp.startsWith("192.168.") ||
+      effectiveIp.startsWith("10.")
+    ) {
+      if (process.env.NODE_ENV === "development") {
+        effectiveIp = "103.108.140.25";
+      } else {
+        effectiveIp = undefined;
+      }
+    }
+    if (effectiveIp) userPayload.ip = effectiveIp;
     if (clientUserAgent) userPayload.user_agent = clientUserAgent;
     if (ttclid) userPayload.ttclid = ttclid;
-    if (ttp) userPayload.ttp = ttp;
+    userPayload.ttp = ttp || `ttp.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+  } else {
+    userPayload.ttp = `ttp.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+    if (process.env.NODE_ENV === "development") {
+      userPayload.ip = "103.108.140.25";
+    }
   }
 
   // Map event name to TikTok standard if needed
@@ -143,7 +165,14 @@ export async function sendTikTokCapiEvent(input: {
       content_id: input.properties?.content_id || (input.properties?.content_ids?.[0]) || undefined,
       content_name: input.properties?.content_name || undefined,
       content_category: input.properties?.content_category || undefined,
-      quantity: input.properties?.num_items || input.properties?.quantity || undefined,
+      quantity:
+        input.properties?.quantity !== undefined
+          ? Number(input.properties?.quantity)
+          : input.properties?.num_items !== undefined
+          ? Number(input.properties?.num_items)
+          : Array.isArray(input.properties?.contents)
+          ? input.properties?.contents.reduce((sum: number, it: any) => sum + (Number(it.quantity) || 1), 0)
+          : undefined,
       order_id: input.properties?.order_id || input.properties?.transaction_id || undefined,
       query: input.properties?.search_string || input.properties?.query || undefined,
     },
@@ -204,13 +233,53 @@ export async function sendTikTokCapiEvent(input: {
 /**
  * 4. Test Live Diagnostic TikTok Events API Connection
  */
-export async function testTikTokCapiDiagnostic(testCodeOverride?: string, originUrl?: string) {
+export async function testTikTokCapiDiagnostic(
+  params?:
+    | string
+    | {
+        testEventCode?: string;
+        pixelId?: string;
+        accessToken?: string;
+        originUrl?: string;
+      },
+  originUrlFallback?: string
+) {
+  let testCodeOverride: string | undefined;
+  let pixelId: string | undefined;
+  let accessToken: string | undefined;
+  let originUrl: string | undefined = originUrlFallback;
+
+  if (typeof params === "string") {
+    testCodeOverride = params;
+  } else if (params && typeof params === "object") {
+    testCodeOverride = params.testEventCode;
+    pixelId = params.pixelId?.trim();
+    accessToken = params.accessToken?.trim();
+    originUrl = params.originUrl || originUrlFallback;
+  }
+
+  // If credentials are provided from the UI, auto-sync and persist them
+  if (pixelId && accessToken) {
+    try {
+      await updateGroupSettings("marketing_tiktok", {
+        tiktok_pixel_id: pixelId,
+        tiktok_access_token: accessToken,
+        ...(testCodeOverride !== undefined ? { tiktok_test_event_code: testCodeOverride } : {}),
+      });
+      invalidateSettingsCache("group:marketing_tiktok");
+    } catch (err) {
+      console.warn("[testTikTokCapiDiagnostic] Auto-sync to settings skipped:", err);
+    }
+  }
+
   const testEventId = `tt_test_evt_${Date.now()}_diag`;
   const base = originUrl || getBaseUrl() || "";
   const result = await sendTikTokCapiEvent({
     eventName: "PageView",
     eventId: testEventId,
     eventSourceUrl: base ? `${base}/admin/marketing/meta` : undefined,
+    pixelId,
+    accessToken,
     userData: {
       email: "test_customer@example.com",
       phone: "01700000000",

@@ -15,7 +15,6 @@ import {
   trackAddToCart as trackGA4AddToCart,
   trackAddToWishlist as trackGA4AddToWishlist,
   trackSelectItem,
-  trackInitiateCheckout,
 } from "@/lib/analytics/datalayer";
 
 export interface ProductCardData {
@@ -132,20 +131,6 @@ export function ProductCard({
       ],
       effectivePrice
     );
-
-    trackInitiateCheckout({
-      items: [
-        {
-          item_id: product.id,
-          item_name: product.name,
-          item_brand: product.brand_name || undefined,
-          item_category: product.category_name || undefined,
-          price: effectivePrice,
-          quantity: 1,
-        },
-      ],
-      value: effectivePrice,
-    });
 
     addItem(
       {

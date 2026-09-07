@@ -7,6 +7,7 @@ declare global {
   interface Window {
     fbq: any;
     _fbq: any;
+    __META_PIXEL_ID__?: string;
   }
 }
 
@@ -21,19 +22,31 @@ function getCookie(name: string): string | undefined {
 const recentMetaEventTimestamps = new Map<string, number>();
 const META_DEDUP_WINDOW_MS = 1200;
 
-export function MetaPixel() {
+import { useEffect } from "react";
+
+export function MetaPixel({ pixelId: propPixelId }: { pixelId?: string } = {}) {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
-  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID || "123456789012345";
+  const pixelId = propPixelId || process.env.NEXT_PUBLIC_META_PIXEL_ID || "";
+  if (!pixelId || pixelId === "123456789012345") return null;
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.fbq) {
+      if (window.__META_PIXEL_ID__ && window.__META_PIXEL_ID__ !== pixelId) {
+        window.fbq("init", pixelId);
+        window.__META_PIXEL_ID__ = pixelId;
+      }
+    }
+  }, [pixelId]);
 
   return (
-    <>
-      <Script
-        id="meta-pixel"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
+    <Script
+      id="meta-pixel-fallback"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{
+        __html: `
+          if (typeof window !== 'undefined' && !window.__META_PIXEL_ID__) {
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -43,11 +56,28 @@ export function MetaPixel() {
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '${pixelId}');
-          `,
-        }}
-      />
-    </>
+            window.__META_PIXEL_ID__ = '${pixelId}';
+          }
+        `,
+      }}
+    />
   );
+}
+
+function getOrInitFbq() {
+  if (typeof window === "undefined") return undefined;
+  if (!window.fbq) {
+    const n: any = function () {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+    };
+    if (!window._fbq) window._fbq = n;
+    n.push = n;
+    n.loaded = true;
+    n.version = "2.0";
+    n.queue = [];
+    window.fbq = n;
+  }
+  return window.fbq;
 }
 
 /**
@@ -85,6 +115,7 @@ export function trackMetaEvent(
     (Array.isArray(params.content_ids) ? params.content_ids.join(",") : "") ||
     params.search_string ||
     params.content_name ||
+    (typeof window !== "undefined" ? window.location.pathname : "") ||
     "";
 
   const eventFingerprint = `${eventName}::${contentSignature}::${params.value || 0}`;
@@ -100,19 +131,33 @@ export function trackMetaEvent(
   // 3. Generate deterministic matching eventID for Browser Pixel & Server CAPI deduplication
   const eventId = customEventId || `evt_${now}_${Math.random().toString(36).substring(2, 9)}`;
 
-  // 4. Fire Browser Meta Pixel (if fbq loaded)
-  if (window.fbq) {
+  // 4. Fire Browser Meta Pixel (guaranteed queue buffer via getOrInitFbq)
+  const fbq = getOrInitFbq();
+  if (fbq) {
     if (Object.keys(params).length > 0) {
-      window.fbq("track", eventName, params, { eventID: eventId });
+      fbq("track", eventName, params, { eventID: eventId });
     } else {
-      window.fbq("track", eventName, {}, { eventID: eventId });
+      fbq("track", eventName, {}, { eventID: eventId });
     }
   }
 
   // 5. Fire Server-Side Meta Conversions API (CAPI) in background
   try {
-    const fbp = getCookie("_fbp");
-    const fbc = getCookie("_fbc");
+    let fbp = getCookie("_fbp");
+    if (!fbp && typeof window !== "undefined") {
+      fbp =
+        localStorage.getItem("ecomx_fbp") ||
+        `fb.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+      document.cookie = `_fbp=${fbp};path=/;max-age=7776000;SameSite=Lax`;
+      localStorage.setItem("ecomx_fbp", fbp);
+    }
+
+    let fbc = getCookie("_fbc") || (typeof localStorage !== "undefined" ? localStorage.getItem("ecomx_fbc") || undefined : undefined);
+
+    const testCode =
+      (typeof sessionStorage !== "undefined" && sessionStorage.getItem("meta_test_event_code")) ||
+      getCookie("meta_test_event_code") ||
+      undefined;
 
     const userData = customerData
       ? {
@@ -147,6 +192,7 @@ export function trackMetaEvent(
         eventSourceUrl: window.location.href,
         userData,
         customData: params,
+        testEventCode: testCode,
       }),
       keepalive: true,
     }).catch(() => {

@@ -366,8 +366,18 @@ export function trackViewContent(
     "ViewContent",
     {
       content_id: item.item_id,
+      content_ids: [item.item_id],
       content_name: item.item_name,
       content_type: "product",
+      content_category: item.item_category,
+      contents: [
+        {
+          content_id: item.item_id,
+          content_name: item.item_name,
+          price: itemPrice,
+          quantity,
+        },
+      ],
       value,
       currency,
     },
@@ -687,8 +697,16 @@ export function trackAddToCart(
     "AddToCart",
     {
       content_id: firstItem?.item_id,
+      content_ids: contentIds,
       content_name: firstItem?.item_name,
       content_type: "product",
+      content_category: firstItem?.item_category,
+      contents: items.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
       value: totalValue,
       currency,
       quantity: totalQuantity,
@@ -862,6 +880,14 @@ export function trackInitiateCheckout(
   trackTikTokEvent(
     "InitiateCheckout",
     {
+      content_id: contentIds[0],
+      content_ids: contentIds,
+      contents: items.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
       value: totalValue,
       currency: curr,
       quantity: totalQuantity,
@@ -1125,6 +1151,14 @@ export function trackPurchase(params: PurchaseEventParams): void {
       "CompletePayment",
       {
         content_type: "product",
+        content_id: contentIds[0],
+        content_ids: contentIds,
+        contents: params.items.map((it) => ({
+          content_id: it.item_id,
+          content_name: it.item_name,
+          price: Number(it.price) || 0,
+          quantity: it.quantity || 1,
+        })),
         currency: curr,
         value: params.value,
         quantity: totalQuantity,

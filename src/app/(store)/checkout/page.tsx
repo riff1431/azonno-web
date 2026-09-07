@@ -184,9 +184,14 @@ export default function CheckoutPage() {
     });
   }, []);
 
-  // Track begin_checkout
+  const hasTrackedBeginCheckout = useRef(false);
+  const lastTrackedShippingTier = useRef<string | null>(null);
+  const lastTrackedPayment = useRef<string | null>(null);
+
+  // 1. Track begin_checkout / InitiateCheckout once cart items load
   useEffect(() => {
-    if (items.length > 0) {
+    if (items.length > 0 && !hasTrackedBeginCheckout.current) {
+      hasTrackedBeginCheckout.current = true;
       trackBeginCheckout({
         items: items.map((it) => ({
           item_id: it.product_id || it.id,
@@ -200,16 +205,89 @@ export default function CheckoutPage() {
         coupon: coupon?.code,
         discount,
         customer: {
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          city: formData.district,
-          state: formData.division,
+          name: formData.name || undefined,
+          phone: formData.phone || undefined,
+          email: formData.email || undefined,
+          city: formData.district || undefined,
+          state: formData.division || undefined,
           country: "BD",
         },
       });
     }
-  }, []);
+  }, [items, finalTotal, coupon, discount, formData]);
+
+  // 2. Track add_shipping_info when delivery location/zone is determined
+  useEffect(() => {
+    if (items.length > 0 && currentZone) {
+      const tier =
+        currentZone === "inside_dhaka" ? "Inside Dhaka" : "Outside Dhaka";
+
+      if (lastTrackedShippingTier.current !== tier) {
+        lastTrackedShippingTier.current = tier;
+        trackAddShippingInfo({
+          items: items.map((it) => ({
+            item_id: it.product_id || it.id,
+            item_name: it.name,
+            item_brand: it.brand_name || undefined,
+            item_variant: it.variant_label || undefined,
+            price: it.price,
+            quantity: it.quantity,
+          })),
+          value: finalTotal,
+          shipping: shippingFee,
+          shipping_tier: tier,
+          coupon: coupon?.code,
+          discount,
+          customer: {
+            name: formData.name || undefined,
+            phone: formData.phone || undefined,
+            email: formData.email || undefined,
+            city: formData.district || undefined,
+            state: formData.division || undefined,
+            country: "BD",
+          },
+        });
+      }
+    }
+  }, [items, currentZone, finalTotal, shippingFee, coupon, discount, formData]);
+
+  // 3. Track add_payment_info when payment method is chosen
+  useEffect(() => {
+    if (items.length > 0 && selectedPaymentMethod) {
+      if (lastTrackedPayment.current !== selectedPaymentMethod) {
+        lastTrackedPayment.current = selectedPaymentMethod;
+        const paymentLabel =
+          selectedPaymentMethod === "bkash"
+            ? "bKash"
+            : selectedPaymentMethod === "nagad"
+            ? "Nagad"
+            : "Cash on Delivery";
+
+        trackAddPaymentInfo({
+          items: items.map((it) => ({
+            item_id: it.product_id || it.id,
+            item_name: it.name,
+            item_brand: it.brand_name || undefined,
+            item_variant: it.variant_label || undefined,
+            price: it.price,
+            quantity: it.quantity,
+          })),
+          value: finalTotal,
+          payment_type: paymentLabel,
+          coupon: coupon?.code,
+          discount,
+          customer: {
+            name: formData.name || undefined,
+            phone: formData.phone || undefined,
+            email: formData.email || undefined,
+            city: formData.district || undefined,
+            state: formData.division || undefined,
+            country: "BD",
+          },
+        });
+      }
+    }
+  }, [items, selectedPaymentMethod, finalTotal, coupon, discount, formData]);
 
   // Real-time Abandoned Cart Capture (captures as customer types)
   useEffect(() => {
@@ -411,29 +489,36 @@ export default function CheckoutPage() {
 
       // If bKash Online Payment is selected, initiate bKash PGW session
       if (selectedPaymentMethod === "bkash") {
-        clearCart();
         try {
           const bkashRes = await fetch("/api/payments/bkash/create", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ orderId: res.orderId }),
           });
-          const bkashData = await bkashRes.json();
+          const bkashData = await bkashRes.json().catch(() => ({}));
           if (bkashData.success && bkashData.bkashURL) {
+            clearCart();
             window.location.href = bkashData.bkashURL;
             return;
           } else {
-            // If bKash gateway is temporarily unavailable or credentials invalid
+            // Keep cart intact so customer does not see an empty cart screen
             setErrorMsg(
               bkashData.error ||
-                "Could not open bKash payment gateway. You can complete your order using Cash on Delivery."
+                (language === "bn"
+                  ? "বিকাশ পেমেন্ট গেটওয়ে চালু করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন অথবা ক্যাশ অন ডেলিভারি বেছে নিন।"
+                  : "Could not initiate bKash payment session. You can retry or complete using Cash on Delivery.")
             );
             setLoading(false);
             return;
           }
-        } catch {
-          // Fallback to confirmation page if bKash call errors
-          router.push(`/orders/${res.orderId}/confirmation`);
+        } catch (bkashErr: any) {
+          setErrorMsg(
+            bkashErr.message ||
+              (language === "bn"
+                ? "বিকাশ পেমেন্ট সার্ভারের সাথে সংযোগ বিচ্ছিন্ন হয়েছে।"
+                : "Failed to connect to bKash gateway. Please retry or choose Cash on Delivery.")
+          );
+          setLoading(false);
           return;
         }
       }
@@ -929,73 +1014,120 @@ export default function CheckoutPage() {
             </h2>
 
             <div className="space-y-3">
-              <label
-                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${
+              {/* Cash on Delivery Option */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedPaymentMethod("cod")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedPaymentMethod("cod");
+                  }
+                }}
+                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
                   selectedPaymentMethod === "cod"
-                    ? "border-[#e91e63] bg-pink-50/40 ring-1 ring-[#e91e63]"
-                    : "border-border hover:bg-surface-secondary/50"
+                    ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
+                    : "border-border hover:bg-surface-secondary/50 bg-white"
                 }`}
               >
                 <input
                   type="radio"
+                  id="payment_method_cod"
                   name="payment_method"
                   value="cod"
                   checked={selectedPaymentMethod === "cod"}
                   onChange={() => setSelectedPaymentMethod("cod")}
-                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
                 />
-                <div className="flex-1 text-xs">
-                  <span className="font-bold text-text text-sm block">{t("checkout", "cod")}</span>
+                <label htmlFor="payment_method_cod" className="flex-1 text-xs cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-text text-sm block">{t("checkout", "cod")}</span>
+                    {selectedPaymentMethod === "cod" && (
+                      <span className="text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        {language === "bn" ? "সিলেক্টেড" : "Selected"}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-text-secondary mt-0.5 block leading-relaxed">
                     {t("checkout", "codDesc")}
                   </span>
-                </div>
-              </label>
+                </label>
+              </div>
 
-              <label
-                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${
+              {/* bKash Payment Option */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedPaymentMethod("bkash")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedPaymentMethod("bkash");
+                  }
+                }}
+                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
                   selectedPaymentMethod === "bkash"
-                    ? "border-[#e91e63] bg-pink-50/40 ring-1 ring-[#e91e63]"
-                    : "border-border hover:bg-surface-secondary/50"
+                    ? "border-[#e91e63] bg-pink-50/60 ring-2 ring-[#e91e63]/40 shadow-xs"
+                    : "border-border hover:bg-surface-secondary/50 bg-white"
                 }`}
               >
                 <input
                   type="radio"
+                  id="payment_method_bkash"
                   name="payment_method"
                   value="bkash"
                   checked={selectedPaymentMethod === "bkash"}
                   onChange={() => setSelectedPaymentMethod("bkash")}
-                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
                 />
-                <div className="flex-1 text-xs">
+                <label htmlFor="payment_method_bkash" className="flex-1 text-xs cursor-pointer">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-text text-sm">{t("checkout", "bkash")}</span>
-                    <span className="text-[10px] font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
-                      {language === "bn" ? "ইনস্ট্যান্ট" : "Instant"}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-black text-[#e91e63] text-sm">{t("checkout", "bkash")}</span>
+                      <span className="text-[10px] font-bold text-white bg-[#e91e63] px-2 py-0.5 rounded-full shadow-2xs">
+                        {language === "bn" ? "ইনস্ট্যান্ট পেমেন্ট" : "Instant Pay"}
+                      </span>
+                    </div>
+                    {selectedPaymentMethod === "bkash" && (
+                      <span className="text-[10px] font-black uppercase text-[#e91e63] bg-pink-100 px-2 py-0.5 rounded-full border border-pink-300">
+                        {language === "bn" ? "সিলেক্টেড" : "Selected"}
+                      </span>
+                    )}
                   </div>
                   <span className="text-text-secondary mt-0.5 block leading-relaxed">
                     {t("checkout", "bkashDesc")}
                   </span>
-                </div>
-              </label>
+                </label>
+              </div>
 
-              <label
-                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all ${
+              {/* SSLCommerz Payment Option */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedPaymentMethod("sslcommerz")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedPaymentMethod("sslcommerz");
+                  }
+                }}
+                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
                   selectedPaymentMethod === "sslcommerz"
-                    ? "border-[#e91e63] bg-pink-50/40 ring-1 ring-[#e91e63]"
-                    : "border-border hover:bg-surface-secondary/50"
+                    ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
+                    : "border-border hover:bg-surface-secondary/50 bg-white"
                 }`}
               >
                 <input
                   type="radio"
+                  id="payment_method_sslcommerz"
                   name="payment_method"
                   value="sslcommerz"
                   checked={selectedPaymentMethod === "sslcommerz"}
                   onChange={() => setSelectedPaymentMethod("sslcommerz")}
-                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
                 />
-                <div className="flex-1 text-xs">
+                <label htmlFor="payment_method_sslcommerz" className="flex-1 text-xs cursor-pointer">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-text text-sm">
                       {language === "bn" ? "অনলাইন পেমেন্ট (কার্ড ও নেট ব্যাংকিং)" : "SSLCommerz (Cards & Net Banking)"}
@@ -1009,8 +1141,8 @@ export default function CheckoutPage() {
                       ? "ভিসা, মাস্টারকার্ড, অ্যামেক্স, ব্র্যাক, সিটিটাস, ডাচ-বাংলা অথবা যেকোনো ব্যাংক কার্ড দিয়ে অনলাইনে নিরাপদে পেমেন্ট করুন।"
                       : "Pay securely with Visa, MasterCard, Amex, Internet Banking, or Mobile Wallet via SSLCommerz."}
                   </span>
-                </div>
-              </label>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -1197,8 +1329,18 @@ export default function CheckoutPage() {
                 </>
               ) : !phoneValidation.isValid ? (
                 language === "bn" ? "সঠিক মোবাইল নম্বর দিন" : "Enter Valid Phone Number"
+              ) : selectedPaymentMethod === "bkash" ? (
+                language === "bn"
+                  ? `বিকাশে পেমেন্ট করুন — ${formatPriceBn(finalTotal)}`
+                  : `Pay with bKash — ${formatPriceBn(finalTotal)}`
+              ) : selectedPaymentMethod === "sslcommerz" ? (
+                language === "bn"
+                  ? `অনলাইনে পেমেন্ট করুন — ${formatPriceBn(finalTotal)}`
+                  : `Pay Online — ${formatPriceBn(finalTotal)}`
               ) : (
-                `${t("checkout", "placeOrder")} — ${formatPriceBn(finalTotal)}`
+                language === "bn"
+                  ? `অর্ডার নিশ্চিত করুন (ক্যাশ অন ডেলিভারি) — ${formatPriceBn(finalTotal)}`
+                  : `Place Order (Cash on Delivery) — ${formatPriceBn(finalTotal)}`
               )}
             </Button>
 

@@ -235,11 +235,25 @@ export async function getModuleSettings(
       query = query.in("environment", ["all", environment]);
     }
 
-    const { data } = await query;
+    const { data } = await query.order("updated_at", { ascending: true });
     const result: Record<string, any> = {};
 
     if (data) {
-      for (const row of data) {
+      // First pass: detect if there is an explicit environment setting (e.g. 'live' or 'sandbox')
+      const envRow = data.find((r) => r.setting_key === "environment");
+      const targetEnv = envRow ? String(envRow.setting_value) : environment;
+
+      // Sort so fallback/sandbox settings are processed first, and targetEnv / 'all' override them
+      const sorted = [...data].sort((a, b) => {
+        const getScore = (env: string) => {
+          if (env === targetEnv) return 3;
+          if (env === "all") return 2;
+          return 1;
+        };
+        return getScore(a.environment) - getScore(b.environment);
+      });
+
+      for (const row of sorted) {
         let val: any = row.setting_value;
 
         if (row.is_secret) {

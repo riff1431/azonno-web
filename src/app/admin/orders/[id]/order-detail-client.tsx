@@ -955,28 +955,65 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   </span>
                 </div>
 
+                {/* Dynamic Due Amount */}
                 <div className="border-t border-gray-200 pt-3 flex justify-between items-baseline text-sm font-black text-gray-900">
-                  <span>Total Due</span>
-                  <span className="text-[#e91e63] text-xl font-black">{formatPrice(order.total)}</span>
+                  <span>{order.payment_status === "paid" ? "COD Due to Collect" : "Total COD Due"}</span>
+                  <span className={`text-xl font-black ${order.payment_status === "paid" ? "text-emerald-700" : "text-[#e91e63]"}`}>
+                    {order.payment_status === "paid" ? "৳0 (PAID)" : formatPrice(order.amount_to_collect !== undefined ? order.amount_to_collect : order.total)}
+                  </span>
                 </div>
+
+                {order.payment_status === "paid" && (
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Total Order Bill:</span>
+                    <span className="font-bold text-gray-800 font-mono">{formatPrice(order.total)}</span>
+                  </div>
+                )}
 
                 <div className="pt-2 border-t border-dashed border-gray-200 flex justify-between items-center text-[11px]">
                   <span className="font-medium">Payment Method:</span>
-                  <span className="font-black uppercase text-gray-800 bg-gray-100 px-2 py-0.5 rounded-lg border border-gray-200">
-                    {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method}
+                  <span
+                    className={`font-black uppercase px-2.5 py-0.5 rounded-lg border text-xs flex items-center gap-1 ${
+                      order.payment_status === "paid"
+                        ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                        : "bg-gray-100 text-gray-800 border-gray-200"
+                    }`}
+                  >
+                    {order.payment_status === "paid" && <CheckCircle2 className="h-3 w-3 text-emerald-600" />}
+                    {order.payment_method === "bkash"
+                      ? "bKash Online Payment"
+                      : order.payment_method === "cod"
+                      ? "Cash on Delivery"
+                      : order.payment_method}
                   </span>
                 </div>
+
+                {/* TrxID Badge if Online Payment */}
+                {(() => {
+                  const trxMatch =
+                    order.public_note?.match(/TrxID:\s*([A-Za-z0-9]+)/i) ||
+                    (history || []).map((h: any) => h.note?.match(/TrxID:\s*([A-Za-z0-9]+)/i)).find(Boolean);
+                  const trxId = trxMatch ? trxMatch[1] : null;
+
+                  if (!trxId) return null;
+                  return (
+                    <div className="flex justify-between items-center text-[11px] bg-pink-50 p-2 rounded-xl border border-pink-200">
+                      <span className="font-bold text-pink-900">bKash TrxID:</span>
+                      <span className="font-mono font-black text-pink-700">{trxId}</span>
+                    </div>
+                  );
+                })()}
 
                 <div className="flex justify-between items-center text-[11px]">
                   <span className="font-medium">Payment Status:</span>
                   <span
                     className={`font-black uppercase px-2.5 py-0.5 rounded-lg border text-[10px] ${
                       order.payment_status === "paid"
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        ? "bg-emerald-100 text-emerald-800 border-emerald-300"
                         : "bg-amber-50 text-amber-700 border-amber-200"
                     }`}
                   >
-                    {order.payment_status}
+                    {order.payment_status === "paid" ? "PAID (পরিশোধিত)" : order.payment_status}
                   </span>
                 </div>
               </div>

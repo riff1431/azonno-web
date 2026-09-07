@@ -84,7 +84,7 @@ export async function getAdminNotifications(): Promise<{
     try {
       const { data: lowStockItems } = await supabase
         .from("inventory")
-        .select("id, product_id, available, on_hand, safety_stock, products(id, name, slug)")
+        .select("id, product_id, available, on_hand, low_stock_threshold, products(id, name, slug)")
         .lte("available", 15)
         .order("available", { ascending: true })
         .limit(4);

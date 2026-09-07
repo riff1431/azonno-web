@@ -2,11 +2,13 @@
 
 import Script from "next/script";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 declare global {
   interface Window {
     ttq: any;
     TiktokAnalyticsObject: string;
+    __TIKTOK_PIXEL_ID__?: string;
   }
 }
 
@@ -21,29 +23,74 @@ function getCookie(name: string): string | undefined {
 const recentTikTokEventTimestamps = new Map<string, number>();
 const TIKTOK_DEDUP_WINDOW_MS = 1200;
 
-export function TikTokPixel() {
+export function TikTokPixel({ pixelId: propPixelId }: { pixelId?: string } = {}) {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
-  const pixelId = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "CXXXXXXXXXXXXXXXXXX";
+  const pixelId = propPixelId || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "";
+  if (!pixelId || pixelId.startsWith("CXXX")) return null;
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.ttq) {
+      if (window.__TIKTOK_PIXEL_ID__ && window.__TIKTOK_PIXEL_ID__ !== pixelId) {
+        window.ttq.load(pixelId);
+        window.__TIKTOK_PIXEL_ID__ = pixelId;
+      }
+    }
+  }, [pixelId]);
 
   return (
-    <>
-      <Script
-        id="tiktok-pixel"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
+    <Script
+      id="tiktok-pixel-fallback"
+      strategy="afterInteractive"
+      dangerouslySetInnerHTML={{
+        __html: `
+          if (typeof window !== 'undefined' && !window.__TIKTOK_PIXEL_ID__) {
             !function (w, d, t) {
               w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;var c=document.getElementsByTagName("script")[0];c.parentNode.insertBefore(a,c)};
               ttq.load('${pixelId}');
-              ttq.page();
+              window.__TIKTOK_PIXEL_ID__ = '${pixelId}';
             }(window, document, 'ttq');
-          `,
-        }}
-      />
-    </>
+          }
+        `,
+      }}
+    />
   );
+}
+
+function getOrInitTtq() {
+  if (typeof window === "undefined") return undefined;
+  if (!window.ttq) {
+    const ttq: any = [];
+    ttq.methods = [
+      "page",
+      "track",
+      "identify",
+      "instances",
+      "debug",
+      "on",
+      "off",
+      "once",
+      "ready",
+      "alias",
+      "group",
+      "enableCookie",
+      "disableCookie",
+      "holdConsent",
+      "revokeConsent",
+      "grantConsent",
+    ];
+    ttq.setAndDefer = function (t: any, e: any) {
+      t[e] = function () {
+        t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
+      };
+    };
+    for (let i = 0; i < ttq.methods.length; i++) {
+      ttq.setAndDefer(ttq, ttq.methods[i]);
+    }
+    window.ttq = ttq;
+  }
+  return window.ttq;
 }
 
 /**
@@ -87,6 +134,7 @@ export function trackTikTokEvent(
     params.query ||
     params.search_string ||
     params.content_name ||
+    (typeof window !== "undefined" ? window.location.pathname : "") ||
     "";
 
   const eventFingerprint = `${mappedEvent}::${contentSignature}::${params.value || 0}`;
@@ -102,23 +150,57 @@ export function trackTikTokEvent(
   // 3. Generate deterministic matching eventID
   const eventId = customEventId || `tt_evt_${now}_${Math.random().toString(36).substring(2, 9)}`;
 
-  // 4. Fire Browser TikTok Pixel (ttq)
-  if (window.ttq) {
+  // 4. Fire Browser TikTok Pixel (guaranteed queue buffer via getOrInitTtq)
+  const ttq = getOrInitTtq();
+  if (ttq) {
     if (customerData) {
-      window.ttq.identify({
-        email: customerData.email,
-        phone_number: customerData.phone,
-        external_id: customerData.external_id || customerData.user_id || customerData.id,
+      let rawPhone = customerData.phone || customerData.phone_number;
+      let formattedPhone: string | undefined;
+      if (rawPhone) {
+        let digits = String(rawPhone).replace(/\D/g, "");
+        if (digits.startsWith("01") && digits.length === 11) {
+          formattedPhone = "+880" + digits.slice(1);
+        } else if (digits.startsWith("8801") && digits.length === 13) {
+          formattedPhone = "+" + digits;
+        } else if (digits.length > 6) {
+          formattedPhone = digits.startsWith("+") ? digits : "+" + digits;
+        }
+      }
+
+      ttq.identify({
+        email: customerData.email ? customerData.email.trim().toLowerCase() : undefined,
+        phone_number: formattedPhone || undefined,
+        external_id: customerData.external_id || customerData.user_id || customerData.id || undefined,
       });
     }
 
-    window.ttq.track(mappedEvent, params, { event_id: eventId });
+    if (mappedEvent === "PageView") {
+      if (typeof ttq.page === "function") {
+        ttq.page();
+      }
+      ttq.track("PageView", params, { event_id: eventId });
+    } else {
+      ttq.track(mappedEvent, params, { event_id: eventId });
+    }
   }
 
   // 5. Fire Server-Side TikTok Events API (CAPI) in background
   try {
-    const ttp = getCookie("_ttp");
-    const ttclid = getCookie("ttclid");
+    let ttp = getCookie("_ttp");
+    if (!ttp && typeof window !== "undefined") {
+      ttp =
+        localStorage.getItem("ecomx_ttp") ||
+        `ttp.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+      document.cookie = `_ttp=${ttp};path=/;max-age=7776000;SameSite=Lax`;
+      localStorage.setItem("ecomx_ttp", ttp);
+    }
+
+    const ttclid = getCookie("ttclid") || (typeof localStorage !== "undefined" ? localStorage.getItem("ecomx_ttclid") || undefined : undefined);
+
+    const testCode =
+      (typeof sessionStorage !== "undefined" && sessionStorage.getItem("tiktok_test_event_code")) ||
+      getCookie("tiktok_test_event_code") ||
+      undefined;
 
     const userData = customerData
       ? {
@@ -146,6 +228,7 @@ export function trackTikTokEvent(
         eventSourceUrl: window.location.href,
         userData,
         properties: params,
+        testEventCode: testCode,
       }),
       keepalive: true,
     }).catch(() => {

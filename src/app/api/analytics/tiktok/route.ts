@@ -36,7 +36,14 @@ export async function POST(req: NextRequest) {
       undefined;
 
     // Capture TikTok cookies (_ttp, ttclid)
-    const ttp = userData.ttp || req.cookies.get("_ttp")?.value || undefined;
+    let ttp = userData.ttp || req.cookies.get("_ttp")?.value;
+    let newlyGeneratedTtp = false;
+
+    if (!ttp || ttp === "undefined" || ttp === "null") {
+      ttp = `ttp.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+      newlyGeneratedTtp = true;
+    }
+
     const ttclid = userData.ttclid || req.cookies.get("ttclid")?.value || undefined;
 
     const enrichedUserData = {
@@ -47,16 +54,34 @@ export async function POST(req: NextRequest) {
       ttclid,
     };
 
+    const effectiveTestCode =
+      testEventCode ||
+      req.cookies.get("tiktok_test_event_code")?.value ||
+      req.nextUrl.searchParams.get("test_event_code") ||
+      req.nextUrl.searchParams.get("tt_test_code") ||
+      req.nextUrl.searchParams.get("test_code") ||
+      undefined;
+
     const result = await sendTikTokCapiEvent({
       eventName,
       eventId,
       eventSourceUrl: eventSourceUrl || req.headers.get("referer") || undefined,
       userData: enrichedUserData,
       properties,
-      testEventCode,
+      testEventCode: effectiveTestCode,
     });
 
-    return NextResponse.json(result);
+    const response = NextResponse.json(result);
+
+    if (newlyGeneratedTtp) {
+      response.cookies.set("_ttp", ttp, {
+        path: "/",
+        maxAge: 7776000,
+        sameSite: "lax",
+      });
+    }
+
+    return response;
   } catch (err: any) {
     console.error("[TikTok Route Error]", err);
     return NextResponse.json(
