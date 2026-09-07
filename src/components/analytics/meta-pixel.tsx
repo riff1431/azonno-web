@@ -156,9 +156,51 @@ export function trackMetaEvent(
       undefined;
   }
 
+  // Helper to sanitize payload for Meta Pixel
+  const cleanParams: Record<string, any> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null && v !== "") {
+      if (Array.isArray(v)) {
+        const cleanedArr = v
+          .map((item) => (typeof item === "object" && item !== null ? Object.fromEntries(Object.entries(item).filter(([_, val]) => val !== undefined && val !== null && val !== "")) : item))
+          .filter((item) => item !== undefined && item !== null);
+        if (cleanedArr.length > 0) cleanParams[k] = cleanedArr;
+      } else if (typeof v === "object") {
+        const subCleaned = Object.fromEntries(Object.entries(v).filter(([_, val]) => val !== undefined && val !== null && val !== ""));
+        if (Object.keys(subCleaned).length > 0) cleanParams[k] = subCleaned;
+      } else {
+        cleanParams[k] = v;
+      }
+    }
+  }
+
   // 4. Fire Browser Meta Pixel (using official track for standard events and trackCustom for custom events)
   const fbq = getOrInitFbq();
   if (fbq) {
+    if (customerData) {
+      const advancedData: Record<string, any> = {};
+      if (customerData.email) advancedData.em = customerData.email.trim().toLowerCase();
+      if (customerData.phone) {
+        let digits = customerData.phone.replace(/\D/g, "");
+        if (digits.startsWith("01") && digits.length === 11) digits = "88" + digits;
+        advancedData.ph = digits;
+      }
+      if (customerData.first_name || customerData.firstName) advancedData.fn = (customerData.first_name || customerData.firstName).trim().toLowerCase();
+      if (customerData.last_name || customerData.lastName) advancedData.ln = (customerData.last_name || customerData.lastName).trim().toLowerCase();
+      if (customerData.city || customerData.district) advancedData.ct = (customerData.city || customerData.district).trim().toLowerCase();
+      if (customerData.country) advancedData.country = (customerData.country || "bd").trim().toLowerCase();
+      if (customerData.external_id || customerData.user_id || customerData.id) advancedData.external_id = String(customerData.external_id || customerData.user_id || customerData.id);
+
+      if (Object.keys(advancedData).length > 0) {
+        try {
+          const pixelId = (window as any).__META_PIXEL_ID__;
+          if (pixelId) {
+            fbq("setUserProperties", pixelId, advancedData);
+          }
+        } catch {}
+      }
+    }
+
     const isStandardMetaEvent = [
       "AddPaymentInfo",
       "AddToCart",
@@ -181,8 +223,8 @@ export function trackMetaEvent(
     ].includes(eventName);
 
     const trackFn = isStandardMetaEvent ? "track" : "trackCustom";
-    if (Object.keys(params).length > 0) {
-      fbq(trackFn, eventName, params, { eventID: eventId });
+    if (Object.keys(cleanParams).length > 0) {
+      fbq(trackFn, eventName, cleanParams, { eventID: eventId });
     } else {
       fbq(trackFn, eventName, {}, { eventID: eventId });
     }
@@ -199,7 +241,7 @@ export function trackMetaEvent(
         eventId,
         sourceUrl: typeof window !== "undefined" ? window.location.href : undefined,
         payload: {
-          ...params,
+          ...cleanParams,
           _event_source: "browser_fbq",
           _meta_pixel_id: typeof window !== "undefined" ? window.__META_PIXEL_ID__ : undefined,
           _test_event_code: testCode,

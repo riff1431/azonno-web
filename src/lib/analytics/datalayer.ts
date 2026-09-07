@@ -428,6 +428,15 @@ export function trackSearch(searchTerm: string, customer?: CustomerData): void {
     },
     customer
   );
+
+  trackTikTokEvent(
+    "Search",
+    {
+      query: searchTerm.trim(),
+      search_string: searchTerm.trim(),
+    },
+    customer
+  );
 }
 
 // ============================================================================
@@ -1332,6 +1341,11 @@ export function trackCompleteRegistration(
     content_name: method,
     status,
   });
+
+  trackTikTokEvent("CompleteRegistration", {
+    content_name: method,
+    status,
+  }, customer);
 }
 
 export const trackSignUp = trackCompleteRegistration;
@@ -1361,6 +1375,13 @@ export function trackLead(
     value,
     currency,
   });
+
+  trackTikTokEvent("SubmitForm", {
+    content_name: leadType,
+    content_category: "Lead Generation",
+    value,
+    currency,
+  }, customer);
 }
 
 export const trackGenerateLead = trackLead;
@@ -1385,6 +1406,10 @@ export function trackContact(
   trackMetaEvent("Contact", {
     content_name: contactMethod,
   });
+
+  trackTikTokEvent("Contact", {
+    content_name: contactMethod,
+  }, customer);
 }
 
 // ============================================================================
@@ -1407,6 +1432,10 @@ export function trackSubscribe(
   trackMetaEvent("Subscribe", {
     content_name: subscriptionType,
   });
+
+  trackTikTokEvent("Subscribe", {
+    content_name: subscriptionType,
+  }, customer);
 }
 
 // ============================================================================
