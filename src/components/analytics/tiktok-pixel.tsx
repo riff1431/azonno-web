@@ -184,6 +184,27 @@ export function trackTikTokEvent(
     }
   }
 
+  // 4.1. Record Live Browser TikTok Event to Live Event Logger
+  try {
+    fetch("/api/analytics/live-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        channel: "browser_tiktok",
+        eventName: mappedEvent,
+        eventId,
+        sourceUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        payload: {
+          ...params,
+          _event_source: "browser_ttq",
+          _tiktok_pixel_id: window.__TIKTOK_PIXEL_ID__,
+        },
+        status: "success",
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {}
+
   // 5. Fire Server-Side TikTok Events API (CAPI) in background
   try {
     let ttp = getCookie("_ttp");

@@ -4,6 +4,7 @@ import { createHash } from "crypto";
 import { getSettingsByGroup, updateGroupSettings, invalidateSettingsCache } from "@/lib/settings/config-service";
 import { revalidatePath } from "next/cache";
 import { getBaseUrl } from "@/lib/utils";
+import { logAnalyticsEvent } from "@/lib/analytics/live-event-logger";
 
 export interface TikTokSettings {
   tiktok_pixel_id: string;
@@ -208,12 +209,38 @@ export async function sendTikTokCapiEvent(input: {
 
     if (resJson.code !== 0 && !response.ok) {
       console.error("[TikTok CAPI Error]", resJson);
+      logAnalyticsEvent({
+        channel: "server_tiktok",
+        eventName: mappedEvent,
+        eventId: input.eventId,
+        sourceUrl: input.eventSourceUrl,
+        payload: requestBody,
+        status: "failed",
+        responseDetails: {
+          httpStatus: response.status,
+          error: resJson.message || "TikTok Events API request failed",
+          requestId: resJson.request_id,
+        },
+      });
       return {
         success: false,
         error: resJson.message || "TikTok Events API request failed",
         logId: resJson.request_id,
       };
     }
+
+    logAnalyticsEvent({
+      channel: "server_tiktok",
+      eventName: mappedEvent,
+      eventId: input.eventId,
+      sourceUrl: input.eventSourceUrl,
+      payload: requestBody,
+      status: "success",
+      responseDetails: {
+        httpStatus: response.status,
+        requestId: resJson.request_id,
+      },
+    });
 
     return {
       success: true,
@@ -223,6 +250,17 @@ export async function sendTikTokCapiEvent(input: {
     };
   } catch (err: any) {
     console.error("[TikTok CAPI Network Error]", err);
+    logAnalyticsEvent({
+      channel: "server_tiktok",
+      eventName: mappedEvent,
+      eventId: input.eventId,
+      sourceUrl: input.eventSourceUrl,
+      payload: requestBody,
+      status: "failed",
+      responseDetails: {
+        error: err.message || "Network error dispatching TikTok CAPI event",
+      },
+    });
     return {
       success: false,
       error: err.message || "Network error dispatching TikTok CAPI event",

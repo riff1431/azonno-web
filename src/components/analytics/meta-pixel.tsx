@@ -141,6 +141,27 @@ export function trackMetaEvent(
     }
   }
 
+  // 4.1. Record Live Browser Meta Event to Live Event Logger
+  try {
+    fetch("/api/analytics/live-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        channel: "browser_meta",
+        eventName,
+        eventId,
+        sourceUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        payload: {
+          ...params,
+          _event_source: "browser_fbq",
+          _meta_pixel_id: window.__META_PIXEL_ID__,
+        },
+        status: "success",
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {}
+
   // 5. Fire Server-Side Meta Conversions API (CAPI) in background
   try {
     let fbp = getCookie("_fbp");

@@ -4,6 +4,7 @@ import { createHash } from "crypto";
 import { getSettingsByGroup, updateGroupSettings, invalidateSettingsCache } from "@/lib/settings/config-service";
 import { revalidatePath } from "next/cache";
 import { getBaseUrl } from "@/lib/utils";
+import { logAnalyticsEvent } from "@/lib/analytics/live-event-logger";
 
 export interface MarketingAnalyticsSettings {
   meta_pixel_id: string;
@@ -285,12 +286,39 @@ export async function sendMetaCapiEvent(input: {
 
     if (!response.ok) {
       console.error("[Meta CAPI Error]", resJson);
+      logAnalyticsEvent({
+        channel: "server_meta",
+        eventName: input.eventName,
+        eventId: input.eventId,
+        sourceUrl: input.eventSourceUrl,
+        payload: capiPayload,
+        status: "failed",
+        responseDetails: {
+          httpStatus: response.status,
+          error: resJson.error?.message || "Meta CAPI request failed",
+          traceId: resJson.error?.fbtrace_id,
+        },
+      });
       return {
         success: false,
         error: resJson.error?.message || "Meta CAPI request failed",
         metaTraceId: resJson.error?.fbtrace_id,
       };
     }
+
+    logAnalyticsEvent({
+      channel: "server_meta",
+      eventName: input.eventName,
+      eventId: input.eventId,
+      sourceUrl: input.eventSourceUrl,
+      payload: capiPayload,
+      status: "success",
+      responseDetails: {
+        httpStatus: response.status,
+        eventsReceived: resJson.events_received,
+        traceId: resJson.fbtrace_id,
+      },
+    });
 
     return {
       success: true,
@@ -299,6 +327,17 @@ export async function sendMetaCapiEvent(input: {
     };
   } catch (err: any) {
     console.error("[Meta CAPI Network Error]", err);
+    logAnalyticsEvent({
+      channel: "server_meta",
+      eventName: input.eventName,
+      eventId: input.eventId,
+      sourceUrl: input.eventSourceUrl,
+      payload: capiPayload,
+      status: "failed",
+      responseDetails: {
+        error: err.message || "Network error dispatching Meta CAPI event",
+      },
+    });
     return {
       success: false,
       error: err.message || "Network error dispatching Meta CAPI event",

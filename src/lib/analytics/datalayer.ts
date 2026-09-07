@@ -282,6 +282,23 @@ export function pushToDataLayer(payload: Record<string, any>): void {
 
   const cleanPayload = sanitizePayload(payload);
   window.dataLayer.push(cleanPayload);
+
+  // Record GA4 DataLayer Event to Live Event Logger
+  try {
+    fetch("/api/analytics/live-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        channel: "datalayer_ga4",
+        eventName: cleanPayload.event || "datalayer_push",
+        eventId: cleanPayload.transaction_id || cleanPayload.order_id || cleanPayload.content_id || undefined,
+        sourceUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        payload: cleanPayload,
+        status: "success",
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {}
 }
 
 // ============================================================================

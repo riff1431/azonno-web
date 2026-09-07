@@ -27,6 +27,7 @@ import {
   Eye,
   CheckCircle,
   Info,
+  Activity,
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import {
@@ -41,9 +42,10 @@ import {
   testTikTokCapiDiagnostic,
   type TikTokSettings,
 } from "@/features/marketing/tiktok-actions";
+import { LivePayloadInspector } from "@/components/admin/analytics/live-payload-inspector";
 
 export default function AdminMetaSettingsPage() {
-  const [activeTab, setActiveTab] = useState<"meta" | "tiktok" | "purchase_emq" | "gtm" | "catalog">("meta");
+  const [activeTab, setActiveTab] = useState<"meta" | "tiktok" | "purchase_emq" | "live_stream" | "gtm" | "catalog">("meta");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testingCapi, setTestingCapi] = useState(false);
@@ -318,6 +320,18 @@ export default function AdminMetaSettingsPage() {
         >
           <Target className="inline h-4 w-4 text-[#e91e63]" />
           <span>Purchase Event Control</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("live_stream")}
+          className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
+            activeTab === "live_stream"
+              ? "border-[#e91e63] text-[#e91e63]"
+              : "border-transparent text-gray-500 hover:text-gray-900"
+          }`}
+        >
+          <Activity className="inline h-4 w-4 text-[#e91e63]" />
+          <span>Live Payload Stream &amp; Inspector</span>
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse ml-1" />
         </button>
         <button
           onClick={() => setActiveTab("gtm")}
@@ -893,6 +907,11 @@ export default function AdminMetaSettingsPage() {
             </div>
           </form>
         </div>
+      )}
+
+      {/* TAB: Live Event Stream & Payload Inspector */}
+      {activeTab === "live_stream" && (
+        <LivePayloadInspector />
       )}
 
       {/* TAB 3: GTM & GA4 DataLayer */}
