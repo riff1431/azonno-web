@@ -28,8 +28,8 @@ export function MetaPixel({ pixelId: propPixelId }: { pixelId?: string } = {}) {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
-  const pixelId = propPixelId || process.env.NEXT_PUBLIC_META_PIXEL_ID || "";
-  if (!pixelId || pixelId === "123456789012345") return null;
+  const pixelId = propPixelId?.trim() || process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() || "";
+  if (!pixelId) return null;
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.fbq) {

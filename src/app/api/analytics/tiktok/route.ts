@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendTikTokCapiEvent } from "@/features/marketing/tiktok-actions";
+import { extractClientIp } from "@/lib/utils";
 
 export const runtime = "nodejs";
 
@@ -23,12 +24,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Capture client IP and User Agent
-    const clientIpAddress =
+    // Capture dynamic client IP from proxy headers
+    let clientIpAddress =
       userData.clientIpAddress ||
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      req.headers.get("x-real-ip") ||
+      extractClientIp(req.headers) ||
       undefined;
+
+    if (
+      !clientIpAddress ||
+      clientIpAddress === "::1" ||
+      clientIpAddress === "127.0.0.1" ||
+      clientIpAddress.startsWith("192.168.") ||
+      clientIpAddress.startsWith("10.")
+    ) {
+      if (process.env.NODE_ENV === "development") {
+        clientIpAddress = "103.108.140.25";
+      } else {
+        clientIpAddress = undefined;
+      }
+    }
 
     const clientUserAgent =
       userData.clientUserAgent ||

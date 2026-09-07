@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendMetaCapiEvent } from "@/features/marketing/meta-actions";
+import { extractClientIp } from "@/lib/utils";
 
 export const runtime = "nodejs";
 
@@ -23,15 +24,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Capture client IP address
+    // Dynamically resolve client IP address from proxy headers (Cloudflare, Vercel, Nginx, X-Forwarded-For)
     let clientIpAddress =
       userData.clientIpAddress ||
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      req.headers.get("x-real-ip") ||
+      extractClientIp(req.headers) ||
       undefined;
 
-    // In local development, loopback IPs (::1, 127.0.0.1) cause Meta CAPI to throw 400 for lack of matching parameters.
-    // Fallback to a valid public IP in development so local testing succeeds with Meta.
+    // In local development only (loopback / private network), fallback for offline testing
     if (
       !clientIpAddress ||
       clientIpAddress === "::1" ||
@@ -40,7 +39,9 @@ export async function POST(req: NextRequest) {
       clientIpAddress.startsWith("10.")
     ) {
       if (process.env.NODE_ENV === "development") {
-        clientIpAddress = "103.108.140.25"; // Standard Bangladesh public ISP IP
+        clientIpAddress = "103.108.140.25"; // Standard Bangladesh public ISP IP for local development testing
+      } else {
+        clientIpAddress = undefined;
       }
     }
 

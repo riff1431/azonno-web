@@ -104,3 +104,47 @@ export function getRequestBaseUrl(request: Request | { headers: Headers }): stri
   return getBaseUrl();
 }
 
+/**
+ * Dynamically resolves the real client public IP from proxy headers.
+ * Supports Cloudflare (CF-Connecting-IP), Vercel, Nginx (X-Real-IP), Akamai (True-Client-IP), and standard X-Forwarded-For.
+ */
+export function extractClientIp(
+  headers: Headers | { get: (key: string) => string | null } | Record<string, any>
+): string | undefined {
+  if (!headers) return undefined;
+
+  const getHeader = (name: string): string | undefined => {
+    if (typeof (headers as any).get === "function") {
+      return (headers as any).get(name) || undefined;
+    }
+    return (headers as any)[name] || (headers as any)[name.toLowerCase()] || undefined;
+  };
+
+  const candidateHeaders = [
+    "cf-connecting-ip",
+    "x-real-ip",
+    "true-client-ip",
+    "x-client-ip",
+    "x-forwarded-for",
+    "x-cluster-client-ip",
+  ];
+
+  for (const headerName of candidateHeaders) {
+    const rawVal = getHeader(headerName);
+    if (rawVal) {
+      const firstIp = rawVal.split(",")[0]?.trim();
+      if (
+        firstIp &&
+        firstIp !== "unknown" &&
+        firstIp !== "null" &&
+        firstIp !== "undefined"
+      ) {
+        return firstIp;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+

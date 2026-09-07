@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { sendSmsNotification } from "@/features/sms/actions";
-import { generateOrderNumber } from "@/lib/utils";
+import { generateOrderNumber, extractClientIp } from "@/lib/utils";
 
 export interface CreateOrderInput {
   customer: {
@@ -350,7 +350,7 @@ export async function createOrder(input: CreateOrderInput) {
       const ttp = cookieStore.get("_ttp")?.value;
       const ttclid = cookieStore.get("_ttclid")?.value;
       const fbclid = cookieStore.get("fbclid")?.value;
-      const clientIp = headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() || headerStore.get("x-real-ip") || undefined;
+      const clientIp = extractClientIp(headerStore);
       const clientUa = headerStore.get("user-agent") || undefined;
 
       trackingMetadata = {

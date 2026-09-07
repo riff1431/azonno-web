@@ -27,8 +27,8 @@ export function TikTokPixel({ pixelId: propPixelId }: { pixelId?: string } = {})
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
-  const pixelId = propPixelId || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "";
-  if (!pixelId || pixelId.startsWith("CXXX")) return null;
+  const pixelId = propPixelId?.trim() || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID?.trim() || "";
+  if (!pixelId) return null;
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.ttq) {
