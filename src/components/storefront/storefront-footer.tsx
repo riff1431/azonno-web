@@ -119,6 +119,8 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
     cod: true,
     amex: true,
   };
+  const paymentBadgeImages = fc.paymentBadgeImages || {};
+  const customPaymentBadges = (fc.customPaymentBadges || []).filter((b) => b.enabled !== false && b.imageUrl);
 
   const categoryLinks =
     fc.categoryLinks && fc.categoryLinks.length > 0
@@ -490,168 +492,144 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                   {language === "bn" ? "আমরা গ্রহণ করি" : "We Accept"}
                 </span>
                 <div className="flex flex-wrap items-center gap-2">
-                  {paymentBadgeStyle !== "badges_with_text" ? (
-                    /* Clean Uniform Icons-Only Mode (All cards identical size & height, official brand logos) */
-                    <>
-                      {/* bKash Logo Card */}
-                      {acceptedPayments.bkash && (
-                        <div
-                          className="flex h-7 sm:h-8 w-11 sm:w-13 items-center justify-center rounded-lg bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-110 transition-transform select-none"
-                          title="bKash"
-                        >
-                          <svg viewBox="0 0 100 80" className="h-4.5 w-auto fill-[#e2136e] shrink-0">
-                            <polygon points="50,5 95,50 50,40 5,50" />
-                            <polygon points="50,45 80,75 50,65 20,75" opacity="0.9" />
-                          </svg>
-                        </div>
+                  {/* Standard Payment Badges (Clean Uniform Same-Size Cards with Custom Image Support) */}
+                  {acceptedPayments.bkash && (
+                    <div
+                      className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-105 hover:shadow-md transition-all select-none overflow-hidden"
+                      title="bKash"
+                    >
+                      {paymentBadgeImages.bkash ? (
+                        <img
+                          src={paymentBadgeImages.bkash}
+                          alt="bKash"
+                          className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none"
+                        />
+                      ) : (
+                        <svg viewBox="0 0 100 80" className="h-4.5 sm:h-5 w-auto fill-[#e2136e] shrink-0">
+                          <polygon points="50,5 95,50 50,40 5,50" />
+                          <polygon points="50,45 80,75 50,65 20,75" opacity="0.9" />
+                        </svg>
                       )}
-
-                      {/* Nagad Logo Card */}
-                      {acceptedPayments.nagad && (
-                        <div
-                          className="flex h-7 sm:h-8 w-11 sm:w-13 items-center justify-center rounded-lg bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-110 transition-transform select-none"
-                          title="Nagad"
-                        >
-                          <svg viewBox="0 0 100 100" className="h-5 w-auto shrink-0">
-                            <path d="M50 10 C30 35 15 50 15 70 C15 85 30 95 50 95 C70 95 85 85 85 70 C85 50 70 35 50 10 Z" fill="#e82429" />
-                            <circle cx="50" cy="65" r="14" fill="#f7941d" />
-                          </svg>
-                        </div>
-                      )}
-
-                      {/* VISA Logo Card */}
-                      {acceptedPayments.visa && (
-                        <div
-                          className="flex h-7 sm:h-8 w-11 sm:w-13 items-center justify-center rounded-lg bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-110 transition-transform select-none"
-                          title="Visa"
-                        >
-                          <span className="text-xs sm:text-sm font-black italic tracking-wider text-[#1a1f71] leading-none">
-                            VISA
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Mastercard Logo Card */}
-                      {acceptedPayments.mastercard && (
-                        <div
-                          className="flex h-7 sm:h-8 w-11 sm:w-13 items-center justify-center rounded-lg bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-110 transition-transform select-none"
-                          title="Mastercard"
-                        >
-                          <div className="relative flex items-center justify-center h-4 w-6">
-                            <div className="absolute left-0.5 h-3.5 w-3.5 rounded-full bg-[#eb001b]" />
-                            <div className="absolute right-0.5 h-3.5 w-3.5 rounded-full bg-[#f79e1b] opacity-90" />
-                          </div>
-                        </div>
-                      )}
-
-                      {/* AMEX Logo Card */}
-                      {acceptedPayments.amex && (
-                        <div
-                          className="flex h-7 sm:h-8 w-11 sm:w-13 items-center justify-center rounded-lg bg-[#016fd0] px-1.5 py-1 shadow-xs border border-blue-400/30 hover:scale-110 transition-transform select-none"
-                          title="American Express"
-                        >
-                          <span className="text-[9px] sm:text-[10px] font-black uppercase text-white tracking-tighter leading-none">
-                            AMEX
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Cash on Delivery Logo Card */}
-                      {acceptedPayments.cod && (
-                        <div
-                          className="flex h-7 sm:h-8 w-11 sm:w-13 items-center justify-center rounded-lg bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-110 transition-transform select-none"
-                          title={t("footer", "codTitle")}
-                        >
-                          <div className="flex flex-col items-center justify-center leading-none">
-                            <span className="text-[7px] font-bold text-zinc-500 tracking-tight">PAY ON</span>
-                            <span className="text-[8px] font-black text-emerald-700 tracking-tight uppercase">DELIVERY</span>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    /* Fallback: Text Badge Pills */
-                    <>
-                      {acceptedPayments.bkash && (
-                        <div
-                          className="flex items-center gap-1.5 rounded-xl bg-[#e2136e] px-2.5 py-1.5 shadow-2xs border border-pink-400/30 hover:scale-105 transition-transform"
-                          title="bKash"
-                        >
-                          <svg viewBox="0 0 100 80" className="h-3.5 w-3.5 fill-white shrink-0">
-                            <polygon points="50,5 95,50 50,40 5,50" />
-                            <polygon points="50,45 80,75 50,65 20,75" opacity="0.9" />
-                          </svg>
-                          <span className="text-[11px] sm:text-xs font-black tracking-tight text-white uppercase">
-                            bKash
-                          </span>
-                        </div>
-                      )}
-
-                      {acceptedPayments.nagad && (
-                        <div
-                          className="flex items-center gap-1.5 rounded-xl bg-[#f7941d] px-2.5 py-1.5 shadow-2xs border border-orange-400/30 hover:scale-105 transition-transform"
-                          title="Nagad"
-                        >
-                          <svg viewBox="0 0 100 100" className="h-3.5 w-3.5 fill-white shrink-0">
-                            <path d="M50 10 C30 35 15 50 15 70 C15 85 30 95 50 95 C70 95 85 85 85 70 C85 50 70 35 50 10 Z" />
-                            <circle cx="50" cy="65" r="12" fill="#f7941d" />
-                          </svg>
-                          <span className="text-[11px] sm:text-xs font-black tracking-tight text-white uppercase">
-                            Nagad
-                          </span>
-                        </div>
-                      )}
-
-                      {acceptedPayments.visa && (
-                        <div
-                          className="flex items-center justify-center rounded-xl bg-white px-2.5 py-1.5 shadow-2xs border border-gray-200 hover:scale-105 transition-transform"
-                          title="Visa"
-                        >
-                          <span className="text-[11px] sm:text-xs font-black italic tracking-widest text-[#1a1f71]">
-                            VISA
-                          </span>
-                        </div>
-                      )}
-
-                      {acceptedPayments.mastercard && (
-                        <div
-                          className="flex items-center gap-1.5 rounded-xl bg-slate-900 px-2.5 py-1.5 shadow-2xs border border-slate-700 hover:scale-105 transition-transform"
-                          title="Mastercard"
-                        >
-                          <div className="relative flex items-center h-3.5 w-5">
-                            <div className="absolute left-0 h-3.5 w-3.5 rounded-full bg-[#eb001b]" />
-                            <div className="absolute right-0 h-3.5 w-3.5 rounded-full bg-[#f79e1b] opacity-85" />
-                          </div>
-                          <span className="text-[10px] sm:text-[11px] font-extrabold text-white">
-                            Mastercard
-                          </span>
-                        </div>
-                      )}
-
-                      {acceptedPayments.amex && (
-                        <div
-                          className="flex items-center rounded-xl bg-[#016fd0] px-2.5 py-1.5 shadow-2xs border border-blue-400/30 hover:scale-105 transition-transform"
-                          title="American Express"
-                        >
-                          <span className="text-[11px] sm:text-xs font-black text-white uppercase">
-                            AMEX
-                          </span>
-                        </div>
-                      )}
-
-                      {acceptedPayments.cod && (
-                        <div
-                          className="flex items-center gap-1.5 rounded-xl bg-emerald-700 px-2.5 py-1.5 shadow-2xs border border-emerald-500/40 hover:scale-105 transition-transform"
-                          title={t("footer", "codTitle")}
-                        >
-                          <Banknote className="h-3.5 w-3.5 text-white shrink-0" />
-                          <span className="text-[11px] sm:text-xs font-black tracking-tight text-white">
-                            {t("footer", "codTitle")}
-                          </span>
-                        </div>
-                      )}
-                    </>
+                    </div>
                   )}
+
+                  {acceptedPayments.nagad && (
+                    <div
+                      className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-105 hover:shadow-md transition-all select-none overflow-hidden"
+                      title="Nagad"
+                    >
+                      {paymentBadgeImages.nagad ? (
+                        <img
+                          src={paymentBadgeImages.nagad}
+                          alt="Nagad"
+                          className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none"
+                        />
+                      ) : (
+                        <svg viewBox="0 0 100 100" className="h-5 sm:h-5.5 w-auto shrink-0">
+                          <path d="M50 10 C30 35 15 50 15 70 C15 85 30 95 50 95 C70 95 85 85 85 70 C85 50 70 35 50 10 Z" fill="#e82429" />
+                          <circle cx="50" cy="65" r="14" fill="#f7941d" />
+                        </svg>
+                      )}
+                    </div>
+                  )}
+
+                  {acceptedPayments.visa && (
+                    <div
+                      className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-105 hover:shadow-md transition-all select-none overflow-hidden"
+                      title="Visa"
+                    >
+                      {paymentBadgeImages.visa ? (
+                        <img
+                          src={paymentBadgeImages.visa}
+                          alt="VISA"
+                          className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none"
+                        />
+                      ) : (
+                        <span className="text-xs sm:text-sm font-black italic tracking-wider text-[#1a1f71] leading-none select-none">
+                          VISA
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {acceptedPayments.mastercard && (
+                    <div
+                      className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-105 hover:shadow-md transition-all select-none overflow-hidden"
+                      title="Mastercard"
+                    >
+                      {paymentBadgeImages.mastercard ? (
+                        <img
+                          src={paymentBadgeImages.mastercard}
+                          alt="Mastercard"
+                          className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none"
+                        />
+                      ) : (
+                        <div className="relative flex items-center justify-center h-4 w-6 shrink-0">
+                          <div className="absolute left-0.5 h-3.5 w-3.5 rounded-full bg-[#eb001b]" />
+                          <div className="absolute right-0.5 h-3.5 w-3.5 rounded-full bg-[#f79e1b] opacity-90" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {acceptedPayments.amex && (
+                    <div
+                      className={cn(
+                        "flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl px-1.5 py-1 shadow-xs hover:scale-105 hover:shadow-md transition-all select-none overflow-hidden",
+                        paymentBadgeImages.amex
+                          ? "bg-white border border-white/20"
+                          : "bg-[#016fd0] border border-blue-400/30"
+                      )}
+                      title="American Express"
+                    >
+                      {paymentBadgeImages.amex ? (
+                        <img
+                          src={paymentBadgeImages.amex}
+                          alt="AMEX"
+                          className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none"
+                        />
+                      ) : (
+                        <span className="text-[9px] sm:text-[10px] font-black uppercase text-white tracking-tighter leading-none select-none">
+                          AMEX
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {acceptedPayments.cod && (
+                    <div
+                      className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-105 hover:shadow-md transition-all select-none overflow-hidden"
+                      title={t("footer", "codTitle")}
+                    >
+                      {paymentBadgeImages.cod ? (
+                        <img
+                          src={paymentBadgeImages.cod}
+                          alt="Cash on Delivery"
+                          className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center leading-none select-none">
+                          <span className="text-[7px] font-bold text-zinc-500 tracking-tight">PAY ON</span>
+                          <span className="text-[8px] font-black text-emerald-700 tracking-tight uppercase">DELIVERY</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Custom Uploaded Payment Badges (e.g. Rocket, Upay, SSLCommerz, etc.) */}
+                  {customPaymentBadges.map((badge, idx) => (
+                    <div
+                      key={badge.id || `custom-badge-${idx}`}
+                      className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 hover:scale-105 hover:shadow-md transition-all select-none overflow-hidden"
+                      title={badge.name}
+                    >
+                      <img
+                        src={badge.imageUrl}
+                        alt={badge.name}
+                        className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

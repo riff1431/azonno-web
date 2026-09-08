@@ -28,6 +28,7 @@ import {
   type HomepageFullConfig,
   type FooterConfig,
   type FooterLinkItem,
+  type CustomPaymentBadgeItem,
   DEFAULT_HOMEPAGE_CONFIG,
 } from "@/features/marketing/homepage-types";
 
@@ -69,6 +70,11 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       ...defaultFooter.acceptedPaymentMethods,
       ...(rawFooter?.acceptedPaymentMethods || {}),
     },
+    paymentBadgeImages: {
+      ...defaultFooter.paymentBadgeImages,
+      ...(rawFooter?.paymentBadgeImages || {}),
+    },
+    customPaymentBadges: rawFooter?.customPaymentBadges || defaultFooter.customPaymentBadges || [],
     categoryLinks:
       rawFooter?.categoryLinks && rawFooter.categoryLinks.length > 0
         ? rawFooter.categoryLinks
@@ -101,6 +107,35 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       ...current,
       [method]: enabled,
     });
+  };
+
+  const updatePaymentBadgeImage = (method: string, imageUrl: string) => {
+    const current = footer.paymentBadgeImages || {};
+    updateFooter("paymentBadgeImages", {
+      ...current,
+      [method]: imageUrl,
+    });
+  };
+
+  const updateCustomPaymentBadge = (index: number, field: keyof CustomPaymentBadgeItem, value: any) => {
+    const list = [...(footer.customPaymentBadges || [])];
+    list[index] = { ...list[index], [field]: value };
+    updateFooter("customPaymentBadges", list);
+  };
+
+  const addCustomPaymentBadge = () => {
+    const newBadge: CustomPaymentBadgeItem = {
+      id: `badge-${Date.now()}`,
+      name: "Custom Badge",
+      imageUrl: "",
+      enabled: true,
+    };
+    updateFooter("customPaymentBadges", [...(footer.customPaymentBadges || []), newBadge]);
+  };
+
+  const removeCustomPaymentBadge = (index: number) => {
+    const list = (footer.customPaymentBadges || []).filter((_, i) => i !== index);
+    updateFooter("customPaymentBadges", list);
   };
 
   const updateSocialLink = (platform: string, url: string) => {
@@ -862,15 +897,15 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       </div>
 
       {/* 8. Payment Method Badges & Display Style */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+      <div className="rounded-2xl border-2 border-pink-200/80 bg-white p-6 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
           <div>
             <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-[#e91e63]" />
-              Accepted Payment Badges
+              Accepted Payment Badges (We Accept)
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              Control accepted payment methods and display style in the storefront footer.
+              Admin can upload custom logos of any size — all badges automatically scale to uniform, identical size pill cards on all devices.
             </p>
           </div>
 
@@ -889,127 +924,291 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
         </div>
 
         {footer.showPaymentBadges !== false && (
-          <div className="space-y-4 pt-1">
-            {/* Display Style Toggle: Icons Only vs Badges With Text */}
-            <div className="rounded-xl border border-pink-100 bg-pink-50/50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <span className="block text-xs font-black text-gray-900">
-                  Badge Display Style
-                </span>
-                <p className="text-[11px] text-gray-500 mt-0.5">
-                  &quot;Icons Only&quot; displays clean, uniform official brand logos without text (best suited for dark footers).
-                </p>
-              </div>
+          <div className="space-y-6">
+            {/* Standard Payment Methods Grid with Custom Image Uploaders */}
+            <div>
+              <span className="block text-xs font-bold text-gray-900 mb-3">
+                Standard Payment Methods (Enable/Disable & Upload Custom Logos):
+              </span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { id: "bkash", label: "bKash", defaultColor: "fill-[#e2136e]" },
+                  { id: "nagad", label: "Nagad", defaultColor: "fill-[#f7941d]" },
+                  { id: "visa", label: "VISA", defaultColor: "text-[#1a1f71]" },
+                  { id: "mastercard", label: "Mastercard", defaultColor: "text-amber-500" },
+                  { id: "amex", label: "AMEX (American Express)", defaultColor: "bg-[#016fd0]" },
+                  { id: "cod", label: "Cash on Delivery (COD)", defaultColor: "text-emerald-700" },
+                ].map((item) => {
+                  const isChecked = footer.acceptedPaymentMethods?.[item.id as keyof typeof footer.acceptedPaymentMethods] !== false;
+                  const customImg = footer.paymentBadgeImages?.[item.id];
 
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => updateFooter("paymentBadgeStyle", "icons_only")}
-                  className={cn(
-                    "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer",
-                    footer.paymentBadgeStyle !== "badges_with_text"
-                      ? "bg-[#e91e63] text-white shadow-xs"
-                      : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
-                  )}
-                >
-                  ✨ Icons Only (Clean Logos)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => updateFooter("paymentBadgeStyle", "badges_with_text")}
-                  className={cn(
-                    "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer",
-                    footer.paymentBadgeStyle === "badges_with_text"
-                      ? "bg-[#e91e63] text-white shadow-xs"
-                      : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
-                  )}
-                >
-                  Badges with Text
-                </button>
+                  return (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        "rounded-xl border p-4 space-y-3 transition-colors",
+                        isChecked ? "border-pink-200 bg-pink-50/20" : "border-gray-200 bg-gray-50/40 opacity-70"
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center gap-2 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={(e) => updatePaymentMethod(item.id, e.target.checked)}
+                            className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                          />
+                          <span className="text-xs font-bold text-gray-900">{item.label}</span>
+                        </label>
+
+                        {/* Live Card Preview */}
+                        <div
+                          className="flex h-8 w-14 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-gray-200 shrink-0 select-none overflow-hidden"
+                          title={`${item.label} Preview`}
+                        >
+                          {customImg ? (
+                            <img
+                              src={customImg}
+                              alt={item.label}
+                              className="h-full w-full max-h-6 object-contain mx-auto"
+                            />
+                          ) : item.id === "bkash" ? (
+                            <svg viewBox="0 0 100 80" className="h-4.5 w-auto fill-[#e2136e]">
+                              <polygon points="50,5 95,50 50,40 5,50" />
+                              <polygon points="50,45 80,75 50,65 20,75" opacity="0.9" />
+                            </svg>
+                          ) : item.id === "nagad" ? (
+                            <svg viewBox="0 0 100 100" className="h-5 w-auto">
+                              <path d="M50 10 C30 35 15 50 15 70 C15 85 30 95 50 95 C70 95 85 85 85 70 C85 50 70 35 50 10 Z" fill="#e82429" />
+                              <circle cx="50" cy="65" r="14" fill="#f7941d" />
+                            </svg>
+                          ) : item.id === "visa" ? (
+                            <span className="text-xs font-black italic tracking-wider text-[#1a1f71] leading-none">VISA</span>
+                          ) : item.id === "mastercard" ? (
+                            <div className="relative flex items-center justify-center h-3.5 w-5.5">
+                              <div className="absolute left-0.5 h-3.5 w-3.5 rounded-full bg-[#eb001b]" />
+                              <div className="absolute right-0.5 h-3.5 w-3.5 rounded-full bg-[#f79e1b] opacity-90" />
+                            </div>
+                          ) : item.id === "amex" ? (
+                            <div className="flex h-full w-full items-center justify-center rounded-lg bg-[#016fd0] px-1 py-0.5">
+                              <span className="text-[9px] font-black uppercase text-white tracking-tighter leading-none">AMEX</span>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center leading-none">
+                              <span className="text-[7px] font-bold text-zinc-500">PAY ON</span>
+                              <span className="text-[8px] font-black text-emerald-700 tracking-tight uppercase">DELIVERY</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Custom Logo Upload Dropzone */}
+                      <div>
+                        <ImageUploadDropzone
+                          value={customImg || ""}
+                          onChange={(url) => updatePaymentBadgeImage(item.id, url)}
+                          folder="payment-badges"
+                          label="Custom Logo Image (Optional)"
+                          placeholder="Upload PNG/JPG or paste image URL"
+                          aspectRatio="auto"
+                        />
+                        {customImg && (
+                          <div className="mt-1 flex justify-end">
+                            <button
+                              type="button"
+                              onClick={() => updatePaymentBadgeImage(item.id, "")}
+                              className="text-[10px] font-bold text-red-600 hover:text-red-700 flex items-center gap-1 cursor-pointer"
+                            >
+                              <RotateCcw className="h-3 w-3" />
+                              Reset to Default Vector Icon
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Individual Checkboxes */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              {[
-                { id: "bkash", label: "bKash" },
-                { id: "nagad", label: "Nagad" },
-                { id: "visa", label: "VISA" },
-                { id: "mastercard", label: "Mastercard" },
-                { id: "amex", label: "AMEX" },
-                { id: "cod", label: "Cash on Delivery" },
-              ].map((item) => {
-                const isChecked = footer.acceptedPaymentMethods?.[item.id as keyof typeof footer.acceptedPaymentMethods] !== false;
-                return (
-                  <label
-                    key={item.id}
-                    className={cn(
-                      "flex items-center gap-2.5 p-3 rounded-xl border transition-colors cursor-pointer select-none",
-                      isChecked
-                        ? "border-pink-200 bg-pink-50/40 text-gray-900 font-bold"
-                        : "border-gray-200 bg-gray-50/50 text-gray-500 hover:bg-gray-100"
-                    )}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) => updatePaymentMethod(item.id, e.target.checked)}
-                      className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
-                    />
-                    <span className="text-xs">{item.label}</span>
-                  </label>
-                );
-              })}
+            {/* Custom Payment & Security Badges */}
+            <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200 pb-3">
+                <div>
+                  <h3 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                    <Sparkles className="h-4 w-4 text-[#e91e63]" />
+                    Additional Custom Payment / Security Badges
+                  </h3>
+                  <p className="text-[11px] text-gray-500">
+                    Add custom payment options like Rocket, Upay, SSLCommerz, Apple Pay, or security trust badges.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={addCustomPaymentBadge}
+                  size="sm"
+                  className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold shrink-0"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1" />
+                  Add Custom Badge
+                </Button>
+              </div>
+
+              {(!footer.customPaymentBadges || footer.customPaymentBadges.length === 0) ? (
+                <p className="text-xs text-gray-400 italic text-center py-2">
+                  No additional custom badges added yet. Click &quot;Add Custom Badge&quot; above to upload your own logos.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {footer.customPaymentBadges.map((badge, idx) => (
+                    <div
+                      key={badge.id || idx}
+                      className="rounded-xl border border-gray-200 bg-white p-3 space-y-2 shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <input
+                          type="text"
+                          value={badge.name}
+                          onChange={(e) => updateCustomPaymentBadge(idx, "name", e.target.value)}
+                          placeholder="Badge Name (e.g. Rocket / Upay)"
+                          className="flex-1 rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                        />
+                        <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-600 select-none">
+                          <input
+                            type="checkbox"
+                            checked={badge.enabled !== false}
+                            onChange={(e) => updateCustomPaymentBadge(idx, "enabled", e.target.checked)}
+                            className="rounded border-gray-300 text-[#e91e63]"
+                          />
+                          Active
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => removeCustomPaymentBadge(idx)}
+                          className="p-1 text-gray-400 hover:text-red-600 rounded"
+                          title="Delete Badge"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+
+                      <div className="flex gap-3 items-center">
+                        <div className="flex-1">
+                          <ImageUploadDropzone
+                            value={badge.imageUrl}
+                            onChange={(url) => updateCustomPaymentBadge(idx, "imageUrl", url)}
+                            folder="payment-badges"
+                            label="Badge Image"
+                            placeholder="Upload logo or enter URL"
+                            aspectRatio="auto"
+                          />
+                        </div>
+                        {badge.imageUrl && (
+                          <div className="flex h-8 w-14 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-gray-200 overflow-hidden">
+                            <img
+                              src={badge.imageUrl}
+                              alt={badge.name}
+                              className="h-full w-full max-h-6 object-contain mx-auto"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Live Footer Preview */}
-            <div className="rounded-xl border border-slate-700 bg-[#0d131f] p-4 text-white space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-400 block">
-                Live Footer Preview on Dark Background:
-              </span>
+            <div className="rounded-2xl border border-slate-700 bg-[#0d131f] p-5 text-white space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase font-extrabold tracking-wider text-zinc-400">
+                  {previewLang === "bn" ? "আমরা গ্রহণ করি (Live Preview)" : "We Accept (Live Preview)"}
+                </span>
+                <span className="text-[10px] text-zinc-500 font-mono">
+                  Exact storefront layout — same card size on all devices
+                </span>
+              </div>
+
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 {footer.acceptedPaymentMethods?.bkash !== false && (
-                  <div className="flex h-7 w-12 items-center justify-center rounded-lg bg-white px-2 py-1 shadow-xs border border-white/20">
-                    <svg viewBox="0 0 100 80" className="h-4.5 w-auto fill-[#e2136e]">
-                      <polygon points="50,5 95,50 50,40 5,50" />
-                      <polygon points="50,45 80,75 50,65 20,75" opacity="0.9" />
-                    </svg>
+                  <div className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 select-none overflow-hidden" title="bKash">
+                    {footer.paymentBadgeImages?.bkash ? (
+                      <img src={footer.paymentBadgeImages.bkash} alt="bKash" className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto" />
+                    ) : (
+                      <svg viewBox="0 0 100 80" className="h-4.5 sm:h-5 w-auto fill-[#e2136e] shrink-0">
+                        <polygon points="50,5 95,50 50,40 5,50" />
+                        <polygon points="50,45 80,75 50,65 20,75" opacity="0.9" />
+                      </svg>
+                    )}
                   </div>
                 )}
+
                 {footer.acceptedPaymentMethods?.nagad !== false && (
-                  <div className="flex h-7 w-12 items-center justify-center rounded-lg bg-white px-2 py-1 shadow-xs border border-white/20">
-                    <svg viewBox="0 0 100 100" className="h-5 w-auto">
-                      <path d="M50 10 C30 35 15 50 15 70 C15 85 30 95 50 95 C70 95 85 85 85 70 C85 50 70 35 50 10 Z" fill="#e82429" />
-                      <circle cx="50" cy="65" r="14" fill="#f7941d" />
-                    </svg>
+                  <div className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 select-none overflow-hidden" title="Nagad">
+                    {footer.paymentBadgeImages?.nagad ? (
+                      <img src={footer.paymentBadgeImages.nagad} alt="Nagad" className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto" />
+                    ) : (
+                      <svg viewBox="0 0 100 100" className="h-5 sm:h-5.5 w-auto shrink-0">
+                        <path d="M50 10 C30 35 15 50 15 70 C15 85 30 95 50 95 C70 95 85 85 85 70 C85 50 70 35 50 10 Z" fill="#e82429" />
+                        <circle cx="50" cy="65" r="14" fill="#f7941d" />
+                      </svg>
+                    )}
                   </div>
                 )}
+
                 {footer.acceptedPaymentMethods?.visa !== false && (
-                  <div className="flex h-7 w-12 items-center justify-center rounded-lg bg-white px-2 py-1 shadow-xs border border-white/20">
-                    <span className="text-xs font-black italic tracking-wider text-[#1a1f71] leading-none">VISA</span>
+                  <div className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 select-none overflow-hidden" title="Visa">
+                    {footer.paymentBadgeImages?.visa ? (
+                      <img src={footer.paymentBadgeImages.visa} alt="VISA" className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto" />
+                    ) : (
+                      <span className="text-xs sm:text-sm font-black italic tracking-wider text-[#1a1f71] leading-none select-none">VISA</span>
+                    )}
                   </div>
                 )}
+
                 {footer.acceptedPaymentMethods?.mastercard !== false && (
-                  <div className="flex h-7 w-12 items-center justify-center rounded-lg bg-white px-2 py-1 shadow-xs border border-white/20">
-                    <div className="relative flex items-center justify-center h-3.5 w-5.5">
-                      <div className="absolute left-0.5 h-3.5 w-3.5 rounded-full bg-[#eb001b]" />
-                      <div className="absolute right-0.5 h-3.5 w-3.5 rounded-full bg-[#f79e1b] opacity-90" />
-                    </div>
+                  <div className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 select-none overflow-hidden" title="Mastercard">
+                    {footer.paymentBadgeImages?.mastercard ? (
+                      <img src={footer.paymentBadgeImages.mastercard} alt="Mastercard" className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto" />
+                    ) : (
+                      <div className="relative flex items-center justify-center h-4 w-6 shrink-0">
+                        <div className="absolute left-0.5 h-3.5 w-3.5 rounded-full bg-[#eb001b]" />
+                        <div className="absolute right-0.5 h-3.5 w-3.5 rounded-full bg-[#f79e1b] opacity-90" />
+                      </div>
+                    )}
                   </div>
                 )}
+
                 {footer.acceptedPaymentMethods?.amex && (
-                  <div className="flex h-7 w-12 items-center justify-center rounded-lg bg-[#016fd0] px-2 py-1 shadow-xs border border-blue-400/30">
-                    <span className="text-[9px] font-black uppercase text-white tracking-tighter leading-none">AMEX</span>
+                  <div className={cn("flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl px-1.5 py-1 shadow-xs select-none overflow-hidden", footer.paymentBadgeImages?.amex ? "bg-white border border-white/20" : "bg-[#016fd0] border border-blue-400/30")} title="American Express">
+                    {footer.paymentBadgeImages?.amex ? (
+                      <img src={footer.paymentBadgeImages.amex} alt="AMEX" className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto" />
+                    ) : (
+                      <span className="text-[9px] sm:text-[10px] font-black uppercase text-white tracking-tighter leading-none select-none">AMEX</span>
+                    )}
                   </div>
                 )}
+
                 {footer.acceptedPaymentMethods?.cod !== false && (
-                  <div className="flex h-7 w-12 items-center justify-center rounded-lg bg-white px-2 py-1 shadow-xs border border-white/20">
-                    <div className="flex flex-col items-center justify-center leading-none">
-                      <span className="text-[7px] font-bold text-zinc-500">PAY ON</span>
-                      <span className="text-[8px] font-black text-emerald-700 tracking-tight uppercase">DELIVERY</span>
-                    </div>
+                  <div className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 select-none overflow-hidden" title="Cash on Delivery">
+                    {footer.paymentBadgeImages?.cod ? (
+                      <img src={footer.paymentBadgeImages.cod} alt="Cash on Delivery" className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto" />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center leading-none select-none">
+                        <span className="text-[7px] font-bold text-zinc-500 tracking-tight">PAY ON</span>
+                        <span className="text-[8px] font-black text-emerald-700 tracking-tight uppercase">DELIVERY</span>
+                      </div>
+                    )}
                   </div>
                 )}
+
+                {/* Custom Badges in Preview */}
+                {footer.customPaymentBadges?.filter((b) => b.enabled !== false && b.imageUrl).map((badge, idx) => (
+                  <div key={badge.id || idx} className="flex h-8 w-14 sm:h-9 sm:w-16 shrink-0 items-center justify-center rounded-xl bg-white px-1.5 py-1 shadow-xs border border-white/20 select-none overflow-hidden" title={badge.name}>
+                    <img src={badge.imageUrl} alt={badge.name} className="h-full w-full max-h-6 sm:max-h-7 object-contain mx-auto select-none" />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

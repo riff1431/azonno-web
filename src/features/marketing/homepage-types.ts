@@ -135,6 +135,13 @@ export interface FooterLinkItem {
   isHighlight?: boolean;
 }
 
+export interface CustomPaymentBadgeItem {
+  id: string;
+  name: string;
+  imageUrl: string;
+  enabled?: boolean;
+}
+
 export interface FooterConfig {
   brandText?: string;
   logoImageUrl?: string;
@@ -170,6 +177,16 @@ export interface FooterConfig {
     cod?: boolean;
     amex?: boolean;
   };
+  paymentBadgeImages?: {
+    bkash?: string;
+    nagad?: string;
+    visa?: string;
+    mastercard?: string;
+    cod?: string;
+    amex?: string;
+    [key: string]: string | undefined;
+  };
+  customPaymentBadges?: CustomPaymentBadgeItem[];
   categoryLinks?: FooterLinkItem[];
   customerCareLinks?: FooterLinkItem[];
 }
@@ -802,6 +819,15 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
       cod: true,
       amex: true,
     },
+    paymentBadgeImages: {
+      bkash: "",
+      nagad: "",
+      visa: "",
+      mastercard: "",
+      cod: "",
+      amex: "",
+    },
+    customPaymentBadges: [],
     categoryLinks: [
       { label: "Skin Care", labelBn: "স্কিন কেয়ার", href: "/products?category=skin-care" },
       { label: "Hair Care", labelBn: "হেয়ার কেয়ার", href: "/products?category=hair-care" },
