@@ -72,6 +72,41 @@ export const TYPE_NAME_MAP: Record<string, { en: string; bn: string }> = {
   attar: { en: "Attar & Perfume Oil", bn: "আতর ও অয়েল" },
 };
 
+export const SKIN_CONCERN_KEYWORDS: Record<string, string[]> = {
+  "Acne & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
+  "Brightening & Pigmentation": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
+  "Anti-Aging & Wrinkles": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
+  "Dryness & Hydration": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
+  "Pore Minimizing": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
+  "Redness & Rosacea": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
+  "Sun Protection": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
+  "Oil Control": ["oil", "matte", "shine", "sebum", "greas", "balance", "lightweight", "gel", "non-oily", "soap-free"],
+  "Barrier Repair": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
+};
+
+export const SKIN_TYPE_KEYWORDS: Record<string, string[]> = {
+  Oily: ["oily", "sebum", "matte", "oil control", "shine", "gel", "non-oily", "lightweight", "soap-free"],
+  Dry: ["dry", "hydrat", "moistur", "nourish", "cream", "lotion", "hyaluronic", "rich"],
+  Combination: ["combination", "balance", "hydrat", "lightweight", "gel", "all skin"],
+  Sensitive: ["sensitive", "gentle", "sooth", "calm", "cica", "kind to skin", "hypoallergenic", "soap-free", "fragrance-free"],
+  Normal: ["normal", "daily", "all skin", "gentle", "everyday"],
+  "All Skin Types": ["all skin", "gentle", "daily", "suitable for all", "kind to skin"],
+};
+
+export const KEY_ACTIVES_KEYWORDS: Record<string, string[]> = {
+  Niacinamide: ["niacinamide", "vitamin b3"],
+  "Hyaluronic Acid": ["hyaluronic", "hyaluron", "hydra"],
+  "Salicylic Acid (BHA)": ["salicylic", "bha"],
+  "Glycolic Acid (AHA)": ["glycolic", "aha"],
+  "Vitamin C": ["vitamin c", "ascorbic", "gluta-boost-c"],
+  Retinol: ["retinol", "retinoid"],
+  "Centella Asiatica (Cica)": ["centella", "cica", "madecassoside"],
+  "Snail Secretion Filtrate": ["snail", "mucin"],
+  Ceramides: ["ceramide", "ceramides"],
+  "Tea Tree": ["tea tree", "melaleuca"],
+  "Alpha Arbutin": ["arbutin", "alpha arbutin"],
+};
+
 function mapProductToCard(p: any): ProductCardData {
   const inv = p.inventory as Array<{ available: number }> | null;
   const isAvailable = inv ? inv.some((i) => i.available > 0) : true;
@@ -283,15 +318,41 @@ export default async function ProductsListingPage({
       q = q.ilike("country", `%${cleanOrigin}%`);
     }
 
-    // 6. Beauty Taxonomy Filters
+    // 6. Beauty Taxonomy Filters (Intelligent Domain-Aware Keyword Matching)
     if (skin_type) {
-      q = q.or(`description.ilike.%${skin_type}%,benefits.ilike.%${skin_type}%,name.ilike.%${skin_type}%`);
+      const typeWords = SKIN_TYPE_KEYWORDS[skin_type] || [skin_type];
+      const orList: string[] = [];
+      typeWords.forEach((kw) => {
+        orList.push(`name.ilike.%${kw}%`);
+        orList.push(`description.ilike.%${kw}%`);
+        orList.push(`benefits.ilike.%${kw}%`);
+        orList.push(`short_description.ilike.%${kw}%`);
+      });
+      q = q.or(orList.join(","));
     }
+
     if (skin_concern) {
-      q = q.or(`description.ilike.%${skin_concern}%,benefits.ilike.%${skin_concern}%,name.ilike.%${skin_concern}%`);
+      const concernWords = SKIN_CONCERN_KEYWORDS[skin_concern] || [skin_concern];
+      const orList: string[] = [];
+      concernWords.forEach((kw) => {
+        orList.push(`name.ilike.%${kw}%`);
+        orList.push(`description.ilike.%${kw}%`);
+        orList.push(`benefits.ilike.%${kw}%`);
+        orList.push(`short_description.ilike.%${kw}%`);
+      });
+      q = q.or(orList.join(","));
     }
+
     if (key_actives) {
-      q = q.or(`description.ilike.%${key_actives}%,ingredients_specifications.ilike.%${key_actives}%,name.ilike.%${key_actives}%`);
+      const activeWords = KEY_ACTIVES_KEYWORDS[key_actives] || [key_actives];
+      const orList: string[] = [];
+      activeWords.forEach((kw) => {
+        orList.push(`name.ilike.%${kw}%`);
+        orList.push(`description.ilike.%${kw}%`);
+        orList.push(`ingredients_specifications.ilike.%${kw}%`);
+        orList.push(`short_description.ilike.%${kw}%`);
+      });
+      q = q.or(orList.join(","));
     }
     if (min_price) {
       q = q.gte("regular_price", Number(min_price));

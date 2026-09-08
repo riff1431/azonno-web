@@ -15,6 +15,27 @@ export interface MatchedProduct {
   country: string | null;
 }
 
+const SKIN_CONCERN_KEYWORDS: Record<string, string[]> = {
+  "Acne & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
+  "Brightening & Pigmentation": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
+  "Anti-Aging & Wrinkles": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
+  "Dryness & Hydration": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
+  "Pore Minimizing": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
+  "Redness & Rosacea": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
+  "Sun Protection": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
+  "Oil Control": ["oil", "matte", "shine", "sebum", "greas", "balance", "lightweight", "gel", "non-oily", "soap-free"],
+  "Barrier Repair": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
+};
+
+const SKIN_TYPE_KEYWORDS: Record<string, string[]> = {
+  Oily: ["oily", "sebum", "matte", "oil control", "shine", "gel", "non-oily", "lightweight", "soap-free"],
+  Dry: ["dry", "hydrat", "moistur", "nourish", "cream", "lotion", "hyaluronic", "rich"],
+  Combination: ["combination", "balance", "hydrat", "lightweight", "gel", "all skin"],
+  Sensitive: ["sensitive", "gentle", "sooth", "calm", "cica", "kind to skin", "hypoallergenic", "soap-free", "fragrance-free"],
+  Normal: ["normal", "daily", "all skin", "gentle", "everyday"],
+  "All Skin Types": ["all skin", "gentle", "daily", "suitable for all", "kind to skin"],
+};
+
 export async function getMatchedQuizRoutine(
   skinType: string,
   concern: string
@@ -37,9 +58,10 @@ export async function getMatchedQuizRoutine(
         sale_price,
         og_image_url,
         country,
-        skin_types,
-        skin_concerns,
-        routine_step,
+        description,
+        short_description,
+        benefits,
+        ingredients_specifications,
         brands (name)
       `)
       .eq("status", "active")
@@ -52,48 +74,44 @@ export async function getMatchedQuizRoutine(
 
     // Step 1: Find a cleanser / prep product
     const cleanserCandidates = allProducts.filter((p: any) => {
-      const name = p.name.toLowerCase();
-      const step = (p.routine_step || "").toLowerCase();
+      const combined = `${p.name} ${p.description || ""} ${p.short_description || ""}`.toLowerCase();
       return (
-        name.includes("cleanser") ||
-        name.includes("wash") ||
-        name.includes("foam") ||
-        step.includes("cleanse")
+        combined.includes("cleanser") ||
+        combined.includes("wash") ||
+        combined.includes("foam") ||
+        combined.includes("facial wash")
       );
     });
 
     // Step 2: Find treatment / active / essence product matching concern or skinType
+    const concernKws = SKIN_CONCERN_KEYWORDS[concern] || [concern.toLowerCase()];
+    const typeKws = SKIN_TYPE_KEYWORDS[skinType] || [skinType.toLowerCase()];
+
     const treatmentCandidates = allProducts.filter((p: any) => {
-      const name = p.name.toLowerCase();
-      const concerns = Array.isArray(p.skin_concerns) ? p.skin_concerns : [];
-      const types = Array.isArray(p.skin_types) ? p.skin_types : [];
+      const combined = `${p.name} ${p.description || ""} ${p.short_description || ""} ${p.benefits || ""} ${p.ingredients_specifications || ""}`.toLowerCase();
 
-      const concernMatch = concerns.some((c: string) =>
-        c.toLowerCase().includes(concern.toLowerCase())
-      );
-      const typeMatch = types.some((t: string) =>
-        t.toLowerCase().includes(skinType.toLowerCase())
-      );
+      const concernMatch = concernKws.some((k) => combined.includes(k.toLowerCase()));
+      const typeMatch = typeKws.some((k) => combined.includes(k.toLowerCase()));
+      const isTreatmentType =
+        combined.includes("serum") ||
+        combined.includes("essence") ||
+        combined.includes("mucin") ||
+        combined.includes("niacinamide") ||
+        combined.includes("hyaluronic");
 
-      return (
-        concernMatch ||
-        typeMatch ||
-        name.includes("serum") ||
-        name.includes("essence") ||
-        name.includes("mucin") ||
-        name.includes("treatment")
-      );
+      return (concernMatch || typeMatch) && isTreatmentType;
     });
 
     // Step 3: Find sunscreen or moisturizer
     const protectCandidates = allProducts.filter((p: any) => {
-      const name = p.name.toLowerCase();
+      const combined = `${p.name} ${p.description || ""} ${p.short_description || ""}`.toLowerCase();
       return (
-        name.includes("sunscreen") ||
-        name.includes("sun") ||
-        name.includes("cream") ||
-        name.includes("moisturizer") ||
-        name.includes("gel")
+        combined.includes("sunscreen") ||
+        combined.includes("sun") ||
+        combined.includes("spf") ||
+        combined.includes("cream") ||
+        combined.includes("moisturi") ||
+        combined.includes("gel")
       );
     });
 
