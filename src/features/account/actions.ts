@@ -91,6 +91,25 @@ export async function getCustomerOrderById(orderId: string) {
   if (!user) return null;
 
   const adminClient = createAdminClient();
+
+  // Automatic Real-Time Live Courier Sync on Customer View
+  const { data: initialOrder } = await adminClient
+    .from("orders")
+    .select("id, consignment_id, tracking_code, status, shipping_address_snapshot")
+    .eq("id", orderId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const cid = initialOrder?.consignment_id || initialOrder?.tracking_code || initialOrder?.shipping_address_snapshot?.consignment_id;
+  if (cid && initialOrder && initialOrder.status !== "cancelled" && initialOrder.status !== "delivered") {
+    try {
+      const { syncLiveCourierStatus } = await import("@/features/logistics/actions");
+      await syncLiveCourierStatus(orderId);
+    } catch (syncErr) {
+      // Non-blocking
+    }
+  }
+
   const { data: order, error } = await adminClient
     .from("orders")
     .select(`

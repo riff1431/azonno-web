@@ -482,6 +482,23 @@ export async function createOrder(input: CreateOrderInput) {
 export async function getOrderById(orderId: string) {
   const supabaseAdmin = createAdminClient();
 
+  // 1. Automatic Real-Time Live Courier Sync on Order View
+  const { data: initialOrder } = await supabaseAdmin
+    .from("orders")
+    .select("id, consignment_id, tracking_code, status, shipping_address_snapshot")
+    .eq("id", orderId)
+    .maybeSingle();
+
+  const cid = initialOrder?.consignment_id || initialOrder?.tracking_code || initialOrder?.shipping_address_snapshot?.consignment_id;
+  if (cid && initialOrder && initialOrder.status !== "cancelled" && initialOrder.status !== "delivered") {
+    try {
+      const { syncLiveCourierStatus } = await import("@/features/logistics/actions");
+      await syncLiveCourierStatus(orderId);
+    } catch (syncErr) {
+      // Non-blocking
+    }
+  }
+
   const { data: order, error } = await supabaseAdmin
     .from("orders")
     .select(`
@@ -1057,6 +1074,44 @@ export async function trackOrder(orderNumber: string, phone: string) {
 
   if (error || !order) {
     return { error: "No order found matching this Order Number and Phone Number combination." };
+  }
+
+  // 1. Automatic Real-Time Live Courier Sync on Customer Tracking Query
+  const cid = order.consignment_id || order.tracking_code || order.shipping_address_snapshot?.consignment_id;
+  if (cid && order.status !== "cancelled" && order.status !== "delivered") {
+    try {
+      const { syncLiveCourierStatus } = await import("@/features/logistics/actions");
+      const syncRes = await syncLiveCourierStatus(order.id);
+      if (syncRes.success) {
+        // Re-fetch latest updated order data with history
+        const { data: refreshedOrder } = await supabase
+          .from("orders")
+          .select(`
+            *,
+            order_items (
+              id,
+              product_name_snapshot,
+              sku_snapshot,
+              unit_price,
+              quantity,
+              total
+            ),
+            order_status_history (
+              id,
+              status,
+              note,
+              created_at
+            )
+          `)
+          .eq("id", order.id)
+          .single();
+        if (refreshedOrder) {
+          return { order: refreshedOrder };
+        }
+      }
+    } catch (syncErr) {
+      console.warn("Real-time courier query auto-sync note:", syncErr);
+    }
   }
 
   return { order };
