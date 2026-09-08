@@ -292,32 +292,128 @@ export function DataTable<T>({
 
 export function RowActions({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [coords, setCoords] = useState<{ top?: number; bottom?: number; right: number } | null>(null);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const updatePosition = React.useCallback(() => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    const dropdownHeight = 150;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    const right = Math.max(12, window.innerWidth - rect.right);
+
+    if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+      // Flip upward
+      setCoords({
+        bottom: window.innerHeight - rect.top + 6,
+        right,
+      });
+    } else {
+      // Open downward
+      setCoords({
+        top: rect.bottom + 6,
+        right,
+      });
+    }
+  }, []);
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!open) {
+      updatePosition();
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (!open) return;
+
+    const handleScrollOrResize = () => {
+      setOpen(false);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+
+    window.addEventListener("scroll", handleScrollOrResize, true);
+    window.addEventListener("resize", handleScrollOrResize);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("scroll", handleScrollOrResize, true);
+      window.removeEventListener("resize", handleScrollOrResize);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   return (
-    <div className="relative">
+    <div className="relative inline-block text-left">
       <button
-        onClick={() => setOpen(!open)}
-        className="rounded-lg p-1.5 text-text-muted hover:bg-surface-secondary hover:text-text transition-colors"
+        ref={buttonRef}
+        type="button"
+        onClick={handleToggle}
+        className={cn(
+          "rounded-lg p-1.5 text-text-muted hover:bg-surface-secondary hover:text-text transition-colors focus:outline-none",
+          open && "bg-surface-secondary text-text ring-2 ring-primary-500/20"
+        )}
       >
         <MoreHorizontal className="h-4 w-4" />
       </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-1 min-w-40 rounded-lg border border-border bg-white p-1 shadow-dropdown">
-            {React.Children.map(children, (child) =>
-              React.isValidElement(child) ? React.cloneElement(child as React.ReactElement<{ onClick?: () => void }>, {
-                onClick: () => {
-                  setOpen(false);
-                  (child.props as { onClick?: () => void }).onClick?.();
-                },
-              }) : child
-            )}
-          </div>
-        </>
-      )}
+
+      {open && mounted && typeof document !== "undefined" &&
+        ReactPortalWrapper(
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-[9998] bg-black/10 sm:bg-transparent"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(false);
+              }}
+            />
+
+            {/* Dropdown Menu (Portal into body) */}
+            <div
+              style={{
+                position: "fixed",
+                ...(coords?.top !== undefined ? { top: `${coords.top}px` } : {}),
+                ...(coords?.bottom !== undefined ? { bottom: `${coords.bottom}px` } : {}),
+                right: `${coords?.right ?? 16}px`,
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="z-[9999] min-w-44 max-w-[calc(100vw-24px)] rounded-xl border border-border bg-white p-1.5 shadow-dropdown animate-in fade-in-0 zoom-in-95 duration-100 ring-1 ring-black/5"
+            >
+              {React.Children.map(children, (child) =>
+                React.isValidElement(child)
+                  ? React.cloneElement(child as React.ReactElement<{ onClick?: () => void }>, {
+                      onClick: () => {
+                        setOpen(false);
+                        (child.props as { onClick?: () => void }).onClick?.();
+                      },
+                    })
+                  : child
+              )}
+            </div>
+          </>
+        )}
     </div>
   );
+}
+
+function ReactPortalWrapper(children: React.ReactNode) {
+  if (typeof document === "undefined") return null;
+  const { createPortal } = require("react-dom");
+  return createPortal(children, document.body);
 }
 
 export function RowAction({
@@ -331,12 +427,13 @@ export function RowAction({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-left text-sm transition-colors",
+        "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-semibold transition-colors select-none",
         variant === "danger"
-          ? "text-red-600 hover:bg-red-50"
-          : "text-text hover:bg-surface-secondary"
+          ? "text-red-600 hover:bg-red-50 active:bg-red-100"
+          : "text-text hover:bg-surface-secondary active:bg-surface-tertiary"
       )}
     >
       {children}
