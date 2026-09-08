@@ -156,7 +156,7 @@ export function trackMetaEvent(
       undefined;
   }
 
-  // Helper to sanitize payload for Meta Pixel
+  // Helper to sanitize and normalize payload for Meta Pixel
   const cleanParams: Record<string, any> = {};
   for (const [k, v] of Object.entries(params)) {
     if (v !== undefined && v !== null && v !== "") {
@@ -172,6 +172,22 @@ export function trackMetaEvent(
         cleanParams[k] = v;
       }
     }
+  }
+
+  // Strictly enforce Meta ISO-4217 uppercase currency and numeric value
+  if (cleanParams.currency) {
+    cleanParams.currency = String(cleanParams.currency).trim().toUpperCase();
+  }
+  if (cleanParams.value !== undefined) {
+    cleanParams.value = Number(cleanParams.value) || 0;
+  }
+
+  // Ensure Purchase event strictly complies with Meta required parameters
+  if (eventName === "Purchase") {
+    if (!cleanParams.currency) {
+      cleanParams.currency = "BDT";
+    }
+    cleanParams.value = Number(cleanParams.value) || 0;
   }
 
   // 4. Fire Browser Meta Pixel (using official track for standard events and trackCustom for custom events)
@@ -193,12 +209,7 @@ export function trackMetaEvent(
 
       if (Object.keys(advancedData).length > 0) {
         try {
-          const pixelId = (window as any).__META_PIXEL_ID__;
-          if (pixelId) {
-            fbq("set", "userData", advancedData, pixelId);
-          } else {
-            fbq("set", "userData", advancedData);
-          }
+          fbq("set", "userData", advancedData);
         } catch {}
       }
     }

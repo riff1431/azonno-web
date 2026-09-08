@@ -1167,7 +1167,8 @@ export interface PurchaseEventParams {
 export function trackPurchase(params: PurchaseEventParams): void {
   if (!params.transaction_id || !params.items || params.items.length === 0) return;
 
-  const curr = params.currency || DEFAULT_CURRENCY;
+  const curr = (params.currency || DEFAULT_CURRENCY).trim().toUpperCase();
+  const totalVal = Number(params.value) || 0;
   const contentIds = params.items.map((it) => it.item_id);
   const contents = formatMetaContents(params.items);
   const totalQuantity = params.items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
@@ -1179,12 +1180,12 @@ export function trackPurchase(params: PurchaseEventParams): void {
     event: "purchase",
     transaction_id: txId,
     order_id: txId,
-    value: params.value,
+    value: totalVal,
     currency: curr,
-    tax: params.tax !== undefined ? params.tax : 0,
-    shipping: params.shipping !== undefined ? params.shipping : 0,
+    tax: params.tax !== undefined ? Number(params.tax) : 0,
+    shipping: params.shipping !== undefined ? Number(params.shipping) : 0,
     coupon: params.coupon,
-    discount: params.discount,
+    discount: params.discount !== undefined ? Number(params.discount) : 0,
     payment_type: params.payment_type || "Cash on Delivery",
     content_ids: contentIds,
     content_type: "product",
@@ -1193,12 +1194,12 @@ export function trackPurchase(params: PurchaseEventParams): void {
     user_data: userData,
     ecommerce: {
       transaction_id: txId,
-      value: params.value,
-      tax: params.tax !== undefined ? params.tax : 0,
-      shipping: params.shipping !== undefined ? params.shipping : 0,
+      value: totalVal,
+      tax: params.tax !== undefined ? Number(params.tax) : 0,
+      shipping: params.shipping !== undefined ? Number(params.shipping) : 0,
       currency: curr,
       coupon: params.coupon,
-      discount: params.discount,
+      discount: params.discount !== undefined ? Number(params.discount) : 0,
       payment_type: params.payment_type || "Cash on Delivery",
       items: formatGA4Items(params.items),
     },
@@ -1212,7 +1213,7 @@ export function trackPurchase(params: PurchaseEventParams): void {
         content_ids: contentIds,
         contents,
         currency: curr,
-        value: params.value,
+        value: totalVal,
         num_items: totalQuantity,
         order_id: txId,
       },
