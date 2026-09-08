@@ -13,10 +13,20 @@ import {
   AlertCircle,
   Loader2,
   ShieldCheck,
+  ExternalLink,
+  Copy,
+  Check,
+  RotateCcw,
+  Sparkles,
 } from "lucide-react";
 import { trackOrder } from "@/features/orders/actions";
 import { Button } from "@/components/shared/ui/button";
 import { useLanguage } from "@/context/language-context";
+import {
+  buildCourierTrackingUrl,
+  formatCustomerLogEntry,
+  getCustomerOrderStatusInfo,
+} from "@/lib/utils";
 
 export default function TrackOrderPage() {
   const { language, t, toBn, formatPriceBn } = useLanguage();
@@ -25,6 +35,7 @@ export default function TrackOrderPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [order, setOrder] = useState<any | null>(null);
+  const [copiedCid, setCopiedCid] = useState(false);
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,12 +54,21 @@ export default function TrackOrderPage() {
     setLoading(false);
   };
 
+  const handleCopyCid = (cid: string) => {
+    if (!cid) return;
+    navigator.clipboard.writeText(cid);
+    setCopiedCid(true);
+    setTimeout(() => setCopiedCid(false), 2000);
+  };
+
+  const isBn = language === "bn";
+
   const statusSteps = [
-    { key: "pending", label: t("orders", "statusPending") },
-    { key: "confirmed", label: t("orders", "statusConfirmed") },
-    { key: "processing", label: t("orders", "statusProcessing") },
-    { key: "shipped", label: t("orders", "statusShipped") },
-    { key: "delivered", label: t("orders", "statusDelivered") },
+    { key: "pending", label: isBn ? "অর্ডার গ্রহণ" : "Order Placed" },
+    { key: "confirmed", label: isBn ? "নিশ্চিত হয়েছে" : "Confirmed" },
+    { key: "processing", label: isBn ? "প্যাকেজিং" : "Packaging" },
+    { key: "shipped", label: isBn ? "ডেলিভারিতে আছে" : "In Transit" },
+    { key: "delivered", label: isBn ? "ডেলিভারি সম্পন্ন" : "Delivered" },
   ];
 
   const getStepIndex = (status: string) => {
@@ -66,6 +86,7 @@ export default function TrackOrderPage() {
       case "out_for_delivery":
         return 3;
       case "delivered":
+      case "completed":
         return 4;
       default:
         return 0;
@@ -75,7 +96,17 @@ export default function TrackOrderPage() {
   const currentStep = order ? getStepIndex(order.status) : 0;
   const address = order?.shipping_address_snapshot || {};
   const items = order?.order_items || [];
-  const history = order?.order_status_history || [];
+  const history = (order?.order_status_history || []).sort(
+    (a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  );
+
+  const activeCid = order?.consignment_id || order?.tracking_code || "";
+  const courierName =
+    order?.courier_name ||
+    address.courier_name ||
+    (activeCid.startsWith("PTH") || activeCid.startsWith("DE") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "SteadFast Courier");
+  const liveTrackingUrl = buildCourierTrackingUrl(courierName, activeCid, order?.tracking_url);
+  const statusInfo = order ? getCustomerOrderStatusInfo(order.status, language) : null;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8 space-y-8">
@@ -83,13 +114,13 @@ export default function TrackOrderPage() {
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700 border border-primary-200">
           <Truck className="h-3.5 w-3.5" />
-          {language === "bn" ? "রিয়েল-টাইম পার্সেল ট্র্যাকিং" : "Real-Time Consignment Tracking"}
+          {isBn ? "রিয়েল-টাইম পার্সেল ট্র্যাকিং" : "Real-Time Consignment Tracking"}
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-text">
           {t("orders", "trackOrderTitle")}
         </h1>
         <p className="text-xs sm:text-sm text-text-secondary max-w-md mx-auto">
-          {language === "bn"
+          {isBn
             ? "আপনার অর্ডার নম্বর এবং মোবাইল নম্বর দিয়ে রিয়েল-টাইম কুরিয়ার ডেলিভারি আপডেট জানুন।"
             : "Enter your Order Number and Bangladesh mobile number to check real-time courier updates."}
         </p>
@@ -108,7 +139,7 @@ export default function TrackOrderPage() {
               placeholder={t("orders", "enterOrderNumber")}
               value={orderNumber}
               onChange={(e) => setOrderNumber(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-secondary/50 px-3.5 py-2.5 text-xs text-text font-mono font-bold uppercase placeholder:text-text-muted focus:outline-none"
+              className="w-full rounded-xl border border-border bg-surface-secondary/50 px-3.5 py-2.5 text-xs text-text font-mono font-bold uppercase placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             />
           </div>
 
@@ -122,16 +153,16 @@ export default function TrackOrderPage() {
               placeholder={t("orders", "enterPhone")}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-secondary/50 px-3.5 py-2.5 text-xs text-text placeholder:text-text-muted focus:outline-none"
+              className="w-full rounded-xl border border-border bg-surface-secondary/50 px-3.5 py-2.5 text-xs text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500/20"
             />
           </div>
 
           <div className="sm:col-span-2 pt-1">
-            <Button type="submit" disabled={loading} className="w-full py-5 font-bold text-xs sm:text-sm">
+            <Button type="submit" disabled={loading} className="w-full py-5 font-bold text-xs sm:text-sm shadow-sm">
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  {language === "bn" ? "অর্ডার অনুসন্ধান করা হচ্ছে..." : "Locating Order..."}
+                  {isBn ? "অর্ডার অনুসন্ধান করা হচ্ছে..." : "Locating Order..."}
                 </>
               ) : (
                 <>
@@ -155,122 +186,236 @@ export default function TrackOrderPage() {
       {order && (
         <div className="space-y-6 animate-in fade-in-0 slide-in-from-bottom-3 duration-300">
           {/* Status Tracker Card */}
-          <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border pb-4">
+          <div className="rounded-3xl border border-border bg-white p-6 sm:p-7 shadow-card space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border pb-4">
               <div>
-                <span className="text-xs text-text-muted">{t("orders", "trackingResults")}:</span>
-                <p className="text-lg font-extrabold text-primary-600 font-mono">
+                <span className="text-xs text-text-muted font-medium">{t("orders", "trackingResults")}:</span>
+                <p className="text-xl font-black text-primary-600 font-mono tracking-tight">
                   {order.order_number}
+                </p>
+                <p className="text-[11px] text-text-muted mt-0.5">
+                  {isBn ? "অর্ডারের তারিখ: " : "Placed on: "}
+                  {new Date(order.created_at).toLocaleDateString(isBn ? "bn-BD" : "en-GB", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
-                <span className="rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-0.5 text-xs font-bold capitalize">
-                  {order.status}
-                </span>
-              </div>
+              {statusInfo && (
+                <div className="flex flex-col sm:items-end gap-1">
+                  <span className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold border ${statusInfo.color}`}>
+                    <span className="h-2 w-2 rounded-full bg-current animate-pulse" />
+                    <span>{statusInfo.label}</span>
+                  </span>
+                  <span className="text-[10px] text-text-muted font-medium max-w-xs text-left sm:text-right">
+                    {statusInfo.desc}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Stepper */}
-            <div className="space-y-2">
-              <div className="grid grid-cols-5 gap-1 text-center">
-                {statusSteps.map((step, idx) => {
-                  const isCompleted = idx <= currentStep;
-                  const isCurrent = idx === currentStep;
+            {order.status !== "cancelled" && order.status !== "returned" && (
+              <div className="space-y-2 py-2">
+                <div className="grid grid-cols-5 gap-1.5 text-center">
+                  {statusSteps.map((step, idx) => {
+                    const isCompleted = idx <= currentStep;
+                    const isCurrent = idx === currentStep;
 
-                  return (
-                    <div key={step.key} className="space-y-2">
-                      <div
-                        className={`h-2 rounded-full transition-all ${
-                          isCompleted ? "bg-primary-600" : "bg-zinc-200"
-                        }`}
-                      />
-                      <span
-                        className={`block text-[11px] leading-tight ${
-                          isCurrent
-                            ? "font-extrabold text-primary-600"
-                            : isCompleted
-                            ? "font-bold text-text"
-                            : "text-text-muted"
-                        }`}
-                      >
-                        {step.label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Order Timeline History */}
-            {history.length > 0 && (
-              <div className="pt-4 border-t border-border space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted">
-                  {language === "bn" ? "স্ট্যাটাস লগ" : "Status Log"}
-                </h3>
-                <div className="space-y-3">
-                  {history.map((h: any) => (
-                    <div key={h.id} className="flex items-start gap-3 text-xs">
-                      <div className="h-2 w-2 rounded-full bg-primary-600 mt-1.5 shrink-0" />
-                      <div className="flex-1">
-                        <p className="font-semibold text-text capitalize">
-                          {h.status}: {h.note || "Status updated"}
-                        </p>
-                        <span className="text-[10px] text-text-muted">
-                          {new Date(h.created_at).toLocaleString(language === "bn" ? "bn-BD" : "en-GB", {
-                            day: "numeric",
-                            month: "short",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                    return (
+                      <div key={step.key} className="space-y-2">
+                        <div
+                          className={`h-2.5 rounded-full transition-all duration-300 ${
+                            isCompleted ? "bg-[#e91e63]" : "bg-zinc-200"
+                          }`}
+                        />
+                        <span
+                          className={`block text-[11px] leading-tight transition-colors ${
+                            isCurrent
+                              ? "font-black text-[#e91e63]"
+                              : isCompleted
+                              ? "font-bold text-gray-800"
+                              : "text-gray-400 font-medium"
+                          }`}
+                        >
+                          {step.label}
                         </span>
                       </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Courier Dispatch Information Card */}
+            {activeCid && (
+              <div className="rounded-2xl border border-primary-100 bg-gradient-to-r from-pink-50/50 via-rose-50/30 to-purple-50/40 p-4 sm:p-5 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-9 w-9 rounded-xl bg-white border border-primary-200 flex items-center justify-center text-[#e91e63] shadow-xs">
+                      <Truck className="h-4.5 w-4.5" />
                     </div>
-                  ))}
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider block">
+                        {isBn ? "কুরিয়ার লজিস্টিকস" : "Courier Partner"}
+                      </span>
+                      <span className="font-bold text-xs text-gray-900">
+                        {courierName}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="inline-flex items-center gap-1.5 bg-white border border-gray-200 px-2.5 py-1 rounded-xl text-xs font-mono font-bold text-gray-800 shadow-2xs">
+                      <span>CID: {activeCid}</span>
+                      <button
+                        onClick={() => handleCopyCid(activeCid)}
+                        title="Copy Consignment ID"
+                        className="text-gray-400 hover:text-gray-700 p-0.5"
+                      >
+                        {copiedCid ? (
+                          <Check className="h-3 w-3 text-emerald-600" />
+                        ) : (
+                          <Copy className="h-3 w-3" />
+                        )}
+                      </button>
+                    </div>
+
+                    {liveTrackingUrl && (
+                      <a
+                        href={liveTrackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold bg-[#e91e63] hover:bg-pink-700 text-white px-3 py-1.5 rounded-xl transition-all shadow-xs"
+                      >
+                        <span>{isBn ? "লাইভ ট্র্যাকিং" : "Live Track"}</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Customer-Friendly Order Timeline History */}
+            {history.length > 0 && (
+              <div className="pt-4 border-t border-border space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-[#e91e63]" />
+                    <span>{isBn ? "ডেলিভারি ট্র্যাকিং হিস্ট্রি" : "Delivery Tracking History"}</span>
+                  </h3>
+                  <span className="text-[10px] text-text-muted font-medium">
+                    {history.length} {isBn ? "টি আপডেট" : "Updates"}
+                  </span>
+                </div>
+
+                <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-pink-100">
+                  {history.map((h: any, idx: number) => {
+                    const view = formatCustomerLogEntry(
+                      { status: h.status, note: h.note, courier_name: courierName },
+                      language
+                    );
+                    const isLatest = idx === history.length - 1;
+
+                    return (
+                      <div key={h.id || idx} className="relative group">
+                        {/* Timeline Bullet Node */}
+                        <div
+                          className={`absolute -left-6 top-1 h-4 w-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                            isLatest
+                              ? "bg-[#e91e63] border-white shadow-xs"
+                              : "bg-white border-pink-300"
+                          }`}
+                        >
+                          <div className={`h-1.5 w-1.5 rounded-full ${isLatest ? "bg-white" : "bg-pink-400"}`} />
+                        </div>
+
+                        {/* Event Content */}
+                        <div className={`rounded-2xl border p-3.5 text-xs transition-colors space-y-1 ${
+                          isLatest ? "bg-pink-50/40 border-pink-200" : "bg-white border-gray-100"
+                        }`}>
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <span className="font-bold text-gray-900 text-xs sm:text-[13px]">
+                              {view.title}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${view.badgeColor}`}>
+                              {view.badge}
+                            </span>
+                          </div>
+
+                          <p className="text-gray-600 text-[11px] sm:text-xs leading-relaxed">
+                            {view.description}
+                          </p>
+
+                          <div className="pt-1 flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
+                            <Calendar className="h-3 w-3 text-gray-300" />
+                            <span>
+                              {new Date(h.created_at).toLocaleString(isBn ? "bn-BD" : "en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Delivery & Items Summary */}
+          {/* Delivery Destination & Ordered Items Summary */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Delivery Info */}
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-2 text-xs">
+            <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-2.5 text-xs">
               <h3 className="font-bold text-text flex items-center gap-1.5 border-b border-border pb-2">
                 <MapPin className="h-4 w-4 text-primary-600" />
-                {t("orders", "shippingAddress")}
+                <span>{t("orders", "shippingAddress")}</span>
               </h3>
-              <p className="font-bold text-text">{address.name}</p>
-              <p className="text-text-secondary">{toBn(address.phone)}</p>
-              <p className="text-text-secondary">{address.address}</p>
-              <p className="text-text-secondary">{address.thana}, {address.district}</p>
+              <p className="font-bold text-text text-sm">{address.name || "Customer"}</p>
+              <p className="text-text-secondary font-mono">{toBn(address.phone || "")}</p>
+              <p className="text-text-secondary leading-relaxed">{address.address}</p>
+              <p className="text-text-secondary font-medium">
+                {[address.thana, address.district].filter(Boolean).join(", ")}
+              </p>
               <div className="pt-2 border-t border-dashed border-border flex justify-between font-semibold">
-                <span>{t("checkout", "shippingMethod")}:</span>
-                <span className="text-primary-700">{order.shipping_method}</span>
+                <span className="text-text-muted">{t("checkout", "shippingMethod")}:</span>
+                <span className="text-primary-700 font-bold">{order.shipping_method || "Standard Delivery"}</span>
               </div>
             </div>
 
             {/* Payment & Items */}
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-2 text-xs">
+            <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-2.5 text-xs">
               <h3 className="font-bold text-text flex items-center gap-1.5 border-b border-border pb-2">
                 <Package className="h-4 w-4 text-primary-600" />
-                {t("orders", "itemDetails")} ({toBn(items.length)})
+                <span>{t("orders", "itemDetails")} ({toBn(items.length)})</span>
               </h3>
-              <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+              <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                 {items.map((it: any) => (
-                  <div key={it.id} className="flex justify-between text-text-secondary">
-                    <span className="truncate pr-2">{toBn(it.quantity)}x {it.product_name_snapshot}</span>
-                    <span className="font-semibold text-text">{formatPriceBn(it.total)}</span>
+                  <div key={it.id} className="flex justify-between items-center text-text-secondary py-0.5">
+                    <span className="truncate pr-2 font-medium">
+                      {toBn(it.quantity)}x {it.product_name_snapshot || it.name}
+                    </span>
+                    <span className="font-bold text-text shrink-0">{formatPriceBn(it.total)}</span>
                   </div>
                 ))}
               </div>
               <div className="pt-2 border-t border-dashed border-border flex justify-between text-sm font-extrabold text-text">
                 <span>{t("checkout", "totalPayable")}:</span>
-                <span className="text-primary-700">{formatPriceBn(order.total)}</span>
+                <span className="text-primary-700 font-black">{formatPriceBn(order.total)}</span>
+              </div>
+              <div className="flex justify-between text-[11px] text-text-muted font-medium">
+                <span>{isBn ? "পেমেন্ট মাধ্যম:" : "Payment Method:"}</span>
+                <span className="uppercase font-bold text-emerald-700">
+                  {order.payment_method === "cod" ? (isBn ? "ক্যাশ অন ডেলিভারি (COD)" : "Cash on Delivery") : order.payment_method}
+                </span>
               </div>
             </div>
           </div>
@@ -279,4 +424,3 @@ export default function TrackOrderPage() {
     </div>
   );
 }
-

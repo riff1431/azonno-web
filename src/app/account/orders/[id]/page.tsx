@@ -13,7 +13,7 @@ import {
   AlertOctagon,
 } from "lucide-react";
 import { getCustomerOrderById } from "@/features/account/actions";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatCustomerLogEntry } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { OrderCancelDialog } from "./order-cancel-dialog";
 
@@ -177,17 +177,25 @@ export default async function CustomerOrderDetailPage({
             <div className="pt-4 border-t border-border space-y-2">
               <h3 className="text-xs font-bold text-text">Fulfillment Timeline</h3>
               <div className="space-y-2 text-xs">
-                {history.map((h: any) => (
-                  <div key={h.id} className="flex items-start gap-2 text-text-secondary">
-                    <div className="h-2 w-2 rounded-full bg-primary-600 mt-1 shrink-0" />
-                    <p>
-                      <strong className="text-text capitalize">{h.status}:</strong> {h.note} —{" "}
-                      <span className="text-[10px] text-text-muted">
-                        {new Date(h.created_at).toLocaleString("en-GB")}
-                      </span>
-                    </p>
-                  </div>
-                ))}
+                {history.map((h: any) => {
+                  const view = formatCustomerLogEntry(
+                    { status: h.status, note: h.note, courier_name: order.courier_name },
+                    "en"
+                  );
+                  return (
+                    <div key={h.id} className="flex items-start gap-2 text-text-secondary">
+                      <div className="h-2 w-2 rounded-full bg-primary-600 mt-1.5 shrink-0" />
+                      <div>
+                        <p className="font-semibold text-text">
+                          {view.title}: <span className="font-normal text-text-secondary">{view.description}</span>
+                        </p>
+                        <span className="text-[10px] text-text-muted">
+                          {new Date(h.created_at).toLocaleString("en-GB")}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -196,19 +204,27 @@ export default async function CustomerOrderDetailPage({
 
       {isCancelled && history.length > 0 && (
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-3">
-          <h3 className="text-xs font-bold text-text uppercase tracking-wider">Order History & Notes</h3>
+          <h3 className="text-xs font-bold text-text uppercase tracking-wider">Order History</h3>
           <div className="space-y-2 text-xs">
-            {history.map((h: any) => (
-              <div key={h.id} className="flex items-start gap-2 text-text-secondary">
-                <div className="h-2 w-2 rounded-full bg-red-500 mt-1 shrink-0" />
-                <p>
-                  <strong className="text-text capitalize">{h.status}:</strong> {h.note} —{" "}
-                  <span className="text-[10px] text-text-muted">
-                    {new Date(h.created_at).toLocaleString("en-GB")}
-                  </span>
-                </p>
-              </div>
-            ))}
+            {history.map((h: any) => {
+              const view = formatCustomerLogEntry(
+                { status: h.status, note: h.note, courier_name: order.courier_name },
+                "en"
+              );
+              return (
+                <div key={h.id} className="flex items-start gap-2 text-text-secondary">
+                  <div className="h-2 w-2 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                  <div>
+                    <p className="font-semibold text-text">
+                      {view.title}: <span className="font-normal text-text-secondary">{view.description}</span>
+                    </p>
+                    <span className="text-[10px] text-text-muted">
+                      {new Date(h.created_at).toLocaleString("en-GB")}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
