@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Check, ShoppingBag, Zap, Sparkles, Truck, Tag, ShieldCheck } from "lucide-react";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { useCart } from "@/context/cart-context";
 import { useLanguage } from "@/context/language-context";
@@ -15,6 +15,7 @@ interface BundleProduct {
   id: string;
   name: string;
   slug: string;
+  sku?: string | null;
   regular_price: number;
   sale_price: number | null;
   og_image_url: string | null;
@@ -23,72 +24,78 @@ interface BundleProduct {
 
 interface FrequentlyBoughtTogetherProps {
   bundleData: {
-    mainProduct: BundleProduct;
-    bundleProducts: BundleProduct[];
-    config: {
-      title: string;
-      offerType: "percentage" | "fixed" | "free_shipping";
-      offerValue: number;
-      badgeText: string;
-      originalTotalPrice: number;
-      comboTotalPrice: number;
-      discountAmount: number;
-      isFreeShipping: boolean;
-    };
+    enabled: boolean;
+    title: string;
+    discount_type: "percentage" | "fixed" | "free_shipping";
+    discount_value: number;
+    badge_text?: string;
+    products: BundleProduct[];
   } | null;
+  mainProduct: any;
 }
 
-export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogetherProps) {
+export function FrequentlyBoughtTogether({
+  bundleData,
+  mainProduct,
+}: FrequentlyBoughtTogetherProps) {
   const router = useRouter();
   const { addItem, openCart } = useCart();
-  const { language, toBn, formatPriceBn } = useLanguage();
+  const { language, t, toBn, formatPriceBn } = useLanguage();
+  const [addedSuccess, setAddedSuccess] = useState(false);
   const isBn = language === "bn";
 
-  if (!bundleData || !bundleData.bundleProducts || bundleData.bundleProducts.length === 0) {
+  // If no active bundle configuration or fewer than 2 total products, don't display widget
+  if (!bundleData || !bundleData.enabled || !bundleData.products || bundleData.products.length === 0) {
     return null;
   }
 
-  const { mainProduct, bundleProducts, config } = bundleData;
-  const allProducts = [mainProduct, ...bundleProducts];
+  const config = bundleData;
+  const allBundleProducts: BundleProduct[] = [
+    {
+      id: mainProduct.id,
+      name: mainProduct.name,
+      slug: mainProduct.slug,
+      sku: mainProduct.sku || null,
+      regular_price: Number(mainProduct.regular_price) || 0,
+      sale_price: mainProduct.sale_price ? Number(mainProduct.sale_price) : null,
+      og_image_url: mainProduct.og_image_url || null,
+      brands: mainProduct.brands || null,
+    },
+    ...config.products.filter((p) => p.id !== mainProduct.id),
+  ];
 
-  // State: Set of selected product IDs (all selected by default)
-  const [selectedIds, setSelectedIds] = useState<string[]>(allProducts.map((p) => p.id));
-  const [addedSuccess, setAddedSuccess] = useState(false);
+  // Default selection: all products in the combo
+  const [selectedIds, setSelectedIds] = useState<string[]>(
+    allBundleProducts.map((p) => p.id)
+  );
 
-  // Toggle selection
   const toggleSelect = (id: string) => {
-    // Keep at least main product selected
-    if (id === mainProduct.id && selectedIds.includes(id) && selectedIds.length === 1) {
-      return;
-    }
+    // Keep main product permanently checked, or allow toggling other items
+    if (id === mainProduct.id && selectedIds.includes(id) && selectedIds.length === 1) return;
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((pId) => pId !== id) : [...prev, id]
     );
   };
 
-  // Filter selected products
-  const selectedProducts = allProducts.filter((p) => selectedIds.includes(p.id));
-  const isComboActive = selectedProducts.length >= 2;
+  const selectedProducts = allBundleProducts.filter((p) => selectedIds.includes(p.id));
 
-  // Calculate live dynamic totals based on selection
+  // Compute pricing totals for selected combination
   const currentRegularTotal = selectedProducts.reduce(
-    (sum, p) => sum + (p.sale_price ?? p.regular_price),
+    (sum, p) => sum + Number(p.sale_price ?? p.regular_price),
     0
   );
 
   let currentDiscount = 0;
-  if (isComboActive) {
-    if (config.offerType === "percentage") {
-      currentDiscount = Math.round((currentRegularTotal * config.offerValue) / 100);
-    } else if (config.offerType === "fixed") {
-      currentDiscount = Math.min(config.offerValue, currentRegularTotal - 50);
-    } else if (config.offerType === "free_shipping") {
-      currentDiscount = 120; // Delivery value
+  if (selectedProducts.length > 1) {
+    if (config.discount_type === "percentage") {
+      currentDiscount = Math.round((currentRegularTotal * (config.discount_value || 0)) / 100);
+    } else if (config.discount_type === "fixed") {
+      currentDiscount = Math.min(currentRegularTotal, config.discount_value || 0);
     }
   }
 
   const finalComboPrice =
-    config.offerType === "free_shipping"
+    config.discount_type === "free_shipping"
       ? currentRegularTotal
       : Math.max(0, currentRegularTotal - currentDiscount);
 
@@ -97,7 +104,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
     if (e) triggerMicroRipple(e);
 
     const bundleItems = selectedProducts.map((prod) => ({
-      item_id: prod.id,
+      item_id: getShortProductId(prod),
       item_name: prod.name,
       item_brand: (prod.brands as any)?.name || undefined,
       price: Number(prod.sale_price ?? prod.regular_price) || 0,
@@ -110,6 +117,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
       addItem({
         id: prod.id,
         product_id: prod.id,
+        sku: getShortProductId(prod),
         name: prod.name,
         slug: prod.slug,
         price: prod.sale_price ?? prod.regular_price,
@@ -131,7 +139,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
     if (e) triggerMicroRipple(e);
 
     const bundleItems = selectedProducts.map((prod) => ({
-      item_id: prod.id,
+      item_id: getShortProductId(prod),
       item_name: prod.name,
       item_brand: (prod.brands as any)?.name || undefined,
       price: Number(prod.sale_price ?? prod.regular_price) || 0,
@@ -144,6 +152,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
       addItem({
         id: prod.id,
         product_id: prod.id,
+        sku: getShortProductId(prod),
         name: prod.name,
         slug: prod.slug,
         price: prod.sale_price ?? prod.regular_price,

@@ -7,11 +7,13 @@ import { Button } from "@/components/shared/ui/button";
 import { useCart } from "@/context/cart-context";
 import { useLanguage } from "@/context/language-context";
 import { trackAddToCart } from "@/lib/analytics/datalayer";
+import { getShortProductId } from "@/lib/utils";
 
 export interface ShoppableProduct {
   id: string;
   name: string;
   slug: string;
+  sku?: string | null;
   regular_price: number;
   sale_price?: number | null;
   og_image_url?: string | null;
@@ -42,6 +44,7 @@ export function ShoppableArticleProducts({
       {
         id: product.id,
         product_id: product.id,
+        sku: getShortProductId(product),
         name: product.name,
         slug: product.slug,
         price: currentPrice,
@@ -55,7 +58,7 @@ export function ShoppableArticleProducts({
     trackAddToCart(
       [
         {
-          item_id: product.id,
+          item_id: getShortProductId(product),
           item_name: product.name,
           item_brand: product.brands?.name || undefined,
           price: currentPrice,
@@ -81,6 +84,7 @@ export function ShoppableArticleProducts({
         {
           id: product.id,
           product_id: product.id,
+          sku: getShortProductId(product),
           name: product.name,
           slug: product.slug,
           price: currentPrice,

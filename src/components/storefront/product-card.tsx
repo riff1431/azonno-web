@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart, Star, Check, ShoppingBag } from "lucide-react";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, getShortProductId } from "@/lib/utils";
 import { useWishlist } from "@/context/wishlist-context";
 import { useCart } from "@/context/cart-context";
 import { triggerMicroRipple } from "@/lib/ui-effects";
@@ -68,7 +68,7 @@ export function ProductCard({
 
   const handleProductClick = () => {
     trackSelectItem({
-      item_id: product.id,
+      item_id: getShortProductId(product),
       item_name: product.name,
       item_brand: product.brand_name || undefined,
       item_category: product.category_name || undefined,
@@ -85,7 +85,7 @@ export function ProductCard({
     trackGA4AddToCart(
       [
         {
-          item_id: product.id,
+          item_id: getShortProductId(product),
           item_name: product.name,
           item_brand: product.brand_name || undefined,
           item_category: product.category_name || undefined,
@@ -100,6 +100,7 @@ export function ProductCard({
       {
         id: product.id,
         product_id: product.id,
+        sku: getShortProductId(product),
         name: product.name,
         slug: product.slug,
         price: effectivePrice,
@@ -121,7 +122,7 @@ export function ProductCard({
     trackGA4AddToCart(
       [
         {
-          item_id: product.id,
+          item_id: getShortProductId(product),
           item_name: product.name,
           item_brand: product.brand_name || undefined,
           item_category: product.category_name || undefined,
@@ -136,6 +137,7 @@ export function ProductCard({
       {
         id: product.id,
         product_id: product.id,
+        sku: getShortProductId(product),
         name: product.name,
         slug: product.slug,
         price: effectivePrice,
@@ -157,7 +159,7 @@ export function ProductCard({
       trackGA4AddToWishlist(
         [
           {
-            item_id: product.id,
+            item_id: getShortProductId(product),
             item_name: product.name,
             item_brand: product.brand_name || undefined,
             item_category: product.category_name || undefined,

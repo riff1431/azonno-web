@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSettingsByGroup } from "@/lib/settings/config-service";
+import { getShortProductId } from "@/lib/utils";
 
 export type FeedPlatform = "meta" | "tiktok" | "google";
 export type FeedFormat = "xml" | "csv";
@@ -89,7 +90,7 @@ async function fetchPublishedProducts(): Promise<{ products: ProductFeedItem[]; 
 
     return {
       id: p.id,
-      sku: p.sku || p.id,
+      sku: getShortProductId(p),
       name: p.name,
       slug: p.slug,
       description: cleanDescription(p.description || p.short_description || p.name),

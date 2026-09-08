@@ -33,7 +33,7 @@ import {
   FlaskConical,
   MessageSquare,
 } from "lucide-react";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { useWishlist } from "@/context/wishlist-context";
@@ -134,7 +134,7 @@ export function ProductDetailClient({
       lastTrackedProductKey.current = trackingKey;
 
       trackViewItem({
-        item_id: product.id,
+        item_id: getShortProductId(product),
         item_name: product.name,
         item_brand: product.brands?.name || undefined,
         item_category: categoryName,
@@ -238,7 +238,7 @@ export function ProductDetailClient({
     trackGA4AddToCart(
       [
         {
-          item_id: product.id,
+          item_id: getShortProductId(product),
           item_name: product.name,
           item_brand: product.brands?.name || undefined,
           item_category: categoryName,
@@ -255,6 +255,7 @@ export function ProductDetailClient({
         id: selectedVariant?.id ? `${product.id}-${selectedVariant.id}` : product.id,
         product_id: product.id,
         variant_id: selectedVariant?.id || null,
+        sku: getShortProductId(product),
         variant_label: selectedVariant?.title || selectedVariant?.name || null,
         name: product.name,
         slug: product.slug,
@@ -273,7 +274,7 @@ export function ProductDetailClient({
     trackGA4AddToCart(
       [
         {
-          item_id: product.id,
+          item_id: getShortProductId(product),
           item_name: product.name,
           item_brand: product.brands?.name || undefined,
           item_category: categoryName,
@@ -290,6 +291,7 @@ export function ProductDetailClient({
         id: selectedVariant?.id ? `${product.id}-${selectedVariant.id}` : product.id,
         product_id: product.id,
         variant_id: selectedVariant?.id || null,
+        sku: getShortProductId(product),
         variant_label: selectedVariant?.title || selectedVariant?.name || null,
         name: product.name,
         slug: product.slug,
@@ -311,7 +313,7 @@ export function ProductDetailClient({
       trackGA4AddToWishlist(
         [
           {
-            item_id: product.id,
+            item_id: getShortProductId(product),
             item_name: product.name,
             item_brand: product.brands?.name || undefined,
             item_category: categoryName,
@@ -485,11 +487,9 @@ export function ProductDetailClient({
                   <ChevronRight className="h-3 w-3" />
                 </Link>
               )}
-              {product.sku && (
-                <span className="inline-flex items-center gap-1 rounded-md bg-zinc-100 border border-zinc-200 px-2 py-0.5 font-mono text-[11px] font-bold text-zinc-600">
-                  {language === "bn" ? "প্রোডাক্ট আইডি / এসকেইউ:" : "ID / SKU:"} #{toBn(product.sku)}
-                </span>
-              )}
+              <span className="inline-flex items-center gap-1 rounded-md bg-zinc-100 border border-zinc-200 px-2 py-0.5 font-mono text-[11px] font-bold text-zinc-600">
+                {language === "bn" ? "প্রোডাক্ট আইডি / এসকেইউ:" : "ID / SKU:"} #{toBn(getShortProductId(product))}
+              </span>
             </div>
             <h1 className="mt-1 text-xl sm:text-2xl lg:text-3xl font-black text-text leading-tight">
               {product.name}

@@ -5,6 +5,7 @@ import { ProductCard, type ProductCardData } from "@/components/storefront/produ
 import { ShieldCheck, ChevronRight } from "lucide-react";
 import { ItemListTracker } from "@/components/analytics/item-list-tracker";
 import { useLanguage } from "@/context/language-context";
+import { getShortProductId } from "@/lib/utils";
 
 interface BrandDetailClientProps {
   brand: {
@@ -28,7 +29,7 @@ export function BrandDetailClient({
     <div className="container-main py-4 sm:py-6 space-y-6">
       <ItemListTracker
         items={productCards.map((p, idx) => ({
-          item_id: p.id,
+          item_id: getShortProductId(p),
           item_name: p.name,
           item_brand: brand.name,
           price: p.sale_price ?? p.regular_price,

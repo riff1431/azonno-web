@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useCart, CartItem } from "@/context/cart-context";
 import { useLanguage } from "@/context/language-context";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import {
   trackViewCart,
@@ -25,7 +25,7 @@ import {
   trackBeginCheckout,
 } from "@/lib/analytics/datalayer";
 
-const FREE_SHIPPING_THRESHOLD = 2000;
+const FREE_SHIPPING_THRESHOLD = 2500;
 
 export function CartDrawer() {
   const { language, toBn, formatPriceBn, t } = useLanguage();
@@ -57,7 +57,7 @@ export function CartDrawer() {
     if (isCartOpen && items.length > 0) {
       trackViewCart(
         items.map((it) => ({
-          item_id: it.product_id || it.id,
+          item_id: getShortProductId(it),
           item_name: it.name,
           item_brand: it.brand_name || undefined,
           item_variant: it.variant_label || undefined,
@@ -73,7 +73,7 @@ export function CartDrawer() {
     trackGA4RemoveFromCart(
       [
         {
-          item_id: item.product_id || item.id,
+          item_id: getShortProductId(item),
           item_name: item.name,
           item_brand: item.brand_name || undefined,
           item_variant: item.variant_label || undefined,
@@ -89,7 +89,7 @@ export function CartDrawer() {
   const handleProceedToCheckout = () => {
     trackBeginCheckout(
       items.map((it) => ({
-        item_id: it.product_id || it.id,
+        item_id: getShortProductId(it),
         item_name: it.name,
         item_brand: it.brand_name || undefined,
         item_variant: it.variant_label || undefined,

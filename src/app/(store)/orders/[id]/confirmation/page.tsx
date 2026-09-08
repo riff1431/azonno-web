@@ -3,6 +3,7 @@ import { getOrderById } from "@/features/orders/actions";
 import { getMarketingAnalyticsSettings } from "@/features/marketing/meta-actions";
 import { PurchaseTracker } from "@/components/analytics/purchase-tracker";
 import { OrderConfirmationClient } from "./order-confirmation-client";
+import { getShortProductId } from "@/lib/utils";
 
 export default async function OrderConfirmationPage({
   params,
@@ -52,7 +53,7 @@ export default async function OrderConfirmationPage({
             zip: address.zip || address.postal_code || "",
           },
           items: items.map((it: any, idx: number) => ({
-            item_id: it.product_id || it.id,
+            item_id: getShortProductId({ sku: it.sku_snapshot, product_id: it.product_id, id: it.id }),
             item_name: it.product_name_snapshot || "Product",
             price: Number(it.unit_price) || 0,
             quantity: Number(it.quantity) || 1,

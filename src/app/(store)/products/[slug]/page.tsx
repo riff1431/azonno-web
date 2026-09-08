@@ -7,7 +7,7 @@ import { getFrequentlyBoughtTogetherBundle } from "@/features/products/combo-act
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { getProductReviews } from "@/features/reviews/actions";
 import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl, getShortProductId } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -116,7 +116,7 @@ export default async function ProductDetailPage({
         name={product.name}
         description={product.description || product.seo_description}
         images={images}
-        sku={product.sku || product.id}
+        sku={getShortProductId(product)}
         brandName={product.brands?.name}
         price={Number(product.regular_price || 0)}
         salePrice={product.sale_price ? Number(product.sale_price) : undefined}

@@ -7,7 +7,7 @@ import { Plus, Pencil, Trash2, Package, Archive, Eye, Truck } from "lucide-react
 import { Button } from "@/components/shared/ui/button";
 import { DataTable, RowActions, RowAction, type Column } from "@/components/admin/data-table";
 import { getProducts, deleteProduct, bulkUpdateProductStatus } from "@/features/products/actions";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, formatShortProductId } from "@/lib/utils";
 import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface ProductRow {
@@ -64,7 +64,7 @@ export default function ProductListClient() {
       width: "110px",
       cell: (row) => (
         <span className="font-mono font-bold text-xs bg-surface-secondary border border-border px-2.5 py-1 rounded-md text-text inline-block">
-          #{row.sku || "—"}
+          #{row.sku ? formatShortProductId(row.sku) : "—"}
         </span>
       ),
     },

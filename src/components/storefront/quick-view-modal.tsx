@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { X, Star, ShoppingBag, Plus, Minus, Zap, ShieldCheck, Heart } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { useWishlist } from "@/context/wishlist-context";
 import { useCart } from "@/context/cart-context";
@@ -19,6 +19,7 @@ interface QuickViewProduct {
   id: string;
   name: string;
   slug: string;
+  sku?: string | null;
   regular_price: number;
   sale_price: number | null;
   image_url?: string | null;
@@ -43,7 +44,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
     if (isOpen && product) {
       const effectivePrice = product.sale_price ?? product.regular_price;
       trackViewItem({
-        item_id: product.id,
+        item_id: getShortProductId(product),
         item_name: product.name,
         item_brand: product.brand_name || undefined,
         item_category: product.category_name || undefined,
@@ -67,7 +68,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
     trackGA4AddToCart(
       [
         {
-          item_id: product.id,
+          item_id: getShortProductId(product),
           item_name: product.name,
           item_brand: product.brand_name || undefined,
           item_category: product.category_name || undefined,
@@ -82,6 +83,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
       {
         id: product.id,
         product_id: product.id,
+        sku: getShortProductId(product),
         name: product.name,
         slug: product.slug,
         price: effectivePrice,
@@ -99,7 +101,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
       trackGA4AddToWishlist(
         [
           {
-            item_id: product.id,
+            item_id: getShortProductId(product),
             item_name: product.name,
             item_brand: product.brand_name || undefined,
             item_category: product.category_name || undefined,

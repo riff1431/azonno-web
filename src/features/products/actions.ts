@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { logActivity } from "@/services/activity-log";
+import { formatShortProductId } from "@/lib/utils";
 
 export async function getNextProductSerial(): Promise<number> {
   const supabase = await createClient();
@@ -117,11 +118,13 @@ export async function createProduct(input: {
   // Get current user
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Determine SKU / Product ID: use admin-provided value or auto-generate sequential number (1, 2, 3...)
+  // Determine SKU / Product ID: use admin-provided value or auto-generate sequential number (0001, 0002, 0003...)
   let sku = input.product.sku ? String(input.product.sku).trim() : "";
   if (!sku) {
     const nextSerial = await getNextProductSerial();
-    sku = String(nextSerial);
+    sku = formatShortProductId(nextSerial);
+  } else {
+    sku = formatShortProductId(sku);
   }
 
   // Insert product with beauty taxonomy
@@ -289,7 +292,9 @@ export async function updateProduct(
   let sku = raw.sku !== undefined ? String(raw.sku || "").trim() : undefined;
   if (sku === "") {
     const nextSerial = await getNextProductSerial();
-    sku = String(nextSerial);
+    sku = formatShortProductId(nextSerial);
+  } else if (sku !== undefined) {
+    sku = formatShortProductId(sku);
   }
 
   // Build a safe payload containing ONLY columns that exist in the products table.

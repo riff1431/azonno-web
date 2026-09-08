@@ -17,7 +17,7 @@ import {
   Phone,
   Globe,
 } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import QRCode from "qrcode";
 import JsBarcode from "jsbarcode";
@@ -891,7 +891,7 @@ export default function InvoicePrintClient({
                     </span>
                     {item.sku_snapshot && (
                       <span className="font-mono text-[9px] text-gray-400">
-                        SKU: {item.sku_snapshot}
+                        SKU: {formatShortProductId(item.sku_snapshot)}
                       </span>
                     )}
                   </td>

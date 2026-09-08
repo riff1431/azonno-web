@@ -147,4 +147,50 @@ export function extractClientIp(
   return undefined;
 }
 
+/**
+ * Standardizes a product SKU or raw identifier into a clean, human-friendly short ID.
+ * - Strips leading '#'
+ * - If numeric (e.g. "1", "12", 3), pads with leading zeros to 4 digits ("0001", "0012", "0003")
+ * - If already formatted custom string (e.g. "BB-101"), keeps it clean.
+ * - If UUID fallback provided without SKU, generates a clean deterministic 4-digit code.
+ */
+export function formatShortProductId(skuOrId?: string | number | null, fallbackId?: string): string {
+  if (!skuOrId && !fallbackId) return "0001";
+  const raw =
+    skuOrId !== undefined && skuOrId !== null && String(skuOrId).trim() !== ""
+      ? String(skuOrId).trim()
+      : String(fallbackId || "").trim();
+
+  if (!raw) return "0001";
+  const clean = raw.replace(/^#/, "").trim();
+
+  // If pure digits (e.g. "1", "02", "12")
+  if (/^\d+$/.test(clean)) {
+    return clean.length < 4 ? clean.padStart(4, "0") : clean;
+  }
+
+  // If standard UUID (36 chars with hyphens) and no numeric SKU was available
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clean)) {
+    const hexSegment = clean.replace(/-/g, "").slice(0, 6);
+    const num = (parseInt(hexSegment, 16) % 9000) + 1000;
+    return String(num);
+  }
+
+  return clean;
+}
+
+/**
+ * Universal product object resolver for short, human-friendly Product ID / Content ID.
+ * Works seamlessly across Product, CartItem, OrderItem, and Catalog Feed objects.
+ */
+export function getShortProductId(
+  product?: { sku?: string | null; sku_snapshot?: string | null; id?: string; product_id?: string } | null
+): string {
+  if (!product) return "0001";
+  const candidate = product.sku || product.sku_snapshot || null;
+  const fallback = product.product_id || product.id || undefined;
+  return formatShortProductId(candidate, fallback);
+}
+
+
 

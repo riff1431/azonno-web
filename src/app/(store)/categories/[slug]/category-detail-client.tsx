@@ -5,6 +5,7 @@ import { ProductCard, type ProductCardData } from "@/components/storefront/produ
 import { Sparkles, FolderTree, ChevronRight } from "lucide-react";
 import { ItemListTracker } from "@/components/analytics/item-list-tracker";
 import { useLanguage } from "@/context/language-context";
+import { getShortProductId } from "@/lib/utils";
 
 interface CategoryDetailClientProps {
   category: {
@@ -29,7 +30,7 @@ export function CategoryDetailClient({
     <div className="container-main py-4 sm:py-6 space-y-6">
       <ItemListTracker
         items={productCards.map((p, idx) => ({
-          item_id: p.id,
+          item_id: getShortProductId(p),
           item_name: p.name,
           item_brand: p.brand_name || undefined,
           item_category: category.name,

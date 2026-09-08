@@ -31,7 +31,7 @@ import {
   Target,
   Sparkles,
 } from "lucide-react";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { updateAdminOrderFull, triggerManualOrderCapiPurchase } from "@/features/orders/actions";
 import { bookCourierDelivery } from "@/features/logistics/actions";
@@ -676,7 +676,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       <p className="font-bold text-gray-900 text-sm">{item.product_name_snapshot}</p>
                       <p className="text-gray-500 mt-0.5 font-medium">
                         Qty: <strong className="text-gray-800">{item.quantity}</strong> × {formatPrice(item.unit_price)}
-                        {item.sku_snapshot && <span className="ml-2 font-mono text-gray-400">SKU: {item.sku_snapshot}</span>}
+                        {item.sku_snapshot && <span className="ml-2 font-mono text-gray-400">SKU: {formatShortProductId(item.sku_snapshot)}</span>}
                       </p>
                     </div>
                   </div>

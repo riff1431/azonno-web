@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { Button } from "@/components/shared/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getShortProductId } from "@/lib/utils";
 import { trackViewItemList } from "@/lib/analytics/datalayer";
 import { useLanguage } from "@/context/language-context";
 
@@ -128,7 +128,7 @@ export function ProductsListingClient({
 
       trackViewItemList(
         products.map((p, idx) => ({
-          item_id: p.id,
+          item_id: getShortProductId(p),
           item_name: p.name,
           item_brand: p.brand_name || undefined,
           item_category: p.category_name || undefined,

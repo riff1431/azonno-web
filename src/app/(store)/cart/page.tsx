@@ -17,7 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useCart, CartItem } from "@/context/cart-context";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import {
   trackViewCart,
@@ -56,7 +56,7 @@ export default function CartPage() {
     if (items.length > 0) {
       trackViewCart(
         items.map((it) => ({
-          item_id: it.product_id || it.id,
+          item_id: getShortProductId(it),
           item_name: it.name,
           item_brand: it.brand_name || undefined,
           item_variant: it.variant_label || undefined,
@@ -72,7 +72,7 @@ export default function CartPage() {
     trackGA4RemoveFromCart(
       [
         {
-          item_id: item.product_id || item.id,
+          item_id: getShortProductId(item),
           item_name: item.name,
           item_brand: item.brand_name || undefined,
           item_variant: item.variant_label || undefined,
@@ -88,7 +88,7 @@ export default function CartPage() {
   const handleProceedToCheckout = () => {
     trackBeginCheckout(
       items.map((it) => ({
-        item_id: it.product_id || it.id,
+        item_id: getShortProductId(it),
         item_name: it.name,
         item_brand: it.brand_name || undefined,
         item_variant: it.variant_label || undefined,

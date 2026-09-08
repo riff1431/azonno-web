@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { sendSmsNotification } from "@/features/sms/actions";
-import { generateOrderNumber, extractClientIp } from "@/lib/utils";
+import { generateOrderNumber, extractClientIp, getShortProductId } from "@/lib/utils";
 
 export interface CreateOrderInput {
   customer: {
@@ -220,7 +220,7 @@ export async function createOrder(input: CreateOrderInput) {
         product_id: product?.id || null,
         variant_id: item.variant_id || null,
         product_name_snapshot: product?.name || item.name,
-        sku_snapshot: product?.sku || null,
+        sku_snapshot: getShortProductId(product),
         unit_price: activePrice,
         quantity: item.quantity || 1,
         total: lineTotal,

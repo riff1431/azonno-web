@@ -7,6 +7,7 @@ export interface CartItem {
   id: string; // unique item identifier (product_id or variant_id)
   product_id: string;
   variant_id?: string | null;
+  sku?: string | null;
   name: string;
   slug: string;
   price: number;

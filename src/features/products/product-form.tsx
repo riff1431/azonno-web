@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
-import { generateSlug, cn } from "@/lib/utils";
+import { generateSlug, cn, formatShortProductId } from "@/lib/utils";
 import { createProduct, updateProduct, getProducts, getNextProductSerial } from "@/features/products/actions";
 import { getCategories } from "@/features/categories/actions";
 import { getBrands } from "@/features/brands/actions";
@@ -389,7 +389,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
       const valueIds = items.map((i: any) => i.id);
       const labels = items.map((i: any) => i.value);
       const skuSuffix = labels.map((l: string) => l.toUpperCase().replace(/\s+/g, "")).join("-");
-      const baseSku = form.sku || (suggestedSku ? String(suggestedSku) : `VAR-${idx + 1}`);
+      const baseSku = form.sku || (suggestedSku ? formatShortProductId(suggestedSku) : `VAR-${idx + 1}`);
       return {
         sku: `${baseSku}-${skuSuffix}`,
         regular_price: form.regular_price || 0,
@@ -620,17 +620,17 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                     <Label className="font-semibold text-text">Product ID / SKU</Label>
                     {!isEditing && suggestedSku && (
                       <span className="text-xs font-semibold text-[#e91e63] bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-md">
-                        Auto Serial: #{suggestedSku}
+                        Auto Serial: #{formatShortProductId(suggestedSku)}
                       </span>
                     )}
                   </div>
                   <Input
                     value={form.sku}
                     onChange={(e) => updateField("sku", e.target.value)}
-                    placeholder={suggestedSku ? `e.g. ${suggestedSku} (Auto serial #${suggestedSku} if empty)` : "e.g. 1, 2, 3... (Auto-assigned if empty)"}
+                    placeholder={suggestedSku ? `e.g. ${formatShortProductId(suggestedSku)} (Auto serial #${formatShortProductId(suggestedSku)} if empty)` : "e.g. 0001, 0002... (Auto-assigned if empty)"}
                   />
                   <p className="text-[11px] text-text-muted">
-                    Product ID & SKU are identical numbers. Leave empty to automatically publish with dynamic serial {suggestedSku ? `#${suggestedSku}` : "(1, 2, 3...)"}.
+                    Product ID & SKU are identical numbers. Leave empty to automatically publish with dynamic serial {suggestedSku ? `#${formatShortProductId(suggestedSku)}` : "(0001, 0002, ...)"}.
                   </p>
                 </div>
                 <div className="space-y-2">

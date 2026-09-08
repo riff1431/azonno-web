@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { validateBdPhoneNumber, cleanBdPhoneNumber } from "@/lib/validation/bangladesh-phone";
 import { useCart } from "@/context/cart-context";
-import { formatPrice, cn } from "@/lib/utils";
+import { formatPrice, cn, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { createOrder } from "@/features/orders/actions";
 import { createClient } from "@/lib/supabase/client";
@@ -194,7 +194,7 @@ export default function CheckoutPage() {
       hasTrackedBeginCheckout.current = true;
       trackBeginCheckout({
         items: items.map((it) => ({
-          item_id: it.product_id || it.id,
+          item_id: getShortProductId(it),
           item_name: it.name,
           item_brand: it.brand_name || undefined,
           item_variant: it.variant_label || undefined,
@@ -226,7 +226,7 @@ export default function CheckoutPage() {
         lastTrackedShippingTier.current = tier;
         trackAddShippingInfo({
           items: items.map((it) => ({
-            item_id: it.product_id || it.id,
+            item_id: getShortProductId(it),
             item_name: it.name,
             item_brand: it.brand_name || undefined,
             item_variant: it.variant_label || undefined,
@@ -265,7 +265,7 @@ export default function CheckoutPage() {
 
         trackAddPaymentInfo({
           items: items.map((it) => ({
-            item_id: it.product_id || it.id,
+            item_id: getShortProductId(it),
             item_name: it.name,
             item_brand: it.brand_name || undefined,
             item_variant: it.variant_label || undefined,
@@ -414,7 +414,7 @@ export default function CheckoutPage() {
     try {
       trackAddPaymentInfo({
         items: items.map((it) => ({
-          item_id: it.product_id || it.id,
+          item_id: getShortProductId(it),
           item_name: it.name,
           item_brand: it.brand_name || undefined,
           item_variant: it.variant_label || undefined,
