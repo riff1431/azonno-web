@@ -18,6 +18,7 @@ import {
   Clock,
   Sparkles,
   ChevronRight,
+  ChevronLeft,
   Info,
   ZoomIn,
   Maximize2,
@@ -390,7 +391,7 @@ export function ProductDetailClient({
       {/* 1. Main Gallery + Info Grid */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12 items-start">
         {/* Left 5 Cols: Gallery */}
-        <div className="lg:col-span-5 space-y-3">
+        <div className="lg:col-span-5 space-y-4">
           {/* Main Photo Box with Luxury Precision Magnifier Zoom */}
           <div
             ref={imageContainerRef}
@@ -401,7 +402,7 @@ export function ProductDetailClient({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
             onClick={() => setIsModalOpen(true)}
-            className="relative aspect-square w-full overflow-hidden rounded-3xl border border-border bg-white shadow-xs flex items-center justify-center cursor-zoom-in group select-none touch-none"
+            className="relative mx-auto w-full max-w-[420px] aspect-square overflow-hidden rounded-3xl border border-gray-200/90 bg-white shadow-xs flex items-center justify-center cursor-zoom-in group select-none touch-none p-4"
           >
             {selectedImage ? (
               <img
@@ -409,12 +410,12 @@ export function ProductDetailClient({
                 alt={product.name}
                 style={{
                   transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                  transform: isZoomed ? "scale(2.4)" : "scale(1)",
+                  transform: isZoomed ? "scale(2.2)" : "scale(1)",
                   transition: isZoomed
                     ? "transform 0.05s ease-out"
                     : "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
-                className="h-full w-full object-cover object-center will-change-transform pointer-events-none"
+                className="h-full w-full object-contain object-center will-change-transform pointer-events-none"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-text-muted">
@@ -444,6 +445,7 @@ export function ProductDetailClient({
             {/* Top Right Action Row */}
             <div className="absolute right-3.5 top-3.5 z-10 flex items-center gap-2">
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsModalOpen(true);
@@ -455,6 +457,7 @@ export function ProductDetailClient({
               </button>
 
               <button
+                type="button"
                 onClick={handleWishlistClick}
                 aria-label="Add to wishlist"
                 className="ripple-container flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-xs transition-all hover:bg-white hover:scale-110 active:scale-90"
@@ -467,6 +470,48 @@ export function ProductDetailClient({
                 />
               </button>
             </div>
+
+            {/* Left / Right Quick Carousel Chevrons */}
+            {imageUrls.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const currIdx = imageUrls.indexOf(selectedImage);
+                    const prevIdx = (currIdx - 1 + imageUrls.length) % imageUrls.length;
+                    setSelectedImage(imageUrls[prevIdx]);
+                  }}
+                  aria-label="Previous photo"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-xs text-gray-700 hover:bg-white hover:text-[#e91e63] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const currIdx = imageUrls.indexOf(selectedImage);
+                    const nextIdx = (currIdx + 1) % imageUrls.length;
+                    setSelectedImage(imageUrls[nextIdx]);
+                  }}
+                  aria-label="Next photo"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-xs text-gray-700 hover:bg-white hover:text-[#e91e63] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </>
+            )}
+
+            {/* Photo Counter Badge */}
+            {imageUrls.length > 1 && (
+              <div className="absolute bottom-3 right-3 rounded-full bg-black/60 backdrop-blur-xs px-2.5 py-1 text-[11px] font-bold text-white shadow-xs pointer-events-none flex items-center gap-1 z-10">
+                <Layers className="h-3 w-3 text-pink-300" />
+                <span>
+                  {toBn(imageUrls.indexOf(selectedImage) + 1)} / {toBn(imageUrls.length)}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Full Screen HD Lightbox Modal */}
@@ -495,23 +540,46 @@ export function ProductDetailClient({
             </div>
           )}
 
-          {/* Thumbnails list */}
+          {/* Thumbnails Gallery Strip (Red-Boxed Space) */}
           {imageUrls.length > 1 && (
-            <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
-              {imageUrls.map((url, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(url)}
-                  className={cn(
-                    "relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border-2 transition-all p-1 bg-surface-secondary btn-soft-fill",
-                    selectedImage === url
-                      ? "border-[#e91e63] ring-2 ring-[#e91e63]/20 shadow-xs scale-105"
-                      : "border-border hover:border-text-muted opacity-80 hover:opacity-100"
-                  )}
-                >
-                  <img src={url} alt="thumbnail" className="h-full w-full object-contain" />
-                </button>
-              ))}
+            <div className="mx-auto w-full max-w-[420px] pt-1 space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-extrabold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Layers className="h-3.5 w-3.5 text-[#e91e63]" />
+                  {language === "bn" ? "প্রোডাক্ট ফটো গ্যালারি" : "Product Gallery"} ({toBn(imageUrls.length)})
+                </span>
+                <span className="text-[10px] font-medium text-gray-400">
+                  {language === "bn" ? "ছবি নির্বাচন করতে ক্লিক করুন" : "Click to switch photo"}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-4 gap-2.5 py-1">
+                {imageUrls.map((url, idx) => {
+                  const isSelected = selectedImage === url;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedImage(url)}
+                      className={cn(
+                        "relative aspect-square w-full overflow-hidden rounded-2xl border-2 transition-all p-1.5 bg-white shadow-2xs group cursor-pointer flex items-center justify-center",
+                        isSelected
+                          ? "border-[#e91e63] ring-2 ring-[#e91e63]/30 shadow-md scale-105"
+                          : "border-gray-200 hover:border-pink-300 opacity-75 hover:opacity-100"
+                      )}
+                    >
+                      <img
+                        src={url}
+                        alt={`${product.name} thumbnail ${idx + 1}`}
+                        className="h-full w-full object-contain transition-transform group-hover:scale-105"
+                      />
+                      {isSelected && (
+                        <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-[#e91e63] ring-2 ring-white" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
