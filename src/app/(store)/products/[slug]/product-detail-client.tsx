@@ -708,72 +708,6 @@ export function ProductDetailClient({
             </div>
           </div>
 
-          {/* Categories, Tags, Skin Concerns & Types Tag Pills */}
-          {(() => {
-            const prodCats = (product.product_categories || []).map((pc: any) => pc.categories).filter(Boolean);
-            const prodTags = (product.product_tags || []).map((pt: any) => pt.tags).filter(Boolean);
-            const hasTaxonomies = prodCats.length > 0 || prodTags.length > 0 || skinConcerns.length > 0 || skinTypes.length > 0;
-            if (!hasTaxonomies) return null;
-
-            return (
-              <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                {/* Categories */}
-                {prodCats.map((c: any) => (
-                  <Link
-                    key={c.id}
-                    href={`/categories/${c.slug}`}
-                    className="inline-flex items-center gap-1 rounded-full bg-pink-50 border border-pink-200 px-2.5 py-0.5 text-[11px] font-bold text-[#e91e63] hover:bg-pink-100 hover:border-pink-300 transition-colors"
-                  >
-                    <FolderTree className="h-2.5 w-2.5 shrink-0" />
-                    <span>{c.name}</span>
-                  </Link>
-                ))}
-
-                {/* Tags */}
-                {prodTags.map((tg: any) => (
-                  <Link
-                    key={tg.id}
-                    href={`/tags/${tg.slug}`}
-                    className="inline-flex items-center gap-1 rounded-full bg-gray-50 border border-gray-200 px-2.5 py-0.5 text-[11px] font-bold text-gray-700 hover:bg-[#e91e63] hover:text-white hover:border-[#e91e63] transition-all shadow-2xs"
-                  >
-                    <Tag className="h-2.5 w-2.5 shrink-0" />
-                    <span>#{tg.name}</span>
-                  </Link>
-                ))}
-
-                {/* Concerns */}
-                {skinConcerns.map((sc: string) => {
-                  const label = language === "bn" ? (SKIN_CONCERN_MAP[sc]?.bn || sc) : (SKIN_CONCERN_MAP[sc]?.en || sc);
-                  return (
-                    <Link
-                      key={sc}
-                      href={`/products?skin_concern=${encodeURIComponent(sc)}`}
-                      className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-bold text-purple-700 hover:bg-purple-100 transition-colors"
-                    >
-                      <Sparkles className="h-2.5 w-2.5 shrink-0" />
-                      <span>{label}</span>
-                    </Link>
-                  );
-                })}
-
-                {/* Skin Types */}
-                {skinTypes.map((st: string) => {
-                  const label = language === "bn" ? (SKIN_TYPE_MAP[st]?.bn || st) : (SKIN_TYPE_MAP[st]?.en || st);
-                  return (
-                    <Link
-                      key={st}
-                      href={`/products?skin_type=${encodeURIComponent(st)}`}
-                      className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
-                    >
-                      <Droplets className="h-2.5 w-2.5 shrink-0" />
-                      <span>{label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            );
-          })()}
-
           {/* Pricing Highlight Card */}
           <div className="rounded-2xl border border-border bg-surface-secondary/40 p-4 space-y-1">
             <div className="flex items-baseline gap-3 flex-wrap">
@@ -996,6 +930,78 @@ export function ProductDetailClient({
               <span className="text-[10px] text-text-muted">{language === "bn" ? "সহজ এক্সচেঞ্জ" : "Easy Wallet Refund"}</span>
             </div>
           </div>
+
+          {/* Product Tags & Taxonomy Pills (Below Product Info) */}
+          {(() => {
+            const prodCats = (product.product_categories || []).map((pc: any) => pc.categories).filter(Boolean);
+            const prodTags = (product.product_tags || []).map((pt: any) => pt.tags).filter(Boolean);
+            const hasTaxonomies = prodCats.length > 0 || prodTags.length > 0 || skinConcerns.length > 0 || skinTypes.length > 0;
+            if (!hasTaxonomies) return null;
+
+            return (
+              <div className="pt-2 border-t border-gray-100 space-y-2">
+                <span className="text-[11px] font-extrabold uppercase tracking-wider text-gray-500 flex items-center gap-1">
+                  <Tag className="h-3 w-3 text-[#e91e63]" />
+                  {language === "bn" ? "ট্যাগ ও সংশ্লিষ্ট ক্যাটাগরি:" : "Tags & Related Categories:"}
+                </span>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {/* Categories */}
+                  {prodCats.map((c: any) => (
+                    <Link
+                      key={c.id}
+                      href={`/categories/${c.slug}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-pink-50 border border-pink-200 px-2.5 py-1 text-xs font-bold text-[#e91e63] hover:bg-pink-100 hover:border-pink-300 transition-colors"
+                    >
+                      <FolderTree className="h-3 w-3 shrink-0" />
+                      <span>{c.name}</span>
+                    </Link>
+                  ))}
+
+                  {/* Tags */}
+                  {prodTags.map((tg: any) => (
+                    <Link
+                      key={tg.id}
+                      href={`/tags/${tg.slug}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-gray-50 border border-gray-200 px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-[#e91e63] hover:text-white hover:border-[#e91e63] transition-all shadow-2xs"
+                    >
+                      <Tag className="h-3 w-3 shrink-0" />
+                      <span>#{tg.name}</span>
+                    </Link>
+                  ))}
+
+                  {/* Concerns */}
+                  {skinConcerns.map((sc: string) => {
+                    const label = language === "bn" ? (SKIN_CONCERN_MAP[sc]?.bn || sc) : (SKIN_CONCERN_MAP[sc]?.en || sc);
+                    return (
+                      <Link
+                        key={sc}
+                        href={`/products?skin_concern=${encodeURIComponent(sc)}`}
+                        className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-2.5 py-1 text-xs font-bold text-purple-700 hover:bg-purple-100 transition-colors"
+                      >
+                        <Sparkles className="h-3 w-3 shrink-0" />
+                        <span>{label}</span>
+                      </Link>
+                    );
+                  })}
+
+                  {/* Skin Types */}
+                  {skinTypes.map((st: string) => {
+                    const label = language === "bn" ? (SKIN_TYPE_MAP[st]?.bn || st) : (SKIN_TYPE_MAP[st]?.en || st);
+                    return (
+                      <Link
+                        key={st}
+                        href={`/products?skin_type=${encodeURIComponent(st)}`}
+                        className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+                      >
+                        <Droplets className="h-3 w-3 shrink-0" />
+                        <span>{label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
