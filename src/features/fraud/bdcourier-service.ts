@@ -317,7 +317,55 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
     }
   }
 
-  // 3. Fallback when API key is not configured or query fails (No fake data!)
+  // 3. Fallback: Query internal store orders history for this customer phone
+  try {
+    const supabase = createAdminClient();
+    const { data: storeOrders } = await supabase
+      .from("orders")
+      .select("id, status, created_at, total")
+      .or(`guest_phone.eq.${normalizedPhone},shipping_address_snapshot->>phone.eq.${normalizedPhone}`);
+
+    const ordList = storeOrders || [];
+    const delCount = ordList.filter((o) => o.status === "delivered" || o.status === "completed").length;
+    const canCount = ordList.filter((o) => ["cancelled", "returned", "failed"].includes(o.status)).length;
+    const totCount = delCount + canCount;
+
+    if (totCount > 0) {
+      const storeRatio = Math.round((delCount / totCount) * 100);
+      const isRed = storeRatio < 50;
+      const isAmber = storeRatio >= 50 && storeRatio < 75;
+
+      const report: BDCourierReport = {
+        success: true,
+        phone: normalizedPhone,
+        total_parcel: totCount,
+        success_parcel: delCount,
+        cancelled_parcel: canCount,
+        success_ratio: storeRatio,
+        risk_level: isRed ? "critical" : isAmber ? "medium" : "safe",
+        color: isRed ? "red" : isAmber ? "amber" : "emerald",
+        badge_text: `${storeRatio}% Store Ratio`,
+        risk_verdict: `Store History: ${delCount}/${totCount} parcels successfully delivered (${storeRatio}% success rate).`,
+        courier_details: createEmptyCourierDetails(),
+        reports_count: 0,
+        reports: [],
+        source: "cached",
+        checked_at: new Date().toISOString(),
+        message: `${storeRatio}% delivery rate based on ${totCount} store orders.`,
+      };
+
+      reportCache.set(normalizedPhone, {
+        report,
+        expiresAt: Date.now() + CACHE_TTL_MS,
+      });
+
+      return report;
+    }
+  } catch (storeErr) {
+    // Non-fatal
+  }
+
+  // 4. Default for truly new buyers (0 parcels across couriers and store)
   return {
     success: false,
     phone: normalizedPhone,
@@ -327,14 +375,14 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
     success_ratio: 0,
     risk_level: "safe",
     color: "zinc",
-    badge_text: "No Records",
+    badge_text: "New Buyer",
     risk_verdict: settings.apiKey
-      ? "No delivery records found on BDCourier for this phone number."
-      : "BDCourier API Key not configured. Please add your API key in Fraud Settings.",
+      ? "No delivery records found on BDCourier or store history for this phone number."
+      : "BDCourier API Key not configured. Please add your API key in Fraud Settings for nationwide multi-courier checking.",
     courier_details: createEmptyCourierDetails(),
     reports_count: 0,
     reports: [],
-    source: "live_api",
+    source: settings.apiKey ? "live_api" : "cached",
     checked_at: new Date().toISOString(),
     message: settings.apiKey
       ? "No courier history found."

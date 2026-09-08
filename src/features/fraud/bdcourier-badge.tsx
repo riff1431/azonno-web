@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Truck, X, Loader2, ShieldAlert, ShieldCheck, AlertTriangle, ExternalLink } from "lucide-react";
+import { Truck, X, Loader2, ShieldAlert, ShieldCheck, AlertTriangle, ExternalLink, KeyRound } from "lucide-react";
 import { fetchBDCourierReport, type BDCourierReport } from "./bdcourier-service";
 import { CourierBrandLogo } from "@/components/shared/courier-logo";
 
@@ -157,17 +157,17 @@ export function BDCourierBadge({
             ) : isRed ? (
               <>
                 <ShieldAlert className="h-3 w-3 shrink-0 text-red-600" />
-                <span>{currentRatio}% Risk</span>
+                <span>{currentRatio}% Risk ({report?.success_parcel ?? 0}/{currentTotal})</span>
               </>
             ) : isAmber ? (
               <>
                 <AlertTriangle className="h-3 w-3 shrink-0 text-amber-600" />
-                <span>{currentRatio}% Ratio</span>
+                <span>{currentRatio}% Ratio ({report?.success_parcel ?? 0}/{currentTotal})</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-600" />
-                <span>{currentRatio}% Ratio</span>
+                <span>{currentRatio}% Score ({report?.success_parcel ?? 0}/{currentTotal})</span>
               </>
             )}
           </>
@@ -239,6 +239,25 @@ export function BDCourierBadge({
                 <p className="text-[11px] text-gray-600 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100 font-medium">
                   {safeVerdict}
                 </p>
+
+                {/* API Key Setup Banner if not configured */}
+                {report.message?.includes("API Key missing") && (
+                  <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 text-xs space-y-1.5">
+                    <span className="font-bold flex items-center gap-1.5 text-amber-900">
+                      <KeyRound className="h-3.5 w-3.5 text-amber-700 shrink-0" />
+                      <span>Connect BDCourier Live API</span>
+                    </span>
+                    <p className="text-[11px] text-amber-800 leading-relaxed">
+                      To view live nationwide fraud scores & delivery success rates across Pathao, SteadFast, RedX, PaperFly, please enter your BDCourier API key.
+                    </p>
+                    <Link
+                      href="/admin/orders/fraud?tab=settings"
+                      className="inline-flex items-center gap-1 text-[11px] font-black text-primary-700 hover:underline pt-0.5"
+                    >
+                      Configure BDCourier API Key &rarr;
+                    </Link>
+                  </div>
+                )}
 
                 {/* All Supported Couriers List */}
                 {allCouriers.length > 0 && (
