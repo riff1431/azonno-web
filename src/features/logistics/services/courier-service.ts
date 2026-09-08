@@ -92,23 +92,48 @@ export async function dispatchOrderToCourier(
     return result;
   }
 
-  // 3. Atomically update Order Record in Database
-  const { error: updateErr } = await supabaseAdmin
+  // 3. Atomically update Order Record in Database with snapshot fallback
+  const addrSnap = (existingOrder as any)?.shipping_address_snapshot || {};
+  const updatedAddressSnap = {
+    ...addrSnap,
+    courier_name: result.courier_name,
+    consignment_id: result.consignment_id,
+    tracking_code: result.tracking_code,
+    tracking_url: result.tracking_url,
+    delivery_hub: result.delivery_hub || null,
+    booked_at: new Date().toISOString(),
+  };
+
+  const coreUpdate: any = {
+    status: "shipped",
+    consignment_id: result.consignment_id,
+    tracking_id: result.tracking_code,
+    shipping_method: result.courier_name,
+    shipping_address_snapshot: updatedAddressSnap,
+    updated_at: new Date().toISOString(),
+  };
+
+  // Try updating with all extended columns first
+  const { error: fullUpdateErr } = await supabaseAdmin
     .from("orders")
     .update({
-      status: "shipped",
+      ...coreUpdate,
       courier_name: result.courier_name,
-      consignment_id: result.consignment_id,
       tracking_code: result.tracking_code,
-      tracking_id: result.tracking_code,
       tracking_url: result.tracking_url,
-      delivery_hub: result.delivery_hub || null,
-      updated_at: new Date().toISOString(),
     })
     .eq("id", input.orderId);
 
-  if (updateErr) {
-    console.error("Failed to update order after courier booking:", updateErr);
+  // If extended columns do not exist in DB, fallback to coreUpdate
+  if (fullUpdateErr) {
+    console.warn("Extended courier columns update fallback:", fullUpdateErr.message);
+    const { error: fallbackErr } = await supabaseAdmin
+      .from("orders")
+      .update(coreUpdate)
+      .eq("id", input.orderId);
+    if (fallbackErr) {
+      console.error("Critical: Fallback order update failed:", fallbackErr);
+    }
   }
 
   // 4. Record in courier_shipments

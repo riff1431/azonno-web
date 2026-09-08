@@ -579,6 +579,29 @@ export async function getAdminOrders(statusFilter?: string) {
       isBlacklisted: Boolean(order.fraud_score && order.fraud_score < 20),
     });
 
+    const addrSnap = order.shipping_address_snapshot || {};
+    const cid =
+      order.consignment_id ||
+      order.tracking_code ||
+      order.tracking_id ||
+      addrSnap.consignment_id ||
+      addrSnap.tracking_id ||
+      addrSnap.tracking_code ||
+      "";
+    const courierName =
+      order.courier_name ||
+      order.shipping_method ||
+      addrSnap.courier_name ||
+      (cid.startsWith("PTH") ? "Pathao Courier" : cid.startsWith("SF") ? "SteadFast Courier" : "");
+    const trackingUrl =
+      order.tracking_url ||
+      addrSnap.tracking_url ||
+      (cid
+        ? courierName.toLowerCase().includes("pathao") || cid.startsWith("PTH")
+          ? `https://pathao.com/courier/tracking/?consignment_id=${cid}`
+          : `https://steadfast.com.bd/t/${cid}`
+        : "");
+
     const historyList = (order.order_status_history || []).sort(
       (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
@@ -591,19 +614,25 @@ export async function getAdminOrders(statusFilter?: string) {
     );
     const isCourierReturned =
       order.status === "returned" ||
-      (order.status === "failed" && Boolean(order.consignment_id)) ||
-      Boolean(latestCourierHistory?.note?.toLowerCase().includes("returned") || latestCourierHistory?.note?.toLowerCase().includes("rto"));
+      (order.status === "failed" && Boolean(cid)) ||
+      Boolean(latestCourierHistory?.note?.toLowerCase().includes("returned") || latestCourierHistory?.note?.toLowerCase().includes("rto")) ||
+      Boolean(addrSnap.is_courier_returned);
     const isCourierCancelled =
       order.status === "cancelled" &&
-      (Boolean(order.consignment_id) || Boolean(latestCourierHistory?.note?.toLowerCase().includes("cancelled")));
+      (Boolean(cid) || Boolean(latestCourierHistory?.note?.toLowerCase().includes("cancelled")) || Boolean(addrSnap.is_courier_cancelled));
 
     return {
       ...order,
+      consignment_id: cid,
+      courier_name: courierName,
+      tracking_code: order.tracking_code || cid,
+      tracking_id: order.tracking_id || cid,
+      tracking_url: trackingUrl,
       advance_paid: advancePaid,
       amount_to_collect: amountToCollect,
       payment_status: order.payment_status || financials.payment_status,
       risk_profile: riskProfile,
-      courier_webhook_note: latestCourierHistory?.note || null,
+      courier_webhook_note: latestCourierHistory?.note || addrSnap.courier_webhook_note || null,
       is_courier_returned: isCourierReturned,
       is_courier_cancelled: isCourierCancelled,
     };

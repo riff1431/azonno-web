@@ -1141,9 +1141,21 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                   const rawPhone = phone.replace(/[^0-9]/g, "");
                   const bdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
                   const customerName = addr.name || ord.guest_name || "Customer";
-                  const consignment = ord.consignment_id || ord.tracking_code || ord.tracking_id || addr.consignment_id || addr.tracking_id || "";
+                  const consignment =
+                    ord.consignment_id ||
+                    ord.tracking_code ||
+                    ord.tracking_id ||
+                    addr.consignment_id ||
+                    addr.tracking_id ||
+                    addr.tracking_code ||
+                    "";
                   const activeCid = consignment;
-                  const rawCourier = (ord.courier_name || (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")).trim();
+                  const rawCourier = (
+                    ord.courier_name ||
+                    ord.shipping_method ||
+                    addr.courier_name ||
+                    (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")
+                  ).trim();
                   const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
                   const isSteadfast = rawCourier.toLowerCase().includes("steadfast") || activeCid.startsWith("SF") || (!isPathao && Boolean(activeCid));
                   const courierBrand = isPathao ? "Pathao" : isSteadfast ? "SteadFast" : (rawCourier || "SteadFast");
@@ -1566,9 +1578,9 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                             ord.status === "shipped" ||
                             ord.status === "in_transit" ||
                             ord.status === "out_for_delivery" ||
-                            (isDelivered && Boolean(ord.courier_name)) ||
-                            (isRet && Boolean(ord.courier_name)) ||
-                            (isCanc && Boolean(ord.courier_name))
+                            ((isDelivered || ord.status === "completed" || ord.status === "delivered") && Boolean(rawCourier || activeCid)) ||
+                            (isRet && Boolean(rawCourier || activeCid)) ||
+                            (isCanc && Boolean(rawCourier || activeCid))
                           );
 
                           if (isAlreadyDispatched) {
@@ -1778,9 +1790,21 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               const rawPhone = phone.replace(/[^0-9]/g, "");
               const bdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
               const customerName = addr.name || ord.guest_name || "Customer";
-              const consignment = ord.consignment_id || ord.tracking_code || ord.tracking_id || addr.consignment_id || addr.tracking_id || "";
+              const consignment =
+                ord.consignment_id ||
+                ord.tracking_code ||
+                ord.tracking_id ||
+                addr.consignment_id ||
+                addr.tracking_id ||
+                addr.tracking_code ||
+                "";
               const activeCid = consignment;
-              const rawCourier = (ord.courier_name || (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")).trim();
+              const rawCourier = (
+                ord.courier_name ||
+                ord.shipping_method ||
+                addr.courier_name ||
+                (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")
+              ).trim();
               const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
               const isSteadfast = rawCourier.toLowerCase().includes("steadfast") || activeCid.startsWith("SF") || (!isPathao && Boolean(activeCid));
               const courierBrand = isPathao ? "Pathao" : isSteadfast ? "SteadFast" : (rawCourier || "SteadFast");
@@ -2015,9 +2039,9 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       ord.status === "shipped" ||
                       ord.status === "in_transit" ||
                       ord.status === "out_for_delivery" ||
-                      (isDelivered && Boolean(ord.courier_name)) ||
-                      (isRet && Boolean(ord.courier_name)) ||
-                      (isCanc && Boolean(ord.courier_name))
+                      ((isDelivered || ord.status === "completed" || ord.status === "delivered") && Boolean(rawCourier || activeCid)) ||
+                      (isRet && Boolean(rawCourier || activeCid)) ||
+                      (isCanc && Boolean(rawCourier || activeCid))
                     );
 
                     if (isAlreadyDispatched) {

@@ -357,29 +357,46 @@ export async function syncLiveCourierStatus(orderId: string) {
   }
 
   // Update order in Supabase
-  const history = Array.isArray(order.order_status_history) ? order.order_status_history : [];
-  const newHistory = [
-    ...history,
-    {
-      from: order.status,
-      to: mappedStatus,
-      changed_at: new Date().toISOString(),
-      changed_by: "Real-time Courier API Sync",
-      note: statusNote,
-    },
-  ];
+  const addrSnap = order.shipping_address_snapshot || {};
+  const updatedAddressSnap = {
+    ...addrSnap,
+    courier_status: liveStatus,
+    courier_webhook_note: statusNote,
+    is_courier_returned: isReturned,
+    is_courier_cancelled: isCancelled,
+    last_synced_at: new Date().toISOString(),
+  };
 
-  await supabase
+  const coreUpdate: any = {
+    status: mappedStatus,
+    shipping_address_snapshot: updatedAddressSnap,
+    public_note: statusNote,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error: syncUpdateErr } = await supabase
     .from("orders")
     .update({
-      status: mappedStatus,
-      is_courier_returned: isReturned,
-      is_courier_cancelled: isCancelled,
-      courier_webhook_note: statusNote,
-      order_status_history: newHistory,
-      updated_at: new Date().toISOString(),
+      ...coreUpdate,
+      courier_name: order.courier_name || (String(cid).startsWith("PTH") ? "Pathao Courier" : "SteadFast Courier"),
     })
     .eq("id", orderId);
+
+  if (syncUpdateErr) {
+    await supabase.from("orders").update(coreUpdate).eq("id", orderId);
+  }
+
+  // Insert audit record into order_status_history table
+  try {
+    await supabase.from("order_status_history").insert({
+      order_id: orderId,
+      status: mappedStatus,
+      note: statusNote,
+      created_at: new Date().toISOString(),
+    });
+  } catch (histErr) {
+    console.warn("Status history insert skipped:", histErr);
+  }
 
   // WooCommerce Idempotent Inventory Synchronization on Courier Status Sync
   try {
