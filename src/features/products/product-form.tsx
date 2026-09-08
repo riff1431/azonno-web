@@ -72,6 +72,25 @@ const ORIGINS_DATA = [
   { value: "Italy", en: "Italy", bn: "ইতালি (Italy)" },
 ];
 
+const KEY_ACTIVES_DATA = [
+  { value: "Niacinamide", en: "Niacinamide", bn: "নিয়াসিনামাইড (Niacinamide)" },
+  { value: "Hyaluronic Acid", en: "Hyaluronic Acid", bn: "হায়ালুরোনিক অ্যাসিড (Hyaluronic Acid)" },
+  { value: "Salicylic Acid (BHA)", en: "Salicylic Acid (BHA)", bn: "স্যালিসিলিক অ্যাসিড (BHA)" },
+  { value: "Glycolic Acid (AHA)", en: "Glycolic Acid (AHA)", bn: "গ্লাইকোলিক অ্যাসিড (AHA)" },
+  { value: "Vitamin C", en: "Vitamin C", bn: "ভিটামিন সি (Vitamin C)" },
+  { value: "Retinol", en: "Retinol", bn: "রেটিনল (Retinol)" },
+  { value: "Centella Asiatica (Cica)", en: "Centella Asiatica (Cica)", bn: "সিকা / সেন্টেলা (Centella / Cica)" },
+  { value: "Snail Secretion Filtrate", en: "Snail Secretion Filtrate", bn: "স্নেইল মিউসিন (Snail Mucin)" },
+  { value: "Ceramides", en: "Ceramides", bn: "সেরামাইডস (Ceramides)" },
+  { value: "Zinc PCA", en: "Zinc PCA", bn: "জিংক পিসিএ (Zinc PCA)" },
+  { value: "Alpha Arbutin", en: "Alpha Arbutin", bn: "আলফা আরবুটিন (Alpha Arbutin)" },
+  { value: "Tea Tree", en: "Tea Tree", bn: "টি ট্রি (Tea Tree)" },
+  { value: "Peptides", en: "Peptides", bn: "পেপটাইডস (Peptides)" },
+  { value: "Mugwort", en: "Mugwort", bn: "মাগওয়ার্ট (Mugwort)" },
+  { value: "Galactomyces", en: "Galactomyces", bn: "গ্যালাক্টোমাইসিস (Galactomyces)" },
+  { value: "Tranexamic Acid", en: "Tranexamic Acid", bn: "ট্রানেক্সামিক অ্যাসিড (Tranexamic Acid)" },
+];
+
 interface AttributeOption {
   id: string;
   name: string;
@@ -622,18 +641,18 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
   };
 
   const dynamicTabs = [
-    { id: "basic", label: "Basic Info", icon: Package },
-    { id: "beauty", label: "Skin & Beauty Specs", icon: Sparkles },
-    { id: "content", label: "Content", icon: FileText },
-    { id: "pricing", label: "Pricing", icon: DollarSign },
-    { id: "combo", label: "Combo Bundles", icon: Sparkles },
+    { id: "basic", label: isBn ? "প্রাথমিক তথ্য" : "Basic Info", icon: Package },
+    { id: "beauty", label: isBn ? "স্কিন ও বিউটি স্পেক্স" : "Skin & Beauty Specs", icon: Sparkles },
+    { id: "content", label: isBn ? "পণ্যের বিবরণ" : "Content", icon: FileText },
+    { id: "pricing", label: isBn ? "মূল্য ও ছাড়" : "Pricing", icon: DollarSign },
+    { id: "combo", label: isBn ? "কম্বো বান্ডেল" : "Combo Bundles", icon: Sparkles },
     ...(form.product_type === "variable"
-      ? [{ id: "variants", label: "Variants", icon: Layers }]
+      ? [{ id: "variants", label: isBn ? "ভ্যারিয়েন্টসমূহ" : "Variants", icon: Layers }]
       : []),
-    { id: "physical", label: "Physical", icon: Ruler },
-    { id: "media", label: "Media", icon: ImageIcon },
-    { id: "seo", label: "SEO", icon: Search },
-    { id: "inventory", label: "Inventory", icon: Box },
+    { id: "physical", label: isBn ? "ওজন ও সাইজ" : "Physical", icon: Ruler },
+    { id: "media", label: isBn ? "ছবি ও মিডিয়া" : "Media", icon: ImageIcon },
+    { id: "seo", label: isBn ? "এসইও (SEO)" : "SEO", icon: Search },
+    { id: "inventory", label: isBn ? "ইনভেন্টরি" : "Inventory", icon: Box },
   ];
 
   return (
@@ -646,10 +665,12 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-text">
-              {isEditing ? "Edit Product" : "Create Product"}
+              {isEditing ? (isBn ? "পণ্য সম্পাদনা করুন" : "Edit Product") : (isBn ? "নতুন পণ্য তৈরি করুন" : "Create Product")}
             </h1>
             <p className="text-xs text-text-secondary">
-              {form.product_type === "variable" ? "Configuring Variable Product" : "Configuring Simple Product"}
+              {form.product_type === "variable"
+                ? (isBn ? "ভ্যারিয়েবল পণ্য কনফিগারেশন" : "Configuring Variable Product")
+                : (isBn ? "সাধারণ পণ্য কনফিগারেশন" : "Configuring Simple Product")}
             </p>
           </div>
         </div>
@@ -658,15 +679,15 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           <select
             value={form.status}
             onChange={(e) => updateField("status", e.target.value)}
-            className="rounded-lg border border-border bg-white px-3 py-2 text-sm"
+            className="rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium"
           >
-            <option value="draft">Draft</option>
-            <option value="active">Active</option>
-            <option value="archived">Archived</option>
+            <option value="draft">{isBn ? "ড্রাফট" : "Draft"}</option>
+            <option value="active">{isBn ? "সক্রিয়" : "Active"}</option>
+            <option value="archived">{isBn ? "আর্কাইভ" : "Archived"}</option>
           </select>
           <Button type="submit" disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            {isEditing ? "Update" : "Create"}
+            {isEditing ? (isBn ? "আপডেট করুন" : "Update") : (isBn ? "তৈরি করুন" : "Create")}
           </Button>
         </div>
       </div>
@@ -704,73 +725,79 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {/* 1. Basic Info */}
           {activeTab === "basic" && (
             <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-4">
-              <h2 className="text-lg font-semibold text-text">Basic Information</h2>
+              <h2 className="text-lg font-semibold text-text">{isBn ? "প্রাথমিক তথ্য" : "Basic Information"}</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Product Name *</Label>
+                  <Label>{isBn ? "পণ্যের নাম *" : "Product Name *"}</Label>
                   <Input value={form.name} onChange={(e) => updateField("name", e.target.value)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Slug *</Label>
+                  <Label>{isBn ? "স্লাগ (Slug) *" : "Slug *"}</Label>
                   <Input value={form.slug} onChange={(e) => updateField("slug", e.target.value)} required />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label className="font-semibold text-text">Product ID / SKU</Label>
+                    <Label className="font-semibold text-text">{isBn ? "প্রোডাক্ট আইডি / এসকেইউ (SKU)" : "Product ID / SKU"}</Label>
                     {!isEditing && suggestedSku && (
                       <span className="text-xs font-semibold text-[#e91e63] bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-md">
-                        Auto Serial: #{formatShortProductId(suggestedSku)}
+                        {isBn ? `অটো সিরিয়াল: #${formatShortProductId(suggestedSku)}` : `Auto Serial: #${formatShortProductId(suggestedSku)}`}
                       </span>
                     )}
                   </div>
                   <Input
                     value={form.sku}
                     onChange={(e) => updateField("sku", e.target.value)}
-                    placeholder={suggestedSku ? `e.g. ${formatShortProductId(suggestedSku)} (Auto serial #${formatShortProductId(suggestedSku)} if empty)` : "e.g. 0001, 0002... (Auto-assigned if empty)"}
+                    placeholder={
+                      suggestedSku
+                        ? (isBn ? `যেমন: ${formatShortProductId(suggestedSku)} (ফাঁকা রাখলে অটো সিরিয়াল #${formatShortProductId(suggestedSku)})` : `e.g. ${formatShortProductId(suggestedSku)} (Auto serial #${formatShortProductId(suggestedSku)} if empty)`)
+                        : (isBn ? "যেমন: 0001, 0002... (ফাঁকা রাখলে স্বয়ংক্রিয়ভাবে তৈরি হবে)" : "e.g. 0001, 0002... (Auto-assigned if empty)")
+                    }
                   />
                   <p className="text-[11px] text-text-muted">
-                    Product ID & SKU are identical numbers. Leave empty to automatically publish with dynamic serial {suggestedSku ? `#${formatShortProductId(suggestedSku)}` : "(0001, 0002, ...)"}.
+                    {isBn
+                      ? `প্রোডাক্ট আইডি ও এসকেইউ একই নম্বর। ফাঁকা রাখলে স্বয়ংক্রিয়ভাবে সিরিয়াল ${suggestedSku ? `#${formatShortProductId(suggestedSku)}` : "(0001, 0002, ...)"} হিসেবে প্রকাশিত হবে।`
+                      : `Product ID & SKU are identical numbers. Leave empty to automatically publish with dynamic serial ${suggestedSku ? `#${formatShortProductId(suggestedSku)}` : "(0001, 0002, ...)"}.`}
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label>Barcode</Label>
+                  <Label>{isBn ? "বারকোড" : "Barcode"}</Label>
                   <Input value={form.barcode} onChange={(e) => updateField("barcode", e.target.value)} />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label>Product Type</Label>
+                  <Label>{isBn ? "পণ্যের ধরণ" : "Product Type"}</Label>
                   <select
                     value={form.product_type}
                     onChange={(e) => updateField("product_type", e.target.value)}
-                    className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium"
                   >
-                    <option value="simple">Simple Product</option>
-                    <option value="variable">Variable Product (with Variants)</option>
+                    <option value="simple">{isBn ? "সাধারণ পণ্য (Simple Product)" : "Simple Product"}</option>
+                    <option value="variable">{isBn ? "ভ্যারিয়েবল পণ্য (Variable Product)" : "Variable Product (with Variants)"}</option>
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Brand</Label>
+                  <Label>{isBn ? "ব্র্যান্ড" : "Brand"}</Label>
                   <select
                     value={form.brand_id}
                     onChange={(e) => updateField("brand_id", e.target.value)}
-                    className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium"
                   >
-                    <option value="">— No brand —</option>
+                    <option value="">{isBn ? "— কোনো ব্র্যান্ড নেই —" : "— No brand —"}</option>
                     {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
                   </select>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Tags (comma separated)</Label>
-                <Input value={form.tags} onChange={(e) => updateField("tags", e.target.value)} placeholder="skincare, essence, k-beauty" />
+                <Label>{isBn ? "ট্যাগসমূহ (কমা দিয়ে আলাদা করুন)" : "Tags (comma separated)"}</Label>
+                <Input value={form.tags} onChange={(e) => updateField("tags", e.target.value)} placeholder={isBn ? "স্কিনকেয়ার, সিরাম, কে-বিউটি" : "skincare, essence, k-beauty"} />
               </div>
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input type="checkbox" checked={form.is_featured} onChange={(e) => updateField("is_featured", e.target.checked)} className="rounded border-border h-4 w-4 text-[#e91e63] accent-[#e91e63]" />
-                  <span className="text-sm text-text font-medium">Feature on Homepage</span>
+                  <span className="text-sm text-text font-medium">{isBn ? "হোমপেজে ফিচার্ড হিসেবে দেখান" : "Feature on Homepage"}</span>
                 </label>
               </div>
 
@@ -782,15 +809,17 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-bold text-gray-900">Free Delivery (ফ্রি ডেলিভারি)</h4>
+                      <h4 className="text-sm font-bold text-gray-900">{isBn ? "ফ্রি ডেলিভারি (Free Delivery)" : "Free Delivery"}</h4>
                       {form.is_free_shipping && (
                         <span className="rounded bg-[#e91e63] px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-xs">
-                          ফ্রি ডেলিভারি Active
+                          {isBn ? "ফ্রি ডেলিভারি সক্রিয়" : "ফ্রি ডেলিভারি Active"}
                         </span>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 mt-0.5">
-                      When enabled, this product will display the solid pink &quot;ফ্রি ডেলিভারি&quot; badge on storefront product cards and highlight free nationwide delivery.
+                      {isBn
+                        ? "চালু করা থাকলে স্টোরফ্রন্টের প্রোডাক্ট কার্ডে পিঙ্ক কালারের 'ফ্রি ডেলিভারি' ব্যাজ প্রদর্শিত হবে এবং সারাদেশে ফ্রি শিপিং প্রযোজ্য হবে।"
+                        : "When enabled, this product will display the solid pink 'ফ্রি ডেলিভারি' badge on storefront product cards and highlight free nationwide delivery."}
                     </p>
                   </div>
                 </div>
@@ -813,24 +842,30 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
               <div className="border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-pink-600" />
-                  <h2 className="text-base font-bold text-gray-900">Beauty & Cosmetics Taxonomy Specs</h2>
+                  <h2 className="text-base font-bold text-gray-900">
+                    {isBn ? "স্কিন ও বিউটি স্পেসিফিকেশন" : "Beauty & Cosmetics Taxonomy Specs"}
+                  </h2>
                 </div>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Configure smart filtering attributes, routine recommendations, authenticity batch codes, and origin provenance.
+                  {isBn
+                    ? "স্মার্ট ফিল্টারিং বৈশিষ্ট্য, ত্বকের ধরণ ও সমস্যা, মূল উপাদান, ব্যাচ কোড এবং সোর্সিং কান্ট্রি কনফিগার করুন।"
+                    : "Configure smart filtering attributes, routine recommendations, authenticity batch codes, and origin provenance."}
                 </p>
               </div>
 
               {/* Skin Types (Multi-select) */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-700">Suitable Skin Types (Select all that apply)</Label>
+                <Label className="text-xs font-bold text-gray-700">
+                  {isBn ? "কোন ধরণের ত্বকের জন্য উপযোগী (প্রযোজ্য সবগুলো সিলেক্ট করুন)" : "Suitable Skin Types (Select all that apply)"}
+                </Label>
                 <div className="flex flex-wrap gap-2">
-                  {["Oily", "Dry", "Combination", "Sensitive", "Normal", "All Skin Types"].map((type) => {
-                    const active = form.skin_type.includes(type);
+                  {SKIN_TYPES_DATA.map((item) => {
+                    const active = form.skin_type.includes(item.value);
                     return (
                       <button
-                        key={type}
+                        key={item.value}
                         type="button"
-                        onClick={() => toggleSkinType(type)}
+                        onClick={() => toggleSkinType(item.value)}
                         className={cn(
                           "rounded-full px-3.5 py-1.5 text-xs font-bold transition-all border",
                           active
@@ -839,7 +874,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         )}
                       >
                         {active && <Check className="inline-block h-3.5 w-3.5 mr-1 -mt-0.5" />}
-                        {type}
+                        {isBn ? item.bn : item.en}
                       </button>
                     );
                   })}
@@ -848,26 +883,17 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
 
               {/* Skin Concerns (Multi-select) */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-700">Target Skin Concerns (Filterable in Catalog)</Label>
+                <Label className="text-xs font-bold text-gray-700">
+                  {isBn ? "টার্গেট স্কিন সমস্যা (ক্যাটালগে ফিল্টার করার জন্য)" : "Target Skin Concerns (Filterable in Catalog)"}
+                </Label>
                 <div className="flex flex-wrap gap-2">
-                  {[
-                    "Acne & Blemishes",
-                    "Brightening & Pigmentation",
-                    "Anti-Aging & Wrinkles",
-                    "Dryness & Hydration",
-                    "Pore Minimizing",
-                    "Redness & Rosacea",
-                    "Sun Protection",
-                    "Dark Circles",
-                    "Oil Control",
-                    "Barrier Repair",
-                  ].map((concern) => {
-                    const active = form.skin_concern.includes(concern);
+                  {SKIN_CONCERNS_DATA.map((concern) => {
+                    const active = form.skin_concern.includes(concern.value);
                     return (
                       <button
-                        key={concern}
+                        key={concern.value}
                         type="button"
-                        onClick={() => toggleSkinConcern(concern)}
+                        onClick={() => toggleSkinConcern(concern.value)}
                         className={cn(
                           "rounded-full px-3 py-1.5 text-xs font-bold transition-all border",
                           active
@@ -876,7 +902,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         )}
                       >
                         {active && <Check className="inline-block h-3.5 w-3.5 mr-1 -mt-0.5" />}
-                        {concern}
+                        {isBn ? concern.bn : concern.en}
                       </button>
                     );
                   })}
@@ -885,32 +911,17 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
 
               {/* Key Actives (Multi-select + Input) */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-700">Key Active Ingredients</Label>
+                <Label className="text-xs font-bold text-gray-700">
+                  {isBn ? "মূল সক্রিয় উপাদানসমূহ (Key Active Ingredients)" : "Key Active Ingredients"}
+                </Label>
                 <div className="flex flex-wrap gap-2">
-                  {[
-                    "Niacinamide",
-                    "Hyaluronic Acid",
-                    "Salicylic Acid (BHA)",
-                    "Glycolic Acid (AHA)",
-                    "Vitamin C",
-                    "Retinol",
-                    "Centella Asiatica (Cica)",
-                    "Snail Secretion Filtrate",
-                    "Ceramides",
-                    "Zinc PCA",
-                    "Alpha Arbutin",
-                    "Tea Tree",
-                    "Peptides",
-                    "Mugwort",
-                    "Galactomyces",
-                    "Tranexamic Acid",
-                  ].map((active) => {
-                    const isSelected = form.key_actives.includes(active);
+                  {KEY_ACTIVES_DATA.map((active) => {
+                    const isSelected = form.key_actives.includes(active.value);
                     return (
                       <button
-                        key={active}
+                        key={active.value}
                         type="button"
-                        onClick={() => toggleKeyActive(active)}
+                        onClick={() => toggleKeyActive(active.value)}
                         className={cn(
                           "rounded-full px-3 py-1.5 text-xs font-bold transition-all border",
                           isSelected
@@ -919,7 +930,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         )}
                       >
                         {isSelected && <Check className="inline-block h-3.5 w-3.5 mr-1 -mt-0.5" />}
-                        {active}
+                        {isBn ? active.bn : active.en}
                       </button>
                     );
                   })}
@@ -929,45 +940,36 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
               {/* Provenance & Routine Step Grid */}
               <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-gray-100">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-700">Country of Origin / Sourcing Provenance</Label>
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "উৎপাদনকারী দেশ / সোর্সিং দেশ" : "Country of Origin / Sourcing Provenance"}
+                  </Label>
                   <select
                     value={form.origin_country}
                     onChange={(e) => updateField("origin_country", e.target.value)}
                     className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium"
                   >
-                    <option value="South Korea">South Korea (K-Beauty)</option>
-                    <option value="Japan">Japan (J-Beauty)</option>
-                    <option value="United Kingdom">United Kingdom (UK)</option>
-                    <option value="United States">United States (USA)</option>
-                    <option value="France">France</option>
-                    <option value="Germany">Germany</option>
-                    <option value="Thailand">Thailand</option>
-                    <option value="Bangladesh">Bangladesh</option>
-                    <option value="India">India</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Italy">Italy</option>
+                    {ORIGINS_DATA.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {isBn ? item.bn : item.en}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-700">Skincare Routine Step</Label>
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "স্কিনকেয়ার রুটিন ধাপ" : "Skincare Routine Step"}
+                  </Label>
                   <select
                     value={form.routine_step}
                     onChange={(e) => updateField("routine_step", e.target.value)}
                     className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium"
                   >
-                    <option value="">— Select Routine Step —</option>
-                    <option value="Cleanser">1. Cleanser (Oil / Foam)</option>
-                    <option value="Toner">2. Toner / Mist</option>
-                    <option value="Essence & Serum">3. Essence / Serum / Ampoule</option>
-                    <option value="Moisturizer & Cream">4. Moisturizer / Emulsion / Cream</option>
-                    <option value="Sunscreen / SPF">5. Sunscreen / SPF</option>
-                    <option value="Eye Cream">Eye Care / Eye Cream</option>
-                    <option value="Mask & Exfoliator">Mask / Scrub / Peeling</option>
-                    <option value="Treatment">Targeted Treatment / Spot Care</option>
-                    <option value="Lip Care">Lip Balm / Lip Mask</option>
-                    <option value="Makeup & Cushion">Makeup / Cushion / Foundation</option>
+                    {ROUTINE_STEPS_DATA.map((item) => (
+                      <option key={item.value} value={item.value}>
+                        {isBn ? item.bn : item.en}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -975,26 +977,34 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
               {/* Batch Code & Expiry Date */}
               <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-gray-100">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-700">Batch Code (For Customer Authenticity Verification)</Label>
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "ব্যাচ কোড (অরিজিনাল পণ্য যাচাইয়ের জন্য)" : "Batch Code (For Customer Authenticity Verification)"}
+                  </Label>
                   <Input
                     value={form.batch_number}
                     onChange={(e) => updateField("batch_number", e.target.value)}
-                    placeholder="e.g. LOT202408A"
+                    placeholder={isBn ? "যেমন: LOT202408A" : "e.g. LOT202408A"}
                   />
                   <p className="text-[11px] text-gray-400">
-                    Displayed in the product page Authenticity Verification badge.
+                    {isBn
+                      ? "প্রোডাক্ট পেজে আসল পণ্য ভেরিফিকেশন ব্যাজে প্রদর্শিত হবে।"
+                      : "Displayed in the product page Authenticity Verification badge."}
                   </p>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-700">Expiry Date (PAO / Shelf Life)</Label>
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "মেয়াদ উত্তীর্ণের তারিখ (PAO / Shelf Life)" : "Expiry Date (PAO / Shelf Life)"}
+                  </Label>
                   <Input
                     type="date"
                     value={form.expiry_date}
                     onChange={(e) => updateField("expiry_date", e.target.value)}
                   />
                   <p className="text-[11px] text-gray-400">
-                    Helps track inventory shelf-life and display freshness seals to customers.
+                    {isBn
+                      ? "পণ্যের মেয়াদ ট্র্যাক করতে এবং গ্রাহকদের ফ্রেশনেস সীল দেখাতে সাহায্য করে।"
+                      : "Helps track inventory shelf-life and display freshness seals to customers."}
                   </p>
                 </div>
               </div>
@@ -1014,8 +1024,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         <h4 className="text-xs font-black">{expiryAlertInfo.title}</h4>
                         <span className={`px-2 py-0.5 rounded-full text-[10px] border ${expiryAlertInfo.badgeColor}`}>
                           {expiryAlertInfo.type === "expired"
-                            ? `${expiryAlertInfo.days} days past expiry`
-                            : `${expiryAlertInfo.days} days left (~${expiryAlertInfo.months} mos)`}
+                            ? (isBn ? `${expiryAlertInfo.days} দিন আগে মেয়াদ শেষ` : `${expiryAlertInfo.days} days past expiry`)
+                            : (isBn ? `${expiryAlertInfo.days} দিন বাকি (~${expiryAlertInfo.months} মাস)` : `${expiryAlertInfo.days} days left (~${expiryAlertInfo.months} mos)`)}
                         </span>
                       </div>
                       <p className="text-xs leading-relaxed opacity-90">{expiryAlertInfo.description}</p>
@@ -1027,9 +1037,13 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
               {/* Authenticity Guarantee Toggle */}
               <div className="flex items-center justify-between rounded-xl bg-pink-50/60 border border-pink-200 p-4">
                 <div>
-                  <h4 className="text-xs font-bold text-pink-950">100% Authentic Guaranteed Seal</h4>
+                  <h4 className="text-xs font-bold text-pink-950">
+                    {isBn ? "১০০% আসল পণ্যের নিশ্চয়তা সীল" : "100% Authentic Guaranteed Seal"}
+                  </h4>
                   <p className="text-[11px] text-pink-700">
-                    Show verified authentic importer badge and direct brand provenance on storefront.
+                    {isBn
+                      ? "স্টোরফ্রন্টে ভেরিফাইড আসল আমদানিকারক ও সরাসরি ব্র্যান্ড সোর্সিং ব্যাজ প্রদর্শন করুন।"
+                      : "Show verified authentic importer badge and direct brand provenance on storefront."}
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -1049,68 +1063,98 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {activeTab === "content" && (
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-6">
               <div className="border-b border-gray-100 pb-3">
-                <h2 className="text-base font-bold text-gray-900">Product Content & Rich Media</h2>
+                <h2 className="text-base font-bold text-gray-900">
+                  {isBn ? "পণ্যের বিবরণ ও বিস্তারিত তথ্য" : "Product Content & Rich Media"}
+                </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Format headings, bullet lists, numbered lists, insert images, links, and switch to raw HTML mode anytime.
+                  {isBn
+                    ? "হেডিং, বুলেট লিস্ট, নাম্বার লিস্ট, ছবি, লিঙ্ক যুক্ত করুন এবং যেকোনো সময় সরাসরি HTML মোডে এডিট করুন।"
+                    : "Format headings, bullet lists, numbered lists, insert images, links, and switch to raw HTML mode anytime."}
                 </p>
               </div>
 
               {/* Short Description */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-gray-700">Short Description (Overview)</Label>
+                <Label className="text-xs font-bold text-gray-700">
+                  {isBn ? "সংক্ষিপ্ত বিবরণ (ওভারভিউ)" : "Short Description (Overview)"}
+                </Label>
                 <textarea
                   value={form.short_description}
                   onChange={(e) => updateField("short_description", e.target.value)}
                   rows={2}
-                  placeholder="Non-oily 24hr hydration gel with Hyaluronic Acid & Vitamin E."
+                  placeholder={
+                    isBn
+                      ? "হায়ালুরোনিক অ্যাসিড ও ভিটামিন ই সমৃদ্ধ ২৪ ঘণ্টা নন-গ্রিজি ময়েশ্চারাইজিং জেল..."
+                      : "Non-oily 24hr hydration gel with Hyaluronic Acid & Vitamin E."
+                  }
                   className="w-full rounded-xl border px-3 py-2 text-xs font-medium resize-none focus:outline-none focus:ring-2 focus:ring-pink-500/10"
                 />
               </div>
 
               {/* Full Description with Rich Editor & HTML Mode */}
               <RichTextEditor
-                label="Full Description"
+                label={isBn ? "সম্পূর্ণ বিস্তারিত বিবরণ" : "Full Description"}
                 value={form.description}
                 onChange={(val) => updateField("description", val)}
-                placeholder="Write detailed product story, clinical formulation, texture details..."
+                placeholder={
+                  isBn
+                    ? "পণ্যের বিস্তারিত বর্ণনা, ক্লিনিক্যাল ফর্মুলেশন, টেক্সচার ও ব্যবহারের সুবিধা লিখুন..."
+                    : "Write detailed product story, clinical formulation, texture details..."
+                }
                 minHeight="220px"
               />
 
               {/* Benefits with Rich Editor & HTML Mode */}
               <RichTextEditor
-                label="Benefits (Key Advantages & Results)"
+                label={isBn ? "উপকারিতা (মূল সুবিধা ও কার্যকারিতা)" : "Benefits (Key Advantages & Results)"}
                 value={form.benefits}
                 onChange={(val) => updateField("benefits", val)}
-                placeholder="• 72hr Intense hydration barrier&#10;• Non-sticky glass skin glow&#10;• Dermatologically tested"
+                placeholder={
+                  isBn
+                    ? "• ৭২ ঘণ্টা গভীর ময়েশ্চারাইজিং ব্যারিয়ার\n• নন-স্টিকি গ্লাস স্কিন গ্লো\n• ডার্মাটোলজিক্যালি টেস্টেড ও নিরাপদ"
+                    : "• 72hr Intense hydration barrier\n• Non-sticky glass skin glow\n• Dermatologically tested"
+                }
                 minHeight="160px"
               />
 
               {/* How to Use with Rich Editor & HTML Mode */}
               <RichTextEditor
-                label="How to Use (Application Routine)"
+                label={isBn ? "ব্যবহারবিধি (কীভাবে ব্যবহার করবেন)" : "How to Use (Application Routine)"}
                 value={form.usage}
                 onChange={(val) => updateField("usage", val)}
-                placeholder="1. Cleanse face with lukewarm water&#10;2. Apply 2-3 pumps evenly&#10;3. Gently massage in upward circular motions"
+                placeholder={
+                  isBn
+                    ? "১. হালকা গরম পানি দিয়ে মুখ ধুয়ে নিন\n২. ২-৩ ফোঁটা সিরাম পুরো মুখে সমানভাবে লাগান\n৩. হালকা হাতে ওপরের দিকে ম্যাসাজ করে শুষে নিতে দিন"
+                    : "1. Cleanse face with lukewarm water\n2. Apply 2-3 pumps evenly\n3. Gently massage in upward circular motions"
+                }
                 minHeight="140px"
               />
 
               {/* Ingredients / Specifications with Rich Editor & HTML Mode */}
               <RichTextEditor
-                label="Ingredients / Specifications"
+                label={isBn ? "উপাদানসমূহ / স্পেসিফিকেশন" : "Ingredients / Specifications"}
                 value={form.ingredients_specifications}
                 onChange={(val) => updateField("ingredients_specifications", val)}
-                placeholder="Aqua/Water, Hyaluronic Acid, Niacinamide (5%), Glycerin, Vitamin E, Centella Asiatica Extract..."
+                placeholder={
+                  isBn
+                    ? "একুয়া/ওয়াটার, হায়ালুরোনিক অ্যাসিড, নিয়াসিনামাইড (৫%), গ্লিসারিন, ভিটামিন ই, সেন্টেলা নির্যাস..."
+                    : "Aqua/Water, Hyaluronic Acid, Niacinamide (5%), Glycerin, Vitamin E, Centella Asiatica Extract..."
+                }
                 minHeight="140px"
               />
 
               <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-gray-100">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-700">Country of Origin</Label>
-                  <Input value={form.country} onChange={(e) => updateField("country", e.target.value)} placeholder="e.g. South Korea" />
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "উৎপাদনকারী দেশ" : "Country of Origin"}
+                  </Label>
+                  <Input value={form.country} onChange={(e) => updateField("country", e.target.value)} placeholder={isBn ? "যেমন: দক্ষিণ কোরিয়া" : "e.g. South Korea"} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-700">Warranty / Authenticity</Label>
-                  <Input value={form.warranty} onChange={(e) => updateField("warranty", e.target.value)} placeholder="e.g. 100% Authentic Guaranteed" />
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "ওয়ারেন্টি / অথেন্টিসিটি" : "Warranty / Authenticity"}
+                  </Label>
+                  <Input value={form.warranty} onChange={(e) => updateField("warranty", e.target.value)} placeholder={isBn ? "যেমন: ১০০% আসল পণ্যের গ্যারান্টি" : "e.g. 100% Authentic Guaranteed"} />
                 </div>
               </div>
             </div>
@@ -1119,18 +1163,18 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {/* 3. Pricing */}
           {activeTab === "pricing" && (
             <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-4">
-              <h2 className="text-lg font-semibold text-text">Base Pricing</h2>
+              <h2 className="text-lg font-semibold text-text">{isBn ? "মূল্য নির্ধারণ" : "Base Pricing"}</h2>
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
-                  <Label>Cost Price (৳)</Label>
+                  <Label>{isBn ? "ক্রয় মূল্য (৳)" : "Cost Price (৳)"}</Label>
                   <Input type="number" step="0.01" min="0" value={form.cost_price || ""} onChange={(e) => updateField("cost_price", parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Regular Price (৳) *</Label>
+                  <Label>{isBn ? "নিয়মিত মূল্য (৳) *" : "Regular Price (৳) *"}</Label>
                   <Input type="number" step="0.01" min="0" value={form.regular_price || ""} onChange={(e) => updateField("regular_price", parseFloat(e.target.value) || 0)} required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Sale Price (৳)</Label>
+                  <Label>{isBn ? "অফার মূল্য (৳)" : "Sale Price (৳)"}</Label>
                   <Input type="number" step="0.01" min="0" value={form.sale_price || ""} onChange={(e) => updateField("sale_price", parseFloat(e.target.value) || 0)} />
                 </div>
               </div>
@@ -1138,8 +1182,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                 <div className="rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-700 flex items-center gap-2">
                   <Tag className="h-4 w-4 text-green-600 shrink-0" />
                   <span>
-                    <strong>Discount:</strong> {Math.round((1 - form.sale_price / form.regular_price) * 100)}% off
-                    (saving ৳{(form.regular_price - form.sale_price).toFixed(2)})
+                    <strong>{isBn ? "ছাড়:" : "Discount:"}</strong> {Math.round((1 - form.sale_price / form.regular_price) * 100)}% {isBn ? "ছাড়" : "off"}
+                    {" "}({isBn ? "সাশ্রয়" : "saving"} ৳{(form.regular_price - form.sale_price).toFixed(2)})
                   </span>
                 </div>
               )}
@@ -1150,15 +1194,17 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {activeTab === "variants" && form.product_type === "variable" && (
             <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-6">
               <div>
-                <h2 className="text-lg font-semibold text-text">Product Variants Generator</h2>
+                <h2 className="text-lg font-semibold text-text">{isBn ? "ভ্যারিয়েন্ট জেনারেটর" : "Product Variants Generator"}</h2>
                 <p className="text-xs text-text-secondary mt-1">
-                  Choose attributes and values to generate variant combinations automatically.
+                  {isBn
+                    ? "অ্যাট্রিবিউট এবং মান নির্বাচন করে স্বয়ংক্রিয়ভাবে বিভিন্ন ভ্যারিয়েন্ট তৈরি করুন।"
+                    : "Choose attributes and values to generate variant combinations automatically."}
                 </p>
               </div>
 
               {/* Attributes & Value Pickers */}
               <div className="space-y-4 rounded-lg border border-border p-4 bg-surface-secondary/40">
-                <Label className="font-semibold text-text">1. Select Attributes to Use</Label>
+                <Label className="font-semibold text-text">{isBn ? "১. প্রয়োজনীয় অ্যাট্রিবিউট সিলেক্ট করুন" : "1. Select Attributes to Use"}</Label>
                 <div className="flex flex-wrap gap-2">
                   {availableAttributes.map((attr) => (
                     <Button
@@ -1176,7 +1222,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
 
                 {selectedAttrIds.length > 0 && (
                   <div className="space-y-3 pt-3 border-t border-border">
-                    <Label className="font-semibold text-text">2. Choose Values for Each Attribute</Label>
+                    <Label className="font-semibold text-text">{isBn ? "২. প্রতিটি অ্যাট্রিবিউটের মান (Values) বেছে নিন" : "2. Choose Values for Each Attribute"}</Label>
                     {availableAttributes
                       .filter((a) => selectedAttrIds.includes(a.id))
                       .map((attr) => (
@@ -1219,7 +1265,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   className="mt-2"
                 >
                   <Layers className="h-4 w-4 mr-1.5" />
-                  Generate Combinations Matrix
+                  {isBn ? "কম্বিনেশন ম্যাট্রিক্স তৈরি করুন" : "Generate Combinations Matrix"}
                 </Button>
               </div>
 
@@ -1228,7 +1274,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-sm text-text">
-                      Generated Variants ({generatedVariants.length})
+                      {isBn ? `তৈরিকৃত ভ্যারিয়েন্টসমূহ (${generatedVariants.length})` : `Generated Variants (${generatedVariants.length})`}
                     </h3>
                   </div>
 
@@ -1236,11 +1282,11 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                     <table className="w-full text-xs text-left">
                       <thead className="bg-surface-secondary text-text-muted border-b border-border">
                         <tr>
-                          <th className="p-2.5">Variant</th>
-                          <th className="p-2.5">SKU</th>
-                          <th className="p-2.5">Regular Price (৳)</th>
-                          <th className="p-2.5">Sale Price (৳)</th>
-                          <th className="p-2.5">Status</th>
+                          <th className="p-2.5">{isBn ? "ভ্যারিয়েন্ট" : "Variant"}</th>
+                          <th className="p-2.5">{isBn ? "এসকেইউ (SKU)" : "SKU"}</th>
+                          <th className="p-2.5">{isBn ? "নিয়মিত মূল্য (৳)" : "Regular Price (৳)"}</th>
+                          <th className="p-2.5">{isBn ? "অফার মূল্য (৳)" : "Sale Price (৳)"}</th>
+                          <th className="p-2.5">{isBn ? "অবস্থা" : "Status"}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-border bg-white">
@@ -1278,8 +1324,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                                 onChange={(e) => updateVariantRow(idx, "status", e.target.value)}
                                 className="rounded border border-border h-7 text-xs px-1"
                               >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                <option value="active">{isBn ? "সক্রিয়" : "Active"}</option>
+                                <option value="inactive">{isBn ? "নিষ্ক্রিয়" : "Inactive"}</option>
                               </select>
                             </td>
                           </tr>
@@ -1295,27 +1341,27 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {/* 5. Physical Specs */}
           {activeTab === "physical" && (
             <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-4">
-              <h2 className="text-lg font-semibold text-text">Physical Dimensions</h2>
+              <h2 className="text-lg font-semibold text-text">{isBn ? "ওজন ও পরিমাপ" : "Physical Dimensions"}</h2>
               <div className="space-y-2">
-                <Label>Weight (kg)</Label>
+                <Label>{isBn ? "ওজন (কেজি)" : "Weight (kg)"}</Label>
                 <Input type="number" step="0.001" min="0" value={form.weight || ""} onChange={(e) => updateField("weight", parseFloat(e.target.value) || 0)} />
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
-                  <Label>Length (cm)</Label>
+                  <Label>{isBn ? "দৈর্ঘ্য (সেমি)" : "Length (cm)"}</Label>
                   <Input type="number" step="0.01" min="0" value={form.length || ""} onChange={(e) => updateField("length", parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Width (cm)</Label>
+                  <Label>{isBn ? "প্রস্থ (সেমি)" : "Width (cm)"}</Label>
                   <Input type="number" step="0.01" min="0" value={form.width || ""} onChange={(e) => updateField("width", parseFloat(e.target.value) || 0)} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Height (cm)</Label>
+                  <Label>{isBn ? "উচ্চতা (সেমি)" : "Height (cm)"}</Label>
                   <Input type="number" step="0.01" min="0" value={form.height || ""} onChange={(e) => updateField("height", parseFloat(e.target.value) || 0)} />
                 </div>
               </div>
               <div className="space-y-3 pt-2 border-t border-gray-100">
-                <Label>Shipping Class & Delivery Option</Label>
+                <Label>{isBn ? "শিপিং ক্লাস ও ডেলিভারি অপশন" : "Shipping Class & Delivery Option"}</Label>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <button
                     type="button"
@@ -1331,8 +1377,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                       <Box className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-gray-900">Standard Shipping</p>
-                      <p className="text-[11px] text-gray-500">Regular shipping rates apply</p>
+                      <p className="text-xs font-bold text-gray-900">{isBn ? "সাধারণ শিপিং" : "Standard Shipping"}</p>
+                      <p className="text-[11px] text-gray-500">{isBn ? "স্বাভাবিক ডেলিভারি চার্জ প্রযোজ্য" : "Regular shipping rates apply"}</p>
                     </div>
                   </button>
 
@@ -1351,12 +1397,12 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-gray-900">Free Delivery</p>
+                        <p className="text-xs font-bold text-gray-900">{isBn ? "ফ্রি ডেলিভারি" : "Free Delivery"}</p>
                         <span className="rounded bg-[#e91e63] px-1.5 py-0.2 text-[9px] font-black uppercase text-white">
-                          ফ্রি
+                          {isBn ? "ফ্রি" : "ফ্রি"}
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#e91e63] font-medium">Free nationwide shipping badge</p>
+                      <p className="text-[11px] text-[#e91e63] font-medium">{isBn ? "সারা দেশে ফ্রি ডেলিভারি ব্যাজ" : "Free nationwide shipping badge"}</p>
                     </div>
                   </button>
                 </div>
@@ -1368,9 +1414,11 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {activeTab === "media" && (
             <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-5">
               <div>
-                <h2 className="text-lg font-semibold text-text">Product Images & Gallery</h2>
+                <h2 className="text-lg font-semibold text-text">{isBn ? "পণ্যের ছবি ও গ্যালারি" : "Product Images & Gallery"}</h2>
                 <p className="text-xs text-text-secondary mt-1">
-                  Upload images directly to Cloudinary. The first image will be used as the featured product image.
+                  {isBn
+                    ? "ক্লাউডিনারিতে সরাসরি ছবি আপলোড করুন। প্রথম ছবিটি মূল ফিচার্ড ছবি হিসেবে ব্যবহৃত হবে।"
+                    : "Upload images directly to Cloudinary. The first image will be used as the featured product image."}
                 </p>
               </div>
 
@@ -1414,7 +1462,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                 {uploadingMedia ? (
                   <div className="flex flex-col items-center gap-2">
                     <Loader2 className="h-8 w-8 animate-spin text-[#e91e63]" />
-                    <p className="text-xs font-bold text-[#e91e63]">Uploading &amp; Optimizing Product Images...</p>
+                    <p className="text-xs font-bold text-[#e91e63]">{isBn ? "ছবি আপলোড ও অপ্টিমাইজ করা হচ্ছে..." : "Uploading & Optimizing Product Images..."}</p>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-2">
@@ -1422,9 +1470,9 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                       <Upload className="h-6 w-6" />
                     </div>
                     <p className="text-sm font-bold text-gray-900">
-                      <span className="text-[#e91e63] underline">Click to upload</span> or drag and drop product photos
+                      <span className="text-[#e91e63] underline">{isBn ? "আপলোড করতে ক্লিক করুন" : "Click to upload"}</span> {isBn ? "অথবা ছবি টেনে এনে ড্রপ করুন" : "or drag and drop product photos"}
                     </p>
-                    <p className="text-xs text-gray-500">JPG, PNG, WebP or SVG up to 15MB each (multi-select supported)</p>
+                    <p className="text-xs text-gray-500">{isBn ? "JPG, PNG, WebP বা SVG সর্বোচ্চ ১৫MB প্রতি ছবি (একাধিক ছবি সাপোর্ট করে)" : "JPG, PNG, WebP or SVG up to 15MB each (multi-select supported)"}</p>
                   </div>
                 )}
               </div>
@@ -1432,7 +1480,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
               {/* Gallery Grid */}
               {galleryImages.length > 0 && (
                 <div className="space-y-2">
-                  <Label>Uploaded Photos ({galleryImages.length})</Label>
+                  <Label>{isBn ? `আপলোডকৃত ছবিসমূহ (${galleryImages.length})` : `Uploaded Photos (${galleryImages.length})`}</Label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {galleryImages.map((url, idx) => (
                       <div
@@ -1442,7 +1490,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         <img src={url} alt="Product" className="h-full w-full object-cover" />
                         {idx === 0 && (
                           <span className="absolute top-1.5 left-1.5 rounded bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold text-white shadow">
-                            Featured
+                            {isBn ? "ফিচার্ড" : "Featured"}
                           </span>
                         )}
                         <button
@@ -1463,14 +1511,14 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {/* 7. SEO Tab */}
           {activeTab === "seo" && (
             <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-4">
-              <h2 className="text-lg font-semibold text-text">Search Engine Optimization</h2>
+              <h2 className="text-lg font-semibold text-text">{isBn ? "সার্চ ইঞ্জিন অপটিমাইজেশন (SEO)" : "Search Engine Optimization"}</h2>
               <div className="space-y-2">
-                <Label>SEO Title</Label>
+                <Label>{isBn ? "এসইও টাইটেল (SEO Title)" : "SEO Title"}</Label>
                 <Input value={form.seo_title} onChange={(e) => updateField("seo_title", e.target.value)} maxLength={70} />
                 <p className="text-xs text-text-muted">{form.seo_title.length}/70</p>
               </div>
               <div className="space-y-2">
-                <Label>Meta Description</Label>
+                <Label>{isBn ? "মেটা ডেসক্রিপশন (Meta Description)" : "Meta Description"}</Label>
                 <textarea
                   value={form.seo_description}
                   onChange={(e) => updateField("seo_description", e.target.value)}
@@ -1481,8 +1529,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                 <p className="text-xs text-text-muted">{form.seo_description.length}/160</p>
               </div>
               <ImageUploadDropzone
-                label="Social Share / OG Image"
-                description="Custom preview image for Facebook, Instagram, and Twitter link shares"
+                label={isBn ? "সোশ্যাল শেয়ার / ওজি ইমেজ (OG Image)" : "Social Share / OG Image"}
+                description={isBn ? "ফেসবুক, ইনস্টাগ্রাম এবং অন্যান্য মাধ্যমে শেয়ারের জন্য কাস্টম প্রিভিউ ছবি" : "Custom preview image for Facebook, Instagram, and Twitter link shares"}
                 value={form.og_image_url}
                 onChange={(url) => updateField("og_image_url", url)}
                 folder="products"
@@ -1494,9 +1542,9 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           {/* 8. Inventory Tab */}
           {activeTab === "inventory" && (
             <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-4">
-              <h2 className="text-lg font-semibold text-text">Initial Inventory</h2>
+              <h2 className="text-lg font-semibold text-text">{isBn ? "প্রাথমিক স্টক ও ইনভেন্টরি" : "Initial Inventory"}</h2>
               <div className="space-y-2">
-                <Label>Initial Stock (on-hand units)</Label>
+                <Label>{isBn ? "প্রাথমিক স্টক (মজুত ইউনিট সংখ্যা)" : "Initial Stock (on-hand units)"}</Label>
                 <Input
                   type="number"
                   min="0"
@@ -1504,7 +1552,9 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   onChange={(e) => updateField("initial_stock", parseInt(e.target.value) || 0)}
                 />
                 <p className="text-xs text-text-muted">
-                  Sets initial available stock. Ongoing changes should be made in the Inventory Manager.
+                  {isBn
+                    ? "প্রাথমিক মজুত সংখ্যা নির্ধারণ করে। পরবর্তীতে ইনভেন্টরি ম্যানেজার থেকে স্টক আপডেট করা যাবে।"
+                    : "Sets initial available stock. Ongoing changes should be made in the Inventory Manager."}
                 </p>
               </div>
             </div>
@@ -1516,10 +1566,12 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
                 <div>
                   <h2 className="text-lg font-bold text-text flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-[#e91e63]" /> Frequently Bought Together (Combo Bundles)
+                    <Sparkles className="h-5 w-5 text-[#e91e63]" /> {isBn ? "একসাথে প্রায়ই কেনা পণ্য (কম্বো বান্ডেল)" : "Frequently Bought Together (Combo Bundles)"}
                   </h2>
                   <p className="text-xs text-text-muted">
-                    Configure complementary cross-sell products and exclusive combo discounts or free shipping for this item.
+                    {isBn
+                      ? "এই পণ্যের সাথে কম্বো ডিসকাউন্ট বা ফ্রি ডেলিভারি অফার সহ ক্রস-সেল পণ্য কনফিগার করুন।"
+                      : "Configure complementary cross-sell products and exclusive combo discounts or free shipping for this item."}
                   </p>
                 </div>
 
@@ -1531,7 +1583,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                     onChange={(e) => setComboConfig((prev) => ({ ...prev, enabled: e.target.checked }))}
                     className="h-4 w-4 rounded text-[#e91e63] accent-[#e91e63] focus:ring-[#e91e63]"
                   />
-                  Enable Combo on Storefront
+                  {isBn ? "স্টোরফ্রন্টে কম্বো সক্রিয় করুন" : "Enable Combo on Storefront"}
                 </label>
               </div>
 
@@ -1540,21 +1592,21 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Section Title */}
                     <div className="space-y-2">
-                      <Label>Section Title</Label>
+                      <Label>{isBn ? "সেকশন টাইটেল" : "Section Title"}</Label>
                       <Input
                         value={comboConfig.title}
                         onChange={(e) => setComboConfig((prev) => ({ ...prev, title: e.target.value }))}
-                        placeholder="Frequently Bought Together"
+                        placeholder={isBn ? "একসাথে প্রায়ই কেনা পণ্য" : "Frequently Bought Together"}
                       />
                     </div>
 
                     {/* Badge Text */}
                     <div className="space-y-2">
-                      <Label>Highlight Badge Text</Label>
+                      <Label>{isBn ? "হাইলাইট ব্যাজ টেক্সট" : "Highlight Badge Text"}</Label>
                       <Input
                         value={comboConfig.badge_text}
                         onChange={(e) => setComboConfig((prev) => ({ ...prev, badge_text: e.target.value }))}
-                        placeholder="Combo Special • Save 15%"
+                        placeholder={isBn ? "কম্বো অফার • ১৫% ছাড়" : "Combo Special • Save 15%"}
                       />
                     </div>
                   </div>
@@ -1562,7 +1614,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   {/* Offer Type & Value */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-pink-50/50 p-4 rounded-xl border border-pink-100">
                     <div className="space-y-2">
-                      <Label>Offer Type</Label>
+                      <Label>{isBn ? "অফারের ধরণ" : "Offer Type"}</Label>
                       <select
                         value={comboConfig.discount_type}
                         onChange={(e) =>
@@ -1571,22 +1623,24 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                             discount_type: e.target.value as any,
                             badge_text:
                               e.target.value === "free_shipping"
-                                ? "Free Shipping Combo"
+                                ? (isBn ? "ফ্রি শিপিং কম্বো" : "Free Shipping Combo")
                                 : prev.badge_text,
                           }))
                         }
                         className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium"
                       >
-                        <option value="percentage">Percentage Discount (%)</option>
-                        <option value="fixed">Fixed BDT Discount (৳)</option>
-                        <option value="free_shipping">Free Nationwide Shipping (৳0)</option>
+                        <option value="percentage">{isBn ? "শতাংশ ছাড় (%)" : "Percentage Discount (%)"}</option>
+                        <option value="fixed">{isBn ? "নির্দিষ্ট টাকা ছাড় (৳)" : "Fixed BDT Discount (৳)"}</option>
+                        <option value="free_shipping">{isBn ? "সারাদেশে ফ্রি ডেলিভারি (৳০)" : "Free Nationwide Shipping (৳0)"}</option>
                       </select>
                     </div>
 
                     {comboConfig.discount_type !== "free_shipping" && (
                       <div className="space-y-2">
                         <Label>
-                          {comboConfig.discount_type === "percentage" ? "Discount Percentage (%)" : "Discount Amount (৳)"}
+                          {comboConfig.discount_type === "percentage"
+                            ? (isBn ? "ছাড়ের শতকরা হার (%)" : "Discount Percentage (%)")
+                            : (isBn ? "ছাড়ের পরিমাণ (৳)" : "Discount Amount (৳)")}
                         </Label>
                         <Input
                           type="number"
@@ -1604,11 +1658,14 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                     )}
 
                     <div className="space-y-1 text-xs text-gray-600 flex flex-col justify-center">
-                      <span className="font-bold text-text">Combo Benefit:</span>
+                      <span className="font-bold text-text">{isBn ? "কম্বোর সুবিধা:" : "Combo Benefit:"}</span>
                       <span>
-                        {comboConfig.discount_type === "percentage" && `${comboConfig.discount_value}% off when buying bundle.`}
-                        {comboConfig.discount_type === "fixed" && `৳${comboConfig.discount_value} flat savings on bundle.`}
-                        {comboConfig.discount_type === "free_shipping" && "Delivery fee is 100% waived on combo checkout."}
+                        {comboConfig.discount_type === "percentage" &&
+                          (isBn ? `বান্ডেল কেনার সময় ${comboConfig.discount_value}% ছাড় পাওয়া যাবে।` : `${comboConfig.discount_value}% off when buying bundle.`)}
+                        {comboConfig.discount_type === "fixed" &&
+                          (isBn ? `বান্ডেলে মোট ৳${comboConfig.discount_value} সরাসরি সাশ্রয় পাওয়া যাবে।` : `৳${comboConfig.discount_value} flat savings on bundle.`)}
+                        {comboConfig.discount_type === "free_shipping" &&
+                          (isBn ? "কম্বো অর্ডারে ডেলিভারি চার্জ সম্পূর্ণ ফ্রি।" : "Delivery fee is 100% waived on combo checkout.")}
                       </span>
                     </div>
                   </div>
@@ -1617,15 +1674,19 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <Label className="text-sm font-bold">
-                        Select Complementary Bundle Items ({comboConfig.bundle_product_ids.length}/3 selected)
+                        {isBn
+                          ? `কম্বো বান্ডেল পণ্য নির্বাচন করুন (${comboConfig.bundle_product_ids.length}/৩ টি নির্বাচিত)`
+                          : `Select Complementary Bundle Items (${comboConfig.bundle_product_ids.length}/3 selected)`}
                       </Label>
                       <span className="text-xs text-text-muted">
-                        Pick 1 to 3 items (or leave empty for smart auto-recommendations)
+                        {isBn
+                          ? "১ থেকে ৩টি পণ্য বেছে নিন (অথবা খালি রাখলে স্বয়ংক্রিয়ভাবে রিকমেন্ড করবে)"
+                          : "Pick 1 to 3 items (or leave empty for smart auto-recommendations)"}
                       </span>
                     </div>
 
                     <Input
-                      placeholder="Search catalog products..."
+                      placeholder={isBn ? "ক্যাটালগ থেকে পণ্য খুঁজুন..." : "Search catalog products..."}
                       value={bundleSearch}
                       onChange={(e) => setBundleSearch(e.target.value)}
                       className="max-w-md"
@@ -1680,7 +1741,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-3">
-            <h2 className="text-lg font-semibold text-text">Categories</h2>
+            <h2 className="text-lg font-semibold text-text">{isBn ? "ক্যাটাগরি" : "Categories"}</h2>
             <div className="max-h-64 overflow-y-auto space-y-1">
               {categories.map((cat) => (
                 <label key={cat.id} className="flex items-center gap-2 rounded px-2 py-1 hover:bg-surface-secondary cursor-pointer">
@@ -1697,36 +1758,48 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           </div>
 
           <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-3">
-            <h2 className="text-lg font-semibold text-text">Summary</h2>
+            <h2 className="text-lg font-semibold text-text">{isBn ? "সারসংক্ষেপ" : "Summary"}</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-text-muted">Status</span>
-                <span className="font-medium text-text capitalize">{form.status}</span>
+                <span className="text-text-muted">{isBn ? "অবস্থা" : "Status"}</span>
+                <span className="font-medium text-text capitalize">
+                  {form.status === "active"
+                    ? (isBn ? "সক্রিয়" : "Active")
+                    : form.status === "archived"
+                    ? (isBn ? "আর্কাইভ" : "Archived")
+                    : (isBn ? "ড্রাফট" : "Draft")}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-text-muted">Type</span>
-                <span className="font-medium text-text capitalize">{form.product_type}</span>
+                <span className="text-text-muted">{isBn ? "ধরণ" : "Type"}</span>
+                <span className="font-medium text-text capitalize">
+                  {form.product_type === "variable"
+                    ? (isBn ? "ভ্যারিয়েবল" : "Variable")
+                    : (isBn ? "সাধারণ" : "Simple")}
+                </span>
               </div>
               {form.regular_price > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-text-muted">Price</span>
+                  <span className="text-text-muted">{isBn ? "মূল্য" : "Price"}</span>
                   <span className="font-medium text-text">৳{form.regular_price}</span>
                 </div>
               )}
               {form.product_type === "variable" && (
                 <div className="flex justify-between">
-                  <span className="text-text-muted">Variants</span>
-                  <span className="font-medium text-primary-600">{generatedVariants.length} generated</span>
+                  <span className="text-text-muted">{isBn ? "ভ্যারিয়েন্ট" : "Variants"}</span>
+                  <span className="font-medium text-primary-600">
+                    {isBn ? `${generatedVariants.length} টি তৈরি হয়েছে` : `${generatedVariants.length} generated`}
+                  </span>
                 </div>
               )}
               <div className="flex justify-between items-center pt-1 border-t border-border">
-                <span className="text-text-muted">Delivery</span>
+                <span className="text-text-muted">{isBn ? "ডেলিভারি" : "Delivery"}</span>
                 {form.is_free_shipping ? (
                   <span className="font-bold text-xs text-[#e91e63] bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
-                    Free Delivery
+                    {isBn ? "ফ্রি ডেলিভারি" : "Free Delivery"}
                   </span>
                 ) : (
-                  <span className="font-medium text-text text-xs">Standard</span>
+                  <span className="font-medium text-text text-xs">{isBn ? "স্ট্যান্ডার্ড" : "Standard"}</span>
                 )}
               </div>
             </div>
