@@ -30,6 +30,7 @@ import {
   X,
   Target,
   Sparkles,
+  Pause,
 } from "lucide-react";
 import { formatPrice, formatShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
@@ -426,6 +427,20 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
             <Check className="h-3.5 w-3.5" /> Confirm Order
           </button>
           <button
+            onClick={() => handleQuickStatus("processing", "Order moved to processing/warehouse packaging")}
+            disabled={saving}
+            className="rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+          >
+            <Package className="h-3.5 w-3.5" /> Processing
+          </button>
+          <button
+            onClick={() => handleQuickStatus("on-hold", "Order placed on hold awaiting customer confirmation/advance")}
+            disabled={saving}
+            className="rounded-xl bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+          >
+            <Pause className="h-3.5 w-3.5" /> On Hold
+          </button>
+          <button
             onClick={() => handleQuickStatus("packed", "Parcel packed in holographic bubble mailer")}
             disabled={saving}
             className="rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
@@ -440,11 +455,11 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
             <Truck className="h-3.5 w-3.5" /> Mark In-Transit
           </button>
           <button
-            onClick={() => handleQuickStatus("delivered", "Parcel delivered and payment collected", true)}
+            onClick={() => handleQuickStatus("completed", "Order completed, parcel delivered & payment collected", true)}
             disabled={saving}
             className="rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
           >
-            <CheckCircle2 className="h-3.5 w-3.5" /> Mark Delivered & Paid
+            <CheckCircle2 className="h-3.5 w-3.5" /> Complete & Paid
           </button>
           <button
             onClick={() => handleQuickStatus("cancelled", "Order cancelled by admin/customer")}
@@ -477,13 +492,16 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     <option value="pending">Pending (Awaiting Verification)</option>
                     <option value="confirmed">Confirmed (Order Verified)</option>
                     <option value="processing">Processing & In Warehouse</option>
+                    <option value="on-hold">On Hold (Awaiting Advance / Action)</option>
                     <option value="packed">Packed (Ready in Box)</option>
                     <option value="ready_for_pickup">Ready for Courier Pickup</option>
                     <option value="shipped">Shipped / In Transit</option>
                     <option value="out_for_delivery">Out for Delivery</option>
-                    <option value="delivered">Delivered & Complete</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="completed">Completed (Delivered & Paid)</option>
                     <option value="cancelled">Cancelled</option>
                     <option value="returned">Returned / RTO</option>
+                    <option value="refunded">Refunded</option>
                   </select>
                 </div>
 

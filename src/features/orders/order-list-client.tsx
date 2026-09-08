@@ -181,9 +181,9 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     if (activeTab === "all") matchesTab = true;
     else if (activeTab === "paid-online") matchesTab = o.payment_status === "paid";
     else if (activeTab === "pending") matchesTab = o.status === "pending";
-    else if (activeTab === "processing") matchesTab = o.status === "processing" || o.status === "confirmed";
-    else if (activeTab === "on-hold") matchesTab = o.status === "on-hold";
-    else if (activeTab === "completed") matchesTab = o.status === "completed" || o.status === "delivered" || o.status === "shipped";
+    else if (activeTab === "processing") matchesTab = o.status === "processing" || o.status === "confirmed" || o.status === "packed" || o.status === "ready_for_pickup";
+    else if (activeTab === "on-hold") matchesTab = o.status === "on-hold" || o.status === "on_hold";
+    else if (activeTab === "completed") matchesTab = o.status === "completed" || o.status === "delivered" || o.status === "shipped" || o.status === "in_transit" || o.status === "out_for_delivery";
     else if (activeTab === "cancelled") matchesTab = o.status === "cancelled";
     else if (activeTab === "courier-returns") {
       matchesTab = Boolean(
@@ -821,16 +821,22 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
 
   const statusColors: Record<string, string> = {
     pending: "bg-amber-50 text-amber-800 border-amber-200",
-    processing: "bg-blue-50 text-blue-800 border-blue-200",
+    confirmed: "bg-blue-50 text-blue-800 border-blue-200",
+    processing: "bg-indigo-50 text-indigo-800 border-indigo-200",
     "on-hold": "bg-orange-50 text-orange-800 border-orange-200",
+    on_hold: "bg-orange-50 text-orange-800 border-orange-200",
+    packed: "bg-purple-50 text-purple-800 border-purple-200",
+    ready_for_pickup: "bg-cyan-50 text-cyan-800 border-cyan-200",
+    shipped: "bg-teal-50 text-teal-800 border-teal-200",
+    in_transit: "bg-teal-50 text-teal-800 border-teal-200",
+    out_for_delivery: "bg-sky-50 text-sky-800 border-sky-200",
+    delivered: "bg-emerald-50 text-emerald-800 border-emerald-200",
     completed: "bg-emerald-50 text-emerald-800 border-emerald-200",
     cancelled: "bg-gray-100 text-gray-700 border-gray-200",
-    refunded: "bg-purple-50 text-purple-800 border-purple-200",
     failed: "bg-red-50 text-red-800 border-red-200",
-    confirmed: "bg-blue-50 text-blue-800 border-blue-200",
-    shipped: "bg-teal-50 text-teal-800 border-teal-200",
-    delivered: "bg-emerald-50 text-emerald-800 border-emerald-200",
+    return_requested: "bg-rose-50 text-rose-800 border-rose-200",
     returned: "bg-rose-50 text-rose-800 border-rose-200",
+    refunded: "bg-purple-50 text-purple-800 border-purple-200",
   };
 
   const tabs = [
@@ -841,9 +847,21 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       count: orders.filter((o) => o.payment_status === "paid").length,
     },
     { label: t("tab_pending"), value: "pending", count: orders.filter((o) => o.status === "pending").length },
-    { label: t("tab_processing"), value: "processing", count: orders.filter((o) => o.status === "processing" || o.status === "confirmed").length },
-    { label: t("tab_on_hold", "On Hold"), value: "on-hold", count: orders.filter((o) => o.status === "on-hold").length },
-    { label: t("tab_delivered"), value: "completed", count: orders.filter((o) => o.status === "completed" || o.status === "delivered" || o.status === "shipped").length },
+    {
+      label: t("tab_processing"),
+      value: "processing",
+      count: orders.filter((o) => o.status === "processing" || o.status === "confirmed" || o.status === "packed" || o.status === "ready_for_pickup").length,
+    },
+    {
+      label: t("tab_on_hold", "On Hold"),
+      value: "on-hold",
+      count: orders.filter((o) => o.status === "on-hold" || o.status === "on_hold").length,
+    },
+    {
+      label: t("tab_delivered"),
+      value: "completed",
+      count: orders.filter((o) => o.status === "completed" || o.status === "delivered" || o.status === "shipped" || o.status === "in_transit" || o.status === "out_for_delivery").length,
+    },
     { label: t("tab_cancelled"), value: "cancelled", count: orders.filter((o) => o.status === "cancelled").length },
     {
       label: t("returns_rto"),

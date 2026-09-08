@@ -360,6 +360,18 @@ export async function syncLiveCourierStatus(orderId: string) {
     })
     .eq("id", orderId);
 
+  // WooCommerce Idempotent Inventory Synchronization on Courier Status Sync
+  try {
+    const { restoreOrderStock, reduceOrderStock } = await import("@/features/orders/actions");
+    if (isReturned || isCancelled || mappedStatus === "returned" || mappedStatus === "cancelled" || mappedStatus === "failed") {
+      await restoreOrderStock(orderId, supabase);
+    } else if (mappedStatus === "completed" || mappedStatus === "delivered" || mappedStatus === "shipped") {
+      await reduceOrderStock(orderId, supabase);
+    }
+  } catch (invErr) {
+    console.warn("[Courier Sync Inventory Warning]:", invErr);
+  }
+
   // Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger on status sync
   if (mappedStatus === "completed" || mappedStatus === "delivered") {
     try {

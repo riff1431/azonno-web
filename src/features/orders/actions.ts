@@ -648,7 +648,19 @@ export async function updateOrderStatus(
   // 2. WooCommerce Idempotent Inventory Synchronization
   try {
     const isNowCancelledOrRefunded = ["cancelled", "refunded", "failed", "returned"].includes(newStatus);
-    const isNowActive = ["processing", "confirmed", "on-hold", "completed", "shipped"].includes(newStatus);
+    const isNowActive = [
+      "processing",
+      "confirmed",
+      "on-hold",
+      "on_hold",
+      "packed",
+      "ready_for_pickup",
+      "shipped",
+      "in_transit",
+      "out_for_delivery",
+      "completed",
+      "delivered",
+    ].includes(newStatus);
 
     if (isNowCancelledOrRefunded) {
       await restoreOrderStock(orderId, supabaseAdmin);
@@ -697,7 +709,10 @@ export async function triggerStatusGatedPurchaseCapi(
     const targetTriggerStatus = marketingConfig.purchase_trigger_status || "completed";
     const isTriggerMatched =
       newStatus === targetTriggerStatus ||
-      (targetTriggerStatus === "completed" && (newStatus === "completed" || newStatus === "delivered"));
+      ((targetTriggerStatus === "completed" || targetTriggerStatus === "delivered") &&
+        (newStatus === "completed" || newStatus === "delivered")) ||
+      ((targetTriggerStatus === "processing" || targetTriggerStatus === "confirmed") &&
+        (newStatus === "processing" || newStatus === "confirmed"));
 
     const addressSnap = orderData?.shipping_address_snapshot || {};
     const alreadyFired = Boolean(addressSnap.purchase_capi_fired_at);
@@ -914,6 +929,34 @@ export async function updateAdminOrderFull(orderId: string, payload: {
     .single();
 
   if (error) return { error: error.message };
+
+  if (payload.status) {
+    // WooCommerce Idempotent Inventory Synchronization
+    try {
+      const isNowCancelledOrRefunded = ["cancelled", "refunded", "failed", "returned"].includes(payload.status);
+      const isNowActive = [
+        "processing",
+        "confirmed",
+        "on-hold",
+        "on_hold",
+        "packed",
+        "ready_for_pickup",
+        "shipped",
+        "in_transit",
+        "out_for_delivery",
+        "completed",
+        "delivered",
+      ].includes(payload.status);
+
+      if (isNowCancelledOrRefunded) {
+        await restoreOrderStock(orderId, supabaseAdmin);
+      } else if (isNowActive) {
+        await reduceOrderStock(orderId, supabaseAdmin);
+      }
+    } catch (invErr) {
+      console.warn("Inventory sync warning (non-fatal):", invErr);
+    }
+  }
 
   if (payload.status || payload.note) {
     await supabaseAdmin.from("order_status_history").insert({

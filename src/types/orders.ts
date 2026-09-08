@@ -5,19 +5,22 @@
 
 export type OrderStatus =
   | "pending"
+  | "confirmed"
   | "processing"
   | "on-hold"
-  | "completed"
-  | "cancelled"
-  | "refunded"
-  | "failed"
-  | "confirmed"
+  | "on_hold"
+  | "packed"
   | "ready_for_pickup"
   | "shipped"
   | "in_transit"
   | "out_for_delivery"
   | "delivered"
-  | "returned";
+  | "completed"
+  | "cancelled"
+  | "failed"
+  | "return_requested"
+  | "returned"
+  | "refunded";
 
 export type PaymentStatus = "pending" | "partially_paid" | "paid" | "failed" | "refunded";
 
@@ -236,32 +239,39 @@ export function calculateOrderFinancials(
 }
 
 /**
- * WooCommerce Core Finite State Machine (FSM) Transitions
- * Mirrors standard WooCommerce e-commerce order lifecycle
+ * WooCommerce Core & Bangladesh Logistics Finite State Machine (FSM) Transitions
+ * Allows flexible, deterministic transitions across order lifecycle
  */
 export const ORDER_FSM_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  // WooCommerce Core States
-  "pending": ["processing", "on-hold", "cancelled", "failed"],
-  "processing": ["completed", "on-hold", "cancelled"],
-  "on-hold": ["processing", "cancelled", "failed"],
-  "completed": ["refunded"],
-  "cancelled": ["processing"], // Terminal: Re-opening to processing
-  "refunded": [],              // Terminal
-  "failed": ["processing", "cancelled"],
+  // 1. Initial Order States
+  "pending": ["confirmed", "processing", "on-hold", "cancelled", "failed"],
+  "confirmed": ["processing", "packed", "ready_for_pickup", "shipped", "completed", "delivered", "on-hold", "cancelled"],
+  "on-hold": ["processing", "confirmed", "cancelled", "failed"],
+  "on_hold": ["processing", "confirmed", "cancelled", "failed"],
 
-  // Backward-Compatible Aliases
-  "confirmed": ["processing", "completed", "on-hold", "cancelled"],
-  "ready_for_pickup": ["completed", "cancelled"],
-  "shipped": ["completed", "failed", "refunded"],
-  "in_transit": ["completed", "failed"],
-  "out_for_delivery": ["completed", "failed"],
-  "delivered": ["refunded"],
-  "returned": ["refunded", "processing"],
+  // 2. Fulfillment & Packing States
+  "processing": ["confirmed", "packed", "ready_for_pickup", "shipped", "completed", "delivered", "on-hold", "cancelled"],
+  "packed": ["ready_for_pickup", "shipped", "processing", "cancelled"],
+  "ready_for_pickup": ["shipped", "completed", "delivered", "processing", "cancelled"],
+
+  // 3. Logistics & Transit States
+  "shipped": ["in_transit", "out_for_delivery", "completed", "delivered", "returned", "failed", "cancelled"],
+  "in_transit": ["out_for_delivery", "completed", "delivered", "returned", "failed"],
+  "out_for_delivery": ["completed", "delivered", "returned", "failed"],
+
+  // 4. Terminal & Delivery States
+  "delivered": ["completed", "refunded", "returned", "processing"],
+  "completed": ["delivered", "refunded", "returned", "processing"],
+  "cancelled": ["processing", "confirmed"], // Re-opening cancelled order
+  "failed": ["processing", "cancelled", "returned"],
+  "return_requested": ["returned", "processing", "cancelled"],
+  "returned": ["refunded", "processing", "completed"],
+  "refunded": ["cancelled"],
 };
 
 /**
  * State Transition Guard
- * Verifies if an order status change is permitted according to WooCommerce FSM
+ * Verifies if an order status change is permitted according to WooCommerce & Logistics FSM
  */
 export function canTransitionOrderStatus(
   currentStatus: OrderStatus,
@@ -297,31 +307,36 @@ export function getAvailableNextStatuses(
 ): Array<{ value: OrderStatus; label: string; isReopen?: boolean }> {
   const statusLabels: Record<string, string> = {
     "pending": "Pending Payment",
+    "confirmed": "Confirmed (Verified)",
     "processing": "Processing",
     "on-hold": "On Hold",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "refunded": "Refunded",
-    "failed": "Failed (RTO)",
-    "confirmed": "Confirmed",
-    "shipped": "Shipped",
-    "delivered": "Delivered",
-    "returned": "Returned",
+    "on_hold": "On Hold",
+    "packed": "Packed",
     "ready_for_pickup": "Ready for Pickup",
+    "shipped": "Shipped / In Transit",
+    "in_transit": "In Transit",
+    "out_for_delivery": "Out for Delivery",
+    "delivered": "Delivered",
+    "completed": "Completed (Delivered & Paid)",
+    "cancelled": "Cancelled",
+    "failed": "Failed (RTO)",
+    "return_requested": "Return Requested",
+    "returned": "Returned (RTO)",
+    "refunded": "Refunded",
   };
 
   const nextKeys = ORDER_FSM_TRANSITIONS[currentStatus] || [];
 
-  // Current status label (Clean, no debug suffix like "(Current)")
+  // Current status label
   const options: Array<{ value: OrderStatus; label: string; isReopen?: boolean }> = [
     { value: currentStatus, label: statusLabels[currentStatus] || currentStatus },
   ];
 
   for (const nextKey of nextKeys) {
-    if (currentStatus === "cancelled" && nextKey === "processing") {
+    if ((currentStatus === "cancelled" || currentStatus === "failed") && (nextKey === "processing" || nextKey === "confirmed")) {
       options.push({
         value: nextKey,
-        label: "Re-open as Processing",
+        label: `Re-open as ${statusLabels[nextKey] || nextKey}`,
         isReopen: true,
       });
     } else {

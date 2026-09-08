@@ -471,9 +471,9 @@ CREATE TABLE orders (
   utm_campaign TEXT,
   referrer TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN (
-    'pending', 'confirmed', 'processing', 'packed',
+    'pending', 'confirmed', 'processing', 'on-hold', 'on_hold', 'packed',
     'ready_for_pickup', 'shipped', 'in_transit',
-    'out_for_delivery', 'delivered',
+    'out_for_delivery', 'delivered', 'completed',
     'cancelled', 'failed',
     'return_requested', 'returned', 'refunded'
   )),
