@@ -6,7 +6,7 @@ import {
   Save, Loader2, ArrowLeft, Package, FileText,
   DollarSign, Ruler, Image as ImageIcon, Search,
   Box, Layers, Upload, Trash2, Plus, Check, Sparkles, Tag, Truck,
-  AlertTriangle, AlertCircle, ShieldCheck, Clock, Calendar
+  AlertTriangle, AlertCircle, ShieldCheck, Clock, Calendar, Eye
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
@@ -20,6 +20,7 @@ import { getProductComboConfig, saveProductComboConfig } from "@/features/produc
 import { RichTextEditor } from "@/components/shared/rich-text-editor";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
 import { useAdminLang } from "@/lib/admin-lang-context";
+import { ProductPreviewModal } from "./product-preview-modal";
 
 const SKIN_TYPES_DATA = [
   { value: "Oily", en: "Oily", bn: "তৈলাক্ত ত্বক (Oily)" },
@@ -123,6 +124,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [suggestedSku, setSuggestedSku] = useState<number | null>(null);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
 
   const [categories, setCategories] = useState<Array<{ id: string; name: string; parent_id: string | null }>>([]);
   const [brands, setBrands] = useState<Array<{ id: string; name: string }>>([]);
@@ -676,6 +678,16 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
         </div>
 
         <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setPreviewModalOpen(true)}
+            className="flex items-center gap-1.5 border-pink-200 text-[#e91e63] hover:bg-pink-50 hover:text-[#e91e63] font-bold text-xs"
+          >
+            <Eye className="h-4 w-4" />
+            <span className="hidden sm:inline">{isBn ? "লাইভ প্রিভিউ" : "Live Preview"}</span>
+          </Button>
+
           <select
             value={form.status}
             onChange={(e) => updateField("status", e.target.value)}
@@ -1802,10 +1814,40 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                   <span className="font-medium text-text text-xs">{isBn ? "স্ট্যান্ডার্ড" : "Standard"}</span>
                 )}
               </div>
+
+              <div className="pt-2 border-t border-border">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setPreviewModalOpen(true)}
+                  className="w-full flex items-center justify-center gap-2 border-pink-300 text-[#e91e63] hover:bg-pink-50 hover:text-[#e91e63] font-bold text-xs py-2"
+                >
+                  <Eye className="h-4 w-4" />
+                  <span>{isBn ? "লাইভ স্টোরফ্রন্ট প্রিভিউ" : "Live Storefront Preview"}</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <ProductPreviewModal
+        isOpen={previewModalOpen}
+        onClose={() => setPreviewModalOpen(false)}
+        form={form}
+        galleryImages={galleryImages}
+        brandName={brands.find((b) => b.id === form.brand_id)?.name}
+        categoryNames={categories
+          .filter((c) => form.selectedCategories.includes(c.id))
+          .map((c) => c.name)}
+        variants={generatedVariants}
+        comboConfig={comboConfig}
+        catalogProducts={catalogProducts}
+        onPublish={() => {
+          const submitBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+          if (submitBtn) submitBtn.click();
+        }}
+      />
     </form>
   );
 }
