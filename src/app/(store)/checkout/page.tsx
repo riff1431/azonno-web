@@ -538,7 +538,7 @@ export default function CheckoutPage() {
     setErrorMsg(null);
 
     if (!formData.name.trim()) {
-      setErrorMsg("Please enter your Full Name.");
+      setErrorMsg(language === "bn" ? "অনুগ্রহ করে আপনার পুরো নাম লিখুন।" : "Please enter your Full Name.");
       return;
     }
     if (!phoneValidation.isValid) {
@@ -551,11 +551,11 @@ export default function CheckoutPage() {
       return;
     }
     if (!formData.address.trim()) {
-      setErrorMsg("Please enter your detailed delivery street address.");
+      setErrorMsg(language === "bn" ? "অনুগ্রহ করে আপনার সম্পূর্ণ ডেলিভারি ঠিকানা লিখুন।" : "Please enter your detailed delivery street address.");
       return;
     }
     if (items.length === 0) {
-      setErrorMsg("Your bag is empty.");
+      setErrorMsg(language === "bn" ? "আপনার শপিং কার্ট খালি।" : "Your bag is empty.");
       return;
     }
 
@@ -570,7 +570,7 @@ export default function CheckoutPage() {
     });
 
     if (!fraudResult.allowed) {
-      setErrorMsg(fraudResult.riskReasons[0] || "Order cannot be placed at this time.");
+      setErrorMsg(fraudResult.riskReasons[0] || (language === "bn" ? "এই মুহূর্তে অর্ডার সম্পন্ন করা সম্ভব হচ্ছে না।" : "Order cannot be placed at this time."));
       setLoading(false);
       return;
     }
@@ -596,7 +596,7 @@ export default function CheckoutPage() {
 
     const res = await verifyCheckoutOtp(formData.phone, otpCode);
     if (!res.valid) {
-      setOtpError(res.error || "Invalid OTP code.");
+      setOtpError(res.error || (language === "bn" ? "ভুল ওটিপি কোড। অনুগ্রহ করে সঠিক কোড দিন।" : "Invalid OTP code."));
       setOtpLoading(false);
       return;
     }
