@@ -351,12 +351,27 @@ export async function createPathaoConsignment(
   // 4. Live API Execution
   if (token && settings.store_id) {
     try {
+      // Ensure recipient address fulfills Pathao's 10-character minimum constraint
+      let formattedAddress = (payload.recipient_address || "").trim();
+      if (formattedAddress.length < 10) {
+        const parts = [
+          formattedAddress,
+          payload.thana,
+          payload.district || "Dhaka City",
+          "Bangladesh",
+        ].filter(Boolean);
+        formattedAddress = parts.join(", ");
+      }
+      if (formattedAddress.length < 10) {
+        formattedAddress = `${formattedAddress}, Delivery Address, Bangladesh`;
+      }
+
       const orderBody: any = {
         store_id: Number(settings.store_id) || settings.store_id,
         merchant_order_id: payload.merchant_order_id,
         recipient_name: payload.recipient_name,
         recipient_phone: phoneCheck.sanitized,
-        recipient_address: payload.recipient_address,
+        recipient_address: formattedAddress,
         recipient_city: cityId,
         recipient_zone: zoneId,
         delivery_type: 48, // Standard 48 Hours delivery

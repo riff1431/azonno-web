@@ -114,27 +114,13 @@ export async function dispatchOrderToCourier(
     updated_at: new Date().toISOString(),
   };
 
-  // Try updating with all extended columns first
-  const { error: fullUpdateErr } = await supabaseAdmin
+  const { error: updateErr } = await supabaseAdmin
     .from("orders")
-    .update({
-      ...coreUpdate,
-      courier_name: result.courier_name,
-      tracking_code: result.tracking_code,
-      tracking_url: result.tracking_url,
-    })
+    .update(coreUpdate)
     .eq("id", input.orderId);
 
-  // If extended columns do not exist in DB, fallback to coreUpdate
-  if (fullUpdateErr) {
-    console.warn("Extended courier columns update fallback:", fullUpdateErr.message);
-    const { error: fallbackErr } = await supabaseAdmin
-      .from("orders")
-      .update(coreUpdate)
-      .eq("id", input.orderId);
-    if (fallbackErr) {
-      console.error("Critical: Fallback order update failed:", fallbackErr);
-    }
+  if (updateErr) {
+    console.error("Critical: Order dispatch update failed:", updateErr);
   }
 
   // 4. Record in courier_shipments

@@ -437,9 +437,19 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 ...o,
                 status: "shipped",
                 courier_name: res.courierName,
+                shipping_method: res.courierName,
                 consignment_id: res.consignmentId,
-                tracking_code: res.trackingId,
+                tracking_code: res.trackingId || res.consignmentId,
+                tracking_id: res.trackingId || res.consignmentId,
                 tracking_url: res.trackingUrl,
+                shipping_address_snapshot: {
+                  ...(o.shipping_address_snapshot || {}),
+                  courier_name: res.courierName,
+                  consignment_id: res.consignmentId,
+                  tracking_code: res.trackingId || res.consignmentId,
+                  tracking_id: res.trackingId || res.consignmentId,
+                  tracking_url: res.trackingUrl,
+                },
               }
             : o
         )
@@ -1167,12 +1177,12 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                     ord.courier_name ||
                     ord.shipping_method ||
                     addr.courier_name ||
-                    (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")
+                    (activeCid.startsWith("PTH") || activeCid.startsWith("DE") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")
                   ).trim();
-                  const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
+                  const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH") || activeCid.startsWith("DE");
                   const isSteadfast = rawCourier.toLowerCase().includes("steadfast") || activeCid.startsWith("SF") || (!isPathao && Boolean(activeCid));
                   const courierBrand = isPathao ? "Pathao" : isSteadfast ? "SteadFast" : (rawCourier || "SteadFast");
-                  const courier = rawCourier || (isPathao ? "Pathao Courier" : "SteadFast Courier");
+                  const courier = isPathao ? "Pathao Courier" : isSteadfast ? "SteadFast Courier" : (rawCourier || "SteadFast Courier");
                   const isShipped = ord.status === "shipped" || Boolean(activeCid);
                   const isLoading = actionLoadingId === ord.id;
                   const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(activeCid)));
@@ -1827,12 +1837,12 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 ord.courier_name ||
                 ord.shipping_method ||
                 addr.courier_name ||
-                (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")
+                (activeCid.startsWith("PTH") || activeCid.startsWith("DE") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")
               ).trim();
-              const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
+              const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH") || activeCid.startsWith("DE");
               const isSteadfast = rawCourier.toLowerCase().includes("steadfast") || activeCid.startsWith("SF") || (!isPathao && Boolean(activeCid));
               const courierBrand = isPathao ? "Pathao" : isSteadfast ? "SteadFast" : (rawCourier || "SteadFast");
-              const courier = rawCourier || (isPathao ? "Pathao Courier" : "SteadFast Courier");
+              const courier = isPathao ? "Pathao Courier" : isSteadfast ? "SteadFast Courier" : (rawCourier || "SteadFast Courier");
               const isLoading = actionLoadingId === ord.id;
               const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(activeCid)));
               const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(activeCid)));
