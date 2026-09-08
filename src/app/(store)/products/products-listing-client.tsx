@@ -28,10 +28,15 @@ import { useLanguage } from "@/context/language-context";
 
 interface ProductsListingClientProps {
   products: ProductCardData[];
+  fallbackProducts?: ProductCardData[];
+  isFallbackApplied?: boolean;
   categories: Array<{ id: string; name: string; slug: string }>;
   brands: Array<{ id: string; name: string; slug: string }>;
   tags?: Array<{ id: string; name: string; slug: string }>;
   currentCategory?: string;
+  currentType?: string;
+  currentSubcategory?: string;
+  currentDiscount?: boolean;
   currentBrand?: string;
   currentTag?: string;
   currentSort?: string;
@@ -45,6 +50,35 @@ interface ProductsListingClientProps {
   currentInStock?: boolean;
   enableBeautyFilters?: boolean;
 }
+
+const TYPE_NAME_MAP: Record<string, { en: string; bn: string }> = {
+  lotion: { en: "Lotion & Creams", bn: "লোশন ও ক্রিম" },
+  moisturizer: { en: "Moisturizer & Hydration", bn: "ময়েশ্চারাইজার" },
+  cleanser: { en: "Cleanser & Facewash", bn: "ক্লিনজার ও ফেসওয়াশ" },
+  wash: { en: "Body Wash & Shower Gel", bn: "বডি ওয়াশ ও শাওয়ার জেল" },
+  serum: { en: "Serum & Essence", bn: "সিরাম ও এসেন্স" },
+  sunscreen: { en: "Sunscreen & SPF", bn: "সানস্ক্রিন (SPF)" },
+  toner: { en: "Toner & Mist", bn: "ট্যোনার ও মিস্ট" },
+  oil: { en: "Hair Oil & Serum", bn: "হেয়ার অয়েল" },
+  shampoo: { en: "Shampoo & Scalp Care", bn: "শ্যাম্পু" },
+  conditioner: { en: "Conditioner & Mask", bn: "কন্ডিশনার" },
+  scalp: { en: "Scalp Scrub", bn: "স্ক্যাল্প স্ক্রাব" },
+  styling: { en: "Hair Styling", bn: "হেয়ার স্টাইলিং" },
+  scrub: { en: "Body Scrub", bn: "বডি স্ক্রাব" },
+  "hand-foot": { en: "Hand & Foot Care", bn: "হ্যান্ড ও ফুট কেয়ার" },
+  diaper: { en: "Diaper Care", bn: "ডায়াপার কেয়ার" },
+  maternity: { en: "Mom Care", bn: "মম কেয়ার" },
+  foundation: { en: "Foundation & BB Cream", bn: "ফাউন্ডেশন" },
+  lipstick: { en: "Lipstick & Lip Tint", bn: "লিপস্টিক" },
+  eyeliner: { en: "Eyeliner & Kajal", bn: "আইলাইনার" },
+  eyes: { en: "Eyeshadow & Mascara", bn: "আইশ্যাডো ও মাশকারা" },
+  powder: { en: "Setting Powder & Spray", bn: "পাউডার ও স্প্রে" },
+  blush: { en: "Blush & Highlighter", bn: "ব্লাশ ও হাইলাইটার" },
+  women: { en: "Women's Fragrance", bn: "পারফিউম" },
+  men: { en: "Men's Cologne", bn: "মেনস কোলন" },
+  mist: { en: "Body Mist", bn: "বডি মিস্ট" },
+  attar: { en: "Attar & Perfume Oil", bn: "আতর ও অয়েল" },
+};
 
 const PRICE_PRESETS = [
   { label: "All Prices", min: null, max: null },
@@ -126,10 +160,15 @@ const ORIGINS = [
 
 export function ProductsListingClient({
   products,
+  fallbackProducts = [],
+  isFallbackApplied = false,
   categories,
   brands,
   tags = [],
   currentCategory,
+  currentType,
+  currentSubcategory,
+  currentDiscount,
   currentBrand,
   currentTag,
   currentSort,
@@ -188,6 +227,8 @@ export function ProductsListingClient({
 
   const activeFiltersCount = [
     currentCategory,
+    currentType || currentSubcategory ? "type" : null,
+    currentDiscount ? "discount" : null,
     currentBrand,
     currentTag,
     currentSearch,
@@ -827,6 +868,41 @@ export function ProductsListingClient({
                   </button>
                 </span>
               )}
+              {(currentType || currentSubcategory) && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-purple-200 px-2.5 py-0.5 text-xs font-bold text-purple-700 shadow-2xs">
+                  {language === "bn" ? "ধরণ:" : "Type:"}{" "}
+                  {currentType
+                    ? (language === "bn" ? (TYPE_NAME_MAP[currentType]?.bn || currentType) : (TYPE_NAME_MAP[currentType]?.en || currentType))
+                    : currentSubcategory}
+                  <button
+                    onClick={() => {
+                      const params = new URLSearchParams(searchParams.toString());
+                      params.delete("type");
+                      params.delete("subcategory");
+                      router.push(`/products?${params.toString()}`);
+                    }}
+                    className="hover:text-red-500"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {currentDiscount && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-rose-200 px-2.5 py-0.5 text-xs font-bold text-rose-700 shadow-2xs">
+                  {language === "bn" ? "অফার: সেল ও ডিসকাউন্ট" : "Offer: Deals & Discounts"}
+                  <button onClick={() => updateParam("discount", null)} className="hover:text-red-500">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {currentSearch && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-indigo-200 px-2.5 py-0.5 text-xs font-bold text-indigo-700 shadow-2xs">
+                  {language === "bn" ? "অনুসন্ধান:" : "Search:"} &ldquo;{currentSearch}&rdquo;
+                  <button onClick={() => updateParam("search", null)} className="hover:text-red-500">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
               {currentBrand && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
                   {t("catalog", "brands")}: {brands.find((b) => b.slug === currentBrand)?.name || currentBrand}
@@ -893,24 +969,56 @@ export function ProductsListingClient({
             </div>
           )}
 
+          {/* Fallback Notice */}
+          {isFallbackApplied && products.length > 0 && (
+            <div className="flex items-center gap-2 rounded-2xl bg-pink-50/70 border border-pink-200 p-3 text-xs text-pink-900 font-bold">
+              <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+              <span>
+                {language === "bn"
+                  ? `এই ক্যাটাগরির সমস্ত অথেনটিক প্রোডাক্টসমূহ (${toBn(products.length)} টি আইটেম)`
+                  : `Showing all available authentic products in this category (${products.length} items)`}
+              </span>
+            </div>
+          )}
+
           {/* Product Cards Grid */}
           {products.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-white p-12 text-center space-y-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-pink-50 text-[#e91e63]">
-                <ShoppingBag className="h-8 w-8 stroke-1" />
+            <div className="space-y-6">
+              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-white p-8 sm:p-12 text-center space-y-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-pink-50 text-[#e91e63]">
+                  <ShoppingBag className="h-8 w-8 stroke-1" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-base font-black text-gray-900">{t("catalog", "noProductsFound")}</h3>
+                  <p className="text-xs text-gray-500 max-w-sm">
+                    {language === "bn"
+                      ? "এই মুহূর্তে এই ফিল্টারে সরাসরি কোনো প্রোডাক্ট নেই। অন্য ফিল্টার চেষ্টা করুন অথবা আমাদের জনপ্রিয় অথেনটিক কালেকশন দেখুন।"
+                      : "No products currently found for this exact filter. Try removing some filters or explore our authentic bestsellers below."}
+                  </p>
+                </div>
+                <Button
+                  onClick={clearAllFilters}
+                  className="rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold text-xs shadow-xs"
+                >
+                  {t("catalog", "resetFilters")}
+                </Button>
               </div>
-              <div className="space-y-1">
-                <h3 className="text-base font-black text-gray-900">{t("catalog", "noProductsFound")}</h3>
-                <p className="text-xs text-gray-500 max-w-sm">
-                  {t("catalog", "noProductsDesc")}
-                </p>
-              </div>
-              <Button
-                onClick={clearAllFilters}
-                className="rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold text-xs"
-              >
-                {t("catalog", "resetFilters")}
-              </Button>
+
+              {fallbackProducts && fallbackProducts.length > 0 && (
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-[#e91e63]" />
+                    <h3 className="text-sm sm:text-base font-black text-gray-900">
+                      {language === "bn" ? "আমাদের জনপ্রিয় অথেনটিক প্রোডাক্টসমূহ:" : "Explore Our Authentic Bestsellers:"}
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3">
+                    {fallbackProducts.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3">

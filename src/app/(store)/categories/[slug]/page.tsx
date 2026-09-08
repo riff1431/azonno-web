@@ -90,11 +90,9 @@ export default async function CategoryDetailPage({
     .is("deleted_at", null);
 
   if (junctionProductIds.length > 0) {
-    prodsQuery = prodsQuery.or(
-      `id.in.(${junctionProductIds.join(",")}),category_id.in.(${allCategoryIds.join(",")})`
-    );
+    prodsQuery = prodsQuery.in("id", junctionProductIds);
   } else {
-    prodsQuery = prodsQuery.in("category_id", allCategoryIds);
+    prodsQuery = prodsQuery.or(`name.ilike.%${category.name}%,slug.ilike.%${category.slug}%`);
   }
 
   let { data: products } = await prodsQuery;
