@@ -12,7 +12,6 @@ import {
   RefreshCw,
   Info,
   ShieldCheck,
-  ExternalLink,
 } from "lucide-react";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { SecretField } from "@/components/admin/module-settings/secret-field";
@@ -35,7 +34,6 @@ const PROVIDER_DEFAULTS: Record<
     senderPlaceholder: string;
     keyLabel: string;
     keyDesc: string;
-    docsUrl?: string;
     showUsername?: boolean;
     usernameLabel?: string;
     usernamePlaceholder?: string;
@@ -46,14 +44,12 @@ const PROVIDER_DEFAULTS: Record<
     senderPlaceholder: "8809612000000 or ApprovedMasking",
     keyLabel: "BulkSMSBD API Key",
     keyDesc: "Found in your BulkSMSBD Portal -> API Settings.",
-    docsUrl: "https://bulksmsbd.net/api-docs",
   },
   MIMSMS: {
     url: "https://api.mimsms.com/api/V2/SMS",
     senderPlaceholder: "8809612444598 or Approved Sender ID",
     keyLabel: "MiMSMS API Key",
     keyDesc: "Found in sms.mimsms.com → Utility → Developer (Must be Activated).",
-    docsUrl: "https://www.mimsms.com/api-documentation",
     showUsername: true,
     usernameLabel: "MiMSMS Account Email (User Name)",
     usernamePlaceholder: "your_panel_login_email@gmail.com",
@@ -63,14 +59,12 @@ const PROVIDER_DEFAULTS: Record<
     senderPlaceholder: "Optional Sender / Masking",
     keyLabel: "Greenweb BD API Token",
     keyDesc: "API Token generated from your Greenweb SMS account.",
-    docsUrl: "https://greenweb.com.bd",
   },
   Twilio: {
     url: "https://api.twilio.com",
     senderPlaceholder: "+1234567890 or Twilio Sender ID",
     keyLabel: "Twilio Auth Token",
     keyDesc: "Primary Auth Token from your Twilio Console dashboard.",
-    docsUrl: "https://www.twilio.com/docs/sms",
     showUsername: true,
     usernameLabel: "Twilio Account SID",
     usernamePlaceholder: "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -80,7 +74,6 @@ const PROVIDER_DEFAULTS: Record<
     senderPlaceholder: "Masking Name / Sender ID",
     keyLabel: "Onnorokom SMS API Key",
     keyDesc: "API Key from Onnorokom SMS developer portal.",
-    docsUrl: "https://onnorokomsms.com",
   },
   Custom: {
     url: "https://api.example.com/sms/send?apiKey={apiKey}&to={phone}&msg={message}&sender={senderId}",
@@ -255,17 +248,6 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 <Server className="h-4 w-4 text-primary-600" />
                 {isBn ? "প্রধান এসএমএস গেটওয়ে কনফিগারেশন" : "Primary SMS Gateway Configuration"}
               </h2>
-              {providerMeta.docsUrl && (
-                <a
-                  href={providerMeta.docsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-1 text-[11px] font-semibold text-primary-600 hover:text-primary-700 underline"
-                >
-                  <span>{isBn ? "অফিসিয়াল ডক" : "API Docs"}</span>
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
             </div>
 
             <div className="space-y-4">
