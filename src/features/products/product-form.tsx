@@ -19,6 +19,58 @@ import { getAttributes } from "@/features/attributes/actions";
 import { getProductComboConfig, saveProductComboConfig } from "@/features/products/combo-actions";
 import { RichTextEditor } from "@/components/shared/rich-text-editor";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
+import { useAdminLang } from "@/lib/admin-lang-context";
+
+const SKIN_TYPES_DATA = [
+  { value: "Oily", en: "Oily", bn: "তৈলাক্ত ত্বক (Oily)" },
+  { value: "Dry", en: "Dry", bn: "শুষ্ক ত্বক (Dry)" },
+  { value: "Combination", en: "Combination", bn: "কম্বিনেশন / মিশ্র ত্বক" },
+  { value: "Sensitive", en: "Sensitive", bn: "সেনসিটিভ ত্বক (Sensitive)" },
+  { value: "Normal", en: "Normal", bn: "স্বাভাবিক ত্বক (Normal)" },
+  { value: "All Skin Types", en: "All Skin Types", bn: "সকল ধরণের ত্বক (All Skin)" },
+];
+
+const SKIN_CONCERNS_DATA = [
+  { value: "Acne & Blemishes", en: "Acne & Blemishes", bn: "ব্রণ ও দাগ (Acne & Blemishes)" },
+  { value: "Brightening & Pigmentation", en: "Brightening & Pigmentation", bn: "উজ্জ্বলতা ও পিগমেন্টেশন (Brightening)" },
+  { value: "Anti-Aging & Wrinkles", en: "Anti-Aging & Wrinkles", bn: "অ্যান্টি-এজিং ও বলিরেখা (Anti-Aging)" },
+  { value: "Dryness & Hydration", en: "Dryness & Hydration", bn: "শুষ্কতা ও ডিপ ময়েশ্চার (Dryness)" },
+  { value: "Pore Minimizing", en: "Pore Minimizing", bn: "পোর মিনিমাইজিং (Pore Minimizing)" },
+  { value: "Redness & Rosacea", en: "Redness & Rosacea", bn: "লালচে ভাব ও রোসেসিয়া (Redness)" },
+  { value: "Sun Protection", en: "Sun Protection", bn: "রোদে সুরক্ষা (Sun Protection / SPF)" },
+  { value: "Dark Circles", en: "Dark Circles", bn: "চোখের নিচের কালো দাগ (Dark Circles)" },
+  { value: "Oil Control", en: "Oil Control", bn: "তেল নিয়ন্ত্রণ (Oil Control)" },
+  { value: "Barrier Repair", en: "Barrier Repair", bn: "স্কিন ব্যারিয়ার রিপেয়ার (Barrier Repair)" },
+];
+
+const ROUTINE_STEPS_DATA = [
+  { value: "", en: "— Select Routine Step —", bn: "— রুটিনের ধাপ বেছে নিন —" },
+  { value: "Cleanser", en: "1. Cleanser (Oil / Foam)", bn: "১. ক্লিনজার (Cleanser - Oil/Foam)" },
+  { value: "Toner", en: "2. Toner / Mist", bn: "২. টোনার / মিস্ট (Toner / Mist)" },
+  { value: "Essence & Serum", en: "3. Essence / Serum / Ampoule", bn: "৩. এসেন্স / সিরাম / অ্যাম্পুল (Serum)" },
+  { value: "Moisturizer & Cream", en: "4. Moisturizer / Emulsion / Cream", bn: "৪. ময়েশ্চারাইজার / ক্রিম (Moisturizer)" },
+  { value: "Sunscreen / SPF", en: "5. Sunscreen / SPF", bn: "৫. সানস্ক্রিন / এসপিএফ (Sunscreen)" },
+  { value: "Eye Cream", en: "Eye Care / Eye Cream", bn: "আই কেয়ার / আই ক্রিম (Eye Cream)" },
+  { value: "Mask & Exfoliator", en: "Mask / Scrub / Peeling", bn: "ফেস মাস্ক / স্ক্রাব (Mask & Scrub)" },
+  { value: "Treatment", en: "Targeted Treatment / Spot Care", bn: "টার্গেটেড ট্রিটমেন্ট (Spot Care)" },
+  { value: "Lip Care", en: "Lip Balm / Lip Mask", bn: "লিপ কেয়ার / লিপ বাম (Lip Care)" },
+  { value: "Makeup & Cushion", en: "Makeup / Cushion / Foundation", bn: "মেকআপ / কুশন / ফাউন্ডেশন (Makeup)" },
+];
+
+const ORIGINS_DATA = [
+  { value: "South Korea", en: "South Korea (K-Beauty)", bn: "দক্ষিণ কোরিয়া / কে-বিউটি (K-Beauty)" },
+  { value: "Japan", en: "Japan (J-Beauty)", bn: "জাপান / জে-বিউটি (J-Beauty)" },
+  { value: "United Kingdom", en: "United Kingdom (UK)", bn: "যুক্তরাজ্য (UK)" },
+  { value: "United States", en: "United States (USA)", bn: "যুক্তরাষ্ট্র (USA)" },
+  { value: "France", en: "France", bn: "ফ্রান্স (France)" },
+  { value: "Germany", en: "Germany", bn: "জার্মানি (Germany)" },
+  { value: "Thailand", en: "Thailand", bn: "থাইল্যান্ড (Thailand)" },
+  { value: "Bangladesh", en: "Bangladesh", bn: "বাংলাদেশ (Bangladesh)" },
+  { value: "India", en: "India", bn: "ভারত (India)" },
+  { value: "Canada", en: "Canada", bn: "কানাডা (Canada)" },
+  { value: "Australia", en: "Australia", bn: "অস্ট্রেলিয়া (Australia)" },
+  { value: "Italy", en: "Italy", bn: "ইতালি (Italy)" },
+];
 
 interface AttributeOption {
   id: string;
@@ -45,6 +97,8 @@ interface VariantItem {
 
 export default function ProductForm({ initialData }: { initialData?: Record<string, unknown> }) {
   const router = useRouter();
+  const { lang, t } = useAdminLang();
+  const isBn = lang === "bn";
   const isEditing = !!initialData;
   const [activeTab, setActiveTab] = useState<string>("basic");
   const [loading, setLoading] = useState(false);
@@ -185,8 +239,10 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
       return {
         type: "expired" as const,
         days: Math.abs(diffDays),
-        title: "Expired Cosmetic Batch Alert (মেয়াদোত্তীর্ণ)",
-        description: `This cosmetic batch expired ${Math.abs(diffDays)} day(s) ago (${form.expiry_date}). Do not sell expired skincare items — quarantine or return to distributor immediately.`,
+        title: isBn ? "মেয়াদোত্তীর্ণ ব্যাচ সতর্কতা (Expired)" : "Expired Cosmetic Batch Alert",
+        description: isBn
+          ? `এই বিউটি প্রডাক্ট ব্যাচের মেয়াদ ${Math.abs(diffDays)} দিন আগে (${form.expiry_date}) শেষ হয়ে গেছে। গ্রাহকদের সুরক্ষার জন্য এটি বিক্রির তালিকা থেকে অবিলম্বে সরিয়ে ফেলুন বা ডিস্ট্রিবিউটরকে ফেরত দিন।`
+          : `This cosmetic batch expired ${Math.abs(diffDays)} day(s) ago (${form.expiry_date}). Do not sell expired skincare items — quarantine or return to distributor immediately.`,
         badgeColor: "bg-red-100 text-red-800 border-red-200",
         containerColor: "bg-red-50/90 border-red-200 text-red-900",
       };
@@ -195,8 +251,10 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
         type: "critical" as const,
         days: diffDays,
         months: diffMonths,
-        title: "Critical Expiry Alert (< 3 Months Remaining)",
-        description: `Expires in ${diffDays} days (${diffMonths} months). Skincare batches nearing 3 months should be placed on clearance sale or promotional bundle to avoid unsold losses.`,
+        title: isBn ? "জরুরি সতর্কতা: মেয়াদ ৩ মাসের কম বাকি" : "Critical Expiry Alert (< 3 Months Remaining)",
+        description: isBn
+          ? `মেয়াদ শেষ হতে মাত্র ${diffDays} দিন (${diffMonths} মাস) বাকি রয়েছে। অবিক্রিত পণ্যের ক্ষতি এড়াতে এটি ফ্ল্যাশ সেল বা কম্বো অফারে দ্রুত বিক্রি করুন।`
+          : `Expires in ${diffDays} days (${diffMonths} months). Skincare batches nearing 3 months should be placed on clearance sale or promotional bundle to avoid unsold losses.`,
         badgeColor: "bg-rose-100 text-rose-900 border-rose-300 font-bold",
         containerColor: "bg-rose-50/90 border-rose-200 text-rose-950",
       };
@@ -205,8 +263,10 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
         type: "warning" as const,
         days: diffDays,
         months: diffMonths,
-        title: "Approaching Expiry Warning (3–6 Months Remaining)",
-        description: `Expires in ${diffDays} days (~${diffMonths} months). Good shelf-life for normal turnover, but recommended to monitor velocity before the 90-day critical cutoff.`,
+        title: isBn ? "মেয়াদ সতর্কতা: ৩-৬ মাস সময় বাকি" : "Approaching Expiry Warning (3–6 Months Remaining)",
+        description: isBn
+          ? `মেয়াদ শেষ হতে প্রায় ${diffMonths} মাস (${diffDays} দিন) বাকি। স্বাভাবিক বিক্রির জন্য ভালো সময়, তবে নিয়মিত স্টক মনিটর করা ভালো।`
+          : `Expires in ${diffDays} days (~${diffMonths} months). Good shelf-life for normal turnover, but recommended to monitor velocity before the 90-day critical cutoff.`,
         badgeColor: "bg-amber-100 text-amber-900 border-amber-300 font-bold",
         containerColor: "bg-amber-50/80 border-amber-200 text-amber-950",
       };
@@ -215,13 +275,15 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
         type: "fresh" as const,
         days: diffDays,
         months: diffMonths,
-        title: "Optimal Fresh Shelf-Life (> 6 Months)",
-        description: `Batch has ${diffMonths} months (${diffDays} days) of fresh shelf-life remaining. Safe for storefront display and standard marketing.`,
+        title: isBn ? "সম্পূর্ণ ফ্রেশ ও নিরাপদ ব্যাচ (> ৬ মাস)" : "Optimal Fresh Shelf-Life (> 6 Months)",
+        description: isBn
+          ? `ব্যাচটির পর্যাপ্ত মেয়াদ রয়েছে (${diffMonths} মাস / ${diffDays} দিন বাকি)। স্টোরফ্রন্টে প্রদর্শনের জন্য এটি সম্পূর্ণ নিরাপদ ও পারফেক্ট।`
+          : `Batch has ${diffMonths} months (${diffDays} days) of fresh shelf-life remaining. Safe for storefront display and standard marketing.`,
         badgeColor: "bg-emerald-100 text-emerald-900 border-emerald-300 font-bold",
         containerColor: "bg-emerald-50/80 border-emerald-200 text-emerald-950",
       };
     }
-  }, [form.expiry_date]);
+  }, [form.expiry_date, isBn]);
 
   useEffect(() => {
     Promise.all([getCategories(), getBrands(), getAttributes(), getProducts()]).then(([cats, brs, attrs, prods]) => {

@@ -66,7 +66,28 @@ const SKIN_CONCERNS = [
   "Barrier Repair",
 ];
 
+const SKIN_CONCERN_MAP: Record<string, { en: string; bn: string }> = {
+  "Acne & Blemishes": { en: "Acne & Blemishes", bn: "ব্রণ ও দাগ" },
+  "Brightening & Pigmentation": { en: "Brightening & Pigmentation", bn: "উজ্জ্বলতা ও পিগমেন্টেশন" },
+  "Anti-Aging & Wrinkles": { en: "Anti-Aging & Wrinkles", bn: "অ্যান্টি-এজিং ও বলিরেখা" },
+  "Dryness & Hydration": { en: "Dryness & Hydration", bn: "শুষ্কতা ও ডিপ ময়েশ্চার" },
+  "Pore Minimizing": { en: "Pore Minimizing", bn: "পোর মিনিমাইজিং" },
+  "Redness & Rosacea": { en: "Redness & Rosacea", bn: "লালচে ভাব ও রোসেসিয়া" },
+  "Sun Protection": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (SPF)" },
+  "Oil Control": { en: "Oil Control", bn: "তেল নিয়ন্ত্রণ" },
+  "Barrier Repair": { en: "Barrier Repair", bn: "ব্যারিয়ার রিপেয়ার" },
+};
+
 const SKIN_TYPES = ["Oily", "Dry", "Combination", "Sensitive", "Normal", "All Skin Types"];
+
+const SKIN_TYPE_MAP: Record<string, { en: string; bn: string }> = {
+  "Oily": { en: "Oily", bn: "তৈলাক্ত ত্বক" },
+  "Dry": { en: "Dry", bn: "শুষ্ক ত্বক" },
+  "Combination": { en: "Combination", bn: "কম্বিনেশন / মিশ্র ত্বক" },
+  "Sensitive": { en: "Sensitive", bn: "সেনসিটিভ ত্বক" },
+  "Normal": { en: "Normal", bn: "স্বাভাবিক ত্বক" },
+  "All Skin Types": { en: "All Skin Types", bn: "সকল ধরণের ত্বক" },
+};
 
 const KEY_ACTIVES = [
   "Niacinamide",
@@ -83,15 +104,15 @@ const KEY_ACTIVES = [
 ];
 
 const ORIGINS = [
-  { label: "South Korea (K-Beauty)", value: "South Korea" },
-  { label: "Japan (J-Beauty)", value: "Japan" },
-  { label: "United Kingdom (UK)", value: "United Kingdom" },
-  { label: "United States (USA)", value: "United States" },
-  { label: "France", value: "France" },
-  { label: "Germany", value: "Germany" },
-  { label: "Thailand", value: "Thailand" },
-  { label: "Bangladesh", value: "Bangladesh" },
-  { label: "India", value: "India" },
+  { value: "South Korea", en: "South Korea (K-Beauty)", bn: "দক্ষিণ কোরিয়া (কে-বিউটি)" },
+  { value: "Japan", en: "Japan (J-Beauty)", bn: "জাপান (জে-বিউটি)" },
+  { value: "United Kingdom", en: "United Kingdom (UK)", bn: "যুক্তরাজ্য (UK)" },
+  { value: "United States", en: "United States (USA)", bn: "যুক্তরাষ্ট্র (USA)" },
+  { value: "France", en: "France", bn: "ফ্রান্স (France)" },
+  { value: "Germany", en: "Germany", bn: "জার্মানি (Germany)" },
+  { value: "Thailand", en: "Thailand", bn: "থাইল্যান্ড (Thailand)" },
+  { value: "Bangladesh", en: "Bangladesh", bn: "বাংলাদেশ (Bangladesh)" },
+  { value: "India", en: "India", bn: "ভারত (India)" },
 ];
 
 export function ProductsListingClient({
@@ -251,6 +272,7 @@ export function ProductsListingClient({
           <div className="flex flex-wrap gap-1.5">
             {SKIN_CONCERNS.map((concern) => {
               const isSelected = currentSkinConcern === concern;
+              const label = language === "bn" ? (SKIN_CONCERN_MAP[concern]?.bn || concern) : (SKIN_CONCERN_MAP[concern]?.en || concern);
               return (
                 <button
                   key={concern}
@@ -267,7 +289,7 @@ export function ProductsListingClient({
                   )}
                 >
                   {isSelected && <Check className="inline-block h-3 w-3 mr-1 -mt-0.5" />}
-                  {concern}
+                  {label}
                 </button>
               );
             })}
@@ -296,6 +318,7 @@ export function ProductsListingClient({
           <div className="flex flex-wrap gap-1.5">
             {SKIN_TYPES.map((type) => {
               const isSelected = currentSkinType === type;
+              const label = language === "bn" ? (SKIN_TYPE_MAP[type]?.bn || type) : (SKIN_TYPE_MAP[type]?.en || type);
               return (
                 <button
                   key={type}
@@ -312,7 +335,7 @@ export function ProductsListingClient({
                   )}
                 >
                   {isSelected && <Check className="inline-block h-3 w-3 mr-1 -mt-0.5" />}
-                  {type}
+                  {label}
                 </button>
               );
             })}
@@ -386,6 +409,7 @@ export function ProductsListingClient({
           <div className="space-y-1">
             {ORIGINS.map((orig) => {
               const isSelected = currentOrigin === orig.value;
+              const label = language === "bn" ? orig.bn : orig.en;
               return (
                 <button
                   key={orig.value}
@@ -401,7 +425,7 @@ export function ProductsListingClient({
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
-                  <span>{orig.label}</span>
+                  <span>{label}</span>
                   {isSelected && <Check className="h-3.5 w-3.5 text-blue-600" />}
                 </button>
               );
@@ -807,25 +831,9 @@ export function ProductsListingClient({
                   </button>
                 </span>
               )}
-              {currentCategory && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
-                  {t("catalog", "categories")}: {categories.find((c) => c.slug === currentCategory)?.name || currentCategory}
-                  <button onClick={() => updateParam("category", null)} className="hover:text-red-500">
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              )}
-              {currentBrand && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
-                  {t("catalog", "brands")}: {brands.find((b) => b.slug === currentBrand)?.name || currentBrand}
-                  <button onClick={() => updateParam("brand", null)} className="hover:text-red-500">
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              )}
               {currentSkinConcern && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-purple-200 px-2.5 py-0.5 text-xs font-bold text-purple-700 shadow-2xs">
-                  {t("catalog", "skinConcern")}: {currentSkinConcern}
+                  {t("catalog", "skinConcern")}: {language === "bn" ? (SKIN_CONCERN_MAP[currentSkinConcern]?.bn || currentSkinConcern) : (SKIN_CONCERN_MAP[currentSkinConcern]?.en || currentSkinConcern)}
                   <button onClick={() => updateParam("skin_concern", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
                   </button>
@@ -833,7 +841,7 @@ export function ProductsListingClient({
               )}
               {currentSkinType && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
-                  {t("catalog", "skinType")}: {currentSkinType}
+                  {t("catalog", "skinType")}: {language === "bn" ? (SKIN_TYPE_MAP[currentSkinType]?.bn || currentSkinType) : (SKIN_TYPE_MAP[currentSkinType]?.en || currentSkinType)}
                   <button onClick={() => updateParam("skin_type", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
                   </button>
@@ -849,7 +857,7 @@ export function ProductsListingClient({
               )}
               {currentOrigin && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-blue-200 px-2.5 py-0.5 text-xs font-bold text-blue-700 shadow-2xs">
-                  {t("catalog", "origin")}: {currentOrigin}
+                  {t("catalog", "origin")}: {language === "bn" ? (ORIGINS.find((o) => o.value === currentOrigin)?.bn || currentOrigin) : (ORIGINS.find((o) => o.value === currentOrigin)?.en || currentOrigin)}
                   <button onClick={() => updateParam("origin", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
                   </button>

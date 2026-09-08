@@ -51,6 +51,39 @@ import {
 import { type StoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { useLanguage } from "@/context/language-context";
 
+const SKIN_CONCERN_MAP: Record<string, { en: string; bn: string }> = {
+  "Acne & Blemishes": { en: "Acne & Blemishes", bn: "ব্রণ ও দাগ" },
+  "Brightening & Pigmentation": { en: "Brightening & Pigmentation", bn: "উজ্জ্বলতা ও পিগমেন্টেশন" },
+  "Anti-Aging & Wrinkles": { en: "Anti-Aging & Wrinkles", bn: "অ্যান্টি-এজিং ও বলিরেখা" },
+  "Dryness & Hydration": { en: "Dryness & Hydration", bn: "শুষ্কতা ও ডিপ ময়েশ্চার" },
+  "Pore Minimizing": { en: "Pore Minimizing", bn: "পোর মিনিমাইজিং" },
+  "Redness & Rosacea": { en: "Redness & Rosacea", bn: "লালচে ভাব ও রোসেসিয়া" },
+  "Sun Protection": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (SPF)" },
+  "Oil Control": { en: "Oil Control", bn: "তেল নিয়ন্ত্রণ" },
+  "Barrier Repair": { en: "Barrier Repair", bn: "ব্যারিয়ার রিপেয়ার" },
+};
+
+const SKIN_TYPE_MAP: Record<string, { en: string; bn: string }> = {
+  "Oily": { en: "Oily", bn: "তৈলাক্ত ত্বক" },
+  "Dry": { en: "Dry", bn: "শুষ্ক ত্বক" },
+  "Combination": { en: "Combination", bn: "কম্বিনেশন / মিশ্র ত্বক" },
+  "Sensitive": { en: "Sensitive", bn: "সেনসিটিভ ত্বক" },
+  "Normal": { en: "Normal", bn: "স্বাভাবিক ত্বক" },
+  "All Skin Types": { en: "All Skin Types", bn: "সকল ধরণের ত্বক" },
+};
+
+const ORIGIN_MAP: Record<string, { en: string; bn: string }> = {
+  "South Korea": { en: "South Korea (K-Beauty)", bn: "দক্ষিণ কোরিয়া (কে-বিউটি)" },
+  "Japan": { en: "Japan (J-Beauty)", bn: "জাপান (জে-বিউটি)" },
+  "United Kingdom": { en: "United Kingdom (UK)", bn: "যুক্তরাজ্য (UK)" },
+  "United States": { en: "United States (USA)", bn: "যুক্তরাষ্ট্র (USA)" },
+  "France": { en: "France", bn: "ফ্রান্স" },
+  "Germany": { en: "Germany", bn: "জার্মানি" },
+  "Thailand": { en: "Thailand", bn: "থাইল্যান্ড" },
+  "Bangladesh": { en: "Bangladesh", bn: "বাংলাদেশ" },
+  "India": { en: "India", bn: "ভারত" },
+};
+
 interface ProductDetailClientProps {
   product: any;
   relatedProducts: any[];
@@ -395,7 +428,7 @@ export function ProductDetailClient({
               )}
               {originCountry && (
                 <span className="rounded-full bg-blue-600 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs flex items-center gap-1">
-                  <Globe className="h-3 w-3" /> {originCountry}
+                  <Globe className="h-3 w-3" /> {language === "bn" ? (ORIGIN_MAP[originCountry]?.bn || originCountry) : (ORIGIN_MAP[originCountry]?.en || originCountry)}
                 </span>
               )}
             </div>
@@ -613,28 +646,34 @@ export function ProductDetailClient({
                 ))}
 
                 {/* Concerns */}
-                {skinConcerns.map((sc: string) => (
-                  <Link
-                    key={sc}
-                    href={`/products?skin_concern=${encodeURIComponent(sc)}`}
-                    className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-bold text-purple-700 hover:bg-purple-100 transition-colors"
-                  >
-                    <Sparkles className="h-2.5 w-2.5 shrink-0" />
-                    <span>{sc}</span>
-                  </Link>
-                ))}
+                {skinConcerns.map((sc: string) => {
+                  const label = language === "bn" ? (SKIN_CONCERN_MAP[sc]?.bn || sc) : (SKIN_CONCERN_MAP[sc]?.en || sc);
+                  return (
+                    <Link
+                      key={sc}
+                      href={`/products?skin_concern=${encodeURIComponent(sc)}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-bold text-purple-700 hover:bg-purple-100 transition-colors"
+                    >
+                      <Sparkles className="h-2.5 w-2.5 shrink-0" />
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })}
 
                 {/* Skin Types */}
-                {skinTypes.map((st: string) => (
-                  <Link
-                    key={st}
-                    href={`/products?skin_type=${encodeURIComponent(st)}`}
-                    className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
-                  >
-                    <Droplets className="h-2.5 w-2.5 shrink-0" />
-                    <span>{st}</span>
-                  </Link>
-                ))}
+                {skinTypes.map((st: string) => {
+                  const label = language === "bn" ? (SKIN_TYPE_MAP[st]?.bn || st) : (SKIN_TYPE_MAP[st]?.en || st);
+                  return (
+                    <Link
+                      key={st}
+                      href={`/products?skin_type=${encodeURIComponent(st)}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+                    >
+                      <Droplets className="h-2.5 w-2.5 shrink-0" />
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })}
               </div>
             );
           })()}
@@ -823,7 +862,9 @@ export function ProductDetailClient({
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] pt-1">
                 <div className="rounded-xl bg-white p-2 border border-pink-100 shadow-2xs">
                   <span className="text-gray-400 font-medium block">{language === "bn" ? "উৎস দেশ:" : "Origin:"}</span>
-                  <span className="font-bold text-gray-900">{originCountry}</span>
+                  <span className="font-bold text-gray-900">
+                    {language === "bn" ? (ORIGIN_MAP[originCountry]?.bn || originCountry) : (ORIGIN_MAP[originCountry]?.en || originCountry)}
+                  </span>
                 </div>
                 <div className="rounded-xl bg-white p-2 border border-pink-100 shadow-2xs">
                   <span className="text-gray-400 font-medium block">{language === "bn" ? "ব্যাচ কোড:" : "Batch Code:"}</span>
@@ -1003,8 +1044,8 @@ export function ProductDetailClient({
                     </h4>
                     <p className="text-xs text-gray-600">
                       {language === "bn"
-                        ? `সরাসরি ${originCountry}-এর অথরাইজড প্রস্তুতকারক থেকে আমদানিকৃত। কোনো রেপ্লিকা বা মেয়াদোত্তীর্ণ পণ্যের সুযোগ নেই।`
-                        : `Imported directly from authorized manufacturers in ${originCountry}. Zero replicas or expired stock guaranteed.`}
+                        ? `সরাসরি ${ORIGIN_MAP[originCountry]?.bn || originCountry}-এর অথরাইজড প্রস্তুতকারক থেকে আমদানিকৃত। কোনো রেপ্লিকা বা মেয়াদোত্তীর্ণ পণ্যের সুযোগ নেই।`
+                        : `Imported directly from authorized manufacturers in ${ORIGIN_MAP[originCountry]?.en || originCountry}. Zero replicas or expired stock guaranteed.`}
                     </p>
                   </div>
                 </div>

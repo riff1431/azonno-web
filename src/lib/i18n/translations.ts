@@ -227,6 +227,9 @@ export interface Translations {
     noProductsFound: string;
     noProductsDesc: string;
     viewAllProducts: string;
+    tags: string;
+    activeFilters: string;
+    searchTags: string;
   };
   orders: {
     confirmationTitle: string;
@@ -334,6 +337,14 @@ export interface Translations {
     wishlist: string;
     cart: string;
     account: string;
+  };
+  tagsPage: {
+    pageTitle: string;
+    subtitle: string;
+    productsCount: string;
+    noProducts: string;
+    noProductsDesc: string;
+    backToCatalog: string;
   };
   common: {
     bangla: string;
@@ -570,6 +581,9 @@ export const translations: Record<Language, Translations> = {
       noProductsFound: "কোনো প্রোডাক্ট পাওয়া যায়নি",
       noProductsDesc: "আপনার নির্বাচিত ফিল্টারে কোনো পণ্য মেলেনি। অন্য ফিল্টার দিয়ে চেষ্টা করুন।",
       viewAllProducts: "সকল প্রোডাক্ট দেখুন",
+      tags: "ট্যাগস",
+      activeFilters: "সক্রিয় ফিল্টারসমূহ:",
+      searchTags: "ট্যাগ খুঁজুন...",
     },
     orders: {
       confirmationTitle: "অর্ডার নিশ্চিত হয়েছে!",
@@ -677,6 +691,14 @@ export const translations: Record<Language, Translations> = {
       wishlist: "উইশলিস্ট",
       cart: "কার্ট",
       account: "অ্যাকাউন্ট",
+    },
+    tagsPage: {
+      pageTitle: "ট্যাগ কালেকশন",
+      subtitle: "নির্বাচিত ট্যাগের সকল অথেনটিক ও অরিজিনাল প্রসাধনী",
+      productsCount: "টি পণ্য পাওয়া গেছে",
+      noProducts: "এই ট্যাগে কোনো পণ্য নেই",
+      noProductsDesc: "আপাতত এই ট্যাগে কোনো সক্রিয় পণ্য পাওয়া যায়নি। ক্যাটালগ থেকে অন্যান্য পণ্য দেখুন।",
+      backToCatalog: "সকল পণ্য ব্রাউজ করুন",
     },
     common: {
       bangla: "বাংলা",
@@ -911,6 +933,9 @@ export const translations: Record<Language, Translations> = {
       noProductsFound: "No Products Found",
       noProductsDesc: "No products matched your selected filters. Please adjust your criteria.",
       viewAllProducts: "View All Products",
+      tags: "Tags",
+      activeFilters: "Active Filters:",
+      searchTags: "Search tags...",
     },
     orders: {
       confirmationTitle: "Order Confirmed!",
@@ -1013,16 +1038,24 @@ export const translations: Record<Language, Translations> = {
       productsCount: "Products",
     },
     mobileNav: {
-      home: "হোম",
-      categories: "ক্যাটাগরি",
-      wishlist: "উইশলিস্ট",
-      cart: "কার্ট",
-      account: "অ্যাকাউন্ট",
+      home: "Home",
+      categories: "Categories",
+      wishlist: "Wishlist",
+      cart: "Cart",
+      account: "Account",
+    },
+    tagsPage: {
+      pageTitle: "Tag Collection",
+      subtitle: "Browse all authentic products tagged under this label",
+      productsCount: "products found",
+      noProducts: "No products found under this tag",
+      noProductsDesc: "There are currently no active products associated with this tag. Please explore our full catalogue.",
+      backToCatalog: "Browse All Products",
     },
     common: {
       bangla: "বাংলা",
       english: "English",
-      language: "ভাষা",
+      language: "Language",
     },
   },
 };
