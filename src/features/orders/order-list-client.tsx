@@ -1778,14 +1778,19 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               const rawPhone = phone.replace(/[^0-9]/g, "");
               const bdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
               const customerName = addr.name || ord.guest_name || "Customer";
-              const courier = ord.courier_name || "SteadFast Courier";
-              const consignment = ord.consignment_id || "";
+              const consignment = ord.consignment_id || ord.tracking_code || ord.tracking_id || addr.consignment_id || addr.tracking_id || "";
+              const activeCid = consignment;
+              const rawCourier = (ord.courier_name || (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")).trim();
+              const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
+              const isSteadfast = rawCourier.toLowerCase().includes("steadfast") || activeCid.startsWith("SF") || (!isPathao && Boolean(activeCid));
+              const courierBrand = isPathao ? "Pathao" : isSteadfast ? "SteadFast" : (rawCourier || "SteadFast");
+              const courier = rawCourier || (isPathao ? "Pathao Courier" : "SteadFast Courier");
               const isLoading = actionLoadingId === ord.id;
-              const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(ord.consignment_id)));
-              const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(ord.consignment_id)));
+              const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(activeCid)));
+              const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(activeCid)));
               const webhookNote = ord.courier_webhook_note || ord.admin_note || "";
               const isProcessing = ord.status === "processing" || ord.status === "confirmed";
-              const isDispatched = Boolean(consignment || ord.tracking_code || ord.status === "shipped" || ord.status === "completed");
+              const isDispatched = Boolean(activeCid || ord.status === "shipped" || ord.status === "completed" || ord.status === "delivered");
 
               return (
                 <div

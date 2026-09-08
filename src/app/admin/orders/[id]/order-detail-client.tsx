@@ -31,6 +31,7 @@ import {
   Target,
   Sparkles,
   Pause,
+  RefreshCw,
 } from "lucide-react";
 import { formatPrice, formatShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
