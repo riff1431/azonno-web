@@ -56,7 +56,7 @@ export default async function ProductsListingPage({
     supabase.from("tags").select("id, name, slug").order("name"),
   ]);
 
-  // Query products
+  // Dynamic Product Query
   let query = supabase
     .from("products")
     .select(`
@@ -71,6 +71,7 @@ export default async function ProductsListingPage({
       skin_concern,
       key_actives,
       origin_country,
+      country,
       routine_step,
       shipping_class,
       brands (name),
@@ -79,10 +80,63 @@ export default async function ProductsListingPage({
     .eq("status", "active")
     .is("deleted_at", null);
 
+  // 1. Search Query (Matches product name, brand name, category name, origin country, tags, SKU)
+  if (search && search.trim()) {
+    const cleanSearch = search.trim();
+    const searchLower = cleanSearch.toLowerCase();
+
+    // Match brands by name or slug
+    const matchingBrandIds = (brands || [])
+      .filter((b) => b.name.toLowerCase().includes(searchLower) || b.slug.toLowerCase().includes(searchLower))
+      .map((b) => b.id);
+
+    // Match categories by name or slug
+    const matchingCategoryIds = (categories || [])
+      .filter((c) => c.name.toLowerCase().includes(searchLower) || c.slug.toLowerCase().includes(searchLower))
+      .map((c) => c.id);
+
+    let searchProductIds: string[] = [];
+    if (matchingCategoryIds.length > 0) {
+      const { data: catProdIds } = await supabase
+        .from("product_categories")
+        .select("product_id")
+        .in("category_id", matchingCategoryIds);
+      if (catProdIds) {
+        searchProductIds.push(...catProdIds.map((cp) => cp.product_id));
+      }
+    }
+
+    const orConditions = [
+      `name.ilike.%${cleanSearch}%`,
+      `slug.ilike.%${cleanSearch}%`,
+      `sku.ilike.%${cleanSearch}%`,
+      `origin_country.ilike.%${cleanSearch}%`,
+      `country.ilike.%${cleanSearch}%`,
+    ];
+
+    if (matchingBrandIds.length > 0) {
+      orConditions.push(`brand_id.in.(${matchingBrandIds.join(",")})`);
+    }
+
+    if (matchingCategoryIds.length > 0) {
+      orConditions.push(`category_id.in.(${matchingCategoryIds.join(",")})`);
+    }
+
+    if (searchProductIds.length > 0) {
+      orConditions.push(`id.in.(${Array.from(new Set(searchProductIds)).join(",")})`);
+    }
+
+    query = query.or(orConditions.join(","));
+  }
+
+  // 2. Category Filter (Matches category_id in products OR junction table product_categories)
   if (category) {
     const cleanCat = category.replace(/-/g, "").toLowerCase();
     const selectedCat = categories?.find(
-      (c) => c.slug === category || c.slug.replace(/-/g, "").toLowerCase() === cleanCat
+      (c) =>
+        c.slug === category ||
+        c.slug.replace(/-/g, "").toLowerCase() === cleanCat ||
+        c.name.toLowerCase() === category.toLowerCase()
     );
     if (selectedCat) {
       const childCatIds = (categories || [])
@@ -90,31 +144,38 @@ export default async function ProductsListingPage({
         .map((c) => c.id);
       const allTargetCatIds = [selectedCat.id, ...childCatIds];
 
-      const { data: productIds } = await supabase
+      const { data: productCategories } = await supabase
         .from("product_categories")
         .select("product_id")
         .in("category_id", allTargetCatIds);
 
-      if (productIds && productIds.length > 0) {
-        query = query.in("id", productIds.map((p) => p.product_id));
+      const junctionProductIds = (productCategories || []).map((p) => p.product_id);
+
+      if (junctionProductIds.length > 0) {
+        query = query.or(
+          `category_id.in.(${allTargetCatIds.join(",")}),id.in.(${junctionProductIds.join(",")})`
+        );
       } else {
-        query = query.eq("id", "00000000-0000-0000-0000-000000000000");
+        query = query.in("category_id", allTargetCatIds);
       }
-    } else {
-      query = query.eq("id", "00000000-0000-0000-0000-000000000000");
     }
   }
 
+  // 3. Brand Filter (Matches brand_id OR brand name in product title)
   if (brand) {
     const cleanBrand = brand.replace(/-/g, "").toLowerCase();
     const selectedBrand = brands?.find(
-      (b) => b.slug === brand || b.slug.replace(/-/g, "").toLowerCase() === cleanBrand
+      (b) =>
+        b.slug === brand ||
+        b.slug.replace(/-/g, "").toLowerCase() === cleanBrand ||
+        b.name.toLowerCase() === brand.toLowerCase()
     );
     if (selectedBrand) {
-      query = query.eq("brand_id", selectedBrand.id);
+      query = query.or(`brand_id.eq.${selectedBrand.id},name.ilike.%${selectedBrand.name}%`);
     }
   }
 
+  // 4. Tag Filter
   const activeTag = tag || tagsParam;
   if (activeTag) {
     const cleanTag = activeTag.replace(/-/g, "").toLowerCase();
@@ -133,11 +194,21 @@ export default async function ProductsListingPage({
       if (tagProds && tagProds.length > 0) {
         query = query.in("id", tagProds.map((p) => p.product_id));
       } else {
-        query = query.eq("id", "00000000-0000-0000-0000-000000000000");
+        query = query.or(`name.ilike.%${selectedTag.name}%,slug.ilike.%${selectedTag.slug}%`);
       }
     }
   }
 
+  // 5. Country of Origin / Sourcing Provenance Filter
+  if (origin) {
+    let cleanOrigin = origin.trim();
+    if (cleanOrigin.toLowerCase() === "korea") cleanOrigin = "South Korea";
+    if (cleanOrigin.toLowerCase() === "uk") cleanOrigin = "United Kingdom";
+    if (cleanOrigin.toLowerCase() === "usa") cleanOrigin = "United States";
+    query = query.or(`origin_country.ilike.%${cleanOrigin}%,country.ilike.%${cleanOrigin}%`);
+  }
+
+  // 6. Beauty Taxonomy Filters
   if (skin_type) {
     query = query.contains("skin_type", [skin_type]);
   }
@@ -148,14 +219,6 @@ export default async function ProductsListingPage({
 
   if (key_actives) {
     query = query.contains("key_actives", [key_actives]);
-  }
-
-  if (origin) {
-    query = query.ilike("origin_country", `%${origin}%`);
-  }
-
-  if (search) {
-    query = query.ilike("name", `%${search}%`);
   }
 
   if (min_price) {
@@ -203,6 +266,8 @@ export default async function ProductsListingPage({
         sale_price: p.sale_price,
         image_url: p.og_image_url || null,
         brand_name: brandData?.name || null,
+        origin_country: p.origin_country || p.country || null,
+        country: p.country || p.origin_country || null,
         is_in_stock: isAvailable,
         rating: 5.0,
         review_count: 14,

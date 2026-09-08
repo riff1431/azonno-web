@@ -27,12 +27,32 @@ export interface ProductCardData {
   image_url?: string | null;
   brand_name?: string | null;
   category_name?: string | null;
+  origin_country?: string | null;
+  country?: string | null;
   rating?: number;
   review_count?: number;
   size?: string | null;
   is_in_stock?: boolean;
   is_free_shipping?: boolean | null;
   shipping_class?: string | null;
+}
+
+function getCountryFlagEmoji(countryName?: string | null): string {
+  if (!countryName) return "✨";
+  const c = countryName.toLowerCase();
+  if (c.includes("korea")) return "🇰🇷";
+  if (c.includes("japan")) return "🇯🇵";
+  if (c.includes("uk") || c.includes("kingdom") || c.includes("britain")) return "🇬🇧";
+  if (c.includes("usa") || c.includes("states") || c.includes("america")) return "🇺🇸";
+  if (c.includes("france")) return "🇫🇷";
+  if (c.includes("germany")) return "🇩🇪";
+  if (c.includes("thailand")) return "🇹🇭";
+  if (c.includes("canada")) return "🇨🇦";
+  if (c.includes("bangladesh")) return "🇧🇩";
+  if (c.includes("india")) return "🇮🇳";
+  if (c.includes("italy")) return "🇮🇹";
+  if (c.includes("australia")) return "🇦🇺";
+  return "🌍";
 }
 
 export function ProductCard({
@@ -255,6 +275,26 @@ export function ProductCard({
 
       {/* 2. Product Information Body */}
       <div className="flex flex-1 flex-col p-3 sm:p-3.5 space-y-2">
+        {/* Brand & Sourcing Origin Row */}
+        {(product.brand_name || product.origin_country || product.country) && (
+          <div className="flex items-center justify-between gap-1 text-[10px] font-bold text-gray-500">
+            {product.brand_name ? (
+              <span className="truncate text-[#e91e63] uppercase tracking-wider font-extrabold hover:underline">
+                {product.brand_name}
+              </span>
+            ) : <span />}
+            {(product.origin_country || product.country) && (
+              <span
+                className="inline-flex items-center gap-1 text-gray-600 shrink-0 bg-gray-50 px-1.5 py-0.5 rounded-md border border-gray-200/70 font-semibold text-[10px]"
+                title={`Made in / Sourced from: ${product.origin_country || product.country}`}
+              >
+                <span>{getCountryFlagEmoji(product.origin_country || product.country)}</span>
+                <span className="truncate max-w-[85px]">{product.origin_country || product.country}</span>
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Product Title */}
         <Link
           href={`/products/${product.slug}`}

@@ -52,25 +52,28 @@ export default async function BrandDetailPage({
 
   if (!brand) notFound();
 
-  // Fetch Products by Brand
+  // Fetch Products by Brand (by brand_id OR brand name match)
   const { data: products } = await supabase
     .from("products")
     .select(`
       id,
       name,
       slug,
+      sku,
       regular_price,
       sale_price,
       og_image_url,
+      origin_country,
+      country,
       shipping_class,
       brands (name),
       inventory (available)
     `)
-    .eq("brand_id", brand.id)
+    .or(`brand_id.eq.${brand.id},name.ilike.%${brand.name}%`)
     .eq("status", "active")
     .is("deleted_at", null);
 
-  const productCards: ProductCardData[] = (products || []).map((p) => {
+  const productCards: ProductCardData[] = (products || []).map((p: any) => {
     const inv = p.inventory as Array<{ available: number }> | null;
     const isAvailable = inv ? inv.some((i) => i.available > 0) : true;
     const brandData = (Array.isArray(p.brands) ? p.brands[0] : p.brands) as { name: string } | null;
@@ -79,10 +82,13 @@ export default async function BrandDetailPage({
       id: p.id,
       name: p.name,
       slug: p.slug,
+      sku: p.sku || null,
       regular_price: p.regular_price,
       sale_price: p.sale_price,
       image_url: p.og_image_url || null,
-      brand_name: brandData?.name || null,
+      brand_name: brandData?.name || brand.name,
+      origin_country: p.origin_country || p.country || null,
+      country: p.country || p.origin_country || null,
       is_in_stock: isAvailable,
       rating: 5.0,
       review_count: 14,

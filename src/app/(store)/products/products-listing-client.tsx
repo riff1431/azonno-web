@@ -104,15 +104,17 @@ const KEY_ACTIVES = [
 ];
 
 const ORIGINS = [
-  { value: "South Korea", en: "South Korea (K-Beauty)", bn: "দক্ষিণ কোরিয়া (কে-বিউটি)" },
-  { value: "Japan", en: "Japan (J-Beauty)", bn: "জাপান (জে-বিউটি)" },
-  { value: "United Kingdom", en: "United Kingdom (UK)", bn: "যুক্তরাজ্য (UK)" },
-  { value: "United States", en: "United States (USA)", bn: "যুক্তরাষ্ট্র (USA)" },
-  { value: "France", en: "France", bn: "ফ্রান্স (France)" },
-  { value: "Germany", en: "Germany", bn: "জার্মানি (Germany)" },
-  { value: "Thailand", en: "Thailand", bn: "থাইল্যান্ড (Thailand)" },
-  { value: "Bangladesh", en: "Bangladesh", bn: "বাংলাদেশ (Bangladesh)" },
-  { value: "India", en: "India", bn: "ভারত (India)" },
+  { value: "South Korea", flag: "🇰🇷", en: "South Korea (K-Beauty)", bn: "দক্ষিণ কোরিয়া (কে-বিউটি)" },
+  { value: "Japan", flag: "🇯🇵", en: "Japan (J-Beauty)", bn: "জাপান (জে-বিউটি)" },
+  { value: "United Kingdom", flag: "🇬🇧", en: "United Kingdom (UK)", bn: "যুক্তরাজ্য (UK)" },
+  { value: "United States", flag: "🇺🇸", en: "United States (USA)", bn: "যুক্তরাষ্ট্র (USA)" },
+  { value: "France", flag: "🇫🇷", en: "France (French Beauty)", bn: "ফ্রান্স (France)" },
+  { value: "Germany", flag: "🇩🇪", en: "Germany", bn: "জার্মানি (Germany)" },
+  { value: "Canada", flag: "🇨🇦", en: "Canada", bn: "কানাডা (Canada)" },
+  { value: "Thailand", flag: "🇹🇭", en: "Thailand", bn: "থাইল্যান্ড (Thailand)" },
+  { value: "Italy", flag: "🇮🇹", en: "Italy", bn: "ইতালি (Italy)" },
+  { value: "Bangladesh", flag: "🇧🇩", en: "Bangladesh", bn: "বাংলাদেশ (Bangladesh)" },
+  { value: "India", flag: "🇮🇳", en: "India", bn: "ভারত (India)" },
 ];
 
 export function ProductsListingClient({
@@ -406,7 +408,7 @@ export function ProductsListingClient({
             )}
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 max-h-52 overflow-y-auto pr-1">
             {ORIGINS.map((orig) => {
               const isSelected = currentOrigin === orig.value;
               const label = language === "bn" ? orig.bn : orig.en;
@@ -425,8 +427,11 @@ export function ProductsListingClient({
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
-                  <span>{label}</span>
-                  {isSelected && <Check className="h-3.5 w-3.5 text-blue-600" />}
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-sm">{orig.flag}</span>
+                    <span>{label}</span>
+                  </span>
+                  {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
                 </button>
               );
             })}
