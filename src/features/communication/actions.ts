@@ -172,7 +172,19 @@ export interface NotificationMatrixSettings {
 }
 
 const DEFAULT_NOTIFICATION_MATRIX: Record<string, boolean> = {
-  // Order Placed
+  // Checkout Phone OTP
+  order_otp_sms: true,
+  order_otp_whatsapp: false,
+  order_otp_email: false,
+  order_otp_inapp: false,
+
+  // Abandoned Checkout Recovery
+  abandoned_cart_sms: true,
+  abandoned_cart_whatsapp: true,
+  abandoned_cart_email: true,
+  abandoned_cart_inapp: false,
+
+  // Order Placed / Confirmed
   order_placed_sms: true,
   order_placed_whatsapp: true,
   order_placed_email: true,
@@ -183,6 +195,12 @@ const DEFAULT_NOTIFICATION_MATRIX: Record<string, boolean> = {
   order_shipped_whatsapp: true,
   order_shipped_email: true,
   order_shipped_inapp: true,
+
+  // Advance Delivery Fee Request
+  advance_requested_sms: true,
+  advance_requested_whatsapp: true,
+  advance_requested_email: false,
+  advance_requested_inapp: true,
 
   // Order Delivered
   order_delivered_sms: true,
@@ -202,17 +220,17 @@ const DEFAULT_NOTIFICATION_MATRIX: Record<string, boolean> = {
   refund_approved_email: true,
   refund_approved_inapp: true,
 
-  // Advance Delivery Fee Request
-  advance_requested_sms: false,
-  advance_requested_whatsapp: true,
-  advance_requested_email: false,
-  advance_requested_inapp: true,
-
   // Review & Feedback Request
-  review_request_sms: false,
+  review_request_sms: true,
   review_request_whatsapp: true,
   review_request_email: true,
   review_request_inapp: false,
+
+  // Promotional & Replenishment
+  promotional_sms: true,
+  promotional_whatsapp: true,
+  promotional_email: true,
+  promotional_inapp: false,
 
   // Password Reset / Account OTP
   password_reset_sms: true,
@@ -246,7 +264,13 @@ export async function shouldSendNotification(
   channel: "sms" | "whatsapp" | "email" | "inapp"
 ): Promise<boolean> {
   const matrix = await getNotificationMatrix();
-  const settingKey = `${eventKey}_${channel}`;
+  
+  // Normalize alias keys
+  let normalizedKey = eventKey;
+  if (eventKey === "order_created") normalizedKey = "order_placed";
+  if (eventKey === "replenishment") normalizedKey = "promotional";
+
+  const settingKey = `${normalizedKey}_${channel}`;
   if (matrix[settingKey] !== undefined) {
     return matrix[settingKey];
   }

@@ -1016,22 +1016,53 @@ export async function updateAdminOrderFull(orderId: string, payload: {
       created_by: authData?.user?.id || null,
     });
 
-    // Automated Transactional SMS Trigger on Order Shipped (Admin Controlled)
-    if (payload.status === "shipped") {
-      const featureSettings = await getStoreFeatureSettings();
-      const phone = data.guest_phone || data.shipping_address_snapshot?.phone;
-      if (featureSettings.enable_order_shipped_sms !== false && phone) {
+    // Automated Transactional SMS Trigger on Order Status Changes (Admin Matrix Controlled)
+    const phone = data.guest_phone || data.shipping_address_snapshot?.phone;
+    const customerName = data.guest_name || data.shipping_address_snapshot?.name || "সম্মানিত গ্রাহক";
+
+    if (phone) {
+      if (payload.status === "shipped") {
         sendSmsNotification({
           recipientPhone: phone,
           eventType: "order_shipped",
           variables: {
-            customer_name: data.guest_name || data.shipping_address_snapshot?.name || "Customer",
+            customer_name: customerName,
             order_number: data.order_number,
             courier_name: data.courier_name || "SteadFast Courier",
             tracking_id: data.consignment_id || data.tracking_code || data.order_number,
             tracking_url: data.tracking_url || `/account/track?order=${data.order_number}`,
           },
-        }).catch((e) => console.error("Dispatch SMS trigger failed:", e));
+        }).catch((e) => console.error("Shipped SMS trigger failed:", e));
+      } else if (payload.status === "delivered" || payload.status === "completed") {
+        sendSmsNotification({
+          recipientPhone: phone,
+          eventType: "order_delivered",
+          variables: {
+            customer_name: customerName,
+            order_number: data.order_number,
+            store_name: "Blush & Budget",
+          },
+        }).catch((e) => console.error("Delivered SMS trigger failed:", e));
+      } else if (payload.status === "cancelled") {
+        sendSmsNotification({
+          recipientPhone: phone,
+          eventType: "order_cancelled",
+          variables: {
+            customer_name: customerName,
+            order_number: data.order_number,
+            store_name: "Blush & Budget",
+          },
+        }).catch((e) => console.error("Cancelled SMS trigger failed:", e));
+      } else if (payload.status === "refunded") {
+        sendSmsNotification({
+          recipientPhone: phone,
+          eventType: "refund_approved",
+          variables: {
+            customer_name: customerName,
+            order_number: data.order_number,
+            store_name: "Blush & Budget",
+          },
+        }).catch((e) => console.error("Refunded SMS trigger failed:", e));
       }
     }
 
