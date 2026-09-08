@@ -318,16 +318,27 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                   ...o,
                   status: res.mappedStatus as any,
                   courier_name: res.courierName || o.courier_name,
+                  shipping_method: res.courierName || o.shipping_method,
                   consignment_id: res.consignmentId || o.consignment_id,
                   is_courier_returned: res.isReturned,
                   is_courier_cancelled: res.isCancelled,
                   courier_webhook_note: res.statusNote,
+                  shipping_address_snapshot: {
+                    ...(o.shipping_address_snapshot || {}),
+                    courier_name: res.courierName || o.courier_name,
+                    consignment_id: res.consignmentId || o.consignment_id,
+                    courier_status: res.liveStatus,
+                    courier_webhook_note: res.statusNote,
+                    is_courier_returned: res.isReturned,
+                    is_courier_cancelled: res.isCancelled,
+                    last_synced_at: new Date().toISOString(),
+                  },
                 }
               : o
           )
         );
         setBannerMsg({
-          text: `Live Sync for Order #${orderId.slice(0, 8)}: ${res.statusNote}`,
+          text: `Live Sync: ${res.statusNote} -> Status updated to ${(res.mappedStatus || "").toUpperCase()}`,
           isError: false,
         });
       } else {
@@ -340,7 +351,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       setBannerMsg({ text: err.message || "Courier sync failed", isError: true });
     } finally {
       setSyncingCourierId(null);
-      setTimeout(() => setBannerMsg(null), 4500);
+      setTimeout(() => setBannerMsg(null), 5500);
     }
   };
 
@@ -368,10 +379,21 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                     ...o,
                     status: res.mappedStatus as any,
                     courier_name: res.courierName || o.courier_name,
+                    shipping_method: res.courierName || o.shipping_method,
                     consignment_id: res.consignmentId || o.consignment_id,
                     is_courier_returned: res.isReturned,
                     is_courier_cancelled: res.isCancelled,
                     courier_webhook_note: res.statusNote,
+                    shipping_address_snapshot: {
+                      ...(o.shipping_address_snapshot || {}),
+                      courier_name: res.courierName || o.courier_name,
+                      consignment_id: res.consignmentId || o.consignment_id,
+                      courier_status: res.liveStatus,
+                      courier_webhook_note: res.statusNote,
+                      is_courier_returned: res.isReturned,
+                      is_courier_cancelled: res.isCancelled,
+                      last_synced_at: new Date().toISOString(),
+                    },
                   }
                 : o
             )

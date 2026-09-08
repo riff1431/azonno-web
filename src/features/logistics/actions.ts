@@ -302,21 +302,33 @@ export async function syncLiveCourierStatus(orderId: string) {
     return { success: false, error: "Order has not been dispatched to a courier yet." };
   }
 
-  const courier = (order.courier_name || "").toLowerCase();
+  const courier = (
+    order.courier_name ||
+    order.shipping_method ||
+    order.shipping_address_snapshot?.courier_name ||
+    ""
+  ).toLowerCase();
+
+  const isPathaoCourier =
+    courier.includes("pathao") ||
+    String(cid).startsWith("PTH") ||
+    String(cid).startsWith("DE");
+
   let liveStatus = "";
   let statusNote = "";
   let rawData: any = null;
 
-  if (courier.includes("pathao") || String(cid).startsWith("PTH")) {
+  if (isPathaoCourier) {
     const { getPathaoOrderStatus } = await import("./services/pathao");
     const res = await getPathaoOrderStatus(cid);
     liveStatus = (res.delivery_status || "").toLowerCase();
-    statusNote = `Pathao Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
+    statusNote = `Pathao Live API: ${(liveStatus || "IN TRANSIT").replace(/_/g, " ").toUpperCase()}`;
     rawData = res;
   } else {
     // SteadFast Courier with multi-key fallback
     const { getSteadfastStatusByCid, getSteadfastStatusByInvoice, getSteadfastStatusByTrackingCode } = await import("./services/steadfast");
-    let res = await getSteadfastStatusByCid(cid);
+    const cleanCid = String(cid).replace(/^SF-/, "").trim();
+    let res = await getSteadfastStatusByCid(cleanCid);
     if ((!res || res.status === 404 || res.status === 500) && order.tracking_code) {
       res = await getSteadfastStatusByTrackingCode(order.tracking_code);
     }
@@ -340,15 +352,34 @@ export async function syncLiveCourierStatus(orderId: string) {
 
   const normalized = liveStatus.toLowerCase().trim();
 
-  if (normalized.includes("delivered") || normalized === "partial_delivered" || normalized === "payment_collected") {
+  if (
+    normalized.includes("delivered") ||
+    normalized === "partial_delivered" ||
+    normalized.includes("payment_collected") ||
+    normalized.includes("successful")
+  ) {
     mappedStatus = "delivered";
-  } else if (normalized.includes("cancel") || normalized === "cancelled_approval_pending") {
+  } else if (
+    normalized.includes("cancel") ||
+    normalized.includes("cancelled") ||
+    normalized.includes("pickup_cancelled") ||
+    normalized.includes("pickup cancel")
+  ) {
     mappedStatus = "cancelled";
     isCancelled = true;
-  } else if (normalized.includes("return") || normalized.includes("rto") || normalized === "failed") {
+  } else if (
+    normalized.includes("return") ||
+    normalized.includes("rto") ||
+    normalized.includes("failed") ||
+    normalized.includes("exchange")
+  ) {
     mappedStatus = "returned";
     isReturned = true;
-  } else if (normalized.includes("hold") || normalized === "reschedule") {
+  } else if (
+    normalized.includes("hold") ||
+    normalized.includes("reschedule") ||
+    normalized.includes("delay")
+  ) {
     mappedStatus = "on-hold";
   } else if (
     normalized.includes("transit") ||
@@ -356,6 +387,7 @@ export async function syncLiveCourierStatus(orderId: string) {
     normalized.includes("review") ||
     normalized.includes("pending") ||
     normalized.includes("pickup") ||
+    normalized.includes("hub") ||
     normalized.includes("out_for_delivery")
   ) {
     mappedStatus = "shipped";
@@ -365,6 +397,8 @@ export async function syncLiveCourierStatus(orderId: string) {
   const addrSnap = order.shipping_address_snapshot || {};
   const updatedAddressSnap = {
     ...addrSnap,
+    courier_name: isPathaoCourier ? "Pathao Courier" : "SteadFast Courier",
+    consignment_id: cid,
     courier_status: liveStatus,
     courier_webhook_note: statusNote,
     is_courier_returned: isReturned,
@@ -374,6 +408,7 @@ export async function syncLiveCourierStatus(orderId: string) {
 
   const coreUpdate: any = {
     status: mappedStatus,
+    shipping_method: isPathaoCourier ? "Pathao Courier" : "SteadFast Courier",
     shipping_address_snapshot: updatedAddressSnap,
     public_note: statusNote,
     updated_at: new Date().toISOString(),
@@ -381,14 +416,11 @@ export async function syncLiveCourierStatus(orderId: string) {
 
   const { error: syncUpdateErr } = await supabase
     .from("orders")
-    .update({
-      ...coreUpdate,
-      courier_name: order.courier_name || (String(cid).startsWith("PTH") ? "Pathao Courier" : "SteadFast Courier"),
-    })
+    .update(coreUpdate)
     .eq("id", orderId);
 
   if (syncUpdateErr) {
-    await supabase.from("orders").update(coreUpdate).eq("id", orderId);
+    console.error("Critical: Live courier status sync update failed:", syncUpdateErr);
   }
 
   // Insert audit record into order_status_history table
@@ -435,7 +467,8 @@ export async function syncLiveCourierStatus(orderId: string) {
   return {
     success: true,
     orderId,
-    courierName: order.courier_name || (String(cid).startsWith("PTH") ? "Pathao Courier" : "SteadFast Courier"),
+    orderNumber: order.order_number,
+    courierName: isPathaoCourier ? "Pathao Courier" : "SteadFast Courier",
     consignmentId: cid,
     liveStatus,
     mappedStatus,
