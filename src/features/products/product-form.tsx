@@ -53,7 +53,7 @@ const ROUTINE_STEPS_DATA = [
   { value: "Sunscreen / SPF", en: "5. Sunscreen / SPF", bn: "৫. সানস্ক্রিন / এসপিএফ (Sunscreen)" },
   { value: "Eye Cream", en: "Eye Care / Eye Cream", bn: "আই কেয়ার / আই ক্রিম (Eye Cream)" },
   { value: "Mask & Exfoliator", en: "Mask / Scrub / Peeling", bn: "ফেস মাস্ক / স্ক্রাব (Mask & Scrub)" },
-  { value: "Treatment", en: "Targeted Treatment / Spot Care", bn: "টার্গেটেড ট্রিটমেন্ট (Spot Care)" },
+  { value: "Treatment", en: "Targeted Serum / Spot Care", bn: "টার্গেটেড সিরাম / স্পট কেয়ার (Spot Care)" },
   { value: "Lip Care", en: "Lip Balm / Lip Mask", bn: "লিপ কেয়ার / লিপ বাম (Lip Care)" },
   { value: "Makeup & Cushion", en: "Makeup / Cushion / Foundation", bn: "মেকআপ / কুশন / ফাউন্ডেশন (Makeup)" },
 ];

@@ -67,7 +67,7 @@ export default function AccountProfilePage() {
     <div className="space-y-6 max-w-3xl">
       <div className="border-b border-gray-100 pb-4">
         <h1 className="text-xl font-black text-gray-900 flex items-center gap-2">
-          <User className="h-5 w-5 text-[#e91e63]" /> My Profile & Preferences
+          <User className="h-5 w-5 text-[#e91e63]" /> My Profile &amp; Preferences
         </h1>
         <p className="text-xs text-gray-500 mt-0.5">
           Manage your personal information, birthday gifts eligibility, and personalized skincare profile.
@@ -164,10 +164,10 @@ export default function AccountProfilePage() {
                 className="w-full pl-10 rounded-xl border px-3.5 py-2.5 text-xs font-semibold text-gray-800 focus:outline-none"
               >
                 <option value="combination">Combination Skin</option>
-                <option value="oily">Oily & Acne-Prone</option>
-                <option value="dry">Dry & Dehydrated</option>
-                <option value="sensitive">Sensitive / Redness</option>
-                <option value="normal">Normal</option>
+                <option value="oily">Oily &amp; Shine-Prone</option>
+                <option value="dry">Dry Skin</option>
+                <option value="sensitive">Sensitive Skin</option>
+                <option value="normal">Normal Skin</option>
               </select>
             </div>
           </div>

@@ -22,12 +22,12 @@ const BEAUTY_INGREDIENTS = [
 ];
 
 const BEAUTY_CONCERNS = [
-  { name: "Acne & Blemishes", slug: "acne", match: ["acne", "blemish", "pimple", "breakout"] },
-  { name: "Dark Spots & Pigmentation", slug: "dark_spots", match: ["brighten", "dark spot", "pigment", "melasma", "spots", "dull"] },
-  { name: "Anti-Aging & Wrinkles", slug: "anti_aging", match: ["aging", "wrinkle", "fine line", "firming", "mature"] },
-  { name: "Dryness & Dehydration", slug: "dry_skin", match: ["dry", "hydration", "dehydrat", "moisture"] },
-  { name: "Pores & Excess Oil", slug: "oil_control", match: ["pore", "oil", "sebum", "blackhead", "whitehead"] },
-  { name: "Barrier Repair & Calming", slug: "barrier_repair", match: ["barrier", "repair", "sensitive", "soothing", "calming", "redness"] },
+  { name: "Blemish & Pore Care", slug: "acne", match: ["acne", "blemish", "pimple", "breakout", "oil"] },
+  { name: "Brightening & Even Tone", slug: "dark_spots", match: ["brighten", "dark spot", "pigment", "melasma", "spots", "dull", "tone"] },
+  { name: "Smoothing & Firming Care", slug: "anti_aging", match: ["aging", "wrinkle", "fine line", "firming", "mature", "smooth"] },
+  { name: "Hydration & Moisture", slug: "dry_skin", match: ["dry", "hydration", "dehydrat", "moisture"] },
+  { name: "Pore Care & Oil Balance", slug: "oil_control", match: ["pore", "oil", "sebum", "blackhead", "whitehead"] },
+  { name: "Barrier Care & Soothing", slug: "barrier_repair", match: ["barrier", "repair", "sensitive", "soothing", "calming", "redness"] },
   { name: "Sun Protection (SPF)", slug: "sun_protection", match: ["sun", "sunscreen", "spf", "uv"] },
 ];
 

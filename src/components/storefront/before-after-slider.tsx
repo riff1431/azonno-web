@@ -42,20 +42,21 @@ export function BeforeAfterSlider({
   buttonText,
   buttonHref = "/products?category=skin-care",
 }: BeforeAfterSliderProps) {
-  const { language, toBn } = useLanguage();
+  const { language } = useLanguage();
 
   const isBn = language === "bn";
+
   const displayEyebrow = eyebrowBadge || (isBn ? "সহজ স্কিনকেয়ার রুটিন" : "EVERYDAY ROUTINE");
-  const displayTitle = title || (isBn ? "সহজ স্কিনকেয়ারের পার্থক্য" : "SEE THE DIFFERENCE");
-  const displaySubtitle = subtitle || (isBn ? "প্রতিদিনের সহজ পরিচর্যায় সতেজ ও কোমল ত্বকের অনুভূতি" : "Simple Everyday Skincare Routine");
+  const displayTitle = title || (isBn ? "টেক্সচার ও ফিনিশ" : "TEXTURE & FINISH");
+  const displaySubtitle = subtitle || (isBn ? "সারাদিনের সতেজ ও মোলায়েম অনুভূতির জন্য প্রস্তুত" : "Designed for a fresh, comfortable feel throughout the day");
   const displayHeading = heading || (isBn ? "৩ ধাপের সহজ স্কিনকেয়ার রুটিন" : "Simple 3-Step Daily Routine");
-  const displayDescription = description || (isBn ? "হালকা ও আরামদায়ক প্রোডাক্ট যা ত্বককে রাখে নরম, সতেজ ও ময়েশ্চারাইজড।" : "Lightweight products that leave skin feeling fresh, soft, and comfortable throughout the day.");
+  const displayDescription = description || (isBn ? "হালকা ও আরামদায়ক পণ্য যা ত্বককে রাখে নরম, সতেজ ও ময়েশ্চারাইজড।" : "Lightweight products designed to leave skin feeling fresh, soft, and comfortable.");
   const displayMetric1 = metric1 || (isBn ? "ত্বকে আনে সতেজ ও শান্ত অনুভূতি" : "Leaves skin feeling calm and refreshed");
-  const displayMetric2 = metric2 || (isBn ? "হালকা ও তেল চিটচিটে ভাবহীন" : "Lightweight and non-greasy all day");
-  const displayMetric3 = metric3 || (isBn ? "১০০% আসল ও অরিজিনাল পণ্য" : "100% Direct Certified Authentic Imports");
-  const displayButtonText = buttonText || (isBn ? "রুটিনটি কিনুন" : "SHOP THE ROUTINE");
-  const displayBeforeLabel = beforeLabel || (isBn ? "আগে • শুষ্ক ত্বক" : "BEFORE • DRY & DULL");
-  const displayAfterLabel = afterLabel || (isBn ? "পরে • সতেজ ও কোমল" : "AFTER • FRESH & HYDRATED");
+  const displayMetric2 = metric2 || (isBn ? "হালকা ও তেল চিটচিটে ভাবহীন টেক্সচার" : "Lightweight, non-greasy texture");
+  const displayMetric3 = metric3 || (isBn ? "১০০% আসল ও অরিজিনাল পণ্য" : "100% Authentic direct imports");
+  const displayButtonText = buttonText || (isBn ? "রুটিনটি দেখুন" : "EXPLORE ROUTINE");
+  const displayBeforeLabel = beforeLabel || (isBn ? "আগে • সাধারণ ত্বক" : "BEFORE • CLEANSED SKIN");
+  const displayAfterLabel = afterLabel || (isBn ? "পরে • ময়েশ্চারাইজড ফিনিশ" : "AFTER • HYDRATED FINISH");
 
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -153,7 +154,7 @@ export function BeforeAfterSlider({
         <div>
           <div className="flex items-center gap-1.5 text-[#e91e63] text-xs font-black uppercase tracking-wide mb-0.5">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>{isBn ? "কার্যকর প্রমাণিত বিউটি রেজাল্ট" : "Proven Beauty Efficacy"}</span>
+            <span>{isBn ? "দৈনন্দিন স্কিনকেয়ার ফিনিশ" : "Daily Skincare Finish"}</span>
           </div>
           <h2 className="text-base sm:text-lg md:text-xl font-black uppercase tracking-wide text-gray-900">
             {displayTitle}
@@ -163,7 +164,7 @@ export function BeforeAfterSlider({
 
         <span className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-gray-400">
           <ArrowLeftRight className="h-3.5 w-3.5" />
-          <span>{isBn ? "ফলাফল তুলনা করতে স্লাইডারটি টানুন" : "Drag the slider to compare results"}</span>
+          <span>{isBn ? "টেক্সচার দেখতে স্লাইডারটি টানুন" : "Drag slider to see finish"}</span>
         </span>
       </div>
 
@@ -193,7 +194,7 @@ export function BeforeAfterSlider({
             {/* 1. After Image (Full Background Layer) */}
             <img
               src={afterImage}
-              alt={isBn ? "৭ দিন পর উজ্জ্বল ত্বক" : "After 7 Days Glowing Skin"}
+              alt={isBn ? "হালকা ময়েশ্চারাইজড ফিনিশ" : "Hydrated Skin Finish"}
               className={`absolute inset-0 h-full w-full ${fitClass}`}
               draggable={false}
             />

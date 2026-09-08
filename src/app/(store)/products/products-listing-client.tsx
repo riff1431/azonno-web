@@ -67,18 +67,25 @@ const SKIN_CONCERNS = [
 ];
 
 const SKIN_CONCERN_MAP: Record<string, { en: string; bn: string }> = {
-  "Acne & Blemishes": { en: "Acne & Blemishes", bn: "ব্রণ ও দাগ" },
-  "Brightening & Pigmentation": { en: "Brightening & Pigmentation", bn: "উজ্জ্বলতা ও পিগমেন্টেশন" },
-  "Anti-Aging & Wrinkles": { en: "Anti-Aging & Wrinkles", bn: "অ্যান্টি-এজিং ও বলিরেখা" },
-  "Dryness & Hydration": { en: "Dryness & Hydration", bn: "শুষ্কতা ও ডিপ ময়েশ্চার" },
-  "Pore Minimizing": { en: "Pore Minimizing", bn: "পোর মিনিমাইজিং" },
-  "Redness & Rosacea": { en: "Redness & Rosacea", bn: "লালচে ভাব ও রোসেসিয়া" },
-  "Sun Protection": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (SPF)" },
-  "Oil Control": { en: "Oil Control", bn: "তেল নিয়ন্ত্রণ" },
-  "Barrier Repair": { en: "Barrier Repair", bn: "ব্যারিয়ার রিপেয়ার" },
+  "Acne & Blemishes": { en: "Blemish & Pore Care", bn: "দাগ ও পোর কেয়ার" },
+  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "উজ্জ্বল ও সমান স্কিন টোন" },
+  "Anti-Aging & Wrinkles": { en: "Smoothing & Firming Care", bn: "মসৃণ ও কোমল স্কিন কেয়ার" },
+  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "হালকা ময়েশ্চার ও হাইড্রেশন" },
+  "Pore Minimizing": { en: "Pore Care & Clean Feel", bn: "পোর কেয়ার ও ক্লিন ফিলিং" },
+  "Redness & Rosacea": { en: "Soothing & Gentle Care", bn: "শান্ত ও আরামদায়ক অনুভূতি" },
+  "Sun Protection": { en: "Sun Protection (SPF)", bn: "সান প্রোটেকশন (SPF)" },
+  "Oil Control": { en: "Oil Balance & Freshness", bn: "অয়েল ব্যালেন্স ও ফ্রেশ ভাব" },
+  "Barrier Repair": { en: "Barrier Care & Comfort", bn: "ব্যারিয়ার কেয়ার ও আরাম" },
 };
 
-const SKIN_TYPES = ["Oily", "Dry", "Combination", "Sensitive", "Normal", "All Skin Types"];
+const SKIN_TYPES = [
+  "Oily",
+  "Dry",
+  "Combination",
+  "Sensitive",
+  "Normal",
+  "All Skin Types",
+];
 
 const SKIN_TYPE_MAP: Record<string, { en: string; bn: string }> = {
   "Oily": { en: "Oily", bn: "তৈলাক্ত ত্বক" },

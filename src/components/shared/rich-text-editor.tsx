@@ -320,7 +320,7 @@ export function RichTextEditor({
   </li>
   <li class="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-800">
     <span class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-black shrink-0">✓</span>
-    <span>${isBn ? "ডার্মাটোলজিস্ট দ্বারা পরীক্ষিত ও সংবেদনশীল ত্বকে নিরাপদ" : "Dermatologist tested & safe for sensitive skin"}</span>
+    <span>${isBn ? "নরম ও সংবেদনশীল ত্বকে ব্যবহারের জন্য উপযোগী" : "Gentle and suitable for sensitive skin"}</span>
   </li>
 </ul>
 <p></p>`;
@@ -334,7 +334,7 @@ export function RichTextEditor({
   </li>
   <li class="flex items-center gap-2.5 text-xs sm:text-sm font-medium text-gray-800">
     <input type="checkbox" checked readOnly class="h-4 w-4 rounded text-pink-600 focus:ring-pink-500 border-gray-300 pointer-events-none" />
-    <span>${isBn ? "ব্রণ ও কালচে দাগ দ্রুত হালকা করতে কার্যকরী" : "Fades dark spots and post-acne pigmentation"}</span>
+    <span>${isBn ? "ত্বকে সমান ও ফ্রেশ ভাব এনে দিতে সাহায্য করে" : "Helps support a more even-looking skin tone"}</span>
   </li>
   <li class="flex items-center gap-2.5 text-xs sm:text-sm font-medium text-gray-800">
     <input type="checkbox" class="h-4 w-4 rounded text-pink-600 focus:ring-pink-500 border-gray-300 pointer-events-none" />
@@ -348,11 +348,11 @@ export function RichTextEditor({
 <ul class="my-3 space-y-2 list-none pl-0">
   <li class="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-800">
     <span class="text-amber-500 text-base shrink-0">✨</span>
-    <span><strong>${isBn ? "প্রধান আকর্ষণ:" : "Key Feature:"}</strong> ${isBn ? "উন্নত কোরিয়ান গ্লোয়িং ফর্মুলেশন" : "Advanced Korean skin barrier repair"}</span>
+    <span><strong>${isBn ? "প্রধান আকর্ষণ:" : "Key Feature:"}</strong> ${isBn ? "কোরিয়ান সহজ হাইড্রেটিং ফর্মুলা" : "Korean gentle hydrating formula"}</span>
   </li>
   <li class="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-800">
     <span class="text-amber-500 text-base shrink-0">⭐</span>
-    <span><strong>${isBn ? "ফলাফল:" : "Visible Results:"}</strong> ${isBn ? "মাত্র ৭ দিনে উজ্জ্বলতা ও সতেজ টানটান অনুভূতি" : "Brighter tone & firmer skin in 7 days"}</span>
+    <span><strong>${isBn ? "ফলাফল:" : "Visible Results:"}</strong> ${isBn ? "নিয়মিত ব্যবহারে সতেজ ও মোলায়েম অনুভূতি" : "Leaves skin feeling soft, fresh, and comfortable"}</span>
   </li>
   <li class="flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-800">
     <span class="text-amber-500 text-base shrink-0">✨</span>
@@ -374,7 +374,7 @@ export function RichTextEditor({
   </div>
   <div class="flex items-start gap-3 p-3 bg-gray-50/80 rounded-2xl border border-gray-200/80">
     <span class="h-6 w-6 rounded-full bg-pink-100 text-[#e91e63] font-black text-xs flex items-center justify-center shrink-0">3</span>
-    <span class="text-xs text-gray-800 font-medium leading-relaxed">${isBn ? "ভালো ফলাফলের জন্য প্রতিদিন সকালে ও রাতে নিয়মিত ব্যবহার করুন।" : "Use daily morning and night for optimal barrier support."}</span>
+    <span class="text-xs text-gray-800 font-medium leading-relaxed">${isBn ? "ভালো ফলাফলের জন্য প্রতিদিন সকালে ও রাতে নিয়মিত ব্যবহার করুন।" : "Use daily morning and night for daily hydration and fresh comfort."}</span>
   </div>
 </div>
 <p></p>`;
@@ -390,7 +390,7 @@ export function RichTextEditor({
       const html = `
 <div class="my-5 rounded-3xl bg-pink-50/50 border border-pink-200/80 p-5 shadow-xs">
   <h4 class="text-sm font-black text-[#e91e63] flex items-center gap-2 mb-3">
-    <span>✨</span> ${isBn ? "কেন এটি আপনার ত্বকের জন্য সেরা?" : "Why Your Skin Will Love This:"}
+    <span>✨</span> ${isBn ? "কেন এটি পছন্দ করবেন:" : "Why You\'ll Like It:"}
   </h4>
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
     <div class="p-3 bg-white rounded-2xl border border-pink-100 flex items-start gap-2 shadow-2xs">
@@ -411,7 +411,7 @@ export function RichTextEditor({
       <span class="text-emerald-600 font-bold">✓</span>
       <div>
         <strong class="block text-gray-900 font-bold">${isBn ? "ব্যারিয়ার সুরক্ষা" : "Barrier Defense"}</strong>
-        <span class="text-gray-600">${isBn ? "ধূলাবালি ও রোদের ক্ষতি থেকে বাঁচায়।" : "Shields from pollution & UV stress."}</span>
+        <span class="text-gray-600">${isBn ? "প্রতিদিনের আরামদায়ক যত্নের জন্য উপযোগী।" : "Designed for comfortable daily barrier care."}</span>
       </div>
     </div>
     <div class="p-3 bg-white rounded-2xl border border-pink-100 flex items-start gap-2 shadow-2xs">
@@ -435,7 +435,7 @@ export function RichTextEditor({
   <p class="text-xs text-gray-800 font-medium leading-relaxed m-0">
     ${isBn
       ? "হালকা ভেজা ত্বকে সিরাম বা এসেন্স ব্যবহার করলে কার্যকারিতা দ্বিগুণ বেড়ে যায়! এরপর ময়েশ্চারাইজার দিয়ে লক করতে ভুলবেন না।"
-      : "Always apply hydrating serum or essence onto slightly damp skin to maximize absorption and seal with moisturizer for 24-hour hydration."}
+      : "Always apply hydrating serum or essence onto slightly damp skin to maximize absorption and seal with moisturizer to keep skin soft and hydrated."}
   </p>
 </div>
 <p></p>`;
@@ -457,7 +457,7 @@ export function RichTextEditor({
       </tr>
       <tr class="hover:bg-gray-50/50 bg-gray-50/30">
         <td class="p-3 font-bold text-gray-900">${isBn ? "উপযুক্ত স্কিন টাইপ" : "Suitable Skin Type"}</td>
-        <td class="p-3 text-gray-700">${isBn ? "তৈলাক্ত, সংবেদনশীল ও ব্রণপ্রবণ ত্বক সহ সকল ত্বক" : "All Skin Types (Oily, Sensitive & Acne-prone)"}</td>
+        <td class="p-3 text-gray-700">${isBn ? "তৈলাক্ত, সংবেদনশীল সহ সকল ধরনের ত্বক" : "All Skin Types (Oily, Sensitive, Normal & Combination)"}</td>
       </tr>
       <tr class="hover:bg-gray-50/50">
         <td class="p-3 font-bold text-gray-900">${isBn ? "উৎপাদনকারী দেশ" : "Country of Origin"}</td>
@@ -514,15 +514,15 @@ export function RichTextEditor({
       <span class="text-[#e91e63] font-black">Q:</span> ${isBn ? "এটি কি সংবেদনশীল (Sensitive) ত্বকে ব্যবহার করা যাবে?" : "Is this safe for sensitive skin?"}
     </h5>
     <p class="text-xs text-gray-600 leading-relaxed pl-4 m-0 border-l-2 border-pink-200">
-      ${isBn ? "হ্যাঁ, এটি ১০০% হাইপোঅ্যালার্জেনিক ও ক্ষতিকারক কেমিক্যালমুক্ত, ফলে যেকোনো সংবেদনশীল ত্বকে নিরাপদে ব্যবহারযোগ্য।" : "Yes, it is formulated with soothing hypoallergenic botanicals safe for sensitive skin."}
+      ${isBn ? "হ্যাঁ, এটি কোমল উপাদান দিয়ে তৈরি এবং প্রতিদিন ব্যবহারের জন্য উপযোগী।" : "Yes, it contains gentle ingredients suitable for everyday use."}
     </p>
   </div>
   <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
     <h5 class="text-xs sm:text-sm font-black text-gray-900 mb-1 flex items-center gap-1.5">
-      <span class="text-[#e91e63] font-black">Q:</span> ${isBn ? "কতদিনের মধ্যে দৃশ্যমান ফলাফল বোঝা যাবে?" : "How soon will I see visible results?"}
+      <span class="text-[#e91e63] font-black">Q:</span> ${isBn ? "ব্যবহারের পর ত্বক কেমন অনুভব হয়?" : "How does it feel after use?"}
     </h5>
     <p class="text-xs text-gray-600 leading-relaxed pl-4 m-0 border-l-2 border-pink-200">
-      ${isBn ? "প্রথম ব্যবহারেই তাৎক্ষণিক হাইড্রেটিং গ্লো পাবেন। ত্বক উজ্জ্বল ও দাগমুক্ত হতে টানা ২-৩ সপ্তাহ নিয়মিত ব্যবহার করুন।" : "Immediate hydration glow on day 1. Noticeable tone clarity in 2-3 weeks of continuous use."}
+      ${isBn ? "ব্যবহারের পর ত্বক সতেজ, নরম ও আরামদায়ক অনুভব হয়।" : "Leaves skin feeling soft, refreshed, and comfortable right away."}
     </p>
   </div>
 </div>
