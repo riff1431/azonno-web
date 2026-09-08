@@ -32,6 +32,7 @@ import {
   Sparkles,
   Pause,
   RefreshCw,
+  ChevronDown,
 } from "lucide-react";
 import { formatPrice, formatShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
@@ -39,6 +40,7 @@ import { updateAdminOrderFull, triggerManualOrderCapiPurchase } from "@/features
 import { bookCourierDelivery, syncLiveCourierStatus } from "@/features/logistics/actions";
 import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
 import { BDCourierHistoryCard } from "@/features/fraud/bdcourier-card";
+import { generateWhatsAppOrderMessage } from "@/types/orders";
 
 interface OrderDetailClientProps {
   order: any;
@@ -50,7 +52,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
   // Status & Notes State
   const [status, setStatus] = useState(order.status || "pending");
-  const [statusNote, setStatusNote] = useState("");
+  const [statusNote, setStatusNote] = useState(order.public_note || "");
   const [internalNote, setInternalNote] = useState(order.internal_note || "");
 
   // Editable Customer & Shipping Address State
@@ -87,13 +89,15 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
     order.public_note || "Fragile skincare cosmetics. Please handle with care and call before delivery."
   );
   const [bookingCourier, setBookingCourier] = useState(false);
+  const [syncingCourier, setSyncingCourier] = useState(false);
 
-  // Feedback State
+  // UI Interactive State
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ text: string; isError: boolean } | null>(null);
   const [copiedCode, setCopiedCode] = useState(false);
   const [capiLoading, setCapiLoading] = useState(false);
   const [capiMsg, setCapiMsg] = useState<{ text: string; isError: boolean } | null>(null);
+  const [openWhatsAppMenu, setOpenWhatsAppMenu] = useState(false);
 
   const items = order.order_items || [];
   const history = order.order_status_history || [];
@@ -177,14 +181,17 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
     const res = await updateAdminOrderFull(order.id, {
       status,
-      note: statusNote.trim() || undefined,
+      publicNote: statusNote.trim() || undefined,
       internalNote: internalNote.trim() || undefined,
+      note: statusNote.trim() || `Fulfillment status updated to ${status} by admin`,
     });
 
     if (res.error) {
       setMsg({ text: res.error, isError: true });
     } else {
       setOrder(res.order);
+      setStatus(res.order.status);
+      setInternalNote(res.order.internal_note || "");
 
       // GA4 & Meta Pixel Event Triggers
       if (status === "cancelled") {
@@ -221,8 +228,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
         });
       }
 
-      setStatusNote("");
-      setMsg({ text: "Fulfillment status updated successfully!", isError: false });
+      setMsg({ text: "Fulfillment status and notes saved successfully!", isError: false });
       setTimeout(() => setMsg(null), 3500);
       router.refresh();
     }
@@ -293,7 +299,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
       recipientAddress: addressForm.address || "Dhaka, Bangladesh",
       district: addressForm.district || "Dhaka City",
       thana: addressForm.thana || "",
-      codAmount: order.total,
+      codAmount: order.payment_status === "paid" ? 0 : order.total,
       weightKg: Number(parcelWeight),
       itemDescription: itemDescription.trim() || undefined,
       specialInstruction: specialInstruction.trim() || undefined,
@@ -307,7 +313,14 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
         isError: false,
       });
       setStatus("shipped");
-      setOrder({ ...order, status: "shipped", consignment_id: res.consignmentId });
+      setOrder({
+        ...order,
+        status: "shipped",
+        courier_name: res.courierName,
+        consignment_id: res.consignmentId,
+        tracking_code: res.trackingId || res.consignmentId,
+        tracking_url: res.trackingUrl,
+      });
       router.refresh();
     } else {
       setMsg({ text: res.error || "Courier booking failed.", isError: true });
@@ -315,8 +328,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
     setBookingCourier(false);
   };
 
-  const [syncingCourier, setSyncingCourier] = useState(false);
-
+  // Sync Live Courier Status
   const handleSyncCourier = async () => {
     setSyncingCourier(true);
     setMsg(null);
@@ -353,13 +365,27 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
     setSaving(true);
     setMsg(null);
 
+    const trackingUrl =
+      courierName.toLowerCase().includes("pathao") || consignmentId.startsWith("PTH")
+        ? `https://pathao.com/courier/tracking/?consignment_id=${consignmentId}`
+        : `https://steadfast.com.bd/t/${consignmentId}`;
+
     const res = await updateAdminOrderFull(order.id, {
+      courier_name: courierName,
+      consignment_id: consignmentId || undefined,
+      tracking_code: consignmentId || undefined,
+      tracking_url: consignmentId ? trackingUrl : undefined,
       note: `Courier updated: ${courierName} (Consignment: ${consignmentId || "N/A"})`,
     });
 
     if (res.error) {
       setMsg({ text: res.error, isError: true });
     } else {
+      if (res.order) {
+        setOrder(res.order);
+        setCourierName(res.order.courier_name || courierName);
+        setConsignmentId(res.order.consignment_id || consignmentId);
+      }
       setMsg({ text: `Courier tracking details saved successfully!`, isError: false });
       setTimeout(() => setMsg(null), 3500);
       router.refresh();
@@ -367,11 +393,19 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
     setSaving(false);
   };
 
+  const activeCid = order.consignment_id || consignmentId || "";
+  const isBooked = Boolean(activeCid);
+  const activeCourierName = order.courier_name || courierName;
+  const isPathao = activeCourierName.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
+
+  const liveTrackingUrl =
+    order.tracking_url ||
+    (isPathao
+      ? `https://pathao.com/courier/tracking/?consignment_id=${activeCid}`
+      : `https://steadfast.com.bd/t/${activeCid}`);
+
   const rawPhone = (addressForm.phone || order.guest_phone || "").replace(/[^0-9]/g, "");
   const formattedBdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
-  const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedBdPhone}&text=${encodeURIComponent(
-    `Hello ${addressForm.name || "Customer"}! Your Blush & Budget order (${order.order_number}) of ৳${order.total} has been confirmed. Thank you for shopping with us!`
-  )}`;
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-16">
@@ -379,18 +413,36 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 bg-white p-5 sm:p-6 rounded-3xl border border-gray-200 shadow-xs">
         <div className="flex items-center gap-3">
           <Link href="/admin/orders">
-            <Button variant="ghost" size="icon" className="rounded-xl border border-gray-200">
+            <Button variant="ghost" size="icon" className="rounded-xl border border-gray-200 hover:bg-gray-100">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-black text-gray-900 font-mono">
                 Order {order.order_number}
               </h1>
-              <span className="rounded-full bg-pink-50 text-[#e91e63] text-xs px-3 py-0.5 border border-pink-200 uppercase font-black">
+              <span
+                className={`rounded-full text-xs px-3 py-0.5 border font-black uppercase tracking-wide ${
+                  order.status === "completed" || order.status === "delivered"
+                    ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                    : order.status === "shipped" || order.status === "in_transit"
+                    ? "bg-teal-50 text-teal-800 border-teal-300"
+                    : order.status === "processing"
+                    ? "bg-pink-50 text-[#e91e63] border-pink-200"
+                    : order.status === "cancelled"
+                    ? "bg-red-50 text-red-800 border-red-300"
+                    : "bg-blue-50 text-blue-800 border-blue-200"
+                }`}
+              >
                 {order.status}
               </span>
+              {isBooked && (
+                <span className="rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-[11px] px-2.5 py-0.5 font-bold flex items-center gap-1 font-mono">
+                  <Truck className="h-3 w-3 text-emerald-600" />
+                  {isPathao ? "Pathao" : "SteadFast"}: {activeCid}
+                </span>
+              )}
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
               Placed on {new Date(order.created_at).toLocaleString("en-GB")} • {items.length} Line Item{items.length === 1 ? "" : "s"}
@@ -399,26 +451,60 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Quick Courier Button */}
-          {order.status !== "shipped" && order.status !== "delivered" && (
-            <Button
-              onClick={() => handleBookCourier("steadfast")}
-              disabled={bookingCourier}
-              size="sm"
-              className="text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs"
-            >
-              {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
-              Book SteadFast Delivery
-            </Button>
+          {/* Header Action Buttons: Courier Sync vs Quick Dispatch */}
+          {isBooked ? (
+            <>
+              <Button
+                onClick={handleSyncCourier}
+                disabled={syncingCourier}
+                size="sm"
+                variant="outline"
+                className="text-xs font-bold rounded-xl border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 shadow-xs"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${syncingCourier ? "animate-spin text-emerald-600" : ""}`} />
+                Sync Courier API
+              </Button>
+              <a
+                href={liveTrackingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-50 border border-blue-200 px-3 py-2 rounded-xl shadow-xs transition-colors"
+              >
+                <span>Live Tracking</span>
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            </>
+          ) : (
+            <>
+              <Button
+                onClick={() => handleBookCourier("steadfast")}
+                disabled={bookingCourier}
+                size="sm"
+                className="text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs"
+              >
+                {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
+                Book SteadFast Delivery
+              </Button>
+              <Button
+                onClick={() => handleBookCourier("pathao")}
+                disabled={bookingCourier}
+                size="sm"
+                variant="outline"
+                className="text-xs font-bold rounded-xl border-orange-300 bg-orange-50 hover:bg-orange-100 text-orange-900 shadow-xs"
+              >
+                {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
+                Pathao Express
+              </Button>
+            </>
           )}
 
-          <Button variant="outline" onClick={handlePrint} className="text-xs font-bold rounded-xl border-gray-300">
+          <Button variant="outline" onClick={handlePrint} className="text-xs font-bold rounded-xl border-gray-300 hover:bg-gray-50">
             <Printer className="h-3.5 w-3.5 mr-1.5" />
             Print Invoice
           </Button>
 
           <Link href={`/orders/${order.id}/confirmation`} target="_blank">
-            <Button variant="outline" className="text-xs font-bold rounded-xl border-gray-300">
+            <Button variant="outline" className="text-xs font-bold rounded-xl border-gray-300 hover:bg-gray-50">
               <ExternalLink className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
               Customer View
             </Button>
@@ -452,49 +538,83 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
           <button
             onClick={() => handleQuickStatus("confirmed", "Order verified and confirmed via phone")}
             disabled={saving}
-            className="rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+              order.status === "confirmed"
+                ? "bg-blue-600 text-white shadow-md ring-2 ring-blue-300 ring-offset-1 font-black"
+                : "bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200"
+            }`}
           >
             <Check className="h-3.5 w-3.5" /> Confirm Order
           </button>
+
           <button
             onClick={() => handleQuickStatus("processing", "Order moved to processing/warehouse packaging")}
             disabled={saving}
-            className="rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+              order.status === "processing"
+                ? "bg-indigo-600 text-white shadow-md ring-2 ring-indigo-300 ring-offset-1 font-black"
+                : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200"
+            }`}
           >
             <Package className="h-3.5 w-3.5" /> Processing
           </button>
+
           <button
             onClick={() => handleQuickStatus("on-hold", "Order placed on hold awaiting customer confirmation/advance")}
             disabled={saving}
-            className="rounded-xl bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+              order.status === "on-hold" || order.status === "on_hold"
+                ? "bg-orange-600 text-white shadow-md ring-2 ring-orange-300 ring-offset-1 font-black"
+                : "bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200"
+            }`}
           >
             <Pause className="h-3.5 w-3.5" /> On Hold
           </button>
+
           <button
             onClick={() => handleQuickStatus("packed", "Parcel packed in holographic bubble mailer")}
             disabled={saving}
-            className="rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+              order.status === "packed" || order.status === "ready_for_pickup"
+                ? "bg-purple-600 text-white shadow-md ring-2 ring-purple-300 ring-offset-1 font-black"
+                : "bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200"
+            }`}
           >
             <Package className="h-3.5 w-3.5" /> Mark Packed
           </button>
+
           <button
             onClick={() => handleQuickStatus("shipped", "Dispatched with courier partner")}
             disabled={saving}
-            className="rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+              order.status === "shipped" || order.status === "in_transit" || order.status === "out_for_delivery"
+                ? "bg-teal-600 text-white shadow-md ring-2 ring-teal-300 ring-offset-1 font-black"
+                : "bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200"
+            }`}
           >
             <Truck className="h-3.5 w-3.5" /> Mark In-Transit
           </button>
+
           <button
             onClick={() => handleQuickStatus("completed", "Order completed, parcel delivered & payment collected", true)}
             disabled={saving}
-            className="rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+              order.status === "completed" || order.status === "delivered"
+                ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-300 ring-offset-1 font-black"
+                : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+            }`}
           >
             <CheckCircle2 className="h-3.5 w-3.5" /> Complete & Paid
           </button>
+
           <button
             onClick={() => handleQuickStatus("cancelled", "Order cancelled by admin/customer")}
             disabled={saving}
-            className="rounded-xl bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5"
+            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
+              order.status === "cancelled"
+                ? "bg-red-600 text-white shadow-md ring-2 ring-red-300 ring-offset-1 font-black"
+                : "bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
+            }`}
           >
             <Ban className="h-3.5 w-3.5" /> Cancel Order
           </button>
@@ -517,7 +637,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full rounded-xl border px-3.5 py-2.5 text-xs text-gray-900 font-bold capitalize focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs text-gray-900 font-bold capitalize focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   >
                     <option value="pending">Pending (Awaiting Verification)</option>
                     <option value="confirmed">Confirmed (Order Verified)</option>
@@ -544,7 +664,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     value={statusNote}
                     onChange={(e) => setStatusNote(e.target.value)}
                     placeholder="e.g. Handed over to SteadFast tracking #SF12345"
-                    className="w-full rounded-xl border px-3.5 py-2.5 text-xs text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -557,7 +677,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     value={internalNote}
                     onChange={(e) => setInternalNote(e.target.value)}
                     placeholder="e.g. Advance ৳120 delivery fee received via bKash TrxID 89A291. Deliver after 5 PM."
-                    className="w-full rounded-xl border p-3 text-xs text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 p-3 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
               </div>
@@ -567,7 +687,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   type="submit"
                   size="sm"
                   disabled={saving}
-                  className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-black rounded-xl px-6 py-2 shadow-sm"
+                  className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-black rounded-xl px-6 py-2 shadow-xs"
                 >
                   {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Save className="h-3.5 w-3.5 mr-1" />}
                   Save Status & Notes
@@ -578,9 +698,16 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
           {/* 2. Courier Consignment & Delivery Center */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
-            <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-              <Package className="h-4 w-4 text-emerald-600" /> Courier Consignment & Tracking Dispatch
-            </h2>
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2">
+                <Package className="h-4 w-4 text-emerald-600" /> Courier Consignment & Tracking Dispatch
+              </h2>
+              {isBooked && (
+                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-lg flex items-center gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Booked
+                </span>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
@@ -588,7 +715,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                 <select
                   value={courierName}
                   onChange={(e) => setCourierName(e.target.value)}
-                  className="w-full rounded-xl border px-3.5 py-2.5 text-xs font-bold text-gray-900 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                 >
                   <option value="SteadFast Courier">SteadFast Courier (Standard)</option>
                   <option value="Pathao Express">Pathao Express</option>
@@ -606,14 +733,14 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="text"
                     value={consignmentId}
                     onChange={(e) => setConsignmentId(e.target.value)}
-                    placeholder="e.g. SF-9029148"
-                    className="flex-1 rounded-xl border px-3.5 py-2.5 text-xs font-mono font-bold text-gray-900 focus:outline-none"
+                    placeholder="e.g. SF-9029148 or PTH12345"
+                    className="flex-1 rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs font-mono font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                   <Button
                     onClick={handleSaveTracking}
                     disabled={saving}
                     size="sm"
-                    className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl shrink-0"
+                    className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold rounded-xl shrink-0 shadow-xs"
                   >
                     Save Tracking
                   </Button>
@@ -625,7 +752,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                         setTimeout(() => setCopiedCode(false), 2000);
                       }}
                       title="Copy Tracking Number"
-                      className="px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs shrink-0 flex items-center gap-1"
+                      className="px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs shrink-0 flex items-center gap-1 transition-colors"
                     >
                       {copiedCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
                     </button>
@@ -643,7 +770,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   min="0.1"
                   value={parcelWeight}
                   onChange={(e) => setParcelWeight(Number(e.target.value))}
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                 />
               </div>
 
@@ -656,7 +783,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   value={itemDescription}
                   onChange={(e) => setItemDescription(e.target.value)}
                   placeholder="e.g. Simple Moisturiser (125ml) x 1"
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                 />
               </div>
 
@@ -669,40 +796,51 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   value={specialInstruction}
                   onChange={(e) => setSpecialInstruction(e.target.value)}
                   placeholder="e.g. Fragile skincare item. Please call before delivery."
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                 />
               </div>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100">
               <div className="flex items-center gap-2 flex-wrap">
-                {consignmentId ? (
+                {isBooked ? (
                   <>
-                    <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-900 px-3 py-1.5 rounded-xl font-bold text-xs">
+                    <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-300 text-emerald-900 px-3 py-1.5 rounded-xl font-bold text-xs shadow-xs">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      <span>Booked with {courierName || "Courier"} ({consignmentId})</span>
+                      <span>Booked with {activeCourierName} ({activeCid})</span>
                     </div>
+
                     <Button
                       onClick={handleSyncCourier}
                       disabled={syncingCourier}
                       size="sm"
                       variant="outline"
-                      className="border-gray-200 text-gray-700 hover:bg-gray-50 text-xs font-bold rounded-xl"
+                      className="border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 text-xs font-bold rounded-xl shadow-xs"
                     >
-                      <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${syncingCourier ? "animate-spin text-[#e91e63]" : ""}`} />
+                      <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${syncingCourier ? "animate-spin text-emerald-600" : ""}`} />
                       Sync Live Courier API
                     </Button>
+
                     <a
-                      href={order.tracking_url || ((courierName || "").toLowerCase().includes("pathao") || consignmentId.startsWith("PTH")
-                        ? `https://pathao.com/courier/tracking/?consignment_id=${consignmentId}`
-                        : `https://steadfast.com.bd/t/${consignmentId}`)}
+                      href={liveTrackingUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 hover:underline px-2 py-1"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 hover:text-blue-800 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl shadow-xs transition-colors"
                     >
                       <span>Open Live Tracking</span>
                       <ExternalLink className="h-3.5 w-3.5" />
                     </a>
+
+                    <Button
+                      onClick={() => handleBookCourier("steadfast")}
+                      disabled={bookingCourier}
+                      size="sm"
+                      variant="ghost"
+                      className="text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl"
+                      title="Re-book with SteadFast if needed"
+                    >
+                      Re-Book
+                    </Button>
                   </>
                 ) : (
                   <>
@@ -710,7 +848,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       onClick={() => handleBookCourier("steadfast")}
                       disabled={bookingCourier}
                       size="sm"
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs"
                     >
                       {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
                       1-Click SteadFast Dispatch
@@ -720,9 +858,9 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       disabled={bookingCourier}
                       size="sm"
                       variant="outline"
-                      className="text-xs font-bold rounded-xl border-gray-300"
+                      className="text-xs font-bold rounded-xl border-orange-300 bg-orange-50 hover:bg-orange-100 text-orange-900 shadow-xs"
                     >
-                      Pathao Express
+                      Pathao Express Dispatch
                     </Button>
                   </>
                 )}
@@ -761,7 +899,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     </div>
                   </div>
 
-                  <span className="font-black text-gray-900 text-sm">
+                  <span className="font-black text-gray-900 text-sm font-mono">
                     {formatPrice(item.total)}
                   </span>
                 </div>
@@ -775,18 +913,22 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
               Order Activity & Timeline History
             </h2>
             <div className="space-y-3 text-xs">
-              {history.map((h: any) => (
-                <div key={h.id} className="flex items-start gap-3 border-l-2 border-[#e91e63] pl-3.5 py-1">
-                  <div>
-                    <p className="font-bold text-gray-900 capitalize">
-                      {h.status}: <span className="font-normal text-gray-600">{h.note}</span>
-                    </p>
-                    <span className="text-[10px] text-gray-400 font-medium">
-                      {new Date(h.created_at).toLocaleString("en-GB")}
-                    </span>
+              {history.length === 0 ? (
+                <p className="text-gray-400 italic">No activity history recorded yet.</p>
+              ) : (
+                history.map((h: any) => (
+                  <div key={h.id} className="flex items-start gap-3 border-l-2 border-[#e91e63] pl-3.5 py-1">
+                    <div>
+                      <p className="font-bold text-gray-900 capitalize">
+                        {h.status}: <span className="font-normal text-gray-600">{h.note}</span>
+                      </p>
+                      <span className="text-[10px] text-gray-400 font-medium font-mono">
+                        {new Date(h.created_at).toLocaleString("en-GB")}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -816,7 +958,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     required
                     value={addressForm.name}
                     onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -827,7 +969,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     required
                     value={addressForm.phone}
                     onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -837,7 +979,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="email"
                     value={addressForm.email}
                     onChange={(e) => setAddressForm({ ...addressForm, email: e.target.value })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -848,7 +990,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     required
                     value={addressForm.address}
                     onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
-                    className="w-full rounded-xl border p-3 text-xs text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 p-3 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -859,7 +1001,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       type="text"
                       value={addressForm.thana}
                       onChange={(e) => setAddressForm({ ...addressForm, thana: e.target.value })}
-                      className="w-full rounded-xl border px-3 py-2 text-xs text-gray-900 focus:outline-none"
+                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                     />
                   </div>
                   <div>
@@ -868,55 +1010,150 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       type="text"
                       value={addressForm.district}
                       onChange={(e) => setAddressForm({ ...addressForm, district: e.target.value })}
-                      className="w-full rounded-xl border px-3 py-2 text-xs text-gray-900 focus:outline-none"
+                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                     />
                   </div>
                 </div>
 
-                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl">
+                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold rounded-xl shadow-xs">
                   {saving ? "Saving..." : "Save Address Changes"}
                 </Button>
               </form>
             ) : (
               <div className="space-y-3">
                 <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">Customer Name</span>
-                  <p className="font-bold text-gray-900 text-sm">{addressForm.name || order.guest_name}</p>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Customer Name</span>
+                  <p className="font-bold text-gray-900 text-sm">{addressForm.name || order.guest_name || "Guest Customer"}</p>
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">Phone Contact</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Phone Contact</span>
                   <p className="font-bold text-gray-900 font-mono text-sm">
-                    {addressForm.phone || order.guest_phone}
+                    {addressForm.phone || order.guest_phone || "N/A"}
                   </p>
                 </div>
 
                 {addressForm.email && (
                   <div>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Email</span>
-                    <p className="text-gray-600">{addressForm.email}</p>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Email</span>
+                    <p className="text-gray-600 font-mono">{addressForm.email}</p>
                   </div>
                 )}
 
                 <div className="pt-2 border-t border-dashed border-gray-200">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">Delivery Destination</span>
-                  <p className="font-medium text-gray-800 mt-0.5">{addressForm.address}</p>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Delivery Destination</span>
+                  <p className="font-medium text-gray-800 mt-0.5">{addressForm.address || "N/A"}</p>
                   <p className="text-gray-500 font-bold">
                     {addressForm.thana ? `${addressForm.thana}, ` : ""}
-                    {addressForm.district}
+                    {addressForm.district || "Dhaka City"}
                   </p>
                 </div>
 
-                {/* 1-Click WhatsApp & Phone Calling Actions */}
-                <div className="pt-2 border-t border-gray-100 flex gap-2">
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 shadow-xs transition-colors"
-                  >
-                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
-                  </a>
+                {/* 1-Click WhatsApp Dropdown Templates & Phone Calling */}
+                <div className="pt-2 border-t border-gray-100 flex gap-2 relative">
+                  <div className="flex-1 relative">
+                    <button
+                      type="button"
+                      onClick={() => setOpenWhatsAppMenu(!openWhatsAppMenu)}
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 shadow-xs transition-colors"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      <span>WhatsApp</span>
+                      <ChevronDown className="h-3 w-3 opacity-80" />
+                    </button>
+
+                    {openWhatsAppMenu && (
+                      <div className="absolute left-0 bottom-full mb-2 w-72 bg-white rounded-2xl border border-gray-200 shadow-xl p-2 z-50 space-y-1 animate-in fade-in-0 zoom-in-95">
+                        <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                          Select WhatsApp Message Template
+                        </div>
+
+                        <a
+                          href={generateWhatsAppOrderMessage(order, "confirm")}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpenWhatsAppMenu(false)}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 text-gray-800 text-xs font-bold transition-colors"
+                        >
+                          <span className="text-base">🌸</span>
+                          <div>
+                            <p className="text-gray-900 font-bold">Order Confirmation</p>
+                            <p className="text-[10px] text-gray-500 font-normal">Order details, items & COD total</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href={generateWhatsAppOrderMessage(order, "shipped")}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpenWhatsAppMenu(false)}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 text-gray-800 text-xs font-bold transition-colors"
+                        >
+                          <span className="text-base">🚚</span>
+                          <div>
+                            <p className="text-gray-900 font-bold">Shipped & Live Tracking</p>
+                            <p className="text-[10px] text-gray-500 font-normal">Courier name, tracking ID & link</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href={generateWhatsAppOrderMessage(order, "advance", 120)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpenWhatsAppMenu(false)}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 text-gray-800 text-xs font-bold transition-colors"
+                        >
+                          <span className="text-base">💳</span>
+                          <div>
+                            <p className="text-gray-900 font-bold">Advance Fee Request (৳120)</p>
+                            <p className="text-[10px] text-gray-500 font-normal">Delivery charge payment request</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href={generateWhatsAppOrderMessage(order, "review")}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpenWhatsAppMenu(false)}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-emerald-50 text-gray-800 text-xs font-bold transition-colors"
+                        >
+                          <span className="text-base">⭐</span>
+                          <div>
+                            <p className="text-gray-900 font-bold">Review & Feedback Request</p>
+                            <p className="text-[10px] text-gray-500 font-normal">Post-delivery satisfaction check</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href={generateWhatsAppOrderMessage(order, "cancelled")}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpenWhatsAppMenu(false)}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-red-50 text-gray-800 text-xs font-bold transition-colors"
+                        >
+                          <span className="text-base">❌</span>
+                          <div>
+                            <p className="text-red-700 font-bold">Order Cancelled Notice</p>
+                            <p className="text-[10px] text-gray-500 font-normal">Cancellation confirmation</p>
+                          </div>
+                        </a>
+
+                        <a
+                          href={`https://wa.me/${formattedBdPhone}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpenWhatsAppMenu(false)}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-gray-100 text-gray-800 text-xs font-bold border-t border-gray-100 transition-colors"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
+                          <div>
+                            <p className="text-gray-900 font-bold">Open Direct Chat</p>
+                          </div>
+                        </a>
+                      </div>
+                    )}
+                  </div>
+
                   <a
                     href={`tel:${addressForm.phone || order.guest_phone}`}
                     className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-800 font-bold text-xs py-2 shadow-xs transition-colors"
@@ -956,7 +1193,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="number"
                     value={financialForm.subtotal}
                     onChange={(e) => setFinancialForm({ ...financialForm, subtotal: Number(e.target.value) })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -966,7 +1203,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="number"
                     value={financialForm.shipping_amount}
                     onChange={(e) => setFinancialForm({ ...financialForm, shipping_amount: Number(e.target.value) })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -976,7 +1213,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="number"
                     value={financialForm.discount_amount}
                     onChange={(e) => setFinancialForm({ ...financialForm, discount_amount: Number(e.target.value) })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   />
                 </div>
 
@@ -985,7 +1222,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <select
                     value={financialForm.payment_method}
                     onChange={(e) => setFinancialForm({ ...financialForm, payment_method: e.target.value })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   >
                     <option value="cod">Cash on Delivery (COD)</option>
                     <option value="bkash">bKash Online / Manual</option>
@@ -1000,7 +1237,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <select
                     value={financialForm.payment_status}
                     onChange={(e) => setFinancialForm({ ...financialForm, payment_status: e.target.value })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
                   >
                     <option value="pending">Pending (Unpaid COD)</option>
                     <option value="partial">Partially Paid (Advance Delivery Fee)</option>
@@ -1011,10 +1248,10 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
                 <div className="pt-2 border-t border-gray-100 flex justify-between font-black text-sm text-gray-900">
                   <span>Recalculated Total:</span>
-                  <span className="text-[#e91e63] text-base">{formatPrice(calculatedTotal)}</span>
+                  <span className="text-[#e91e63] text-base font-mono">{formatPrice(calculatedTotal)}</span>
                 </div>
 
-                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl">
+                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold rounded-xl shadow-xs">
                   {saving ? "Saving..." : "Save Financial Adjustments"}
                 </Button>
               </form>
@@ -1022,19 +1259,19 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
               <div className="space-y-2.5 text-gray-600">
                 <div className="flex justify-between">
                   <span>Products Subtotal</span>
-                  <span className="font-bold text-gray-900">{formatPrice(order.subtotal)}</span>
+                  <span className="font-bold text-gray-900 font-mono">{formatPrice(order.subtotal)}</span>
                 </div>
 
                 {order.discount_amount > 0 && (
                   <div className="flex justify-between text-emerald-600 font-bold">
                     <span>Discount Applied</span>
-                    <span>-{formatPrice(order.discount_amount)}</span>
+                    <span className="font-mono">-{formatPrice(order.discount_amount)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between">
                   <span>Delivery Charge</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-gray-900 font-mono">
                     {order.shipping_amount === 0 ? "FREE" : formatPrice(order.shipping_amount)}
                   </span>
                 </div>
@@ -1042,7 +1279,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                 {/* Dynamic Due Amount */}
                 <div className="border-t border-gray-200 pt-3 flex justify-between items-baseline text-sm font-black text-gray-900">
                   <span>{order.payment_status === "paid" ? "COD Due to Collect" : "Total COD Due"}</span>
-                  <span className={`text-xl font-black ${order.payment_status === "paid" ? "text-emerald-700" : "text-[#e91e63]"}`}>
+                  <span className={`text-xl font-black font-mono ${order.payment_status === "paid" ? "text-emerald-700" : "text-[#e91e63]"}`}>
                     {order.payment_status === "paid" ? "৳0 (PAID)" : formatPrice(order.amount_to_collect !== undefined ? order.amount_to_collect : order.total)}
                   </span>
                 </div>
@@ -1204,7 +1441,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     }}
                     disabled={capiLoading}
                     size="sm"
-                    className="w-full bg-linear-to-r from-[#e91e63] to-pink-700 hover:from-pink-600 hover:to-pink-800 text-white text-xs font-bold rounded-xl py-2.5 shadow-sm"
+                    className="w-full bg-linear-to-r from-[#e91e63] to-pink-700 hover:from-pink-600 hover:to-pink-800 text-white text-xs font-bold rounded-xl py-2.5 shadow-xs"
                   >
                     {capiLoading ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />

@@ -882,12 +882,17 @@ export async function updateAdminOrderFull(orderId: string, payload: {
   status?: string;
   note?: string;
   internalNote?: string;
+  publicNote?: string;
   payment_method?: string;
   payment_status?: string;
   shipping_amount?: number;
   discount_amount?: number;
   total?: number;
   shipping_address_snapshot?: any;
+  courier_name?: string;
+  consignment_id?: string;
+  tracking_code?: string;
+  tracking_url?: string;
 }) {
   const supabaseAdmin = createAdminClient();
   const supabaseUser = await createClient();
@@ -904,6 +909,12 @@ export async function updateAdminOrderFull(orderId: string, payload: {
   if (payload.discount_amount !== undefined) updateData.discount_amount = payload.discount_amount;
   if (payload.total !== undefined) updateData.total = payload.total;
   if (payload.shipping_address_snapshot) updateData.shipping_address_snapshot = payload.shipping_address_snapshot;
+  if (payload.internalNote !== undefined) updateData.internal_note = payload.internalNote;
+  if (payload.publicNote !== undefined) updateData.public_note = payload.publicNote;
+  if (payload.courier_name !== undefined) updateData.courier_name = payload.courier_name;
+  if (payload.consignment_id !== undefined) updateData.consignment_id = payload.consignment_id;
+  if (payload.tracking_code !== undefined) updateData.tracking_code = payload.tracking_code;
+  if (payload.tracking_url !== undefined) updateData.tracking_url = payload.tracking_url;
 
   const { data, error } = await supabaseAdmin
     .from("orders")
