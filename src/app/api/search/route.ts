@@ -73,6 +73,13 @@ export async function GET(request: Request) {
     .ilike("name", `%${query}%`)
     .limit(4);
 
+  // Search Tags
+  const { data: tags } = await supabase
+    .from("tags")
+    .select("id, name, slug")
+    .or(`name.ilike.%${query}%,slug.ilike.%${query}%`)
+    .limit(4);
+
   // Match Beauty Actives/Ingredients
   const matchedIngredients = BEAUTY_INGREDIENTS.filter((item) =>
     item.match.some((m) => m.includes(query) || query.includes(m))
@@ -87,6 +94,7 @@ export async function GET(request: Request) {
     products: products || [],
     categories: categories || [],
     brands: brands || [],
+    tags: tags || [],
     ingredients: matchedIngredients,
     concerns: matchedConcerns,
   });

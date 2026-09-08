@@ -33,13 +33,22 @@ export default async function BrandDetailPage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  // Fetch Brand
-  const { data: brand } = await supabase
+  // Fetch Brand with slug fallback
+  let { data: brand } = await supabase
     .from("brands")
     .select("*")
     .eq("slug", slug)
-    .eq("status", "active")
-    .single();
+    .maybeSingle();
+
+  if (!brand) {
+    const cleanSlug = slug.replace(/-/g, "");
+    const { data: altBrand } = await supabase
+      .from("brands")
+      .select("*")
+      .or(`slug.ilike.%${slug}%,slug.ilike.%${cleanSlug}%`)
+      .maybeSingle();
+    brand = altBrand;
+  }
 
   if (!brand) notFound();
 

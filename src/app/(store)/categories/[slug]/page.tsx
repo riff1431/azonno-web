@@ -33,30 +33,42 @@ export default async function CategoryDetailPage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  // Fetch Category
-  const { data: category } = await supabase
+  // Fetch Category with slug normalization fallback
+  let { data: category } = await supabase
     .from("categories")
     .select("*")
     .eq("slug", slug)
-    .eq("status", "active")
-    .single();
+    .maybeSingle();
+
+  if (!category) {
+    // Try normalized slug (e.g. "skincare" vs "skin-care", "haircare" vs "hair-care")
+    const altSlug = slug.includes("-") ? slug.replace(/-/g, "") : slug.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    const { data: altCat } = await supabase
+      .from("categories")
+      .select("*")
+      .ilike("slug", `%${altSlug}%`)
+      .maybeSingle();
+    category = altCat;
+  }
 
   if (!category) notFound();
 
-  // Fetch Subcategories
+  // Fetch Subcategories (child categories)
   const { data: subcategories } = await supabase
     .from("categories")
     .select("id, name, slug")
     .eq("parent_id", category.id)
     .eq("status", "active");
 
-  // Fetch Products in this category
+  const allCategoryIds = [category.id, ...(subcategories || []).map((s) => s.id)];
+
+  // Fetch Products in this category or any of its subcategories
   const { data: productCategories } = await supabase
     .from("product_categories")
     .select("product_id")
-    .eq("category_id", category.id);
+    .in("category_id", allCategoryIds);
 
-  const productIds = (productCategories || []).map((pc) => pc.product_id);
+  const productIds = Array.from(new Set((productCategories || []).map((pc) => pc.product_id)));
 
   let products: any[] = [];
   if (productIds.length > 0) {

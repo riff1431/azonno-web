@@ -79,6 +79,45 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     badge_text: "Combo Special • Save 10%",
   });
 
+  // Extract initial categories from initialData relations
+  const initialCategoryIds: string[] = useMemo(() => {
+    if (!initialData) return [];
+    if (Array.isArray(initialData.product_categories)) {
+      return (initialData.product_categories as any[])
+        .map((pc: any) => pc.category_id || pc.categories?.id)
+        .filter(Boolean);
+    }
+    if (initialData.category_id) return [String(initialData.category_id)];
+    return [];
+  }, [initialData]);
+
+  // Extract initial tags from initialData relations
+  const initialTagsString: string = useMemo(() => {
+    if (!initialData) return "";
+    if (Array.isArray(initialData.product_tags)) {
+      return (initialData.product_tags as any[])
+        .map((pt: any) => pt.tags?.name || pt.name)
+        .filter(Boolean)
+        .join(", ");
+    }
+    if (Array.isArray(initialData.tags)) {
+      return (initialData.tags as string[]).join(", ");
+    }
+    if (typeof initialData.tags === "string") return initialData.tags;
+    return "";
+  }, [initialData]);
+
+  const initialStockValue = useMemo(() => {
+    if (!initialData) return 0;
+    if (Array.isArray(initialData.inventory) && (initialData.inventory as any[]).length > 0) {
+      return (initialData.inventory as any[])[0]?.on_hand ?? 0;
+    }
+    if (initialData.inventory && typeof (initialData.inventory as any).on_hand === "number") {
+      return (initialData.inventory as any).on_hand;
+    }
+    return 0;
+  }, [initialData]);
+
   const [form, setForm] = useState({
     name: (initialData?.name as string) ?? "",
     slug: (initialData?.slug as string) ?? "",
@@ -88,8 +127,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     brand_id: (initialData?.brand_id as string) ?? "",
     status: (initialData?.status as string) ?? "draft",
     is_featured: (initialData?.is_featured as boolean) ?? false,
-    selectedCategories: [] as string[],
-    tags: "" as string,
+    selectedCategories: initialCategoryIds,
+    tags: initialTagsString,
     // Content
     short_description: (initialData?.short_description as string) ?? "",
     description: (initialData?.description as string) ?? "",
@@ -127,7 +166,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     og_image_url: (initialData?.og_image_url as string) ?? "",
     is_indexed: (initialData?.is_indexed as boolean) ?? true,
     // Inventory
-    initial_stock: 0,
+    initial_stock: initialStockValue,
   });
 
   // Dynamic Batch & Expiry Date Alert Computation

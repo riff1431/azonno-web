@@ -32,6 +32,8 @@ import {
   BookOpen,
   FlaskConical,
   MessageSquare,
+  Tag,
+  FolderTree,
 } from "lucide-react";
 import { formatPrice, cn, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
@@ -577,29 +579,65 @@ export function ProductDetailClient({
             </div>
           </div>
 
-          {/* Skin Concerns & Types Tag Pills */}
-          {(skinConcerns.length > 0 || skinTypes.length > 0) && (
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {skinConcerns.map((sc: string) => (
-                <span
-                  key={sc}
-                  className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-bold text-purple-700"
-                >
-                  <Sparkles className="h-2.5 w-2.5 shrink-0" />
-                  <span>{sc}</span>
-                </span>
-              ))}
-              {skinTypes.map((st: string) => (
-                <span
-                  key={st}
-                  className="inline-flex items-center gap-1 rounded-full bg-pink-50 border border-pink-200 px-2.5 py-0.5 text-[11px] font-bold text-pink-700"
-                >
-                  <Droplets className="h-2.5 w-2.5 shrink-0" />
-                  <span>{st}</span>
-                </span>
-              ))}
-            </div>
-          )}
+          {/* Categories, Tags, Skin Concerns & Types Tag Pills */}
+          {(() => {
+            const prodCats = (product.product_categories || []).map((pc: any) => pc.categories).filter(Boolean);
+            const prodTags = (product.product_tags || []).map((pt: any) => pt.tags).filter(Boolean);
+            const hasTaxonomies = prodCats.length > 0 || prodTags.length > 0 || skinConcerns.length > 0 || skinTypes.length > 0;
+            if (!hasTaxonomies) return null;
+
+            return (
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                {/* Categories */}
+                {prodCats.map((c: any) => (
+                  <Link
+                    key={c.id}
+                    href={`/categories/${c.slug}`}
+                    className="inline-flex items-center gap-1 rounded-full bg-pink-50 border border-pink-200 px-2.5 py-0.5 text-[11px] font-bold text-[#e91e63] hover:bg-pink-100 hover:border-pink-300 transition-colors"
+                  >
+                    <FolderTree className="h-2.5 w-2.5 shrink-0" />
+                    <span>{c.name}</span>
+                  </Link>
+                ))}
+
+                {/* Tags */}
+                {prodTags.map((tg: any) => (
+                  <Link
+                    key={tg.id}
+                    href={`/tags/${tg.slug}`}
+                    className="inline-flex items-center gap-1 rounded-full bg-gray-50 border border-gray-200 px-2.5 py-0.5 text-[11px] font-bold text-gray-700 hover:bg-[#e91e63] hover:text-white hover:border-[#e91e63] transition-all shadow-2xs"
+                  >
+                    <Tag className="h-2.5 w-2.5 shrink-0" />
+                    <span>#{tg.name}</span>
+                  </Link>
+                ))}
+
+                {/* Concerns */}
+                {skinConcerns.map((sc: string) => (
+                  <Link
+                    key={sc}
+                    href={`/products?skin_concern=${encodeURIComponent(sc)}`}
+                    className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-2.5 py-0.5 text-[11px] font-bold text-purple-700 hover:bg-purple-100 transition-colors"
+                  >
+                    <Sparkles className="h-2.5 w-2.5 shrink-0" />
+                    <span>{sc}</span>
+                  </Link>
+                ))}
+
+                {/* Skin Types */}
+                {skinTypes.map((st: string) => (
+                  <Link
+                    key={st}
+                    href={`/products?skin_type=${encodeURIComponent(st)}`}
+                    className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+                  >
+                    <Droplets className="h-2.5 w-2.5 shrink-0" />
+                    <span>{st}</span>
+                  </Link>
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Pricing Highlight Card */}
           <div className="rounded-2xl border border-border bg-surface-secondary/40 p-4 space-y-1">

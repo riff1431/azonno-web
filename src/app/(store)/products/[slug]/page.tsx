@@ -50,6 +50,8 @@ export default async function ProductDetailPage({
     .select(`
       *,
       brands (id, name, slug),
+      product_categories (category_id, categories(id, name, slug)),
+      product_tags (tag_id, tags(id, name, slug)),
       inventory (on_hand, available),
       product_variants (*),
       product_media (
@@ -94,14 +96,22 @@ export default async function ProductDetailPage({
     images.unshift(product.og_image_url);
   }
 
+  const primaryCategory = (product.product_categories || [])[0]?.categories;
+
   const breadcrumbItems = [
     { name: "Home", url: `${baseUrl}` },
     { name: "Products", url: `${baseUrl}/products` },
   ];
+  if (primaryCategory) {
+    breadcrumbItems.push({
+      name: primaryCategory.name,
+      url: `${baseUrl}/categories/${primaryCategory.slug}`,
+    });
+  }
   if (product.brands) {
     breadcrumbItems.push({
       name: product.brands.name,
-      url: `${baseUrl}/products?brand=${product.brands.slug}`,
+      url: `${baseUrl}/brands/${product.brands.slug}`,
     });
   }
   breadcrumbItems.push({
@@ -141,11 +151,22 @@ export default async function ProductDetailPage({
         <Link href="/products" className="hover:text-text shrink-0 transition-colors">
           Products
         </Link>
+        {primaryCategory && (
+          <>
+            <ChevronRight className="h-3 w-3 shrink-0 text-zinc-400" />
+            <Link
+              href={`/categories/${primaryCategory.slug}`}
+              className="hover:text-text shrink-0 transition-colors font-medium"
+            >
+              {primaryCategory.name}
+            </Link>
+          </>
+        )}
         {product.brands && (
           <>
             <ChevronRight className="h-3 w-3 shrink-0 text-zinc-400" />
             <Link
-              href={`/products?brand=${product.brands.slug}`}
+              href={`/brands/${product.brands.slug}`}
               className="hover:text-text shrink-0 transition-colors"
             >
               {product.brands.name}

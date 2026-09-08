@@ -17,6 +17,8 @@ export default async function ProductsListingPage({
   searchParams: Promise<{
     category?: string;
     brand?: string;
+    tag?: string;
+    tags?: string;
     sort?: string;
     search?: string;
     min_price?: string;
@@ -31,6 +33,8 @@ export default async function ProductsListingPage({
   const {
     category,
     brand,
+    tag,
+    tags: tagsParam,
     sort,
     search,
     min_price,
@@ -45,10 +49,11 @@ export default async function ProductsListingPage({
   const supabase = await createClient();
   const featureSettings = await getStoreFeatureSettings();
 
-  // Fetch Categories & Brands for filters
-  const [{ data: categories }, { data: brands }] = await Promise.all([
-    supabase.from("categories").select("id, name, slug").eq("status", "active"),
+  // Fetch Categories, Brands & Tags for filters
+  const [{ data: categories }, { data: brands }, { data: tags }] = await Promise.all([
+    supabase.from("categories").select("id, name, slug, parent_id").eq("status", "active"),
     supabase.from("brands").select("id, name, slug").eq("status", "active"),
+    supabase.from("tags").select("id, name, slug").order("name"),
   ]);
 
   // Query products
@@ -75,12 +80,20 @@ export default async function ProductsListingPage({
     .is("deleted_at", null);
 
   if (category) {
-    const selectedCat = categories?.find((c) => c.slug === category);
+    const cleanCat = category.replace(/-/g, "").toLowerCase();
+    const selectedCat = categories?.find(
+      (c) => c.slug === category || c.slug.replace(/-/g, "").toLowerCase() === cleanCat
+    );
     if (selectedCat) {
+      const childCatIds = (categories || [])
+        .filter((c) => c.parent_id === selectedCat.id)
+        .map((c) => c.id);
+      const allTargetCatIds = [selectedCat.id, ...childCatIds];
+
       const { data: productIds } = await supabase
         .from("product_categories")
         .select("product_id")
-        .eq("category_id", selectedCat.id);
+        .in("category_id", allTargetCatIds);
 
       if (productIds && productIds.length > 0) {
         query = query.in("id", productIds.map((p) => p.product_id));
@@ -93,9 +106,35 @@ export default async function ProductsListingPage({
   }
 
   if (brand) {
-    const selectedBrand = brands?.find((b) => b.slug === brand);
+    const cleanBrand = brand.replace(/-/g, "").toLowerCase();
+    const selectedBrand = brands?.find(
+      (b) => b.slug === brand || b.slug.replace(/-/g, "").toLowerCase() === cleanBrand
+    );
     if (selectedBrand) {
       query = query.eq("brand_id", selectedBrand.id);
+    }
+  }
+
+  const activeTag = tag || tagsParam;
+  if (activeTag) {
+    const cleanTag = activeTag.replace(/-/g, "").toLowerCase();
+    const selectedTag = tags?.find(
+      (t) =>
+        t.slug === activeTag ||
+        t.slug.replace(/-/g, "").toLowerCase() === cleanTag ||
+        t.name.toLowerCase() === activeTag.toLowerCase()
+    );
+    if (selectedTag) {
+      const { data: tagProds } = await supabase
+        .from("product_tags")
+        .select("product_id")
+        .eq("tag_id", selectedTag.id);
+
+      if (tagProds && tagProds.length > 0) {
+        query = query.in("id", tagProds.map((p) => p.product_id));
+      } else {
+        query = query.eq("id", "00000000-0000-0000-0000-000000000000");
+      }
     }
   }
 
@@ -178,6 +217,10 @@ export default async function ProductsListingPage({
       return true;
     });
 
+  const activeCategoryName = categories?.find((c) => c.slug === category)?.name || category;
+  const activeBrandName = brands?.find((b) => b.slug === brand)?.name || brand;
+  const activeTagName = tags?.find((t) => t.slug === activeTag || t.name === activeTag)?.name || activeTag;
+
   return (
     <div className="container-main py-4 sm:py-6 space-y-5">
       {/* Breadcrumb Navigation */}
@@ -195,9 +238,11 @@ export default async function ProductsListingPage({
           {search
             ? `Search Results for "${search}"`
             : category
-            ? `Category: ${category}`
+            ? `Category: ${activeCategoryName}`
             : brand
-            ? `Brand: ${brand}`
+            ? `Brand: ${activeBrandName}`
+            : activeTag
+            ? `Tag: #${activeTagName}`
             : skin_concern
             ? `Concern: ${skin_concern}`
             : "All Authentic Skincare & Cosmetics"}
@@ -212,8 +257,10 @@ export default async function ProductsListingPage({
         products={productCardItems}
         categories={categories || []}
         brands={brands || []}
+        tags={tags || []}
         currentCategory={category}
         currentBrand={brand}
+        currentTag={activeTag}
         currentSort={sort}
         currentSearch={search}
         currentMinPrice={min_price}

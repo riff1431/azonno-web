@@ -52,6 +52,7 @@ interface SearchResult {
   }>;
   categories: Array<{ id: string; name: string; slug: string }>;
   brands: Array<{ id: string; name: string; slug: string }>;
+  tags?: Array<{ id: string; name: string; slug: string }>;
   ingredients?: Array<{ name: string; slug: string }>;
   concerns?: Array<{ name: string; slug: string }>;
 }
@@ -249,6 +250,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
       (searchResults.products.length > 0 ||
         searchResults.categories.length > 0 ||
         searchResults.brands.length > 0 ||
+        (searchResults.tags && searchResults.tags.length > 0) ||
         (searchResults.ingredients && searchResults.ingredients.length > 0) ||
         (searchResults.concerns && searchResults.concerns.length > 0));
 
@@ -344,6 +346,28 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
                     >
                       {b.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Matching Tags */}
+            {searchResults.tags && searchResults.tags.length > 0 && (
+              <div className="pt-2 border-t border-gray-100">
+                <span className="px-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1">
+                  <Tag className="h-2.5 w-2.5" />
+                  {language === "bn" ? "ট্যাগস" : "Tags"}
+                </span>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  {searchResults.tags.map((tg) => (
+                    <Link
+                      key={tg.id}
+                      href={`/tags/${tg.slug}`}
+                      onClick={() => setShowSearchDropdown(false)}
+                      className="rounded-full bg-pink-50/70 border border-pink-100 px-3 py-1 text-xs font-semibold text-pink-700 hover:bg-pink-100 transition-colors flex items-center gap-1"
+                    >
+                      <span>#{tg.name}</span>
                     </Link>
                   ))}
                 </div>

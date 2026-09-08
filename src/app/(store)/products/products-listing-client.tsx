@@ -18,6 +18,7 @@ import {
   Globe,
   Droplets,
   Zap,
+  Tag,
 } from "lucide-react";
 import { ProductCard, type ProductCardData } from "@/components/storefront/product-card";
 import { Button } from "@/components/shared/ui/button";
@@ -29,8 +30,10 @@ interface ProductsListingClientProps {
   products: ProductCardData[];
   categories: Array<{ id: string; name: string; slug: string }>;
   brands: Array<{ id: string; name: string; slug: string }>;
+  tags?: Array<{ id: string; name: string; slug: string }>;
   currentCategory?: string;
   currentBrand?: string;
+  currentTag?: string;
   currentSort?: string;
   currentSearch?: string;
   currentMinPrice?: string;
@@ -95,8 +98,10 @@ export function ProductsListingClient({
   products,
   categories,
   brands,
+  tags = [],
   currentCategory,
   currentBrand,
+  currentTag,
   currentSort,
   currentSearch,
   currentMinPrice,
@@ -120,6 +125,8 @@ export function ProductsListingClient({
         ? `Category: ${categories.find((c) => c.slug === currentCategory)?.name || currentCategory}`
         : currentBrand
         ? `Brand: ${brands.find((b) => b.slug === currentBrand)?.name || currentBrand}`
+        : currentTag
+        ? `Tag: #${tags.find((t) => t.slug === currentTag || t.name === currentTag)?.name || currentTag}`
         : currentSkinConcern
         ? `Concern: ${currentSkinConcern}`
         : currentSearch
@@ -138,19 +145,21 @@ export function ProductsListingClient({
         listName
       );
     }
-  }, [products, currentCategory, currentBrand, currentSkinConcern, currentSearch]);
+  }, [products, currentCategory, currentBrand, currentTag, currentSkinConcern, currentSearch]);
 
   // Custom price input local state
   const [customMin, setCustomMin] = useState(currentMinPrice || "");
   const [customMax, setCustomMax] = useState(currentMaxPrice || "");
 
-  // Search within brand & category lists
+  // Search within brand, category & tag lists
   const [brandSearchTerm, setBrandSearchTerm] = useState("");
   const [catSearchTerm, setCatSearchTerm] = useState("");
+  const [tagSearchTerm, setTagSearchTerm] = useState("");
 
   const activeFiltersCount = [
     currentCategory,
     currentBrand,
+    currentTag,
     currentSearch,
     currentSkinType,
     currentSkinConcern,
@@ -204,6 +213,10 @@ export function ProductsListingClient({
 
   const filteredBrands = brands.filter((b) =>
     b.name.toLowerCase().includes(brandSearchTerm.toLowerCase())
+  );
+
+  const filteredTags = tags.filter((t) =>
+    t.name.toLowerCase().includes(tagSearchTerm.toLowerCase())
   );
 
   const pricePresets = [
@@ -621,6 +634,64 @@ export function ProductsListingClient({
           })}
         </div>
       </div>
+
+      {/* 8. PRODUCT TAGS */}
+      {tags.length > 0 && (
+        <div className="space-y-3 pt-5 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
+              <Tag className="h-3.5 w-3.5 text-[#e91e63]" /> {language === "bn" ? "ট্যাগস" : "Tags"}
+            </span>
+            {currentTag && (
+              <button
+                type="button"
+                onClick={() => updateParam("tag", null)}
+                className="text-[10px] font-bold text-red-600 hover:underline"
+              >
+                {t("catalog", "resetFilters")}
+              </button>
+            )}
+          </div>
+
+          {tags.length > 6 && (
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder={language === "bn" ? "ট্যাগ খুঁজুন..." : "Search tags..."}
+                value={tagSearchTerm}
+                onChange={(e) => setTagSearchTerm(e.target.value)}
+                className="w-full rounded-lg border pl-7 pr-2 py-1 text-[11px] focus:outline-none"
+              />
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto pr-1">
+            {filteredTags.map((tg) => {
+              const isSelected = currentTag === tg.slug || currentTag === tg.name;
+              return (
+                <button
+                  key={tg.id}
+                  type="button"
+                  onClick={() => {
+                    updateParam("tag", isSelected ? null : tg.slug);
+                    setMobileFilterOpen(false);
+                  }}
+                  className={cn(
+                    "rounded-full px-2.5 py-1 text-[11px] font-bold transition-all border text-left",
+                    isSelected
+                      ? "bg-[#e91e63] text-white border-[#e91e63] shadow-2xs"
+                      : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-100"
+                  )}
+                >
+                  {isSelected && <Check className="inline-block h-3 w-3 mr-1 -mt-0.5" />}
+                  #{tg.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -712,6 +783,30 @@ export function ProductsListingClient({
               <span className="text-[11px] font-bold text-pink-950">
                 {language === "bn" ? "সক্রিয় ফিল্টারসমূহ:" : "Active Filters:"}
               </span>
+              {currentCategory && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
+                  {t("catalog", "categories")}: {categories.find((c) => c.slug === currentCategory)?.name || currentCategory}
+                  <button onClick={() => updateParam("category", null)} className="hover:text-red-500">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {currentBrand && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
+                  {t("catalog", "brands")}: {brands.find((b) => b.slug === currentBrand)?.name || currentBrand}
+                  <button onClick={() => updateParam("brand", null)} className="hover:text-red-500">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {currentTag && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
+                  {language === "bn" ? "ট্যাগ:" : "Tag:"} #{tags.find((t) => t.slug === currentTag || t.name === currentTag)?.name || currentTag}
+                  <button onClick={() => updateParam("tag", null)} className="hover:text-red-500">
+                    <X className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
               {currentCategory && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
                   {t("catalog", "categories")}: {categories.find((c) => c.slug === currentCategory)?.name || currentCategory}
