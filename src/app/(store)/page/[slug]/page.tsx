@@ -173,14 +173,16 @@ const CMS_PAGES: Record<
   },
 };
 
-// Aliases mapping so alternate slugs like return-policy, privacy-policy, terms-and-conditions all resolve
 const SLUG_ALIASES: Record<string, string> = {
   "return-policy": "returns",
   "returns-policy": "returns",
+  "returns-refunds": "returns",
+  "authenticity-guarantee": "authenticity",
   "privacy-policy": "privacy",
   "terms-and-conditions": "terms",
   "terms-conditions": "terms",
   "about-us": "about",
+  "contact-us": "contact",
   "help": "faq",
 };
 
@@ -215,4 +217,3 @@ export default async function CmsPublicPage({ params }: { params: Promise<{ slug
     </CmsPageClient>
   );
 }
-
