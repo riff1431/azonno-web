@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendSmsNotification } from "@/features/sms/actions";
 import { revalidatePath } from "next/cache";
+import { isModuleEnabled } from "@/lib/settings/config-service";
 
 export interface RiskEvaluation {
   riskScore: number;
@@ -118,6 +119,20 @@ export async function evaluateOrderRisk({
   total?: number;
   ipAddress?: string;
 }): Promise<RiskEvaluation> {
+  const isFraudEnabled = await isModuleEnabled("fraud_detection");
+  if (!isFraudEnabled) {
+    return {
+      riskScore: 0,
+      riskLevel: "low",
+      isBlacklisted: false,
+      courierSuccessRate: "100%",
+      previousOrdersCount: 0,
+      isDuplicateOrder: false,
+      reasons: ["Fraud scoring module is disabled."],
+      recommendedAction: "allow",
+    };
+  }
+
   const supabase = createAdminClient();
   const cleanPhone = phone.trim().replace(/[^0-9]/g, "");
   const cleanEmail = (email || "").trim().toLowerCase();

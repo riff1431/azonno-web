@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { isModuleEnabled } from "@/lib/settings/config-service";
 
 export interface ComboBundleConfig {
   product_id: string;
@@ -47,6 +48,11 @@ export async function saveProductComboConfig(config: ComboBundleConfig) {
  * Get full bundle items with live product data for the Storefront Product Detail Page
  */
 export async function getFrequentlyBoughtTogetherBundle(mainProductId: string) {
+  const globalEnabled = await isModuleEnabled("frequently_bought_together");
+  if (!globalEnabled) {
+    return null;
+  }
+
   const supabase = await createClient();
 
   // 1. Fetch main product

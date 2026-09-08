@@ -1015,134 +1015,140 @@ export default function CheckoutPage() {
 
             <div className="space-y-3">
               {/* Cash on Delivery Option */}
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelectedPaymentMethod("cod")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setSelectedPaymentMethod("cod");
-                  }
-                }}
-                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
-                  selectedPaymentMethod === "cod"
-                    ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
-                    : "border-border hover:bg-surface-secondary/50 bg-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  id="payment_method_cod"
-                  name="payment_method"
-                  value="cod"
-                  checked={selectedPaymentMethod === "cod"}
-                  onChange={() => setSelectedPaymentMethod("cod")}
-                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
-                />
-                <label htmlFor="payment_method_cod" className="flex-1 text-xs cursor-pointer">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-text text-sm block">{t("checkout", "cod")}</span>
-                    {selectedPaymentMethod === "cod" && (
-                      <span className="text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                        {language === "bn" ? "সিলেক্টেড" : "Selected"}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-text-secondary mt-0.5 block leading-relaxed">
-                    {t("checkout", "codDesc")}
-                  </span>
-                </label>
-              </div>
+              {settings.is_cod_enabled !== false && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedPaymentMethod("cod")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedPaymentMethod("cod");
+                    }
+                  }}
+                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+                    selectedPaymentMethod === "cod"
+                      ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
+                      : "border-border hover:bg-surface-secondary/50 bg-white"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    id="payment_method_cod"
+                    name="payment_method"
+                    value="cod"
+                    checked={selectedPaymentMethod === "cod"}
+                    onChange={() => setSelectedPaymentMethod("cod")}
+                    className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
+                  />
+                  <label htmlFor="payment_method_cod" className="flex-1 text-xs cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-text text-sm block">{t("checkout", "cod")}</span>
+                      {selectedPaymentMethod === "cod" && (
+                        <span className="text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                          {language === "bn" ? "সিলেক্টেড" : "Selected"}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-text-secondary mt-0.5 block leading-relaxed">
+                      {t("checkout", "codDesc")}
+                    </span>
+                  </label>
+                </div>
+              )}
 
               {/* bKash Payment Option */}
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelectedPaymentMethod("bkash")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setSelectedPaymentMethod("bkash");
-                  }
-                }}
-                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
-                  selectedPaymentMethod === "bkash"
-                    ? "border-[#e91e63] bg-pink-50/60 ring-2 ring-[#e91e63]/40 shadow-xs"
-                    : "border-border hover:bg-surface-secondary/50 bg-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  id="payment_method_bkash"
-                  name="payment_method"
-                  value="bkash"
-                  checked={selectedPaymentMethod === "bkash"}
-                  onChange={() => setSelectedPaymentMethod("bkash")}
-                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
-                />
-                <label htmlFor="payment_method_bkash" className="flex-1 text-xs cursor-pointer">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-black text-[#e91e63] text-sm">{t("checkout", "bkash")}</span>
-                      <span className="text-[10px] font-bold text-white bg-[#e91e63] px-2 py-0.5 rounded-full shadow-2xs">
-                        {language === "bn" ? "ইনস্ট্যান্ট পেমেন্ট" : "Instant Pay"}
-                      </span>
+              {settings.is_bkash_enabled !== false && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedPaymentMethod("bkash")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedPaymentMethod("bkash");
+                    }
+                  }}
+                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+                    selectedPaymentMethod === "bkash"
+                      ? "border-[#e91e63] bg-pink-50/60 ring-2 ring-[#e91e63]/40 shadow-xs"
+                      : "border-border hover:bg-surface-secondary/50 bg-white"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    id="payment_method_bkash"
+                    name="payment_method"
+                    value="bkash"
+                    checked={selectedPaymentMethod === "bkash"}
+                    onChange={() => setSelectedPaymentMethod("bkash")}
+                    className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
+                  />
+                  <label htmlFor="payment_method_bkash" className="flex-1 text-xs cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="font-black text-[#e91e63] text-sm">{t("checkout", "bkash")}</span>
+                        <span className="text-[10px] font-bold text-white bg-[#e91e63] px-2 py-0.5 rounded-full shadow-2xs">
+                          {language === "bn" ? "ইনস্ট্যান্ট পেমেন্ট" : "Instant Pay"}
+                        </span>
+                      </div>
+                      {selectedPaymentMethod === "bkash" && (
+                        <span className="text-[10px] font-black uppercase text-[#e91e63] bg-pink-100 px-2 py-0.5 rounded-full border border-pink-300">
+                          {language === "bn" ? "সিলেক্টেড" : "Selected"}
+                        </span>
+                      )}
                     </div>
-                    {selectedPaymentMethod === "bkash" && (
-                      <span className="text-[10px] font-black uppercase text-[#e91e63] bg-pink-100 px-2 py-0.5 rounded-full border border-pink-300">
-                        {language === "bn" ? "সিলেক্টেড" : "Selected"}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-text-secondary mt-0.5 block leading-relaxed">
-                    {t("checkout", "bkashDesc")}
-                  </span>
-                </label>
-              </div>
+                    <span className="text-text-secondary mt-0.5 block leading-relaxed">
+                      {t("checkout", "bkashDesc")}
+                    </span>
+                  </label>
+                </div>
+              )}
 
               {/* SSLCommerz Payment Option */}
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelectedPaymentMethod("sslcommerz")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setSelectedPaymentMethod("sslcommerz");
-                  }
-                }}
-                className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
-                  selectedPaymentMethod === "sslcommerz"
-                    ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
-                    : "border-border hover:bg-surface-secondary/50 bg-white"
-                }`}
-              >
-                <input
-                  type="radio"
-                  id="payment_method_sslcommerz"
-                  name="payment_method"
-                  value="sslcommerz"
-                  checked={selectedPaymentMethod === "sslcommerz"}
-                  onChange={() => setSelectedPaymentMethod("sslcommerz")}
-                  className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
-                />
-                <label htmlFor="payment_method_sslcommerz" className="flex-1 text-xs cursor-pointer">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-text text-sm">
-                      {language === "bn" ? "অনলাইন পেমেন্ট (কার্ড ও নেট ব্যাংকিং)" : "SSLCommerz (Cards & Net Banking)"}
+              {settings.is_sslcommerz_enabled !== false && (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedPaymentMethod("sslcommerz")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedPaymentMethod("sslcommerz");
+                    }
+                  }}
+                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+                    selectedPaymentMethod === "sslcommerz"
+                      ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
+                      : "border-border hover:bg-surface-secondary/50 bg-white"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    id="payment_method_sslcommerz"
+                    name="payment_method"
+                    value="sslcommerz"
+                    checked={selectedPaymentMethod === "sslcommerz"}
+                    onChange={() => setSelectedPaymentMethod("sslcommerz")}
+                    className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
+                  />
+                  <label htmlFor="payment_method_sslcommerz" className="flex-1 text-xs cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-text text-sm">
+                        {language === "bn" ? "অনলাইন পেমেন্ট (কার্ড ও নেট ব্যাংকিং)" : "SSLCommerz (Cards & Net Banking)"}
+                      </span>
+                      <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                        Visa / MC / Amex
+                      </span>
+                    </div>
+                    <span className="text-text-secondary mt-0.5 block leading-relaxed">
+                      {language === "bn"
+                        ? "ভিসা, মাস্টারকার্ড, অ্যামেক্স, ব্র্যাক, সিটিটাস, ডাচ-বাংলা অথবা যেকোনো ব্যাংক কার্ড দিয়ে অনলাইনে নিরাপদে পেমেন্ট করুন।"
+                        : "Pay securely with Visa, MasterCard, Amex, Internet Banking, or Mobile Wallet via SSLCommerz."}
                     </span>
-                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                      Visa / MC / Amex
-                    </span>
-                  </div>
-                  <span className="text-text-secondary mt-0.5 block leading-relaxed">
-                    {language === "bn"
-                      ? "ভিসা, মাস্টারকার্ড, অ্যামেক্স, ব্র্যাক, সিটিটাস, ডাচ-বাংলা অথবা যেকোনো ব্যাংক কার্ড দিয়ে অনলাইনে নিরাপদে পেমেন্ট করুন।"
-                      : "Pay securely with Visa, MasterCard, Amex, Internet Banking, or Mobile Wallet via SSLCommerz."}
-                  </span>
-                </label>
-              </div>
+                  </label>
+                </div>
+              )}
             </div>
           </div>
         </div>

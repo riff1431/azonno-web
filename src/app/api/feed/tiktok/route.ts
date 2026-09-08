@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRequestBaseUrl } from "@/lib/utils";
 import { generateTikTokFeed, type FeedFormat } from "@/lib/feeds/catalog-builder";
+import { isModuleEnabled } from "@/lib/settings/config-service";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
+  const enabled = await isModuleEnabled("tiktok_catalog");
+  if (!enabled) {
+    return new NextResponse("TikTok Catalog Feed is currently disabled by administrator.", {
+      status: 403,
+      headers: { "Content-Type": "text/plain" },
+    });
+  }
+
   const { searchParams } = new URL(request.url);
   const formatParam = (searchParams.get("format") || "xml").toLowerCase();
   const format: FeedFormat = formatParam === "csv" ? "csv" : "xml";

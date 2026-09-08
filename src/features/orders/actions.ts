@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { sendSmsNotification } from "@/features/sms/actions";
 import { generateOrderNumber, extractClientIp, getShortProductId, buildCourierTrackingUrl } from "@/lib/utils";
+import { isModuleEnabled } from "@/lib/settings/config-service";
 
 export interface CreateOrderInput {
   customer: {
@@ -1076,6 +1077,11 @@ export async function updateAdminOrderFull(orderId: string, payload: {
 }
 
 export async function trackOrder(orderNumber: string, phone: string) {
+  const isTrackingEnabled = await isModuleEnabled("live_tracking");
+  if (!isTrackingEnabled) {
+    return { error: "Live order tracking is currently disabled by store administrator." };
+  }
+
   const supabase = createAdminClient();
   const cleanNumber = orderNumber.trim().toUpperCase();
   const cleanPhone = phone.trim();

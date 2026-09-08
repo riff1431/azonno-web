@@ -27,12 +27,15 @@ import {
   RotateCcw,
   UserX,
   ShieldAlert,
+  ShieldCheck,
   Calculator,
   Factory,
   TrendingUp,
   Search,
   Filter,
   CheckCircle2,
+  Sliders,
+  Sparkles,
 } from "lucide-react";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { ModuleCard, type ModuleCardItem } from "@/components/admin/module-settings/module-card";
@@ -64,16 +67,28 @@ const ICON_MAP: Record<string, any> = {
   RotateCcw,
   UserX,
   ShieldAlert,
+  ShieldCheck,
   Calculator,
   Factory,
   TrendingUp,
   Blocks,
+  Sliders,
+  Sparkles,
+  Filter,
 };
 
 const MODULE_SETTINGS_HREF_MAP: Record<string, string> = {
-  cloudinary: "/admin/media/cloudinary",
-  steadfast: "/admin/shipping/steadfast",
-  pathao: "/admin/shipping/pathao",
+  // 1. Core Systems
+  auth: "/admin/users",
+  orders: "/admin/orders",
+  products: "/admin/products",
+  customers: "/admin/customers",
+  inventory: "/admin/inventory",
+  categories: "/admin/categories",
+  brands: "/admin/brands",
+  attributes: "/admin/attributes",
+
+  // 2. Payments & Checkout
   cod: "/admin/payments/cod",
   bkash: "/admin/payments/bkash",
   nagad: "/admin/payments/nagad",
@@ -81,17 +96,65 @@ const MODULE_SETTINGS_HREF_MAP: Record<string, string> = {
   stripe: "/admin/payments/stripe",
   paypal: "/admin/payments/paypal",
   bank_transfer: "/admin/payments/custom",
-  sms: "/admin/communication/sms",
-  email: "/admin/communication/email",
+  guest_checkout: "/admin/settings/checkout",
+  checkout_advance_fee: "/admin/settings/checkout",
+  coupons: "/admin/coupons",
+
+  // 3. Logistics & Shipping
+  steadfast: "/admin/shipping/steadfast",
+  pathao: "/admin/shipping/pathao",
+  redx: "/admin/shipping",
+  shipping_zones: "/admin/shipping/zones",
+  live_tracking: "/track-order",
+
+  // 4. Marketing & Conversion Intelligence
   meta_pixel: "/admin/marketing/meta",
   meta_capi: "/admin/marketing/meta",
   meta_catalog: "/admin/marketing/catalog",
-  reviews: "/admin/products/settings",
+  tiktok_pixel: "/admin/marketing/settings",
+  tiktok_events_api: "/admin/marketing/settings",
+  tiktok_catalog: "/admin/marketing/catalog",
+  google_feed: "/admin/marketing/catalog",
+  gtm: "/admin/marketing/settings",
+  ga4: "/admin/marketing/settings",
+  frequently_bought_together: "/admin/settings/features",
+  trending_bar: "/admin/settings/features",
+  announcement_bar: "/admin/settings/theme",
+
+  // 5. Customer Experience & Storefront
+  reviews: "/admin/reviews",
+  qa: "/admin/qa",
+  wishlist: "/admin/settings/features",
+  loyalty: "/admin/settings/features",
+  skincare_quiz: "/admin/settings/features",
+  blog: "/admin/blog",
   returns: "/admin/returns",
+  beauty_filters: "/admin/settings/features",
+  sticky_mobile_cta: "/admin/settings/features",
+  authenticity_verification: "/admin/settings/features",
+
+  // 6. Communication & Notifications
+  sms: "/admin/communication/sms",
+  email: "/admin/communication/email",
+  whatsapp: "/admin/communication/whatsapp",
+  notification_matrix: "/admin/communication/notifications",
+
+  // 7. Anti-Fraud & Risk Management
   fraud_detection: "/admin/fraud",
+  checkout_otp: "/admin/settings/checkout",
+  abandoned_checkout: "/admin/orders",
+
+  // 8. Finance & Operations
   accounting: "/admin/finance/accounting",
+  expenses: "/admin/finance/costs",
   suppliers: "/admin/finance/suppliers",
   investors: "/admin/finance/investors",
+  dues: "/admin/finance/dues",
+
+  // 9. Media & Infrastructure
+  cloudinary: "/admin/media",
+  system_health: "/admin/settings/system-health",
+  maintenance_mode: "/admin/settings/maintenance",
 };
 
 interface ModulesClientProps {
@@ -111,10 +174,11 @@ export function ModulesClient({ initialModules }: ModulesClientProps) {
     { id: "payments", label: "Payments" },
     { id: "shipping", label: "Shipping & Courier" },
     { id: "marketing", label: "Marketing" },
-    { id: "communication", label: "Communication" },
-    { id: "media", label: "Media" },
     { id: "features", label: "Features" },
+    { id: "communication", label: "Communication" },
+    { id: "fraud", label: "Fraud & Security" },
     { id: "finance", label: "Finance" },
+    { id: "media", label: "Media" },
   ];
 
   const handleToggle = async (key: string, enabled: boolean) => {
@@ -176,19 +240,34 @@ export function ModulesClient({ initialModules }: ModulesClientProps) {
 
         {/* Categories Tab Pill Strip */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setCategoryFilter(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${
-                categoryFilter === cat.id
-                  ? "bg-primary-600 text-white shadow-sm"
-                  : "bg-surface-secondary text-text-secondary hover:bg-surface-tertiary"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const count =
+              cat.id === "all"
+                ? modules.length
+                : modules.filter((m) => m.category.toLowerCase() === cat.id).length;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setCategoryFilter(cat.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors ${
+                  categoryFilter === cat.id
+                    ? "bg-primary-600 text-white shadow-sm"
+                    : "bg-surface-secondary text-text-secondary hover:bg-surface-tertiary"
+                }`}
+              >
+                <span>{cat.label}</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                    categoryFilter === cat.id
+                      ? "bg-white/20 text-white"
+                      : "bg-surface-tertiary text-text-muted"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

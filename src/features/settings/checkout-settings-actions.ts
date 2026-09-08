@@ -1,6 +1,6 @@
 "use server";
 
-import { getSettingsByGroup, updateGroupSettings } from "@/lib/settings/config-service";
+import { getSettingsByGroup, updateGroupSettings, isModuleEnabled } from "@/lib/settings/config-service";
 import { revalidatePath } from "next/cache";
 
 export interface CheckoutAndFraudSettings {
@@ -29,6 +29,12 @@ export interface CheckoutAndFraudSettings {
 
   // Checkout Form Location Controls
   show_location_hierarchy: boolean; // Show Division, District & Thana dropdowns in checkout
+
+  // Dynamic Payment Methods Availability
+  is_cod_enabled?: boolean;
+  is_bkash_enabled?: boolean;
+  is_nagad_enabled?: boolean;
+  is_sslcommerz_enabled?: boolean;
 }
 
 const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
@@ -52,6 +58,10 @@ const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
   abandoned_cart_discount_code: "SAVE5",
 
   show_location_hierarchy: true,
+  is_cod_enabled: true,
+  is_bkash_enabled: true,
+  is_nagad_enabled: false,
+  is_sslcommerz_enabled: true,
 };
 
 /**
@@ -59,7 +69,14 @@ const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
  */
 export async function getCheckoutAndFraudSettings(): Promise<CheckoutAndFraudSettings> {
   try {
-    const data = await getSettingsByGroup("checkout_fraud");
+    const [data, isCod, isBkash, isNagad, isSsl] = await Promise.all([
+      getSettingsByGroup("checkout_fraud"),
+      isModuleEnabled("cod").catch(() => true),
+      isModuleEnabled("bkash").catch(() => true),
+      isModuleEnabled("nagad").catch(() => false),
+      isModuleEnabled("sslcommerz").catch(() => true),
+    ]);
+
     return {
       inside_dhaka_rate: Number(data.inside_dhaka_rate ?? DEFAULT_SETTINGS.inside_dhaka_rate),
       sub_dhaka_rate: Number(data.sub_dhaka_rate ?? DEFAULT_SETTINGS.sub_dhaka_rate),
@@ -81,6 +98,10 @@ export async function getCheckoutAndFraudSettings(): Promise<CheckoutAndFraudSet
       abandoned_cart_discount_code: data.abandoned_cart_discount_code || DEFAULT_SETTINGS.abandoned_cart_discount_code,
 
       show_location_hierarchy: data.show_location_hierarchy !== false,
+      is_cod_enabled: isCod,
+      is_bkash_enabled: isBkash,
+      is_nagad_enabled: isNagad,
+      is_sslcommerz_enabled: isSsl,
     };
   } catch (e) {
     return DEFAULT_SETTINGS;

@@ -16,6 +16,7 @@ import { getBlogPostBySlug, getBlogPosts } from "@/features/blog/actions";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { getBaseUrl } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/server";
+import { isModuleEnabled } from "@/lib/settings/config-service";
 import { BlogPostClient } from "./blog-post-client";
 
 export async function generateMetadata({
@@ -46,6 +47,11 @@ export default async function BlogPostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const enabled = await isModuleEnabled("blog");
+  if (!enabled) {
+    notFound();
+  }
+
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
 
