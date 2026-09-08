@@ -220,8 +220,21 @@ export async function getThemeSettings(): Promise<ThemeSettings> {
 
 export async function saveThemeSettings(settings: Partial<ThemeSettings>) {
   await updateGroupSettings("theme", settings);
+
+  if (settings.insideDhakaFree) {
+    try {
+      await updateGroupSettings("checkout_fraud", {
+        free_shipping_threshold: Number(settings.insideDhakaFree),
+      });
+    } catch {}
+  }
+
   revalidatePath("/", "layout");
+  revalidatePath("/");
+  revalidatePath("/checkout");
+  revalidatePath("/cart");
   revalidatePath("/admin/settings/theme");
+  revalidatePath("/admin/settings/checkout");
   return { success: true };
 }
 

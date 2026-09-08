@@ -38,6 +38,7 @@ import {
 import { trackSearch } from "@/lib/analytics/datalayer";
 import { useLanguage } from "@/context/language-context";
 import { LanguageSwitcher } from "@/components/storefront/language-switcher";
+import type { ThemeSettings } from "@/features/settings/actions";
 
 interface SearchResult {
   products: Array<{
@@ -66,7 +67,11 @@ const TOP_BRANDS_DEFAULT = [
   { name: "L'Oréal Paris", slug: "loreal" },
 ];
 
-export function StorefrontHeader() {
+export interface StorefrontHeaderProps {
+  initialThemeSettings?: ThemeSettings;
+}
+
+export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const { wishlistCount } = useWishlist();
@@ -437,7 +442,7 @@ export function StorefrontHeader() {
                 {t("header", "announcementBadge")}
               </span>
               <span className="truncate text-zinc-200 font-semibold text-[11.5px] sm:text-xs">
-                {t("header", "announcementText")}
+                {initialThemeSettings?.announcement || t("header", "announcementText")}
               </span>
             </div>
             {isSwitcherEnabled && (
@@ -453,11 +458,23 @@ export function StorefrontHeader() {
               {t("header", "announcementBadge")}
             </span>
             <span className="text-zinc-200 font-semibold text-xs sm:text-sm">
-              {t("header", "announcementText")}
+              {initialThemeSettings?.announcement || t("header", "announcementText")}
             </span>
           </div>
 
           <div className="hidden sm:flex items-center gap-3.5 text-zinc-400 font-medium shrink-0">
+            {initialThemeSettings?.supportPhone && (
+              <>
+                <a
+                  href={`tel:${initialThemeSettings.supportPhone.replace(/\s+/g, "")}`}
+                  className="hidden lg:flex items-center gap-1 text-zinc-300 hover:text-white transition-colors"
+                >
+                  <Phone className="h-3 w-3 text-pink-400" />
+                  <span>{initialThemeSettings.supportPhone}</span>
+                </a>
+                <span className="hidden lg:inline text-zinc-700">|</span>
+              </>
+            )}
             <Link
               href={config.routineFinderHref || "/products?category=skin-care"}
               className="flex items-center gap-1 text-pink-300 hover:text-white transition-colors text-xs font-bold"

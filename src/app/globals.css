@@ -86,6 +86,75 @@
   --shadow-pink-glow: 0 10px 25px -5px rgba(233, 30, 99, 0.35);
 }
 
+/* --- Dynamic Theme Variations (Admin Controllable) --- */
+:root, [data-theme="rose"] {
+  --color-sg-pink: #e91e63;
+  --color-sg-pink-hover: #d81b60;
+  --color-sg-pink-light: #fdf2f8;
+  --color-sg-pink-border: #f472b6;
+  --color-primary-50: #fdf2f8;
+  --color-primary-100: #fce7f3;
+  --color-primary-200: #fbcfe8;
+  --color-primary-300: #f472b6;
+  --color-primary-400: #ec4899;
+  --color-primary-500: #f43f5e;
+  --color-primary-600: #e91e63;
+  --color-primary-700: #be123c;
+  --color-primary-800: #9f1239;
+  --color-primary-900: #881337;
+}
+
+[data-theme="emerald"] {
+  --color-sg-pink: #059669;
+  --color-sg-pink-hover: #047857;
+  --color-sg-pink-light: #ecfdf5;
+  --color-sg-pink-border: #34d399;
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
+}
+
+[data-theme="violet"] {
+  --color-sg-pink: #7c3aed;
+  --color-sg-pink-hover: #6d28d9;
+  --color-sg-pink-light: #f5f3ff;
+  --color-sg-pink-border: #a78bfa;
+  --color-primary-50: #f5f3ff;
+  --color-primary-100: #ede9fe;
+  --color-primary-200: #ddd6fe;
+  --color-primary-300: #c4b5fd;
+  --color-primary-400: #a78bfa;
+  --color-primary-500: #8b5cf6;
+  --color-primary-600: #7c3aed;
+  --color-primary-700: #6d28d9;
+  --color-primary-800: #5b21b6;
+  --color-primary-900: #4c1d95;
+}
+
+[data-theme="dark"] {
+  --color-sg-pink: #18181b;
+  --color-sg-pink-hover: #09090b;
+  --color-sg-pink-light: #f4f4f5;
+  --color-sg-pink-border: #71717a;
+  --color-primary-50: #f4f4f5;
+  --color-primary-100: #e4e4e7;
+  --color-primary-200: #d4d4d8;
+  --color-primary-300: #a1a1aa;
+  --color-primary-400: #71717a;
+  --color-primary-500: #52525b;
+  --color-primary-600: #18181b;
+  --color-primary-700: #09090b;
+  --color-primary-800: #040405;
+  --color-primary-900: #000000;
+}
+
 /* --- Base Styles --- */
 html, body {
   font-family: var(--font-sans);

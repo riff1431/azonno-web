@@ -6,7 +6,7 @@ import { StorefrontFooter } from "@/components/storefront/storefront-footer";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
 import { CartDrawer } from "@/components/storefront/cart-drawer";
 import { StorefrontMaintenanceScreen } from "@/components/storefront/storefront-maintenance-screen";
-import { getLocalizationSettings } from "@/features/settings/actions";
+import { getLocalizationSettings, getThemeSettings } from "@/features/settings/actions";
 import { getSettingsByGroup } from "@/lib/settings/config-service";
 import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
@@ -16,9 +16,10 @@ export default async function StorefrontLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [localizationSettings, systemSettings] = await Promise.all([
+  const [localizationSettings, systemSettings, themeSettings] = await Promise.all([
     getLocalizationSettings(),
     getSettingsByGroup("system"),
+    getThemeSettings(),
   ]);
 
   // Check Maintenance Mode
@@ -75,8 +76,11 @@ export default async function StorefrontLayout({
     <LanguageProvider initialConfig={localizationSettings}>
       <WishlistProvider>
         <CartProvider>
-          <div className="flex min-h-screen flex-col bg-white">
-            <StorefrontHeader />
+          <div
+            data-theme={themeSettings.themeColor || "rose"}
+            className="flex min-h-screen flex-col bg-white"
+          >
+            <StorefrontHeader initialThemeSettings={themeSettings} />
             <main className="flex-1 min-h-[calc(100vh-80px)]">{children}</main>
             <StorefrontFooter />
             <MobileBottomNav />
