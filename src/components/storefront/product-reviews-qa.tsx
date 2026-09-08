@@ -134,8 +134,8 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
     } else {
       setQuestionMsg({
         text: isBn
-          ? "আপনার প্রশ্নটি গ্রহণ করা হয়েছে! আমাদের বিউটি স্পেশালিস্ট শীঘ্রই উত্তর দেবেন।"
-          : "Your question has been posted! Our beauty advisor will respond shortly.",
+          ? "আপনার প্রশ্নটি জমা হয়েছে! আমাদের টিম দ্রুত উত্তর দেবে।"
+          : "Your question has been posted! Our team will respond shortly.",
         isError: false,
       });
       setQuestionText("");
@@ -285,7 +285,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                   </label>
                   <input
                     type="text"
-                    placeholder={isBn ? "যেমন: অসাধারণ টেক্সচার, ত্বককে উজ্জ্বল করে!" : "e.g. Excellent texture, leaves skin glowing!"}
+                    placeholder={isBn ? "যেমন: হালকা টেক্সচার, ত্বককে ফ্রেশ রাখে!" : "e.g. Lightweight texture, leaves skin feeling fresh!"}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-xs text-gray-900 focus:border-[#e91e63] focus:outline-none"
@@ -299,7 +299,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                   <textarea
                     rows={3}
                     required
-                    placeholder={isBn ? "এই স্কিনকেয়ার পণ্য নিয়ে আপনার বাস্তব অভিজ্ঞতা ও ফলাফল শেয়ার করুন..." : "Share your genuine experience and results with this product..."}
+                    placeholder={isBn ? "এই পণ্যটি ব্যবহার করে আপনার কেমন লেগেছে তা শেয়ার করুন..." : "Share how this product felt and worked for you..."}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     className="w-full rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-900 focus:border-[#e91e63] focus:outline-none"
@@ -376,7 +376,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                   {r.admin_reply && (
                     <div className="mt-3 rounded-xl bg-primary-50/70 border border-primary-100 p-3 space-y-1">
                       <span className="font-bold text-xs text-primary-900 block">
-                        {isBn ? "অফিসিয়াল বিউটি স্পেশালিস্টের উত্তর:" : "Response from ecomXbangladesh Official Advisor:"}
+                        {isBn ? "ব্লাশ অ্যান্ড বাজেট টিমের উত্তর:" : "Response from Blush & Budget Team:"}
                       </span>
                       <p className="text-xs text-primary-800 leading-relaxed">{r.admin_reply}</p>
                     </div>
@@ -394,7 +394,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           <div className="rounded-2xl border border-border bg-surface-secondary/40 p-5 space-y-3 text-xs">
             <h3 className="text-sm sm:text-base font-bold text-text flex items-center gap-1.5">
               <HelpCircle className="h-4 w-4 text-primary-600" />
-              {isBn ? "উপাদান বা ব্যবহার বিধি সম্পর্কে কিছু জানার আছে?" : "Have a question about ingredients or usage?"}
+              {isBn ? "ব্যবহার বা উপাদান সম্পর্কে কোনো প্রশ্ন আছে?" : "Have questions about how to use this or its ingredients?"}
             </h3>
 
             {!currentUser ? (
@@ -415,7 +415,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                 <input
                   type="text"
                   required
-                  placeholder={isBn ? "যেমন: এটি কি সংবেদনশীল একনে-প্রবণ ত্বকে ব্যবহারযোগ্য?" : "e.g. Is this suitable for sensitive acne-prone skin?"}
+                  placeholder={isBn ? "যেমন: এটি কি প্রতিদিন ব্যবহার করা যাবে?" : "e.g. Can this be used daily?"}
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                   className="flex-1 rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none"
@@ -490,7 +490,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                       </div>
                     ) : (
                       <p className="text-xs text-gray-400 italic pl-4 border-l-2 border-gray-200">
-                        {isBn ? "আমাদের সার্টিফাইড বিউটি স্পেশালিস্টের উত্তরের অপেক্ষায়..." : "Awaiting response from our certified beauty specialist..."}
+                        {isBn ? "আমাদের টিমের উত্তরের অপেক্ষায়..." : "Awaiting response from our team..."}
                       </p>
                     )}
                   </div>

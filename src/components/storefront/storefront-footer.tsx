@@ -78,15 +78,15 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
     language === "bn"
       ? fc.aboutTextBn ||
         config.footerAboutText ||
-        "বাংলাদেশের সবচেয়ে নির্ভরযোগ্য বিউটি ও স্কিনকেয়ার গন্তব্য। ১০০% অরিজিনাল কোরিয়ান ও ওয়েস্টার্ন কসমেটিকস সারা দেশে ক্যাশ অন ডেলিভারিতে দ্রুত পৌঁছানো হয়।"
+        "বাংলাদেশের নির্ভরযোগ্য বিউটি শপ। ১০০% আসল আন্তর্জাতিক স্কিনকেয়ার, মেকআপ ও হেয়ার কেয়ার সামগ্রী সারা দেশে ক্যাশ অন ডেলিভারিতে দ্রুত পৌঁছে দেওয়া হয়।"
       : fc.aboutText ||
         config.footerAboutText ||
-        "Bangladesh's most trusted beauty and personal care destination for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.";
+        "Your trusted beauty store in Bangladesh for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.";
 
   const copyrightText =
     fc.copyrightText ||
     config.footerCopyright ||
-    `© ${new Date().getFullYear()} ${brandName}. All rights reserved. 100% Genuine Certified Cosmetics.`;
+    `© ${new Date().getFullYear()} ${brandName}. All rights reserved. 100% Authentic Products.`;
 
   const supportPhone = fc.supportPhone || config.supportPhone || "+880 1700-000000";
   const supportEmail = fc.supportEmail || config.supportEmail || "support@example.com";
@@ -98,13 +98,13 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
 
   const newsletterTitle =
     language === "bn"
-      ? fc.newsletterTitleBn || "এক্সক্লুসিভ অফার ও বিউটি টিপস পান"
-      : fc.newsletterTitle || "Get Exclusive Deals & Beauty Tips";
+      ? fc.newsletterTitleBn || "বিশেষ অফার ও বিউটি টিপস পান"
+      : fc.newsletterTitle || "Get Special Offers & Beauty Tips";
 
   const newsletterSubtitle =
     language === "bn"
-      ? fc.newsletterSubtitleBn || "নতুন প্রোডাক্ট রিলিজ, ডিসকাউন্ট ভাউচার ও স্কিনকেয়ার গাইড পেতে সাবস্ক্রাইব করুন।"
-      : fc.newsletterSubtitle || "Subscribe for new arrivals, flash sale coupons & skincare routine guides.";
+      ? fc.newsletterSubtitleBn || "নতুন পণ্য, ডিসকাউন্ট ও সহজ স্কিনকেয়ার গাইডের আপডেট পেতে সাবস্ক্রাইব করুন।"
+      : fc.newsletterSubtitle || "Subscribe for new arrivals, discounts, and simple skincare guides.";
 
   const showTrustPillars = fc.showTrustPillars !== false;
   const showNewsletter = fc.showNewsletter !== false;

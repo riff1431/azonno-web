@@ -527,9 +527,9 @@ export async function getBlogCategories(): Promise<BlogCategory[]> {
   }
 
   return await getFallbackStore<BlogCategory[]>(CATEGORIES_STORE_KEY, [
-    { id: "cat-1", name: "Skincare Science", slug: "skincare-science", description: "Dermatological active guides, ingredient deep-dives, and barrier science.", icon: "Sparkles", position: 1 },
-    { id: "cat-2", name: "Korean Beauty (K-Beauty)", slug: "korean-beauty", description: "Glass skin routines, double-cleansing methods, and Seoul trend reviews.", icon: "BookOpen", position: 2 },
-    { id: "cat-3", name: "Acne & Barrier Repair", slug: "acne-barrier-repair", description: "Clinical recommendations for hyperpigmentation, cystic acne, and damaged barriers.", icon: "ShieldCheck", position: 3 },
+    { id: "cat-1", name: "Skincare Basics", slug: "skincare-basics", description: "Easy guides on everyday ingredients, product types, and simple routines.", icon: "Sparkles", position: 1 },
+    { id: "cat-2", name: "K-Beauty & Trends", slug: "korean-beauty", description: "Everyday Korean skincare steps, hydration tips, and popular beauty favorites.", icon: "BookOpen", position: 2 },
+    { id: "cat-3", name: "Daily Routine Tips", slug: "daily-routines", description: "Practical tips for morning and evening routines, sun protection, and fresh skin.", icon: "ShieldCheck", position: 3 },
   ]);
 }
 

@@ -36,10 +36,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const siteUrl = seo?.canonical_url || store?.store_url || requestUrl || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://blushandbudget.com";
   const storeName = store?.store_name || "Blush & Budget";
-  const title = seo?.meta_title || `${storeName} | Authentic Cosmetics & Beauty Shop in Bangladesh`;
+  const title = seo?.meta_title || `${storeName} | Authentic Skincare & Beauty in Bangladesh`;
   const description =
     seo?.meta_description ||
-    "Bangladesh's trusted e-commerce destination for 100% authentic international cosmetics, Korean skincare, makeup, and hair care. Nationwide Cash on Delivery across 64 districts.";
+    "Shop authentic skincare, makeup, and beauty products from trusted global brands. Fast doorstep delivery with Cash on Delivery across Bangladesh.";
   const ogImage = seo?.og_image_url || undefined;
 
   return {

@@ -8,29 +8,29 @@ const CMS_PAGES: Record<
 > = {
   about: {
     title: "About Blush & Budget",
-    subtitle: "Your Trusted Gateway to 100% Authentic Global Skincare & Cosmetics",
-    lastUpdated: "August 2026",
+    subtitle: "Simple, trusted beauty and skincare for your daily routine",
+    lastUpdated: "September 2026",
     content: (
       <div className="space-y-6 text-sm text-text-secondary leading-relaxed">
         <p>
-          Founded in Dhaka, <strong>Blush &amp; Budget</strong> was born out of a simple mission: to make premium, original, and certified skincare from South Korea, the United Kingdom, and the United States readily accessible to beauty enthusiasts across all 64 districts of Bangladesh.
+          Founded in Dhaka, <strong>Blush &amp; Budget</strong> makes it easy to find authentic skincare and beauty products from trusted global brands. We focus on gentle, reliable products that fit naturally into your everyday beauty routine.
         </p>
-        <h3 className="text-lg font-bold text-text pt-2">Direct Authorized Procurement</h3>
+        <h3 className="text-lg font-bold text-text pt-2">Direct &amp; Authentic Sourcing</h3>
         <p>
-          Every single serum, cleanser, sunscreen, and moisturizer in our inventory is directly procured from authorized international distributors in Seoul, London, and Dubai. We eliminate intermediaries to guarantee pristine product authenticity and the freshest batch production dates.
+          Every cleanser, serum, sunscreen, and moisturizer in our collection is sourced directly from authorized brand distributors. We keep our supply chain direct to ensure 100% genuine products with fresh batch dates.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
           <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
-            <h4 className="font-bold text-text text-base">100% Original</h4>
-            <p className="text-xs text-text-muted mt-1">Guaranteed authentic or 3x money back refund.</p>
+            <h4 className="font-bold text-text text-base">100% Genuine</h4>
+            <p className="text-xs text-text-muted mt-1">Authentic products from trusted beauty brands.</p>
           </div>
           <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
-            <h4 className="font-bold text-text text-base">Fast 24-48h Delivery</h4>
-            <p className="text-xs text-text-muted mt-1">Doorstep delivery across Dhaka &amp; nationwide express.</p>
+            <h4 className="font-bold text-text text-base">Fast 24–48h Delivery</h4>
+            <p className="text-xs text-text-muted mt-1">Doorstep delivery across Dhaka and all 64 districts.</p>
           </div>
           <div className="rounded-2xl border border-border bg-white p-5 shadow-card">
             <h4 className="font-bold text-text text-base">Cash on Delivery</h4>
-            <p className="text-xs text-text-muted mt-1">Inspect your parcel at doorstep before making payment.</p>
+            <p className="text-xs text-text-muted mt-1">Check your package upon delivery before paying.</p>
           </div>
         </div>
       </div>
@@ -38,70 +38,70 @@ const CMS_PAGES: Record<
   },
   authenticity: {
     title: "100% Authenticity Guarantee",
-    subtitle: "Our Triple-Check Verification Standard for Cosmetics in Bangladesh",
-    lastUpdated: "August 2026",
+    subtitle: "Our commitment to genuine beauty products",
+    lastUpdated: "September 2026",
     content: (
       <div className="space-y-6 text-sm text-text-secondary leading-relaxed">
         <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-6 flex items-start gap-4">
           <ShieldCheck className="h-8 w-8 text-emerald-600 shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-bold text-emerald-800 text-base">Our Zero-Counterfeit Commitment</h3>
+            <h3 className="font-bold text-emerald-800 text-base">Our Authenticity Promise</h3>
             <p className="text-xs text-emerald-700 mt-1 leading-relaxed">
-              We understand the damage counterfeit skincare can cause. We source directly from official brand partners like COSRX Korea, CeraVe UK, and The Ordinary. If any product is proven non-authentic, we provide a 100% full refund immediately plus cover all courier return pickup costs.
+              We source directly from official brand partners and authorized distributors. If you ever receive an item that is not 100% authentic, we will provide a full refund right away and take care of the return shipping.
             </p>
           </div>
         </div>
 
         <h3 className="text-lg font-bold text-text pt-2">How to Verify Your Product:</h3>
         <ul className="list-disc pl-5 space-y-2 text-xs text-text-secondary">
-          <li><strong>Batch Code Verification:</strong> Every box includes an embossed batch code verifiable on CheckFresh.com.</li>
-          <li><strong>HiddenTag / QR Seals:</strong> Korean products feature genuine brand holographic authentication stickers.</li>
-          <li><strong>Sealed Packaging:</strong> Untampered hygiene foil seals on every bottle and tube.</li>
+          <li><strong>Batch Code:</strong> Every box includes a verifiable batch code.</li>
+          <li><strong>Brand Seals:</strong> Korean and global products feature genuine brand security seals.</li>
+          <li><strong>Sealed Packaging:</strong> Untampered protective packaging on every product.</li>
         </ul>
       </div>
     ),
   },
   returns: {
     title: "7-Day Return & Replacement Policy",
-    subtitle: "Hassle-Free Returns with Instant Doorstep Pickup",
-    lastUpdated: "August 2026",
+    subtitle: "Simple and hassle-free returns",
+    lastUpdated: "September 2026",
     content: (
       <div className="space-y-6 text-sm text-text-secondary leading-relaxed">
         <p>
-          At Blush &amp; Budget, your skin health and satisfaction come first. If you received a damaged item, incorrect shade/variant, or defective pump, we offer a <strong>7-day replacement guarantee</strong>.
+          If you received a damaged product or an incorrect item, we offer an easy <strong>7-day replacement or return</strong>.
         </p>
-        <h3 className="text-lg font-bold text-text pt-2">Eligibility for Return</h3>
+        <h3 className="text-lg font-bold text-text pt-2">Return Guidelines</h3>
         <ul className="list-disc pl-5 space-y-2 text-xs text-text-secondary">
-          <li>Item must be unused, unwashed, and in original brand packaging with all tags attached.</li>
-          <li>Report within 7 days of delivery with parcel unboxing video.</li>
-          <li>Our courier partner will pick up the parcel directly from your address at zero extra cost.</li>
+          <li>Items should be unused and in original packaging with seals intact.</li>
+          <li>Let us know within 7 days of delivery with an unboxing video.</li>
+          <li>Our courier partner will pick up the parcel directly from your doorstep.</li>
         </ul>
       </div>
     ),
   },
   privacy: {
     title: "Privacy Policy",
-    subtitle: "How We Protect Your Personal Information",
-    lastUpdated: "August 2026",
+    subtitle: "How we protect your personal information",
+    lastUpdated: "September 2026",
     content: (
       <div className="space-y-4 text-sm text-text-secondary leading-relaxed">
         <p>
-          We respect your privacy. Your name, phone number, delivery address, and order details are strictly used to fulfill your deliveries via SteadFast/Pathao and send delivery tracking notifications.
+          We respect your privacy. Your name, phone number, and delivery address are strictly used to deliver your orders and send order tracking updates.
         </p>
         <p>
-          We never sell, rent, or trade customer contact details with third-party advertising brokers.
+          We never share, rent, or sell your personal details to third parties.
         </p>
       </div>
     ),
   },
   terms: {
     title: "Terms & Conditions",
-    subtitle: "Shopping and Service Agreement",
-    lastUpdated: "August 2026",
+    subtitle: "Shopping and service terms",
+    lastUpdated: "September 2026",
     content: (
       <div className="space-y-4 text-sm text-text-secondary leading-relaxed">
         <p>
-          By placing an order on Blush &amp; Budget, you agree to inspect your parcel upon doorstep delivery and remit the agreed Cash on Delivery amount to the delivery rider.
+          By placing an order on Blush &amp; Budget, you agree to inspect your parcel upon delivery and pay the agreed Cash on Delivery amount.
         </p>
         <p>
           All pricing is listed in Bangladeshi Taka (BDT ৳) inclusive of applicable taxes.
@@ -111,35 +111,35 @@ const CMS_PAGES: Record<
   },
   faq: {
     title: "Frequently Asked Questions (FAQ)",
-    subtitle: "Quick Answers on Orders, Authenticity, Delivery & Returns",
-    lastUpdated: "August 2026",
+    subtitle: "Quick answers about ordering, delivery, and authenticity",
+    lastUpdated: "September 2026",
     content: (
       <div className="space-y-6 text-sm text-text-secondary leading-relaxed">
         <div className="rounded-2xl border border-border bg-white p-5 shadow-xs">
-          <h4 className="font-bold text-text text-base">১. আপনাদের প্রোডাক্ট কি ১০০% আসল ও অরিজিনাল?</h4>
+          <h4 className="font-bold text-text text-base">১. আপনাদের পণ্য কি ১০০% আসল?</h4>
           <p className="text-xs text-text-muted mt-2 leading-relaxed">
-            হ্যাঁ, আমাদের প্রতিটি প্রোডাক্ট সরাসরি ব্র্যান্ড বা অনুমোদিত আন্তর্জাতিক ডিস্ট্রিবিউটর (কোরিয়া, ইউকে, ইউএসএ) থেকে আমদানি করা। নকল প্রমাণিত হলে ৩০০% মানিব্যাক গ্যারান্টি।
+            হ্যাঁ, আমাদের প্রতিটি পণ্য সরাসরি ব্র্যান্ড ও অনুমোদিত ডিস্ট্রিবিউটর থেকে সংগৃহীত। আমরা শুধুমাত্র খাঁটি ও জেনুইন বিউটি প্রডাক্ট সরবরাহ করি।
           </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-xs">
           <h4 className="font-bold text-text text-base">২. ডেলিভারি পেতে কত সময় লাগে?</h4>
           <p className="text-xs text-text-muted mt-2 leading-relaxed">
-            ঢাকা সিটির ভেতরে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ৩ থেকে ৫ কার্যদিবসের মধ্যে SteadFast / Pathao কুরিয়ারের মাধ্যমে ডেলিভারি সম্পন্ন করা হয়।
+            ঢাকায় ২৪ থেকে ৪৮ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২ থেকে ৪ কার্যদিবসের মধ্যে হোম ডেলিভারি সম্পন্ন হয়।
           </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-xs">
           <h4 className="font-bold text-text text-base">৩. ডেলিভারির সময় কি চেক করে নেওয়া যাবে?</h4>
           <p className="text-xs text-text-muted mt-2 leading-relaxed">
-            অবশ্যই! ক্যাশ অন ডেলিভারিতে রাইডারের সামনে পার্সেলটি চেক করে মূল্য পরিশোধ করতে পারবেন।
+            হ্যাঁ, ক্যাশ অন ডেলিভারিতে পার্সেল চেক করে নিশ্চিত হয়ে মূল্য পরিশোধ করতে পারবেন।
           </p>
         </div>
 
         <div className="rounded-2xl border border-border bg-white p-5 shadow-xs">
-          <h4 className="font-bold text-text text-base">৪. সমস্যা হলে রিটার্ন বা পরিবর্তন কীভাবে করব?</h4>
+          <h4 className="font-bold text-text text-base">৪. কোনো সমস্যা হলে রিটার্ন কীভাবে করব?</h4>
           <p className="text-xs text-text-muted mt-2 leading-relaxed">
-            ডেলিভারি পাওয়ার ৭ দিনের মধ্যে আমাদের সাপোর্ট নম্বরে (+880 1700-000000) অথবা ফেসবুক পেজে আনবক্সিং ভিডিও সহ মেসেজ দিন। আমাদের কুরিয়ার প্রতিনিধি সরাসরি আপনার বাসা থেকে পার্সেলটি পিকআপ করে নিবেন।
+            ডেলিভারি পাওয়ার ৭ দিনের মধ্যে আমাদের কাস্টমার সাপোর্টে যোগাযোগ করুন। আমাদের টিম দ্রুত রিটার্ন ও রিপ্লেসমেন্টের ব্যবস্থা করবে।
           </p>
         </div>
       </div>

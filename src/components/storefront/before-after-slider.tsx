@@ -45,17 +45,17 @@ export function BeforeAfterSlider({
   const { language, toBn } = useLanguage();
 
   const isBn = language === "bn";
-  const displayEyebrow = eyebrowBadge || (isBn ? "সার্টিফাইড স্কিন-ফ্রেন্ডলি ফর্মুলা" : "CERTIFIED SKIN-FRIENDLY");
-  const displayTitle = title || (isBn ? "ত্বকের সত্যিকারের পরিবর্তন দেখুন" : "SEE REAL SKIN RESULTS");
-  const displaySubtitle = subtitle || (isBn ? "৭ দিনের স্কিনকেয়ার ট্রান্সফর্মেশন ফলাফল" : "Interactive 7-Day Skincare Transformation");
-  const displayHeading = heading || (isBn ? "৭ দিনে স্কিন ব্যারিয়ার পুনরুদ্ধার করুন" : "Restore Skin Barrier in 7 Days");
-  const displayDescription = description || (isBn ? "হাইপারপিগমেন্টেশন দূর করুন, ত্বকের স্বাভাবিক আর্দ্রতা ফিরিয়ে আনুন ৩-ধাপের বিশেষ রুটিনে।" : "Target hyperpigmentation, uneven skin tone, and deep dehydration using our certified 3-step routine.");
-  const displayMetric1 = metric1 || (isBn ? "৯৬% লালচে ভাব ও জ্বালাপোড়া হ্রাস" : "96% Noticeable reduction in redness and irritation");
-  const displayMetric2 = metric2 || (isBn ? "২৪ ঘণ্টা নন-গ্রিসি ময়েশ্চার প্রটেকশন" : "24h Non-greasy moisture barrier protection");
-  const displayMetric3 = metric3 || (isBn ? "১০০% আসল ও সার্টিফাইড পণ্য" : "100% Direct Certified Authentic Global Imports");
-  const displayButtonText = buttonText || (isBn ? "ট্রান্সফর্মেশন রুটিন কিনুন" : "SHOP THE TRANSFORMATION ROUTINE");
-  const displayBeforeLabel = beforeLabel || (isBn ? "১ম দিন • রুক্ষ ও প্রাণহীন" : "DAY 1 • DULL & DEHYDRATED");
-  const displayAfterLabel = afterLabel || (isBn ? "৭ম দিন • উজ্জ্বল ও মসৃণ ত্বক" : "DAY 7 • RADIANT GLASS SKIN");
+  const displayEyebrow = eyebrowBadge || (isBn ? "সহজ স্কিনকেয়ার রুটিন" : "EVERYDAY ROUTINE");
+  const displayTitle = title || (isBn ? "সহজ স্কিনকেয়ারের পার্থক্য" : "SEE THE DIFFERENCE");
+  const displaySubtitle = subtitle || (isBn ? "প্রতিদিনের সহজ পরিচর্যায় সতেজ ও কোমল ত্বকের অনুভূতি" : "Simple Everyday Skincare Routine");
+  const displayHeading = heading || (isBn ? "৩ ধাপের সহজ স্কিনকেয়ার রুটিন" : "Simple 3-Step Daily Routine");
+  const displayDescription = description || (isBn ? "হালকা ও আরামদায়ক প্রোডাক্ট যা ত্বককে রাখে নরম, সতেজ ও ময়েশ্চারাইজড।" : "Lightweight products that leave skin feeling fresh, soft, and comfortable throughout the day.");
+  const displayMetric1 = metric1 || (isBn ? "ত্বকে আনে সতেজ ও শান্ত অনুভূতি" : "Leaves skin feeling calm and refreshed");
+  const displayMetric2 = metric2 || (isBn ? "হালকা ও তেল চিটচিটে ভাবহীন" : "Lightweight and non-greasy all day");
+  const displayMetric3 = metric3 || (isBn ? "১০০% আসল ও অরিজিনাল পণ্য" : "100% Direct Certified Authentic Imports");
+  const displayButtonText = buttonText || (isBn ? "রুটিনটি কিনুন" : "SHOP THE ROUTINE");
+  const displayBeforeLabel = beforeLabel || (isBn ? "আগে • শুষ্ক ত্বক" : "BEFORE • DRY & DULL");
+  const displayAfterLabel = afterLabel || (isBn ? "পরে • সতেজ ও কোমল" : "AFTER • FRESH & HYDRATED");
 
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);

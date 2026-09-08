@@ -122,7 +122,7 @@ export async function getMatchedQuizRoutine(
         image_url: chosenCleanser.og_image_url || null,
         brand_name: (chosenCleanser.brands as any)?.name || null,
         step_label: "Step 1: Gentle Cleanser",
-        step_description: "Gentle low-pH barrier defense cleanser formulated to sweep away sebum and micro-dust without stripping natural lipids.",
+        step_description: "Gentle everyday cleanser that washes away dirt and excess oil while leaving skin soft and refreshed.",
         country: chosenCleanser.country || "Korea / UK",
       });
     }
@@ -136,8 +136,8 @@ export async function getMatchedQuizRoutine(
         sale_price: chosenTreatment.sale_price,
         image_url: chosenTreatment.og_image_url || null,
         brand_name: (chosenTreatment.brands as any)?.name || null,
-        step_label: "Step 2: Targeted Essence & Serum",
-        step_description: `High-performance beauty formulation addressing ${concern} for ${skinType} skin in Bangladesh climate.`,
+        step_label: "Step 2: Essence & Serum",
+        step_description: `Lightweight formula that provides daily hydration and helps create a smooth, even-looking complexion.`,
         country: chosenTreatment.country || "Korea / UK",
       });
     }
@@ -151,15 +151,15 @@ export async function getMatchedQuizRoutine(
         sale_price: chosenProtect.sale_price,
         image_url: chosenProtect.og_image_url || null,
         brand_name: (chosenProtect.brands as any)?.name || null,
-        step_label: "Step 3: Moisture Seal & Defense",
-        step_description: "Non-greasy lightweight daily cream protecting skin moisture and defending against environmental stress.",
+        step_label: "Step 3: Moisturizer & Protection",
+        step_description: "Lightweight, non-greasy moisturizer that locks in hydration for a soft, comfortable finish all day.",
         country: chosenProtect.country || "Korea / UK",
       });
     }
 
     return {
-      routineTitle: `Curated ${capitalize(skinType)} & ${capitalize(concern)} Skin Routine`,
-      routineSubtitle: `Specially curated for Bangladesh humidity to balance moisture, strengthen skin wellness, and enhance natural glow.`,
+      routineTitle: `${capitalize(skinType)} Daily Beauty Routine`,
+      routineSubtitle: `Simple, effective steps chosen to keep your skin feeling fresh, soft, and balanced throughout the day.`,
       products: matchedList,
     };
   } catch (err) {
@@ -175,8 +175,8 @@ function capitalize(s: string) {
 
 function getFallbackRoutine(skinType: string, concern: string) {
   return {
-    routineTitle: `Personalized ${capitalize(skinType)} Beauty Routine`,
-    routineSubtitle: `Curated 2-step daily skincare routine designed for ${concern} to maintain healthy and glowing skin.`,
+    routineTitle: `Personalized Daily Skincare Routine`,
+    routineSubtitle: `A simple, gentle routine to keep skin soft, hydrated, and looking naturally fresh.`,
     products: [
       {
         id: "prod-cerave-cleanser",
@@ -187,7 +187,7 @@ function getFallbackRoutine(skinType: string, concern: string) {
         image_url: "/product_placeholder.svg",
         brand_name: "CeraVe",
         step_label: "Step 1: Gentle Cleanser",
-        step_description: "Cleanses and hydrates without disrupting the protective skin barrier. Enriched with 3 essential ceramides.",
+        step_description: "Gently cleanses and hydrates skin with essential ceramides for a fresh, comfortable feel.",
         country: "United Kingdom",
       },
       {
@@ -199,7 +199,7 @@ function getFallbackRoutine(skinType: string, concern: string) {
         image_url: "/product_placeholder.svg",
         brand_name: "COSRX",
         step_label: "Step 2: Core Essence",
-        step_description: "96.3% snail secretion filtrate provides deep cellular hydration and restores soothing bounce to sensitized skin.",
+        step_description: "Lightweight essence with snail mucin that delivers deep hydration for a smooth, natural-looking glow.",
         country: "South Korea",
       },
     ],

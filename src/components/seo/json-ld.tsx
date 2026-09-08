@@ -72,7 +72,7 @@ export function ProductJsonLd({
           : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "ecomXbangladesh",
+        name: "Blush & Budget",
       },
     },
   };
@@ -134,7 +134,7 @@ export function ArticleJsonLd({
   datePublished,
   dateModified,
   author,
-  publisherName = "ecomXbangladesh",
+  publisherName = "Blush & Budget",
   publisherLogo,
   url,
 }: ArticleJsonLdProps) {
@@ -189,7 +189,7 @@ export function PersonJsonLd({
   url,
   image,
   socialLinks = [],
-  worksFor = "ecomXbangladesh",
+  worksFor = "Blush & Budget",
 }: PersonJsonLdProps) {
   const data = {
     "@context": "https://schema.org",
@@ -234,7 +234,7 @@ export function FaqJsonLd({ items }: { items: FaqItem[] }) {
 }
 
 export function OrganizationJsonLd({
-  name = "ecomXbangladesh",
+  name = "Blush & Budget",
   url,
   logo,
   contactPhone = "+880 1700-000000",

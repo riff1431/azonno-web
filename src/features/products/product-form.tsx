@@ -32,16 +32,16 @@ const SKIN_TYPES_DATA = [
 ];
 
 const SKIN_CONCERNS_DATA = [
-  { value: "Acne & Blemishes", en: "Acne & Blemishes", bn: "ব্রণ ও দাগ (Acne & Blemishes)" },
-  { value: "Brightening & Pigmentation", en: "Brightening & Pigmentation", bn: "উজ্জ্বলতা ও পিগমেন্টেশন (Brightening)" },
-  { value: "Anti-Aging & Wrinkles", en: "Anti-Aging & Wrinkles", bn: "অ্যান্টি-এজিং ও বলিরেখা (Anti-Aging)" },
-  { value: "Dryness & Hydration", en: "Dryness & Hydration", bn: "শুষ্কতা ও ডিপ ময়েশ্চার (Dryness)" },
-  { value: "Pore Minimizing", en: "Pore Minimizing", bn: "পোর মিনিমাইজিং (Pore Minimizing)" },
-  { value: "Redness & Rosacea", en: "Redness & Rosacea", bn: "লালচে ভাব ও রোসেসিয়া (Redness)" },
+  { value: "Clear Skin & Blemishes", en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
+  { value: "Brightening & Even Tone", en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
+  { value: "Smooth Lines & Firmness", en: "Smooth Lines & Firmness", bn: "কোমল ও টানটান অনুভূতি" },
+  { value: "Hydration & Moisture", en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন (Hydration)" },
+  { value: "Pore & Oil Care", en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
+  { value: "Redness & Soothing", en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
   { value: "Sun Protection", en: "Sun Protection", bn: "রোদে সুরক্ষা (Sun Protection / SPF)" },
-  { value: "Dark Circles", en: "Dark Circles", bn: "চোখের নিচের কালো দাগ (Dark Circles)" },
-  { value: "Oil Control", en: "Oil Control", bn: "তেল নিয়ন্ত্রণ (Oil Control)" },
-  { value: "Barrier Repair", en: "Barrier Repair", bn: "স্কিন ব্যারিয়ার রিপেয়ার (Barrier Repair)" },
+  { value: "Dark Circles & Eye Care", en: "Dark Circles & Eye Care", bn: "চোখের নিচের যত্ন (Eye Care)" },
+  { value: "Oil Control", en: "Oil Control", bn: "তেল নিয়ন্ত্রণ ও ফ্রেশ লুক" },
+  { value: "Barrier Care", en: "Barrier Care", bn: "স্কিন ব্যারিয়ার কেয়ার (Barrier Care)" },
 ];
 
 const ROUTINE_STEPS_DATA = [

@@ -236,7 +236,7 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
     drawerLogoImageUrl: "",
     adminLogoImageUrl: "",
     searchPlaceholders: [
-      "Ordinary",
+      "The Ordinary",
       "COSRX Snail Mucin",
       "CeraVe Cleanser",
       "Beauty of Joseon Sunscreen",
@@ -259,8 +259,8 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
         ],
         featuredBrands: ["L'Oréal Paris", "Maybelline", "MAC", "Revolution"],
         promoBanner: {
-          title: "Makeup Fest Up to 40% Off",
-          subtitle: "100% Original Global Cosmetics",
+          title: "Makeup Collection",
+          subtitle: "100% Original Cosmetics for Everyday Looks",
           image: "/categories/cat_makeup.jpg",
           href: "/products?category=makeup",
         },
@@ -273,15 +273,15 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
         subcategories: [
           { name: "Cleansers & Facewash", href: "/products?category=skin-care&type=cleanser" },
           { name: "Toners & Mists", href: "/products?category=skin-care&type=toner" },
-          { name: "Serums & Ampoules", href: "/products?category=skin-care&type=serum" },
+          { name: "Serums & Essences", href: "/products?category=skin-care&type=serum" },
           { name: "Moisturizers & Creams", href: "/products?category=skin-care&type=moisturizer" },
-          { name: "Sunscreen & SPF 50", href: "/products?category=skin-care&type=sunscreen" },
+          { name: "Daily Sunscreen & SPF", href: "/products?category=skin-care&type=sunscreen" },
           { name: "Eye & Lip Care", href: "/products?category=skin-care&type=eye-lip" },
         ],
         featuredBrands: ["COSRX", "The Ordinary", "CeraVe", "Beauty of Joseon"],
         promoBanner: {
-          title: "Glass Skin Glow Routine",
-          subtitle: "Top Korean & US Formulations",
+          title: "Everyday Skincare Essentials",
+          subtitle: "Gentle K-Beauty & Global Brands",
           image: "/categories/cat_k_beauty.jpg",
           href: "/products?category=skin-care",
         },
@@ -295,13 +295,13 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
           { name: "Shampoos & Cleansers", href: "/products?category=hair-care&type=shampoo" },
           { name: "Conditioners & Hair Masks", href: "/products?category=hair-care&type=conditioner" },
           { name: "Hair Oils & Serums", href: "/products?category=hair-care&type=oil" },
-          { name: "Anti-Dandruff & Scalp Care", href: "/products?category=hair-care&type=scalp" },
+          { name: "Scalp Care & Scrubs", href: "/products?category=hair-care&type=scalp" },
           { name: "Hair Styling & Colors", href: "/products?category=hair-care&type=styling" },
         ],
         featuredBrands: ["Vatika", "L'Oréal", "Himalaya", "Tresemme"],
         promoBanner: {
-          title: "Zero Dandruff Festival",
-          subtitle: "Fresh & Healthy Scalp Care Routine",
+          title: "Fresh Scalp & Hair Care",
+          subtitle: "Shampoos, Oils & Conditioners for Daily Care",
           image: "/categories/cat_hair_care.jpg",
           href: "/products?category=hair-care",
         },
@@ -312,15 +312,15 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
         slug: "body-care",
         href: "/products?category=body-care",
         subcategories: [
-          { name: "Body Lotions & Butters", href: "/products?category=body-care&type=lotion" },
+          { name: "Body Lotions & Creams", href: "/products?category=body-care&type=lotion" },
           { name: "Shower Gels & Body Wash", href: "/products?category=body-care&type=wash" },
-          { name: "Body Scrubs & Exfoliators", href: "/products?category=body-care&type=scrub" },
+          { name: "Body Scrubs", href: "/products?category=body-care&type=scrub" },
           { name: "Hand & Foot Care", href: "/products?category=body-care&type=hand-foot" },
         ],
         featuredBrands: ["Nivea", "Vaseline", "Cetaphil", "Meril"],
         promoBanner: {
-          title: "Luxury Body Hydration",
-          subtitle: "Smooth, velvety soft skin 24h",
+          title: "Daily Body Care",
+          subtitle: "Gentle Lotions & Body Washes for Soft Skin",
           image: "/categories/cat_mom_baby.jpg",
           href: "/products?category=body-care",
         },
@@ -333,13 +333,13 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
         subcategories: [
           { name: "Baby Lotions & Creams", href: "/products?category=mom-baby&type=lotion" },
           { name: "Baby Shampoos & Wash", href: "/products?category=mom-baby&type=wash" },
-          { name: "Diaper Rash Care", href: "/products?category=mom-baby&type=diaper" },
-          { name: "Maternity Skincare", href: "/products?category=mom-baby&type=maternity" },
+          { name: "Diaper Care", href: "/products?category=mom-baby&type=diaper" },
+          { name: "Mom Care Essentials", href: "/products?category=mom-baby&type=maternity" },
         ],
         featuredBrands: ["Aveeno Baby", "Johnson's", "Cetaphil Baby", "Sebamed"],
         promoBanner: {
-          title: "Gentle Pure Baby Care",
-          subtitle: "100% Tear-Free & Pediatrician Approved",
+          title: "Gentle Baby Care",
+          subtitle: "Mild & Gentle Products for Little Ones",
           image: "/categories/cat_mom_baby.jpg",
           href: "/products?category=mom-baby",
         },
@@ -353,12 +353,12 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
           { name: "Women's Perfumes", href: "/products?category=fragrance&type=women" },
           { name: "Men's Cologne & EDT", href: "/products?category=fragrance&type=men" },
           { name: "Body Mists & Sprays", href: "/products?category=fragrance&type=mist" },
-          { name: "Attars & Oils", href: "/products?category=fragrance&type=attar" },
+          { name: "Attars & Perfume Oils", href: "/products?category=fragrance&type=attar" },
         ],
         featuredBrands: ["Chanel", "Dior", "Victoria's Secret", "Armaf"],
         promoBanner: {
-          title: "Signature Global Scents",
-          subtitle: "Long-lasting luxury notes",
+          title: "Everyday Fragrances",
+          subtitle: "Fresh Perfumes, Colognes & Body Mists",
           image: "/categories/cat_fragrance.jpg",
           href: "/products?category=fragrance",
         },
@@ -367,13 +367,13 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
   },
 
   announcementBadgeText: "FREE DELIVERY",
-  announcementText: "Free nationwide delivery on orders over ৳2,000!",
+  announcementText: "Free nationwide delivery on orders over ৳2,000",
   freeDeliveryThreshold: 2000,
   routineFinderText: "Routine Finder",
-  routineFinderHref: "/products?category=skin-care",
+  routineFinderHref: "/quiz",
   trackOrderText: "Track Order",
-  trackOrderHref: "/account/orders",
-  authenticGuaranteeText: "100% Authentic Guarantee",
+  trackOrderHref: "/track-order",
+  authenticGuaranteeText: "100% Authentic Products",
   supportPhone: "+880 1700-000000",
 
   // Top Subnavigation Campaign Badges
@@ -386,105 +386,105 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
     { id: "pill-5", label: "MEN", href: "/products?category=skin-care", bgClass: "bg-[#059669]" },
   ],
 
-  // 1. Hero Carousel Banners (Formatted in 1920x650 Wide Ratio)
+  // 1. Hero Carousel Banners
   heroSlides: [
     {
       id: "hero-1",
-      title: "Himalaya Skincare & Haircare Up to 50% Off",
+      title: "Himalaya Skincare & Haircare Special Offers",
       href: "/products?search=himalaya",
       image: "/banners/hero_himalaya.jpg",
     },
     {
       id: "hero-2",
-      title: "The Ordinary Clinical Serums 33% Off",
+      title: "The Ordinary Everyday Serums",
       href: "/products?search=the%20ordinary",
       image: "/banners/hero_ordinary.svg",
     },
     {
       id: "hero-3",
-      title: "COSRX K-Beauty Festival Up to 41% Off",
+      title: "COSRX K-Beauty Favorites",
       href: "/products?search=cosrx",
       image: "/banners/hero_cosrx.svg",
     },
     {
       id: "hero-4",
-      title: "Vatika Naturals Hair Care Festival",
+      title: "Vatika Hair Oils & Shampoos",
       href: "/products?category=hair-care",
       image: "/banners/hero_vatika.svg",
     },
   ],
 
-  // 2. Secondary Strip Banner (Pond's Miracle Me)
+  // 2. Secondary Strip Banner
   stripBanner: {
     id: "strip-ponds",
-    title: "POND'S MIRACLE ME UP TO 25% OFF",
+    title: "Pond's Hydra Light Gel & Daily Creams",
     href: "/products?search=ponds",
     image: "/banners/strip_ponds.svg",
   },
 
-  // 3. DEALS YOU CANNOT MISS (Exact 4 100% Unbreakable Local Banners)
+  // 3. DEALS YOU CANNOT MISS
   dealsYouCannotMiss: [
     {
       id: "deal-1",
-      title: "MEGA OFFERS 50% OFF - Free Delivery",
+      title: "Special Offers with Free Nationwide Delivery",
       href: "/products?discount=true",
       image: "/banners/deal_mega_offers.jpg",
     },
     {
       id: "deal-2",
-      title: "SAY GOODBYE TO DANDRUFF IN 7 DAYS",
+      title: "Fresh & Healthy Scalp Care Essentials",
       href: "/products?category=hair-care",
       image: "/banners/deal_anti_dandruff.jpg",
     },
     {
       id: "deal-3",
-      title: "Meril Perfumed Shower Gel 51 TK OFF",
+      title: "Meril Perfumed Shower Gels",
       href: "/products?category=body-care",
       image: "/banners/deal_shower_gel.svg",
     },
     {
       id: "deal-4",
-      title: "JEWELLERY & ACCESSORIES BLUSH & BUDGET NEW ARRIVALS",
+      title: "Everyday Jewelry & Accessories New Arrivals",
       href: "/products?category=jewellery",
       image: "/banners/deal_jewellery.svg",
     },
   ],
 
-  // 4. TOP BRANDS & OFFERS (Exact 6 100% Unbreakable Local Banners)
+  // 4. TOP BRANDS & OFFERS
   topBrandsAndOffers: [
     {
       id: "brand-1",
-      title: "the only trimmer you'll ever need",
+      title: "Everyday Grooming Trimmers",
       href: "/products?search=trimmer",
       image: "/banners/brand_trimmer.svg",
     },
     {
       id: "brand-2",
-      title: "skino Summer Protection UP TO 50% OFF",
+      title: "Daily Sun Protection & SPF Essentials",
       href: "/products?search=sunscreen",
       image: "/banners/brand_skino.svg",
     },
     {
       id: "brand-3",
-      title: "INTRODUCING Vatika Naturals",
+      title: "Vatika Naturals Hair Care",
       href: "/products?category=hair-care",
       image: "/banners/brand_vatika.svg",
     },
     {
       id: "brand-4",
-      title: "Treasure of Glow - UP TO 35% OFF + FREE DELIVERY",
+      title: "Gentle Skincare Favorites",
       href: "/products?discount=true",
       image: "/banners/brand_glow.svg",
     },
     {
       id: "brand-5",
-      title: "The Ordinary. UP TO 33% OFF",
+      title: "The Ordinary Skincare",
       href: "/products?search=the%20ordinary",
       image: "/banners/brand_ordinary.svg",
     },
     {
       id: "brand-6",
-      title: "Soft skin - Luxury Daily Body Care",
+      title: "Daily Body Care & Softening Lotions",
       href: "/products?category=body-care",
       image: "/banners/brand_softskin.svg",
     },
@@ -494,31 +494,31 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
   limitedTimeOffers: [
     {
       id: "bogo",
-      ribbonText: "DOUBLE THE FUN WITH",
+      ribbonText: "SPECIAL DEAL",
       mainText: "BOGO",
       href: "/products?discount=true",
     },
     {
       id: "combo",
-      ribbonText: "PERFECT MATCH",
+      ribbonText: "ROUTINE PACK",
       mainText: "COMBO",
       href: "/products?category=combo",
     },
     {
       id: "offers",
-      ribbonText: "EXCLUSIVE",
+      ribbonText: "SPECIAL",
       mainText: "OFFERS",
       href: "/products?discount=true",
     },
     {
       id: "clearance",
-      ribbonText: "CLEARANCE",
+      ribbonText: "SEASONAL",
       mainText: "SALE",
       href: "/products?discount=true",
     },
   ],
 
-  // 6. SHOP BEAUTY PRODUCTS BY CATEGORY (Girl Model Cards with Name)
+  // 6. SHOP BEAUTY PRODUCTS BY CATEGORY
   shopByCategories: [
     { id: "cat-1", name: "MAKEUP", slug: "makeup", image: "/categories/cat_makeup.jpg" },
     { id: "cat-2", name: "K-BEAUTY", slug: "skin-care", image: "/categories/cat_k_beauty.jpg" },
@@ -528,33 +528,33 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
     { id: "cat-6", name: "FRAGRANCE", slug: "fragrance", image: "/categories/cat_fragrance.jpg" },
   ],
 
-  // 6.5. Before & After Beauty Tech Slider
+  // 6.5. Before & After Slider
   beforeAfterSection: {
     enabled: true,
-    title: "SEE REAL SKIN RESULTS",
-    subtitle: "Interactive 7-Day Skincare Transformation",
+    title: "SEE THE DIFFERENCE",
+    subtitle: "Simple Everyday Skincare Routine",
     beforeImage: "/banners/before_skin.jpg",
     afterImage: "/banners/after_skin.jpg",
-    beforeLabel: "DAY 1 • DULL & DEHYDRATED",
-    afterLabel: "DAY 7 • RADIANT GLASS SKIN",
+    beforeLabel: "BEFORE • DRY & DULL",
+    afterLabel: "AFTER • FRESH & HYDRATED",
     imageFit: "top",
     aspectRatio: "4/3",
-    eyebrowBadge: "CLINICALLY FORMULATED",
-    heading: "Restore Skin Barrier in 7 Days",
-    description: "Target hyperpigmentation, uneven skin tone, and deep dehydration using our certified 3-step routine.",
-    metric1: "96% Noticeable reduction in redness and irritation",
-    metric2: "24h Non-greasy moisture barrier protection",
-    metric3: "100% Direct Certified Authentic Global Imports",
-    buttonText: "SHOP THE TRANSFORMATION ROUTINE",
+    eyebrowBadge: "EVERYDAY ROUTINE",
+    heading: "Simple 3-Step Daily Routine",
+    description: "Lightweight products that leave skin feeling fresh, soft, and comfortable throughout the day.",
+    metric1: "Leaves skin feeling calm and refreshed",
+    metric2: "Lightweight and non-greasy all day",
+    metric3: "100% Direct Certified Authentic Imports",
+    buttonText: "SHOP THE ROUTINE",
     buttonHref: "/products?category=skin-care",
   },
 
   // 7. Trending Products Showcase Section Titles & Card Controls
-  trendingTitle: "TRENDING PRODUCTS",
-  trendingSubtitle: "100% Certified Direct Imports",
+  trendingTitle: "POPULAR PRODUCTS",
+  trendingSubtitle: "100% Certified Authentic Imports",
   trendingViewAllText: "View All →",
   cardSettings: {
-    freeShippingText: "FREE SHIPPING",
+    freeShippingText: "FREE DELIVERY",
     addToCartText: "ADD TO CART",
     orderNowText: "ORDER NOW",
     showDiscountBadge: true,
@@ -567,217 +567,201 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
   // 8. Trust Pillars
   trustPillars: [
     { id: "tp-1", title: "100% Authentic", subtitle: "Direct from Brands", iconName: "shield" },
-    { id: "tp-2", title: "Fast Delivery", subtitle: "24-48h Nationwide", iconName: "truck" },
-    { id: "tp-3", title: "Cash on Delivery", subtitle: "Pay on parcel delivery", iconName: "zap" },
+    { id: "tp-2", title: "Fast Delivery", subtitle: "24-48h in Dhaka", iconName: "truck" },
+    { id: "tp-3", title: "Cash on Delivery", subtitle: "Pay upon parcel delivery", iconName: "zap" },
     { id: "tp-4", title: "Easy Returns", subtitle: "7-Day Return Policy", iconName: "rotate" },
   ],
 
-  // 9. SEO & Humanized FAQ Section (Inspired by Beauty Booth & Ogerio)
+  // 9. SEO & Humanized FAQ Section
   faqSection: {
     enabled: true,
     heading: "Authentic Cosmetics Shop in Bangladesh: Your Beauty Destination",
     headingBn: "বাংলাদেশে আসল কসমেটিকস ও স্কিনকেয়ারের বিশ্বস্ত গন্তব্য",
     subtitle:
-      "Explore 100% genuine skincare, makeup & haircare with nationwide Cash on Delivery, doorstep inspection, and expert beauty guidance.",
+      "Shop 100% genuine skincare, makeup, and hair care with nationwide Cash on Delivery, doorstep parcel inspection, and friendly support.",
     subtitleBn:
-      "১০০% খাঁটি আন্তর্জাতিক স্কিনকেয়ার ও মেকআপ কালেকশন — সারা দেশে ক্যাশ অন ডেলিভারি, পার্সেল চেক করার সুবিধা ও ফ্রি বিউটি পরামর্শ।",
+      "১০০% আসল আন্তর্জাতিক স্কিনকেয়ার ও মেকআপ কালেকশন — সারা দেশে ক্যাশ অন ডেলিভারি, পার্সেল চেক করার সুবিধা ও সার্বক্ষণিক কাস্টমার সাপোর্ট।",
     seoDescriptionHtml: `<div class="space-y-4 text-zinc-700 leading-relaxed text-sm sm:text-base">
   <p>
-    Finding a trustworthy <strong>cosmetics shop in Bangladesh</strong> is no longer just about hunting for a low price or picking a random bottle off a shelf. When it comes to your skin, face, and hair, authenticity is everything. At <strong>Blush &amp; Budget</strong>, we started with a clear mission: every beauty lover in Bangladesh deserves 100% genuine, certified gentle skincare and makeup without paying inflated prices or worrying about counterfeit products. We believe shopping for beauty should feel transparent, comforting, and inspiring.
+    Finding a trustworthy <strong>cosmetics shop in Bangladesh</strong> should be simple and reliable. At <strong>Blush &amp; Budget</strong>, we bring you 100% genuine skincare, makeup, and hair care directly from authorized distributors in South Korea, the UK, the US, and Japan. We believe shopping for beauty should feel easy, honest, and comfortable.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    Why Genuine Cosmetics Matter for Your Skin Health
+    100% Authentic Products with Verified Batch Codes
   </h3>
   <p>
-    Counterfeit cosmetics are unfortunately widespread in local markets. Applying unverified replicas can lead to persistent breakouts, unwanted irritation, and compromised skin wellness. That is why at Blush &amp; Budget, we strictly avoid secondary resellers or unofficial intermediaries. We source our inventory directly from verified brand hubs and authorized global distributors in Seoul, Tokyo, London, and New York. Every serum, moisturizer, sunscreen, and lipstick comes with its manufacturer batch code, verifiable tamper-evident seals, and guaranteed shelf freshness.
+    We source every item directly from official brand partners and authorized distributors. Every serum, cleanser, sunscreen, and lipstick comes with its manufacturer batch code, tamper-evident hygiene seals, and guaranteed freshness.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    Skincare Designed for Bangladesh’s Humid Tropical Weather
+    Skincare Made for Everyday Humid Weather
   </h3>
   <p>
-    Skincare is deeply personal, especially in our climate. Between intense monsoon humidity, scorching summer heat, and urban dust in cities like Dhaka and Chittagong, heavy occlusive creams often clog pores. That is why we curate lightweight, non-comedogenic essentials that actually suit South Asian skin types. Explore our <a href="/products?category=skin-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Skincare Products in Bangladesh</a> to discover gentle low-pH cleansers, soothing centella toners, hydrating hyaluronic acid essences, and oil-free daily sunscreens that leave zero white cast.
+    In warm and humid weather, heavy creams can feel uncomfortable. We focus on lightweight, non-sticky essentials that feel fresh on the skin. Explore our <a href="/products?category=skin-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Skincare Collection</a> to find gentle cleansers, hydrating toners, lightweight serums, and daily sunscreens that blend easily without leaving a white cast.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    Wearable, Long-Lasting Makeup for Every Occasion
+    Everyday Makeup for Work, Study &amp; Events
   </h3>
   <p>
-    Whether you prefer a soft, dewy "no-makeup" look for university or office wear, or vibrant, high-pigment glamour for festive weddings and celebrations, our <a href="/products?category=makeup" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Makeup Collection</a> is handpicked for sweat resistance and all-day comfort. From velvety lip tints and cushion compacts to smudge-proof eyeliners and lightweight setting powders, we bring you formulas that flatter warm undertones effortlessly.
+    Whether you like a natural everyday look or a festive makeup finish, our <a href="/products?category=makeup" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Makeup Collection</a> is curated for long-lasting comfort. From smooth lip tints and cushion compacts to smudge-proof eyeliners and lightweight powders, find shades that suit you best.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    The Korean &amp; Japanese Beauty Revolution
+    Korean &amp; Global Beauty Favorites
   </h3>
   <p>
-    K-Beauty and J-Beauty have transformed how we think about self-care. Rather than masking skin problems with thick layers, gentle botanical ingredients like snail mucin, heartleaf, propolis, rice water, and fermented galactomyces nourish and protect your skin barrier. Discover cult-favorite products from top global names on our <a href="/brands" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Official Brand Directory</a>, where you can browse authentic formulations loved by millions worldwide.
+    K-Beauty is loved around the world for its focus on gentle hydration and natural glow. Ingredients like snail mucin, centella, rice water, and hyaluronic acid help keep skin feeling soft and refreshed. Browse our <a href="/brands" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Brand Directory</a> to explore top authentic names like COSRX, The Ordinary, CeraVe, and Beauty of Joseon.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    Nourishing Hair &amp; Scalp Care for Daily Pollution Protection
+    Nationwide Cash on Delivery with Doorstep Inspection
   </h3>
   <p>
-    Hard water, dust, and humid weather frequently cause scalp buildup, frizz, and excessive hair breakage. We offer targeted solutions in our <a href="/products?category=hair-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Hair Care Collection</a>, featuring clarifying scalps scrubs, peptide-infused strengthening shampoos, and botanical hair oils that restore vitality and shine from root to tip.
-  </p>
-
-  <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    Shop with Complete Peace of Mind: 64-District Cash on Delivery
-  </h3>
-  <p>
-    We believe you should feel 100% confident every time you order. That is why Blush &amp; Budget offers nationwide Cash on Delivery across all 64 districts of Bangladesh. More importantly, we encourage our customers to <strong>inspect their parcels at their doorstep</strong> before completing payment. Combined with our 7-day hassle-free replacement policy and free skincare guidance on WhatsApp, we are here to make your online beauty shopping enjoyable, honest, and truly risk-free.
+    We want you to shop with complete peace of mind. Blush &amp; Budget offers nationwide Cash on Delivery across all 64 districts of Bangladesh. You can <strong>inspect your parcel at your doorstep</strong> before paying the delivery rider. With our 7-day easy replacement policy and helpful customer support, shopping online is simple and worry-free.
   </p>
 </div>`,
     seoDescriptionHtmlBn: `<div class="space-y-4 text-zinc-700 leading-relaxed text-sm sm:text-base">
   <p>
-    বাংলাদেশে একটি নির্ভরযোগ্য <strong>অনলাইন কসমেটিকস শপ</strong> খুঁজে পাওয়া এখন আর কেবল কম দামে পণ্য কেনার বিষয় নয়। আপনার ত্বক, মুখ ও চুলের যত্ন নেওয়ার জন্য পণ্যের আসল ও খাঁটি হওয়া সবচেয়ে জরুরি। <strong>Blush &amp; Budget (ব্লাশ অ্যান্ড বাজেট)</strong> তৈরি হয়েছে এই বিশ্বাস থেকেই—বাংলাদেশের প্রতিটি বিউটি প্রেমী যেন কোনো নকলের ভয় বা অতিরিক্ত দাম ছাড়া ১০০% অথেনটিক ও ব্র্যান্ড-প্রত্যয়িত রূপচর্চা সামগ্রী কিনতে পারেন।
+    বাংলাদেশে একটি নির্ভরযোগ্য <strong>অনলাইন কসমেটিকস শপ</strong> থেকে পছন্দের পণ্য কেনা এখন আরও সহজ। <strong>Blush &amp; Budget (ব্লাশ অ্যান্ড বাজেট)</strong>-এ আমরা দিচ্ছি দক্ষিণ কোরিয়া, যুক্তরাজ্য, যুক্তরাষ্ট্র ও জাপানের ১০০% আসল স্কিনকেয়ার, মেকআপ ও হেয়ার কেয়ার সামগ্রী।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    আসল ও সার্টিফাইড কসমেটিকস কেন ত্বকের জন্য অত্যন্ত জরুরি?
+    ১০০% আসল পণ্য ও অথেনটিক সোর্সিং
   </h3>
   <p>
-    লোকাল মার্কেটে নকল ও ভেজাল বিউটি প্রোডাক্টের ছড়াছড়ি ত্বকের স্বাভাবিক সুস্থতার জন্য ঝুঁকিপূর্ণ। অরিজিনাল নয় এমন রেপ্লিকা ব্যবহারের ফলে ত্বকে ব্রণের উপদ্রব বা অস্বস্তির সৃষ্টি হতে পারে। তাই Blush &amp; Budget-এ আমরা কোনো থার্ড পার্টি বা অনির্ভরযোগ্য সোর্স থেকে পণ্য নিই না। আমাদের প্রতিটি প্রোডাক্ট সরাসরি সিউল (দক্ষিণ কোরিয়া), টোকিও, লন্ডন ও ইউএসএ-এর অফিশিয়াল ব্র্যান্ড ও অনুমোদিত ডিস্ট্রিবিউটর থেকে আমদানি করা। প্রতিটি পণ্যে রয়েছে আসল ম্যানুফ্যাকচারার ব্যাচ কোড ও ইনট্যাক্ট হাইজিন সিল।
+    আমরা কোনো অনির্ভরযোগ্য মাধ্যম থেকে পণ্য নিই না। আমাদের প্রতিটি পণ্য সরাসরি অফিশিয়াল ব্র্যান্ড ও অনুমোদিত ডিস্ট্রিবিউটর থেকে সংগৃহীত। প্রতিটি পণ্যে রয়েছে আসল ম্যানুফ্যাকচারার ব্যাচ কোড ও ইনট্যাক্ট সিল।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    আমাদের দেশের আবহাওয়ার উপযোগী স্কিনকেয়ার সলিউশন
+    আমাদের আবহাওয়ার উপযোগী হালকা স্কিনকেয়ার
   </h3>
   <p>
-    বাংলাদেশের গরম, অতিরিক্ত আর্দ্রতা ও ধুলাবালির কারণে সবার ত্বকে ভারী ক্রিম বা অয়েলি লোশন মানানসই হয় না। তৈলাক্ত ও ব্রনপ্রবণ ত্বকের জন্য দরকার হালকা ও জেল-বেসড প্রোডাক্ট। আমাদের <a href="/products?category=skin-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">স্কিনকেয়ার কালেকশন</a>-এ রয়েছে লো-পিএইচ ফেসওয়াশ, সেন্টেলা ও নিয়াসিনামাইড সিরাম, লাইটওয়েট ময়েশ্চারাইজার এবং হোয়াইট কাস্ট-হীন সানস্ক্রিন যা চিটচিটে না হয়ে ত্বকে গভীর সুরক্ষা দেয়।
+    গরম ও আর্দ্র আবহাওয়ায় ভারী ক্রিমের চেয়ে হালকা ও আরামদায়ক প্রোডাক্ট ব্যবহার করা ভালো। আমাদের <a href="/products?category=skin-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">স্কিনকেয়ার কালেকশন</a>-এ রয়েছে জেন্টল ফেসওয়াশ, হাইড্রেটিং টোনার, লাইটওয়েট সিরাম ও নন-গ্রিসি সানস্ক্রিন যা ত্বককে রাখে সতেজ ও সুরক্ষিত।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    আকর্ষণীয় ও দীর্ঘস্থায়ী মেকআপ কালেকশন
+    দৈনন্দিন ও উৎসবের মেকআপ কালেকশন
   </h3>
   <p>
-    দৈনন্দিন অফিস ও ভার্সিটি লুকের জন্য নো-মেকআপ গ্লো হোক কিংবা বিয়ে ও উৎসবের জমকালো সাজ—আমাদের <a href="/products?category=makeup" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">মেকআপ কালেকশন</a> সাজানো হয়েছে দীর্ঘস্থায়ী ও ঘাম-প্রতিরোধী প্রোডাক্ট দিয়ে। লিপ টিন্ট, কুশন ফাউন্ডেশন, ওয়াটারপ্রুফ আইলাইনার থেকে শুরু করে ফিক্সিং স্প্রে—সবই পাবেন নিশ্চিত কোয়ালিটিতে।
+    অফিস বা ভার্সিটির সাধারণ সাজ হোক কিংবা উৎসবের জমকালো মেকআপ—আমাদের <a href="/products?category=makeup" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">মেকআপ কালেকশন</a> সাজানো হয়েছে আরামদায়ক ও সহজে ব্যবহার উপযোগী পণ্য দিয়ে। লিপ টিন্ট, কুশন ফাউন্ডেশন ও আইলাইনার পাবেন নিশ্চিত কোয়ালিটিতে।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    কোরিয়ান ও জাপানিজ স্কিনকেয়ার ট্রেন্ড
+    কোরিয়ান ও গ্লোবাল সেরা ব্র্যান্ড
   </h3>
   <p>
-    কোরিয়ান গ্লাস স্কিন রুটিন এখন শুধু ট্রেন্ড নয়, বরং স্বাস্থ্যকর ত্বকের নির্ভরযোগ্য সমাধান। স্নেল মিউসিন, হার্টলিফ, রাইস ওয়াটার এবং প্রোবায়োটিকসের মতো প্রাকৃতিক উপাদান ত্বকের গভীর থেকে জেল্লা ফিরিয়ে আনে। বিশ্বের সেরা ব্র্যান্ডগুলোর কালেকশন এক্সপ্লোর করতে ভিজিট করুন আমাদের <a href="/brands" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">টপ ব্র্যান্ডস পেজ</a>।
+    স্নেল মিউসিন, সেন্টেলা ও হায়ালুরোনিক অ্যাসিডের মতো উপাদান ত্বককে রাখে নরম ও হাইড্রেটেড। বিশ্বের জনপ্রিয় ব্র্যান্ডগুলোর পণ্য দেখতে ভিজিট করুন আমাদের <a href="/brands" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">টপ ব্র্যান্ডস পেজ</a>।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
     <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    চুল ও স্ক্যাল্পের বিশেষ যত্ন
+    ৬৪ জেলায় ক্যাশ অন ডেলিভারি ও পার্সেল চেক করার সুবিধা
   </h3>
   <p>
-    কঠিন পানি ও ধুলাবালির কারণে চুলের রুক্ষতা ও ড্যামেজ প্রতিরোধে আমাদের <a href="/products?category=hair-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">হেয়ার কেয়ার ক্যাটাগরি</a>-তে রয়েছে সালফেট-মুক্ত শ্যাম্পু, স্ক্যাল্প স্কেলার এবং নারিশিং হেয়ার সিরাম।
-  </p>
-
-  <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    ৬৪ জেলায় ক্যাশ অন ডেলিভারি ও পার্সেল চেক করার স্বাধীনতা
-  </h3>
-  <p>
-    আপনার শপিং অভিজ্ঞতাকে শতভাগ নিরাপদ করতে Blush &amp; Budget দিচ্ছে সমগ্র বাংলাদেশের ৬৪টি জেলায় ক্যাশ অন ডেলিভারি সুবিধা। পার্সেল হাতে পেয়ে <strong>ডেলিভারিম্যানের সামনে খুলে চেক করে</strong> মূল্য পরিশোধ করার সম্পূর্ণ স্বাধীনতা রয়েছে। সাথে ৭ দিনের রিপ্লেসমেন্ট গ্যারান্টি এবং হোয়াটসঅ্যাপে অভিজ্ঞ বিউটি কনসালট্যান্টদের ফ্রি পরামর্শ।
+    বাংলাদেশের ৬৪টি জেলাতেই রয়েছে ক্যাশ অন ডেলিভারি সুবিধা। পার্সেল হাতে পেয়ে <strong>ডেলিভারিম্যানের সামনে দেখে</strong> মূল্য পরিশোধ করতে পারবেন। সাথে ৭ দিনের সহজ রিটার্ন পলিসি ও কাস্টমার সাপোর্ট।
   </p>
 </div>`,
     faqs: [
       {
         id: "faq-1",
         category: "Authenticity & Sourcing",
-        question: "How can I be 100% sure that the products on Blush & Budget are genuine and authentic?",
+        question: "How do I know the products on Blush & Budget are 100% genuine?",
         questionBn: "আপনাদের প্রোডাক্টগুলো যে ১০০% আসল ও অরিজিনাল, তা কীভাবে নিশ্চিত হব?",
         answer:
-          "We understand that buying beauty products online can feel stressful due to counterfeit copies in the market. Every item on Blush & Budget is imported directly from official brand partners or authorized distribution hubs in South Korea, the UK, the US, and Japan. Every product includes its original manufacturer batch code (verifiable on global batch checkers like CheckFresh), security seal, and barcode. If any item is ever shown to be counterfeit, we provide an unconditional 100% money-back guarantee.",
+          "Every product on Blush & Budget is imported directly from official brand partners or authorized distribution hubs in South Korea, the UK, the US, and Japan. Each item comes with its original manufacturer batch code and packaging seal.",
         answerBn:
-          "অনলাইনে কসমেটিকস কেনার সময় নকলের ভয় থাকা অত্যন্ত স্বাভাবিক। Blush & Budget-এর প্রতিটি প্রোডাক্ট সরাসরি সিউল, লন্ডন, টোকিও ও ইউএসএ-এর অনুমোদিত ডিস্ট্রিবিউশন হাব থেকে সরাসরি আনা হয়। প্রতিটি বক্সে আসল ম্যানুফ্যাকচারার ব্যাচ কোড ও সিল থাকে যা CheckFresh বা সংশ্লিষ্ট ব্র্যান্ড পোর্টালে সহজেই ভেরিফাই করা যায়। কোনো পণ্য নকল প্রমাণিত হলে আমরা নিঃশর্ত ১০০% মানিব্যাক গ্যারান্টি প্রদান করি।",
+          "Blush & Budget-এর প্রতিটি প্রোডাক্ট সরাসরি সিউল, লন্ডন, টোকিও ও ইউএসএ-এর অনুমোদিত ডিস্ট্রিবিউশন হাব থেকে সরাসরি আনা হয়। প্রতিটি পণ্যে আসল ব্যাচ কোড ও সিল থাকে।",
       },
       {
         id: "faq-2",
         category: "Doorstep Inspection",
-        question: "Can I inspect the parcel and check the product before paying the courier rider?",
+        question: "Can I check the parcel before paying the delivery rider?",
         questionBn: "ডেলিভারিম্যানের সামনে পার্সেলটি কি খুলে চেক করে নেওয়া যাবে?",
         answer:
-          "Yes, absolutely! We want you to feel completely confident with your purchase. We actively encourage all our customers to inspect the outer packaging, hygiene seals, and product condition in front of the delivery rider before completing payment. You pay with total confidence.",
+          "Yes. We encourage you to check the outer packaging and product condition in front of the delivery rider before completing your payment.",
         answerBn:
-          "হ্যাঁ, অবশ্যই! আমাদের সম্মানিত গ্রাহকদের সম্পূর্ণ সন্তুষ্টির জন্য আমরা ডেলিভারিম্যানের সামনেই পার্সেলটি ভালো করে চেক করে নেওয়ার পরামর্শ দিই। পণ্যের প্যাকেজিং ও সিল ঠিক রয়েছে কিনা তা নিশ্চিত হয়ে তবেই পেমেন্ট করুন।",
+          "হ্যাঁ, অবশ্যই। ডেলিভারিম্যানের সামনে পার্সেলটি দেখে সিল ও পণ্যের অবস্থা নিশ্চিত হয়ে মূল্য পরিশোধ করতে পারবেন।",
       },
       {
         id: "faq-3",
         category: "Delivery & Courier",
-        question: "How fast is delivery, and do you deliver across all 64 districts in Bangladesh?",
-        questionBn: "ডেলিভারি পেতে কত দিন সময় লাগে এবং সারা বাংলাদেশে কি ক্যাশ অন ডেলিভারি আছে?",
+        question: "How long does delivery take across Bangladesh?",
+        questionBn: "ডেলিভারি পেতে কত দিন সময় লাগে এবং সারা দেশে কি ক্যাশ অন ডেলিভারি আছে?",
         answer:
-          "We offer nationwide Cash on Delivery (COD) across all 64 districts, thanas, and upazilas in Bangladesh via Steadfast and Pathao Courier. Delivery within Dhaka City takes 24 to 48 hours, while deliveries outside Dhaka typically arrive within 2 to 4 business days. You will receive live SMS updates with tracking details as soon as your parcel is dispatched.",
+          "Delivery within Dhaka City takes 24 to 48 hours. Deliveries outside Dhaka typically arrive within 2 to 4 business days. We provide nationwide Cash on Delivery via Steadfast and Pathao Courier.",
         answerBn:
-          "হ্যাঁ! সমগ্র বাংলাদেশের ৬৪টি জেলা ও থানা পর্যায়ে Steadfast এবং Pathao কুরিয়ারের মাধ্যমে ক্যাশ অন ডেলিভারি (COD) সুবিধা রয়েছে। ঢাকা সিটির মধ্যে মাত্র ২৪ থেকে ৪৮ ঘণ্টা এবং ঢাকার বাইরে সাধারণত ২ থেকে ৪ কার্যদিবসের মধ্যে হোম ডেলিভারি পৌঁছে দেওয়া হয়। পার্সেল পাঠানোর সাথে সাথে আপনি ট্র্যাকিং লিংক সহ এসএমএস নোটিফিকেশন পাবেন।",
+          "ঢাকা সিটির মধ্যে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২ থেকে ৪ কার্যদিবসের মধ্যে ডেলিভারি পৌঁছে দেওয়া হয়। সারা দেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে।",
       },
       {
         id: "faq-4",
         category: "Skincare Routines",
-        question: "How do I choose the best skincare routine for Bangladesh's humid weather and oily/acne-prone skin?",
-        questionBn: "আমাদের দেশের গরম ও অতিরিক্ত আর্দ্র আবহাওয়ায় তৈলাক্ত বা ব্রনপ্রবণ ত্বকের জন্য কেমন রুটিন বেছে নেওয়া উচিত?",
+        question: "How do I choose products for hot and humid weather?",
+        questionBn: "আমাদের দেশের গরম ও আর্দ্র আবহাওয়ায় কেমন পণ্য বেছে নেওয়া উচিত?",
         answer:
-          "In hot and humid weather, the golden rule is lightweight layering without clogging pores. We recommend starting with a low-pH gentle cleanser, balancing with a soothing Centella or Heartleaf toner, targeting sebum and pores with a Niacinamide serum, locking hydration with an oil-free water gel cream, and finishing daily with a non-greasy, zero-white-cast SPF 50+ sunscreen.",
+          "In humid weather, lightweight products work best. We recommend a gentle cleanser, a light hydrating toner or serum, an oil-free moisturizer, and a non-greasy daily sunscreen.",
         answerBn:
-          "আমাদের আর্দ্র আবহাওয়ায় ত্বকের লোমকূপ বন্ধ না করে হালকা ওয়াটার-বেসড প্রোডাক্ট বেছে নেওয়া সেরা উপায়। প্রথমে একটি মাইল্ড লো-পিএইচ ফেসওয়াশ দিয়ে মুখ ধুয়ে নিন, সেন্টেলা বা হার্টলিফ টোনার দিয়ে ত্বক শান্ত করুন, অতিরিক্ত তেল ও ব্রণের দাগের জন্য নিয়াসিনামাইড সিরাম দিন, জেল-বেসড ময়েশ্চারাইজার লাগান এবং দিনের বেলা অবশ্যই নন-গ্রীসি SPF 50+ সানস্ক্রিন ব্যবহার করুন।",
+          "গরম ও আর্দ্র আবহাওয়ায় হালকা ও ওয়াটার-বেসড প্রোডাক্ট ব্যবহার করা ভালো। মাইল্ড ফেসওয়াশ, হালকা টোনার বা সিরাম, জেল ময়েশ্চারাইজার এবং নন-গ্রিসি সানস্ক্রিন বেছে নিন।",
       },
       {
         id: "faq-5",
         category: "Returns & Exchanges",
-        question: "What is your return or replacement policy if a product arrives damaged or incorrect?",
+        question: "What is your return policy if an item arrives damaged or incorrect?",
         questionBn: "প্রোডাক্টে কোনো সমস্যা বা ভুল হলে রিটার্ন বা পরিবর্তনের নিয়ম কী?",
         answer:
-          "We provide a hassle-free 7-day replacement guarantee. If an item arrives damaged, leaked, or incorrect, simply reach out to our WhatsApp support or customer care hotline with your order ID and a quick photo/unboxing video within 7 days. We will schedule a free courier pickup directly from your doorstep and dispatch a brand-new replacement immediately at zero extra cost.",
+          "We offer a 7-day replacement policy. If an item arrives damaged or incorrect, contact our customer care within 7 days with your order ID and a photo/unboxing video. We will arrange a free courier pickup from your address and send a replacement.",
         answerBn:
-          "আমাদের রয়েছে ঝামেলাহীন ৭ দিনের রিপ্লেসমেন্ট সুবিধা। কোনো কারণে ক্ষতিগ্রস্ত পার্সেল বা ভুল প্রোডাক্ট পৌঁছালে আনবক্সিংয়ের সময় তোলা ছবি বা ভিডিও সহ আমাদের হোয়াটসঅ্যাপ সাপোর্ট বা হটলাইনে জানান। আমাদের কুরিয়ার প্রতিনিধি সরাসরি আপনার ঠিকানা থেকে পার্সেলটি সম্পূর্ণ ফ্রিতে সংগ্রহ করবে এবং সাথে সাথে নতুন প্রোডাক্ট পাঠানো হবে।",
+          "আমাদের রয়েছে ৭ দিনের সহজ রিপ্লেসমেন্ট সুবিধা। কোনো কারণে ভুল বা ক্ষতিগ্রস্ত পণ্য পৌঁছালে ৭ দিনের মধ্যে ছবি বা ভিডিও সহ আমাদের জানান। আমরা ঠিকানা থেকে পার্সেলটি সংগ্রহ করে নতুন পণ্য পাঠিয়ে দেব।",
       },
       {
         id: "faq-6",
         category: "Skincare Advisory",
-        question: "Can I get personalized product recommendations for my skin routine before buying?",
-        questionBn: "অর্ডার করার আগে কি আমার ত্বকের ধরন অনুযায়ী ফ্রি পরামর্শ পেতে পারি?",
+        question: "Can I get help choosing the right products before ordering?",
+        questionBn: "অর্ডার করার আগে কি প্রোডাক্ট বেছে নিতে সাহায্য পেতে পারি?",
         answer:
-          "Yes, completely free! If you are unsure which serum, moisturizer, or routine matches your skin goals (blemishes, dark spots, sun tan, uneven tone, or dullness), our certified beauty advisors are available on WhatsApp and live chat daily from 10 AM to 10 PM. We listen to your concerns and recommend only what your skin genuinely needs.",
+          "Yes! If you need help choosing the right cleanser, serum, or moisturizer for your everyday routine, message us on WhatsApp daily from 10 AM to 10 PM.",
         answerBn:
-          "অবশ্যই এবং সম্পূর্ণ বিনামূল্যে! আপনার ত্বকের চাহিদা (যেমন: ব্রণের দাগ, রোদে পোড়া ভাব, আনইভেন স্কিন টোন বা শুষ্কতা) অনুযায়ী কোন পণ্যটি উপযুক্ত হবে তা জানতে আমাদের বিউটি এক্সপার্টরা প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত হোয়াটসঅ্যাপ ও লাইভ সাপোর্টে পরামর্শ দিতে প্রস্তুত থাকেন।",
+          "অবশ্যই! আপনার রুটিনের জন্য উপযুক্ত পণ্য বেছে নিতে প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত আমাদের হোয়াটসঅ্যাপে মেসেজ দিয়ে সহায়তা নিতে পারেন।",
       },
       {
         id: "faq-7",
         category: "Payment & Pricing",
-        question: "Do I need to pay any advance deposit for Cash on Delivery orders?",
+        question: "Do I need to pay any advance for Cash on Delivery orders?",
         questionBn: "ক্যাশ অন ডেলিভারিতে অর্ডার করতে কি কোনো অগ্রিম টাকা দিতে হয়?",
         answer:
-          "For regular orders, you pay 100% of your bill directly to the courier rider upon delivery with zero advance payment. For certain remote upazila deliveries or high-value multi-item packages, a nominal courier confirmation deposit may be requested to protect against fraudulent bookings, which is fully adjusted against your final invoice.",
+          "For regular orders, you pay the full amount directly to the courier rider upon delivery. No advance payment is needed.",
         answerBn:
-          "স্বাভাবিক অর্ডারের ক্ষেত্রে কোনো অগ্রিম ছাড়াই সম্পূর্ণ মূল্য ডেলিভারিম্যানের কাছে ক্যাশ অন ডেলিভারিতে পরিশোধ করতে পারবেন। কেবল দূরবর্তী থানা এলাকা বা বড় অর্ডারের ক্ষেত্রে ফেক অর্ডার এড়াতে নামমাত্র কুরিয়ার ফি অগ্রিম গ্রহণ করা হতে পারে, যা আপনার মূল বিলের সাথে সম্পূর্ণ অ্যাডজাস্ট করা হয়।",
+          "সাধারণ অর্ডারের ক্ষেত্রে কোনো অগ্রিম ছাড়াই সম্পূর্ণ মূল্য পণ্য হাতে পেয়ে ডেলিভারিম্যানের কাছে পরিশোধ করতে পারবেন।",
       },
       {
         id: "faq-8",
         category: "Product Safety",
-        question: "Are your skincare and makeup products certified safe and free from toxic additives?",
-        questionBn: "আপনাদের পণ্যগুলো কি ত্বকের জন্য নিরাপদ ও ক্ষতিকর উপাদানমুক্ত?",
+        question: "Are your beauty products safe and authentic?",
+        questionBn: "আপনাদের পণ্যগুলো কি নিরাপদ ও আসল?",
         answer:
-          "100% safe and tested. We strictly reject harsh bleaching agents, toxic additives, or unverified chemical compounds. Every brand we carry complies with strict international cosmetic safety standards (such as Korean MFDS, EU Cosmetic Safety Regulations, and US FDA compliance) focused on gentle barrier restoration, natural radiance, and long-term cosmetic safety and skin wellness.",
+          "Yes. We only carry genuine products from reputable international brands that follow strict safety and quality standards.",
         answerBn:
-          "শতভাগ নিরাপদ ও সার্টিফাইড। আমরা ক্ষতিকর ব্লিচিং এজেন্ট, বিষাক্ত কেমিক্যাল বা অনুমোদনহীন উপাদানযুক্ত কোনো পণ্য বিক্রি করি না। আমাদের প্রতিটি ব্র্যান্ড আন্তর্জাতিক কসমেটিক নিরাপত্তা মানদণ্ড (যেমন কোরিয়ান MFDS, ইউরোপীয় ইউনিয়ন ও ইউএস এফডিএ) মেনে প্রস্তুত, যা ত্বকের ক্ষতি না করে ভেতর থেকে প্রাকৃতিক সুস্থতা ও গ্লো বজায় রাখে।",
+          "হ্যাঁ। আমরা কেবল আন্তর্জাতিক মানসম্পন্ন আসল ব্র্যান্ডের নিরাপদ রূপচর্চা সামগ্রী সরবরাহ করি।",
       },
     ],
     showWhatsappCard: true,
     whatsappTitle: "Need help choosing the right beauty products?",
     whatsappTitleBn: "সঠিক প্রোডাক্ট নির্বাচনে সাহায্য প্রয়োজন?",
     whatsappSubtitle:
-      "Chat directly with our certified beauty advisors on WhatsApp daily 10 AM to 10 PM.",
+      "Chat directly with our team on WhatsApp daily 10 AM to 10 PM.",
     whatsappSubtitleBn:
-      "আমাদের বিউটি এক্সপার্টরা প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত হোয়াটসঅ্যাপে সক্রিয় আছেন।",
+      "আমাদের কাস্টমার সাপোর্ট প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত হোয়াটসঅ্যাপে প্রস্তুত আছে।",
     whatsappButtonText: "Chat on WhatsApp",
-    whatsappButtonTextBn: "হোয়াটসঅ্যাপে ফ্রি পরামর্শ নিন",
+    whatsappButtonTextBn: "হোয়াটসঅ্যাপে মেসেজ দিন",
     whatsappNumber: "+880 1700-000000",
   },
 
@@ -786,19 +770,19 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
     brandText: "Blush & Budget",
     logoImageUrl: "",
     aboutText:
-      "Bangladesh's most trusted beauty and personal care destination for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.",
+      "Your trusted beauty store in Bangladesh for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.",
     aboutTextBn:
-      "বাংলাদেশের সবচেয়ে নির্ভরযোগ্য বিউটি ও স্কিনকেয়ার গন্তব্য। ১০০% অরিজিনাল কোরিয়ান ও ওয়েস্টার্ন কসমেটিকস সারা দেশে ক্যাশ অন ডেলিভারিতে দ্রুত পৌঁছানো হয়।",
-    copyrightText: "© 2026 Blush & Budget. All rights reserved. 100% Genuine Certified Cosmetics.",
+      "বাংলাদেশের নির্ভরযোগ্য বিউটি শপ। ১০০% আসল আন্তর্জাতিক স্কিনকেয়ার, মেকআপ ও হেয়ার কেয়ার সামগ্রী সারা দেশে ক্যাশ অন ডেলিভারিতে দ্রুত পৌঁছে দেওয়া হয়।",
+    copyrightText: "© 2026 Blush & Budget. All rights reserved. 100% Authentic Products.",
     supportPhone: "+880 1700-000000",
     supportEmail: "support@example.com",
     supportAddress: "Gulshan, Dhaka, Bangladesh",
     supportAddressBn: "গুলশান, ঢাকা, বাংলাদেশ",
     supportWhatsapp: "+880 1700-000000",
-    newsletterTitle: "Get Exclusive Deals & Beauty Tips",
-    newsletterTitleBn: "এক্সক্লুসিভ অফার ও বিউটি টিপস পান",
-    newsletterSubtitle: "Subscribe for new arrivals, flash sale coupons & skincare routine guides.",
-    newsletterSubtitleBn: "নতুন প্রোডাক্ট রিলিজ, ডিসকাউন্ট ভাউচার ও স্কিনকেয়ার গাইড পেতে সাবস্ক্রাইব করুন।",
+    newsletterTitle: "Get Special Offers & Beauty Tips",
+    newsletterTitleBn: "বিশেষ অফার ও বিউটি টিপস পান",
+    newsletterSubtitle: "Subscribe for new arrivals, discounts, and simple skincare guides.",
+    newsletterSubtitleBn: "নতুন পণ্য, ডিসকাউন্ট ও সহজ স্কিনকেয়ার গাইডের আপডেট পেতে সাবস্ক্রাইব করুন।",
     showTrustPillars: true,
     showNewsletter: true,
     showPaymentBadges: true,
@@ -851,6 +835,6 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
   footerBrandText: "Blush & Budget",
   footerLogoImageUrl: "",
   footerAboutText:
-    "Bangladesh's most trusted beauty and personal care destination for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.",
-  footerCopyright: "© 2026 Blush & Budget. All rights reserved. 100% Genuine Certified Cosmetics.",
+    "Your trusted beauty store in Bangladesh for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.",
+  footerCopyright: "© 2026 Blush & Budget. All rights reserved. 100% Authentic Products.",
 };

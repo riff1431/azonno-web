@@ -47,32 +47,32 @@ export function SkincareQuizClient() {
   const questions = [
     {
       id: 1,
-      title: language === "bn" ? "আপনার ত্বকের প্রধান ধরণ কোনটি?" : "What is your primary skin type?",
+      title: language === "bn" ? "আপনার স্কিনের ধরণ কোনটি?" : "What is your skin type?",
       subtitle: language === "bn"
-        ? "বাংলাদেশের আবহাওয়ায় দিনের মাঝামাঝি সময়ে আপনার ত্বকের অনুভূতি কেমন হয়?"
-        : "How does your face feel midway through the day in Bangladesh climate?",
+        ? "প্রতিদিনের রুটিনে আপনার ত্বক সাধারণত কেমন অনুভব হয়?"
+        : "How does your skin usually feel during the day?",
       options: [
         {
-          label: language === "bn" ? "শুষ্ক ও টানটান ত্বক" : "Dry & Dehydrated Skin",
-          desc: language === "bn" ? "মুখ ধোয়ার পর ত্বক টানটান, খসখসে বা রুক্ষ লাগে" : "Feels tight, flaky, or rough after cleansing",
+          label: language === "bn" ? "শুষ্ক ত্বক" : "Dry Skin",
+          desc: language === "bn" ? "মুখ ধোয়ার পর কিছুটা টানটান বা খসখসে লাগে" : "Feels tight or slightly dry after cleansing",
           icon: Droplets,
           value: "dry",
         },
         {
-          label: language === "bn" ? "তৈলাক্ত ও চকচকে ত্বক" : "Oily & Shiny Skin",
-          desc: language === "bn" ? "T-জোনে অতিরিক্ত তেল জমে, ব্রণ হওয়ার প্রবণতা বেশি" : "Excess sebum around T-zone, prone to breakouts",
+          label: language === "bn" ? "তৈলাক্ত ত্বক" : "Oily Skin",
+          desc: language === "bn" ? "মুখে তেলতেলে ভাব বা অতিরিক্ত শাইন থাকে" : "Feels shiny with excess oil, especially on T-zone",
           icon: Sparkles,
           value: "oily",
         },
         {
           label: language === "bn" ? "মিশ্র ত্বক" : "Combination Skin",
-          desc: language === "bn" ? "কপাল ও নাক তৈলাক্ত, কিন্তু গাল স্বাভাবিক বা শুষ্ক" : "Oily forehead and nose, normal/dry cheeks",
+          desc: language === "bn" ? "কপাল ও নাকে তেলতেলে, কিন্তু গাল স্বাভাবিক বা শুষ্ক" : "Oily on forehead and nose, normal or dry on cheeks",
           icon: Scale,
           value: "combo",
         },
         {
-          label: language === "bn" ? "সংবেদনশীল ত্বক" : "Sensitive & Reactive Skin",
-          desc: language === "bn" ? "সহজেই লালচে ভাব, চুলকানি বা নতুন পণ্যে জ্বালাপোড়া হয়" : "Easily irritated, redness, stung by harsh products",
+          label: language === "bn" ? "সংবেদনশীল ত্বক" : "Sensitive Skin",
+          desc: language === "bn" ? "নতুন কোনো পণ্য ব্যবহারে সহজেই অস্বস্তি বা লালচে ভাব হয়" : "Easily feels delicate or uncomfortable with new products",
           icon: ShieldCheck,
           value: "sensitive",
         },
@@ -80,32 +80,32 @@ export function SkincareQuizClient() {
     },
     {
       id: 2,
-      title: language === "bn" ? "আপনার ত্বকের প্রধান সমস্যা কি?" : "What is your main skincare concern?",
+      title: language === "bn" ? "আপনার প্রধান স্কিনকেয়ার লক্ষ্য কি?" : "What is your main skincare goal?",
       subtitle: language === "bn"
-        ? "আপনি কোন সমস্যার সমাধানে সবচেয়ে বেশি গুরুত্ব দিতে চান?"
-        : "Select the primary skin transformation you want to achieve.",
+        ? "যে বিষয়ে আপনি সবচেয়ে বেশি ফোকাস করতে চান তা বেছে নিন।"
+        : "Choose what you would like to focus on for your daily routine.",
       options: [
         {
-          label: language === "bn" ? "ডিপ হাইড্রেশন ও গ্লাস স্কিন" : "Deep Hydration & Glass Skin",
-          desc: language === "bn" ? "স্কিন ব্যারিয়ার মেরামত ও ভেতর থেকে উজ্জ্বল আভা" : "Repair damaged barrier, plumpness, natural radiant glow",
+          label: language === "bn" ? "হাইড্রেশন ও ফ্রেশ লুক" : "Hydration & Fresh Glow",
+          desc: language === "bn" ? "ত্বকে আর্দ্রতা বজায় রাখা ও ফ্রেশ, কোমল অনুভূতি" : "Keep skin soft, comfortable, and hydrated throughout the day",
           icon: Droplets,
           value: "hydration",
         },
         {
-          label: language === "bn" ? "ব্রণ, পোরস ও অমসৃণ টেক্সচার" : "Acne, Pores & Texture",
-          desc: language === "bn" ? "সক্রিয় ব্রণ দূর করা ও গর্ত/খোঁচামুক্ত মসৃণ ত্বক" : "Clear active blemishes and smooth bumpy texture",
+          label: language === "bn" ? "অয়েল কন্ট্রোল ও স্মুথ ফিল" : "Oil Control & Smooth Feel",
+          desc: language === "bn" ? "অতিরিক্ত তেল নিয়ন্ত্রণ এবং ত্বককে মসৃণ ও পরিষ্কার রাখা" : "Keep excess oil balanced and skin feeling clean and smooth",
           icon: Sparkles,
           value: "acne",
         },
         {
-          label: language === "bn" ? "কালো দাগ ও পিগমেন্টেশন" : "Dark Spots & Hyperpigmentation",
-          desc: language === "bn" ? "রোদে পোড়া দাগ, ব্রণের দাগ হালকা করা ও গায়ের রঙ উজ্জ্বল করা" : "Fade sun spots, post-acne marks, and even tone",
+          label: language === "bn" ? "উজ্জ্বলতা ও সমান স্কিন টোন" : "Brightening & Even Tone",
+          desc: language === "bn" ? "রোদে পোড়া ভাব দূর করে স্কিন টোন সমান ও ফ্রেশ রাখা" : "Help create a more even-looking and fresh complexion",
           icon: Sun,
           value: "brightening",
         },
         {
-          label: language === "bn" ? "অ্যান্টি-এজিং ও টানটান চামড়া" : "Anti-Aging & Elasticity",
-          desc: language === "bn" ? "বয়সের ছাপ, বলিরেখা দূর করা এবং কোলাজেন সাপোর্ট" : "Fine lines, firmness, collagen support",
+          label: language === "bn" ? "কোমল ও টানটান অনুভূতি" : "Firmness & Smooth Feel",
+          desc: language === "bn" ? "ত্বকের নমনীয়তা ও মসৃণ টেক্সচার ধরে রাখা" : "Support skin elasticity and a smooth, youthful look",
           icon: Hourglass,
           value: "aging",
         },
@@ -113,26 +113,26 @@ export function SkincareQuizClient() {
     },
     {
       id: 3,
-      title: language === "bn" ? "আপনার দৈনন্দিন পরিবেশ ও জীবনধারা কেমন?" : "What is your daily lifestyle exposure?",
+      title: language === "bn" ? "আপনার দৈনন্দিন পরিবেশ কেমন?" : "What is your daily environment?",
       subtitle: language === "bn"
-        ? "আপনার ত্বক দৈনিক কোন পারিপার্শ্বিক চাপের সম্মুখীন হয়?"
-        : "Understanding your daily environmental stressors.",
+        ? "প্রতিদিনের রুটিনের জন্য উপযুক্ত পণ্য বাছাই করতে সাহায্য করে।"
+        : "Helps us choose products that fit your day-to-day routine.",
       options: [
         {
-          label: language === "bn" ? "বেশি সময় রোদে ও বাইরে থাকা" : "High Outdoor & Sun Exposure",
-          desc: language === "bn" ? "প্রতিদিন যাতায়াত, ধুলোবালি ও কড়া রোদে থাকা" : "Daily commute, public transport, outdoor activities",
+          label: language === "bn" ? "বেশি সময় বাইরে থাকা" : "Mostly Outdoors",
+          desc: language === "bn" ? "বাইরে যাতায়াত, রোদ ও ধুলোবালির মধ্যে বেশি থাকা" : "Regular commute, outdoors and sun exposure",
           icon: Sun,
           value: "outdoor",
         },
         {
-          label: language === "bn" ? "শীতাতপ নিয়ন্ত্রিত রুমে থাকা" : "Air Conditioned Indoors",
-          desc: language === "bn" ? "অফিস বা পড়ার রুমে ৮+ ঘণ্টা এসির ঠাণ্ডায় থাকা (ত্বক শুষ্ক করে)" : "8+ hours in AC office or study room (dehydrating)",
+          label: language === "bn" ? "বেশিরভাগ সময় এসিতে থাকা" : "Mostly Indoors (AC)",
+          desc: language === "bn" ? "অফিস বা পড়ার রুমে দীর্ঘ সময় এসির বাতাসে থাকা" : "Long hours in air-conditioned rooms",
           icon: Wind,
           value: "indoor",
         },
         {
-          label: language === "bn" ? "ইনডোর ও আউটডোরের ভারসাম্যপূর্ণ মিশ্রণ" : "Balanced Indoor & Outdoor",
-          desc: language === "bn" ? "ডেস্ক কাজের সাথে সাধারণ দৈনন্দিন যাতায়াত" : "Mix of regular desk work and daily errands",
+          label: language === "bn" ? "ইনডোর ও আউটডোরের মিশ্রণ" : "Balanced Indoor & Outdoor",
+          desc: language === "bn" ? "সাধারণ ঘরোয়া বা অফিস কাজের সাথে সাধারণ যাতায়াত" : "Mix of desk work and everyday errands",
           icon: CloudSun,
           value: "mixed",
         },
@@ -225,12 +225,12 @@ export function SkincareQuizClient() {
             <Sparkles className="h-8 w-8 animate-spin" />
           </div>
           <h2 className="text-xl font-black text-gray-900">
-            {language === "bn" ? "আপনার ত্বকের প্রোফাইল বিশ্লেষণ করা হচ্ছে..." : "Analyzing Your Skin Profile..."}
+            {language === "bn" ? "আপনার জন্য সেরা রুটিন তৈরি হচ্ছে..." : "Finding your daily routine..."}
           </h2>
           <p className="text-xs text-gray-500 max-w-sm mx-auto">
             {language === "bn"
-              ? "বাংলাদেশের আবহাওয়ার সাথে সামঞ্জস্যপূর্ণ ৪৫০+ সার্টিফাইড কসমেটিক্স থেকে সেরা উপাদান মিলিয়ে দেখা হচ্ছে।"
-              : "Matching active formulations against 450+ certified imported cosmetics tailored for Bangladesh weather."}
+              ? "আপনার পছন্দের ভিত্তিতে উপযোগী স্কিনকেয়ার পণ্য খুঁজে বের করা হচ্ছে।"
+              : "Matching gentle, trusted beauty products to fit your daily needs."}
           </p>
         </div>
       );
@@ -247,7 +247,7 @@ export function SkincareQuizClient() {
         <div className="rounded-3xl border border-pink-100 bg-linear-to-br from-pink-50/60 via-white to-pink-50/40 p-8 sm:p-10 shadow-card text-center space-y-3">
           <span className="rounded-full bg-pink-100 text-[#e91e63] px-3.5 py-1 text-xs font-black uppercase tracking-wider inline-flex items-center gap-1.5 shadow-2xs">
             <Sparkles className="h-3.5 w-3.5 text-[#e91e63]" />
-            {language === "bn" ? "১০০% ডার্মাটোলজিক্যালি ম্যাচড রুটিন" : "100% Dermatologically Matched Routine"}
+            {language === "bn" ? "আপনার জন্য সাজানো স্কিনকেয়ার রুটিন" : "Personalized Skincare Routine"}
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
             {matchedData.routineTitle}

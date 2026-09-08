@@ -4,7 +4,7 @@ import LoginForm from "@/components/storefront/login-form";
 
 export const metadata: Metadata = {
   title: "Sign In",
-  description: "Sign in to your ecomXbangladesh account.",
+  description: "Sign in to your Blush & Budget account.",
 };
 
 export default function LoginPage() {

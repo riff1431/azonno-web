@@ -20,7 +20,7 @@ export async function generateMetadata({
   if (!brand) return { title: "Brand Not Found" };
 
   return {
-    title: brand.seo_title || `${brand.name} Authentic Products — ecomXbangladesh`,
+    title: brand.seo_title || `${brand.name} Authentic Products — Blush & Budget`,
     description: brand.seo_description || `Shop 100% genuine ${brand.name} products in Bangladesh with cash on delivery.`,
   };
 }
