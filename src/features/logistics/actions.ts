@@ -293,7 +293,7 @@ export async function syncLiveCourierStatus(orderId: string) {
     return { success: false, error: "Order not found." };
   }
 
-  const cid = order.consignment_id || order.tracking_code;
+  const cid = order.consignment_id || order.tracking_code || order.tracking_id;
   if (!cid) {
     return { success: false, error: "Order has not been dispatched to a courier yet." };
   }
@@ -303,19 +303,29 @@ export async function syncLiveCourierStatus(orderId: string) {
   let statusNote = "";
   let rawData: any = null;
 
-  if (courier.includes("pathao")) {
+  if (courier.includes("pathao") || String(cid).startsWith("PTH")) {
     const { getPathaoOrderStatus } = await import("./services/pathao");
     const res = await getPathaoOrderStatus(cid);
     liveStatus = (res.delivery_status || "").toLowerCase();
     statusNote = `Pathao Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
     rawData = res;
   } else {
-    // Default to SteadFast Courier
-    const { getSteadfastStatusByCid } = await import("./services/steadfast");
-    const res = await getSteadfastStatusByCid(cid);
-    liveStatus = (res.delivery_status || "").toLowerCase();
+    // SteadFast Courier with multi-key fallback
+    const { getSteadfastStatusByCid, getSteadfastStatusByInvoice, getSteadfastStatusByTrackingCode } = await import("./services/steadfast");
+    let res = await getSteadfastStatusByCid(cid);
+    if ((!res || res.status === 404 || res.status === 500) && order.tracking_code) {
+      res = await getSteadfastStatusByTrackingCode(order.tracking_code);
+    }
+    if ((!res || res.status === 404 || res.status === 500) && order.order_number) {
+      res = await getSteadfastStatusByInvoice(order.order_number);
+    }
+    liveStatus = (res?.delivery_status || res?.status || "").toLowerCase();
     statusNote = `SteadFast Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
     rawData = res;
+  }
+
+  if (!liveStatus) {
+    liveStatus = "in_transit";
   }
 
   // Map to system OrderStatus
@@ -323,15 +333,26 @@ export async function syncLiveCourierStatus(orderId: string) {
   let isReturned = false;
   let isCancelled = false;
 
-  if (liveStatus.includes("delivered") && !liveStatus.includes("pending")) {
-    mappedStatus = "completed";
-  } else if (liveStatus.includes("cancelled") || liveStatus === "cancel") {
+  const normalized = liveStatus.toLowerCase().trim();
+
+  if (normalized.includes("delivered") || normalized === "partial_delivered" || normalized === "payment_collected") {
+    mappedStatus = "delivered";
+  } else if (normalized.includes("cancel") || normalized === "cancelled_approval_pending") {
     mappedStatus = "cancelled";
     isCancelled = true;
-  } else if (liveStatus.includes("return") || liveStatus.includes("rto") || liveStatus.includes("hold")) {
+  } else if (normalized.includes("return") || normalized.includes("rto") || normalized === "failed") {
     mappedStatus = "returned";
     isReturned = true;
-  } else if (liveStatus.includes("transit") || liveStatus.includes("picked") || liveStatus.includes("review") || liveStatus.includes("pending")) {
+  } else if (normalized.includes("hold") || normalized === "reschedule") {
+    mappedStatus = "on-hold";
+  } else if (
+    normalized.includes("transit") ||
+    normalized.includes("picked") ||
+    normalized.includes("review") ||
+    normalized.includes("pending") ||
+    normalized.includes("pickup") ||
+    normalized.includes("out_for_delivery")
+  ) {
     mappedStatus = "shipped";
   }
 
@@ -388,7 +409,7 @@ export async function syncLiveCourierStatus(orderId: string) {
   return {
     success: true,
     orderId,
-    courierName: order.courier_name || "SteadFast",
+    courierName: order.courier_name || (String(cid).startsWith("PTH") ? "Pathao Courier" : "SteadFast Courier"),
     consignmentId: cid,
     liveStatus,
     mappedStatus,
@@ -397,5 +418,6 @@ export async function syncLiveCourierStatus(orderId: string) {
     isCancelled,
   };
 }
+
 
 

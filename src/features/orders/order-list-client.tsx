@@ -315,7 +315,9 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
             o.id === orderId
               ? {
                   ...o,
-                  status: res.mappedStatus,
+                  status: res.mappedStatus as any,
+                  courier_name: res.courierName || o.courier_name,
+                  consignment_id: res.consignmentId || o.consignment_id,
                   is_courier_returned: res.isReturned,
                   is_courier_cancelled: res.isCancelled,
                   courier_webhook_note: res.statusNote,
@@ -344,7 +346,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
   // 1.3 Bulk Real-Time Courier Sync for all Selected Dispatched Orders
   const handleBulkSyncCouriers = async () => {
     const targets = orders.filter(
-      (o) => selectedIds.includes(o.id) && Boolean(o.consignment_id || o.tracking_code)
+      (o) => selectedIds.includes(o.id) && Boolean(o.consignment_id || o.tracking_code || o.tracking_id)
     );
     if (targets.length === 0) {
       setBannerMsg({ text: "No dispatched orders in selection to sync.", isError: true });
@@ -363,7 +365,9 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               o.id === ord.id
                 ? {
                     ...o,
-                    status: res.mappedStatus,
+                    status: res.mappedStatus as any,
+                    courier_name: res.courierName || o.courier_name,
+                    consignment_id: res.consignmentId || o.consignment_id,
                     is_courier_returned: res.isReturned,
                     is_courier_cancelled: res.isCancelled,
                     courier_webhook_note: res.statusNote,
@@ -1137,12 +1141,17 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                   const rawPhone = phone.replace(/[^0-9]/g, "");
                   const bdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;
                   const customerName = addr.name || ord.guest_name || "Customer";
-                  const isShipped = ord.status === "shipped" || Boolean(ord.consignment_id);
-                  const courier = ord.courier_name || "SteadFast Courier";
-                  const consignment = ord.consignment_id || ord.tracking_code || ord.tracking_id || "";
+                  const consignment = ord.consignment_id || ord.tracking_code || ord.tracking_id || addr.consignment_id || addr.tracking_id || "";
+                  const activeCid = consignment;
+                  const rawCourier = (ord.courier_name || (activeCid.startsWith("PTH") ? "Pathao Courier" : activeCid.startsWith("SF") ? "SteadFast Courier" : "")).trim();
+                  const isPathao = rawCourier.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
+                  const isSteadfast = rawCourier.toLowerCase().includes("steadfast") || activeCid.startsWith("SF") || (!isPathao && Boolean(activeCid));
+                  const courierBrand = isPathao ? "Pathao" : isSteadfast ? "SteadFast" : (rawCourier || "SteadFast");
+                  const courier = rawCourier || (isPathao ? "Pathao Courier" : "SteadFast Courier");
+                  const isShipped = ord.status === "shipped" || Boolean(activeCid);
                   const isLoading = actionLoadingId === ord.id;
-                  const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(consignment)));
-                  const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(consignment)));
+                  const isRet = Boolean(ord.is_courier_returned || ord.status === "returned" || (ord.status === "failed" && Boolean(activeCid)));
+                  const isCanc = Boolean(ord.is_courier_cancelled || (ord.status === "cancelled" && Boolean(activeCid)));
                   const webhookNote = ord.courier_webhook_note || ord.admin_note || "";
 
                   const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
@@ -1546,13 +1555,23 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       <td className="px-4 py-3.5 text-center whitespace-nowrap">
                         {(() => {
                           const isSyncing = syncingCourierId === ord.id;
-                          const activeCid = consignment || ord.tracking_code || ord.tracking_id || "";
-                          const courierBrand = (courier || "SteadFast").split(" ")[0];
-                          const trackUrl = ord.tracking_url || (courier.toLowerCase().includes("pathao")
-                            ? `https://merchant.pathao.com/tracking?consignment_id=${activeCid}`
+                          const isDelivered = ord.status === "completed" || ord.status === "delivered";
+                          const isHold = ord.status === "on-hold" || ord.status === "on_hold";
+                          const trackUrl = ord.tracking_url || (isPathao
+                            ? `https://pathao.com/courier/tracking/?consignment_id=${activeCid}`
                             : `https://steadfast.com.bd/t/${activeCid}`);
 
-                          if (isRet) {
+                          const isAlreadyDispatched = Boolean(
+                            activeCid ||
+                            ord.status === "shipped" ||
+                            ord.status === "in_transit" ||
+                            ord.status === "out_for_delivery" ||
+                            (isDelivered && Boolean(ord.courier_name)) ||
+                            (isRet && Boolean(ord.courier_name)) ||
+                            (isCanc && Boolean(ord.courier_name))
+                          );
+
+                          if (isAlreadyDispatched) {
                             return (
                               <div className="flex flex-col items-center gap-1">
                                 <div className="flex items-center gap-1">
@@ -1560,125 +1579,106 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                     href={trackUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 text-rose-700 font-bold text-xs bg-rose-50 hover:bg-rose-100 h-6 px-2 rounded-lg border border-rose-200 transition-colors shadow-2xs"
-                                    title="Parcel returned from courier. Click to open live tracking."
-                                  >
-                                    <RotateCcw className="h-3 w-3 text-rose-600 shrink-0 animate-pulse" />
-                                    <span>RTO Return ({courierBrand})</span>
-                                    <ExternalLink className="h-2.5 w-2.5 text-rose-600 opacity-60" />
-                                  </a>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSyncSingleCourier(ord.id)}
-                                    disabled={isSyncing}
-                                    className="h-6 w-6 flex items-center justify-center rounded-lg border border-rose-200 bg-white hover:bg-rose-50 text-rose-700 transition-colors shadow-2xs"
-                                    title="Query live delivery status from Courier API"
-                                  >
-                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
-                                  </button>
-                                </div>
-                                {activeCid && (
-                                  <div className="inline-flex items-center gap-1 text-[10px] font-mono text-rose-700 font-bold">
-                                    <span>CID: {activeCid}</span>
-                                    <button
-                                      onClick={() => handleCopy(activeCid, ord.id)}
-                                      title="Copy Consignment ID"
-                                      className="hover:text-rose-950 p-0.5"
-                                    >
-                                      {copiedId === ord.id ? <Check className="h-2.5 w-2.5 text-emerald-600" /> : <Copy className="h-2.5 w-2.5" />}
-                                    </button>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          }
-
-                          if (isCanc) {
-                            return (
-                              <div className="flex flex-col items-center gap-1">
-                                <div className="flex items-center gap-1">
-                                  <div
-                                    className="inline-flex items-center gap-1 text-amber-800 font-bold text-[11px] bg-amber-50 h-6 px-2 rounded-lg border border-amber-200 shadow-2xs"
-                                    title={`Cancelled by courier: ${webhookNote || "Cancelled"}`}
-                                  >
-                                    <Ban className="h-3 w-3 text-amber-600" />
-                                    <span>Cancelled ({courierBrand})</span>
-                                  </div>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSyncSingleCourier(ord.id)}
-                                    disabled={isSyncing}
-                                    className="h-6 w-6 flex items-center justify-center rounded-lg border border-amber-200 bg-white hover:bg-amber-50 text-amber-700 transition-colors shadow-2xs"
-                                    title="Query live delivery status from Courier API"
-                                  >
-                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
-                                  </button>
-                                </div>
-                                {activeCid && (
-                                  <span className="text-[10px] font-mono text-amber-800 font-bold">CID: {activeCid}</span>
-                                )}
-                              </div>
-                            );
-                          }
-
-                          const isDispatched = Boolean(activeCid || ord.status === "shipped" || ord.status === "completed" || ord.status === "delivered");
-                          const isProcessing = ord.status === "processing" || ord.status === "confirmed";
-
-                          if (isDispatched) {
-                            const isDelivered = ord.status === "completed" || ord.status === "delivered";
-                            return (
-                              <div className="flex flex-col items-center gap-1">
-                                <div className="flex items-center gap-1">
-                                  <a
-                                    href={trackUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`inline-flex items-center gap-1.5 font-bold text-xs h-6 px-2.5 rounded-lg border transition-colors shadow-2xs ${
-                                      isDelivered
-                                        ? "bg-emerald-100/80 text-emerald-800 border-emerald-300 hover:bg-emerald-200"
-                                        : "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                                    className={`inline-flex items-center gap-1.5 font-bold text-xs h-6 px-2.5 rounded-lg border transition-all shadow-2xs ${
+                                      isRet
+                                        ? "bg-rose-50 text-rose-800 border-rose-300 hover:bg-rose-100"
+                                        : isCanc
+                                        ? "bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100"
+                                        : isDelivered
+                                        ? "bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100"
+                                        : isHold
+                                        ? "bg-orange-50 text-orange-800 border-orange-300 hover:bg-orange-100"
+                                        : isPathao
+                                        ? "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                                        : "bg-emerald-50/80 text-emerald-800 border-emerald-200 hover:bg-emerald-100"
                                     }`}
                                     title={`Click to open official live tracking for ${courierBrand}`}
                                   >
-                                    {isDelivered ? (
+                                    {isRet ? (
+                                      <RotateCcw className="h-3 w-3 text-rose-600 shrink-0 animate-pulse" />
+                                    ) : isCanc ? (
+                                      <Ban className="h-3 w-3 text-amber-600 shrink-0" />
+                                    ) : isDelivered ? (
                                       <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" />
+                                    ) : isHold ? (
+                                      <AlertTriangle className="h-3 w-3 text-orange-600 shrink-0" />
                                     ) : (
-                                      <Truck className="h-3 w-3 text-blue-600 shrink-0 animate-pulse" />
+                                      <Truck className={`h-3 w-3 ${isPathao ? "text-red-600" : "text-emerald-600"} shrink-0 animate-pulse`} />
                                     )}
-                                    <span>{isDelivered ? "Delivered" : "In Transit"} ({courierBrand})</span>
-                                    <ExternalLink className="h-2.5 w-2.5 opacity-60" />
+                                    <span>
+                                      {isRet
+                                        ? `RTO Return (${courierBrand})`
+                                        : isCanc
+                                        ? `Cancelled (${courierBrand})`
+                                        : isDelivered
+                                        ? `Delivered (${courierBrand})`
+                                        : isHold
+                                        ? `On Hold (${courierBrand})`
+                                        : `In Transit (${courierBrand})`}
+                                    </span>
+                                    <ExternalLink className="h-2.5 w-2.5 opacity-60 shrink-0" />
                                   </a>
+
                                   <button
                                     type="button"
                                     onClick={() => handleSyncSingleCourier(ord.id)}
                                     disabled={isSyncing}
-                                    className="h-6 w-6 flex items-center justify-center rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-colors shadow-2xs cursor-pointer"
-                                    title="Query live delivery status from Courier API"
+                                    className={`h-6 w-6 flex items-center justify-center rounded-lg border transition-colors shadow-2xs cursor-pointer ${
+                                      isSyncing
+                                        ? "bg-pink-50 border-pink-300 text-[#e91e63]"
+                                        : isRet
+                                        ? "border-rose-200 bg-white hover:bg-rose-50 text-rose-700"
+                                        : isCanc
+                                        ? "border-amber-200 bg-white hover:bg-amber-50 text-amber-700"
+                                        : "border-gray-200 bg-white hover:bg-gray-50 text-gray-700"
+                                    }`}
+                                    title="Query live delivery status from Courier API (Updates Order Status in Real Time)"
                                   >
-                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : "text-gray-600"}`} />
+                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
                                   </button>
                                 </div>
-                                {activeCid && (
-                                  <div className="inline-flex items-center gap-1 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-gray-800">
-                                    <span>CID: {activeCid}</span>
-                                    <button
-                                      onClick={() => handleCopy(activeCid, ord.id)}
-                                      title="Copy Consignment ID"
-                                      className="hover:text-gray-950 p-0.5"
-                                    >
-                                      {copiedId === ord.id ? (
-                                        <Check className="h-2.5 w-2.5 text-emerald-600" />
-                                      ) : (
-                                        <Copy className="h-2.5 w-2.5 text-gray-500" />
-                                      )}
-                                    </button>
+
+                                {activeCid ? (
+                                  <div className="flex items-center gap-1">
+                                    <div className="inline-flex items-center gap-1 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold text-gray-800">
+                                      <span>CID: {activeCid}</span>
+                                      <button
+                                        onClick={() => handleCopy(activeCid, ord.id)}
+                                        title="Copy Consignment ID"
+                                        className="hover:text-gray-950 p-0.5"
+                                      >
+                                        {copiedId === ord.id ? (
+                                          <Check className="h-2.5 w-2.5 text-emerald-600" />
+                                        ) : (
+                                          <Copy className="h-2.5 w-2.5 text-gray-500" />
+                                        )}
+                                      </button>
+                                    </div>
+
+                                    {(isRet || isCanc) && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleOpenCustomDispatch(ord, isPathao ? "pathao" : "steadfast")}
+                                        className="text-[9px] font-bold text-[#e91e63] hover:underline bg-pink-50 border border-pink-200 px-1 py-0.5 rounded"
+                                        title="Re-dispatch this parcel to courier"
+                                      >
+                                        Re-book ⚡
+                                      </button>
+                                    )}
                                   </div>
-                                )}
+                                ) : null}
                               </div>
                             );
                           }
 
-                          if (isProcessing) {
+                          const isDispatchable =
+                            ord.status === "processing" ||
+                            ord.status === "confirmed" ||
+                            ord.status === "pending" ||
+                            ord.status === "packed" ||
+                            ord.status === "ready_for_pickup";
+
+                          if (isDispatchable) {
                             return (
                               <div className="flex items-center justify-center gap-1">
                                 <Button
@@ -1996,114 +1996,139 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                     </div>
                   </div>
 
-                  {/* Courier Status Banner (RTO / Returned / Cancelled / Dispatched) */}
-                  {isRet ? (
-                    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-900 space-y-1">
-                      <div className="flex items-center justify-between font-bold">
-                        <span className="flex items-center gap-1.5 text-rose-800">
-                          <RotateCcw className="h-3.5 w-3.5 text-rose-600 animate-pulse" />
-                          <span>Returned from Courier (RTO)</span>
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleSyncSingleCourier(ord.id)}
-                            disabled={syncingCourierId === ord.id}
-                            className="inline-flex items-center gap-1 bg-white border border-rose-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-rose-800 hover:bg-rose-100"
-                            title="Query live delivery status from Courier API"
-                          >
-                            <RefreshCw className={`h-2.5 w-2.5 ${syncingCourierId === ord.id ? "animate-spin text-[#e91e63]" : ""}`} />
-                            <span>Sync API</span>
-                          </button>
-                          {consignment && (
-                            <a
-                              href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-mono text-[10px] text-rose-700 underline font-bold"
-                            >
-                              {consignment} ↗
-                            </a>
+                  {/* Mobile Courier Tracking & Actions */}
+                  {(() => {
+                    const isSyncing = syncingCourierId === ord.id;
+                    const isDelivered = ord.status === "completed" || ord.status === "delivered";
+                    const isHold = ord.status === "on-hold" || ord.status === "on_hold";
+                    const trackUrl = ord.tracking_url || (isPathao
+                      ? `https://pathao.com/courier/tracking/?consignment_id=${activeCid}`
+                      : `https://steadfast.com.bd/t/${activeCid}`);
+
+                    const isAlreadyDispatched = Boolean(
+                      activeCid ||
+                      ord.status === "shipped" ||
+                      ord.status === "in_transit" ||
+                      ord.status === "out_for_delivery" ||
+                      (isDelivered && Boolean(ord.courier_name)) ||
+                      (isRet && Boolean(ord.courier_name)) ||
+                      (isCanc && Boolean(ord.courier_name))
+                    );
+
+                    if (isAlreadyDispatched) {
+                      return (
+                        <div className={`rounded-2xl border p-2.5 text-xs space-y-1.5 shadow-2xs ${
+                          isRet
+                            ? "border-rose-200 bg-rose-50/70 text-rose-900"
+                            : isCanc
+                            ? "border-amber-200 bg-amber-50/70 text-amber-900"
+                            : isDelivered
+                            ? "border-emerald-200 bg-emerald-50/70 text-emerald-900"
+                            : isHold
+                            ? "border-orange-200 bg-orange-50/70 text-orange-900"
+                            : isPathao
+                            ? "border-red-200 bg-red-50/60 text-red-950"
+                            : "border-blue-200 bg-blue-50/70 text-blue-900"
+                        }`}>
+                          <div className="flex items-center justify-between font-bold">
+                            <span className="flex items-center gap-1.5 text-[11px]">
+                              {isRet ? (
+                                <RotateCcw className="h-3.5 w-3.5 text-rose-600 animate-pulse" />
+                              ) : isCanc ? (
+                                <Ban className="h-3.5 w-3.5 text-amber-600" />
+                              ) : isDelivered ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                              ) : isHold ? (
+                                <AlertTriangle className="h-3.5 w-3.5 text-orange-600" />
+                              ) : (
+                                <Truck className={`h-3.5 w-3.5 ${isPathao ? "text-red-600" : "text-emerald-600"} animate-pulse`} />
+                              )}
+                              <span>
+                                {isRet
+                                  ? `RTO Return (${courierBrand})`
+                                  : isCanc
+                                  ? `Cancelled (${courierBrand})`
+                                  : isDelivered
+                                  ? `Delivered (${courierBrand})`
+                                  : isHold
+                                  ? `On Hold (${courierBrand})`
+                                  : `In Transit (${courierBrand})`}
+                              </span>
+                            </span>
+
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                onClick={() => handleSyncSingleCourier(ord.id)}
+                                disabled={isSyncing}
+                                className="inline-flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-gray-800 hover:bg-gray-100 shadow-2xs cursor-pointer"
+                                title="Query live delivery status from Courier API"
+                              >
+                                <RefreshCw className={`h-2.5 w-2.5 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                <span>Sync API</span>
+                              </button>
+                              {activeCid && (
+                                <a
+                                  href={trackUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[11px] font-bold text-blue-700 hover:underline inline-flex items-center gap-0.5"
+                                >
+                                  <span>Track</span>
+                                  <ExternalLink className="h-3 w-3" />
+                                </a>
+                              )}
+                            </div>
+                          </div>
+
+                          {activeCid && (
+                            <div className="flex items-center justify-between pt-0.5">
+                              <div className="inline-flex items-center gap-1 bg-white px-1.5 py-0.5 rounded border border-gray-200 text-[10px] font-mono font-bold text-gray-800">
+                                <span>CID: {activeCid}</span>
+                                <button
+                                  onClick={() => handleCopy(activeCid, ord.id)}
+                                  title="Copy Consignment ID"
+                                  className="hover:text-gray-950 p-0.5"
+                                >
+                                  {copiedId === ord.id ? (
+                                    <Check className="h-2.5 w-2.5 text-emerald-600" />
+                                  ) : (
+                                    <Copy className="h-2.5 w-2.5 text-gray-500" />
+                                  )}
+                                </button>
+                              </div>
+                              {(isRet || isCanc) && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenCustomDispatch(ord, isPathao ? "pathao" : "steadfast")}
+                                  className="text-[10px] font-bold text-[#e91e63] hover:underline bg-pink-50 border border-pink-200 px-1.5 py-0.5 rounded"
+                                >
+                                  Re-book Courier ⚡
+                                </button>
+                              )}
+                            </div>
+                          )}
+
+                          {webhookNote && (
+                            <p className="text-[10px] font-medium opacity-80">
+                              Note: {webhookNote}
+                            </p>
                           )}
                         </div>
-                      </div>
-                      {webhookNote && (
-                        <p className="text-[10px] text-rose-700 font-medium">
-                          Webhook Note: {webhookNote}
-                        </p>
-                      )}
-                    </div>
-                  ) : isCanc ? (
-                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900 space-y-1">
-                      <div className="flex items-center justify-between font-bold">
-                        <span className="flex items-center gap-1.5 text-amber-800">
-                          <Ban className="h-3.5 w-3.5 text-amber-600" />
-                          <span>Cancelled via Courier Webhook</span>
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleSyncSingleCourier(ord.id)}
-                            disabled={syncingCourierId === ord.id}
-                            className="inline-flex items-center gap-1 bg-white border border-amber-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-amber-800 hover:bg-amber-100"
-                            title="Query live delivery status from Courier API"
-                          >
-                            <RefreshCw className={`h-2.5 w-2.5 ${syncingCourierId === ord.id ? "animate-spin text-[#e91e63]" : ""}`} />
-                            <span>Sync API</span>
-                          </button>
-                          {consignment && (
-                            <span className="font-mono text-[10px] text-amber-700 font-bold">{consignment}</span>
-                          )}
-                        </div>
-                      </div>
-                      {webhookNote && (
-                        <p className="text-[10px] text-amber-700 font-medium">
-                          Reason: {webhookNote}
-                        </p>
-                      )}
-                    </div>
-                  ) : (consignment || ord.status === "shipped" || ord.status === "completed" || ord.status === "delivered") ? (
-                    <div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-2.5 text-xs flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-blue-900 font-bold text-[11px]">
-                        {ord.status === "completed" || ord.status === "delivered" ? (
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                        ) : (
-                          <Truck className="h-3.5 w-3.5 text-blue-600 animate-pulse" />
-                        )}
-                        <span>{ord.status === "completed" || ord.status === "delivered" ? "Delivered" : "In Transit"} ({courier.split(" ")[0]})</span>
-                        {consignment && (
-                          <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-blue-200 text-[10px] text-blue-900">
-                            {consignment}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleSyncSingleCourier(ord.id)}
-                          disabled={syncingCourierId === ord.id}
-                          className="inline-flex items-center gap-1 bg-white border border-blue-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-blue-800 hover:bg-blue-100 shadow-2xs"
-                          title="Query live delivery status from Courier API"
-                        >
-                          <RefreshCw className={`h-2.5 w-2.5 ${syncingCourierId === ord.id ? "animate-spin text-[#e91e63]" : ""}`} />
-                          <span>Sync API</span>
-                        </button>
-                        {consignment && (
-                          <a
-                            href={ord.tracking_url || `https://steadfast.com.bd/t/${consignment}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[11px] font-bold text-blue-700 hover:underline inline-flex items-center gap-0.5"
-                          >
-                            <span>Track</span>
-                            <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ) : null}
+                      );
+                    }
+
+                    return null;
+                  })()}
 
                   {/* 1-Click Action Buttons for Mobile */}
                   <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-gray-100">
                     <div className="flex items-center gap-1.5">
-                      {isProcessing && !consignment ? (
+                      {!activeCid &&
+                      (ord.status === "processing" ||
+                        ord.status === "confirmed" ||
+                        ord.status === "pending" ||
+                        ord.status === "packed" ||
+                        ord.status === "ready_for_pickup") ? (
                         <>
                           <Button
                             onClick={() => handleOneClickDispatch(ord, "steadfast")}

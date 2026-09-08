@@ -35,7 +35,7 @@ import {
 import { formatPrice, formatShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { updateAdminOrderFull, triggerManualOrderCapiPurchase } from "@/features/orders/actions";
-import { bookCourierDelivery } from "@/features/logistics/actions";
+import { bookCourierDelivery, syncLiveCourierStatus } from "@/features/logistics/actions";
 import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
 import { BDCourierHistoryCard } from "@/features/fraud/bdcourier-card";
 
@@ -312,6 +312,35 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
       setMsg({ text: res.error || "Courier booking failed.", isError: true });
     }
     setBookingCourier(false);
+  };
+
+  const [syncingCourier, setSyncingCourier] = useState(false);
+
+  const handleSyncCourier = async () => {
+    setSyncingCourier(true);
+    setMsg(null);
+    try {
+      const res = await syncLiveCourierStatus(order.id);
+      if (res.success) {
+        setMsg({ text: `Live Sync: ${res.statusNote}`, isError: false });
+        setStatus(res.mappedStatus);
+        setOrder({
+          ...order,
+          status: res.mappedStatus,
+          courier_name: res.courierName,
+          consignment_id: res.consignmentId,
+          is_courier_returned: res.isReturned,
+          is_courier_cancelled: res.isCancelled,
+          courier_webhook_note: res.statusNote,
+        });
+        router.refresh();
+      } else {
+        setMsg({ text: res.error || "Failed to sync status from courier API.", isError: true });
+      }
+    } catch (e: any) {
+      setMsg({ text: e.message || "Failed to sync status.", isError: true });
+    }
+    setSyncingCourier(false);
   };
 
   const handlePrint = () => {
@@ -645,25 +674,57 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100">
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={() => handleBookCourier("steadfast")}
-                  disabled={bookingCourier}
-                  size="sm"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl"
-                >
-                  {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
-                  1-Click SteadFast Dispatch
-                </Button>
-                <Button
-                  onClick={() => handleBookCourier("pathao")}
-                  disabled={bookingCourier}
-                  size="sm"
-                  variant="outline"
-                  className="text-xs font-bold rounded-xl border-gray-300"
-                >
-                  Pathao Express
-                </Button>
+              <div className="flex items-center gap-2 flex-wrap">
+                {consignmentId ? (
+                  <>
+                    <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-900 px-3 py-1.5 rounded-xl font-bold text-xs">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <span>Booked with {courierName || "Courier"} ({consignmentId})</span>
+                    </div>
+                    <Button
+                      onClick={handleSyncCourier}
+                      disabled={syncingCourier}
+                      size="sm"
+                      variant="outline"
+                      className="border-gray-200 text-gray-700 hover:bg-gray-50 text-xs font-bold rounded-xl"
+                    >
+                      <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${syncingCourier ? "animate-spin text-[#e91e63]" : ""}`} />
+                      Sync Live Courier API
+                    </Button>
+                    <a
+                      href={order.tracking_url || ((courierName || "").toLowerCase().includes("pathao") || consignmentId.startsWith("PTH")
+                        ? `https://pathao.com/courier/tracking/?consignment_id=${consignmentId}`
+                        : `https://steadfast.com.bd/t/${consignmentId}`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 hover:underline px-2 py-1"
+                    >
+                      <span>Open Live Tracking</span>
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={() => handleBookCourier("steadfast")}
+                      disabled={bookingCourier}
+                      size="sm"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl"
+                    >
+                      {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
+                      1-Click SteadFast Dispatch
+                    </Button>
+                    <Button
+                      onClick={() => handleBookCourier("pathao")}
+                      disabled={bookingCourier}
+                      size="sm"
+                      variant="outline"
+                      className="text-xs font-bold rounded-xl border-gray-300"
+                    >
+                      Pathao Express
+                    </Button>
+                  </>
+                )}
               </div>
 
               <Link href="/admin/shipping" target="_blank">
