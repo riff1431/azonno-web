@@ -153,11 +153,15 @@ export async function bookCourierDelivery(input: {
     console.warn("SMS delivery notification notice:", smsErr);
   }
 
-  revalidatePath("/admin/shipping");
-  revalidatePath(`/admin/orders/${input.orderId}`);
-  revalidatePath("/admin/orders");
-  revalidatePath("/account/orders");
-  revalidatePath("/account/track");
+  try {
+    revalidatePath("/admin/shipping");
+    revalidatePath(`/admin/orders/${input.orderId}`);
+    revalidatePath("/admin/orders");
+    revalidatePath("/account/orders");
+    revalidatePath("/account/track");
+  } catch (revErr) {
+    // Non-fatal if called in CLI or outside request lifecycle
+  }
 
   return {
     success: true,
@@ -319,7 +323,8 @@ export async function syncLiveCourierStatus(orderId: string) {
     if ((!res || res.status === 404 || res.status === 500) && order.order_number) {
       res = await getSteadfastStatusByInvoice(order.order_number);
     }
-    liveStatus = (res?.delivery_status || res?.status || "").toLowerCase();
+    const rawStatusVal = res?.delivery_status ?? (typeof res?.status === "string" ? res.status : "");
+    liveStatus = String(rawStatusVal || "in_transit").toLowerCase();
     statusNote = `SteadFast Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
     rawData = res;
   }
@@ -420,8 +425,12 @@ export async function syncLiveCourierStatus(orderId: string) {
     }
   }
 
-  revalidatePath("/admin/orders");
-  revalidatePath(`/admin/orders/${orderId}`);
+  try {
+    revalidatePath("/admin/orders");
+    revalidatePath(`/admin/orders/${orderId}`);
+  } catch (revErr) {
+    // Non-fatal outside request lifecycle
+  }
 
   return {
     success: true,

@@ -32,7 +32,7 @@ export async function dispatchOrderToCourier(
   // 1. Idempotency Check: Verify if order is already dispatched/has consignment
   const { data: existingOrder, error: checkErr } = await supabaseAdmin
     .from("orders")
-    .select("id, order_number, status, consignment_id, tracking_code, tracking_id")
+    .select("id, order_number, status, consignment_id, tracking_id, shipping_address_snapshot, public_note")
     .eq("id", input.orderId)
     .single();
 
@@ -42,8 +42,8 @@ export async function dispatchOrderToCourier(
       courier_name: "SteadFast Courier",
       courier_code: input.courierCode,
       consignment_id: existingOrder.consignment_id,
-      tracking_code: existingOrder.tracking_code || existingOrder.tracking_id || "",
-      tracking_url: `https://steadfast.com.bd/t/${existingOrder.tracking_code || existingOrder.consignment_id}`,
+      tracking_code: existingOrder.tracking_id || existingOrder.consignment_id,
+      tracking_url: `https://steadfast.com.bd/t/${existingOrder.tracking_id || existingOrder.consignment_id}`,
       cod_amount: input.codAmount,
       error: `Order #${existingOrder.order_number} is already booked (Consignment ID: ${existingOrder.consignment_id}).`,
     };
@@ -137,25 +137,32 @@ export async function dispatchOrderToCourier(
   }
 
   // 4. Record in courier_shipments
-  await supabaseAdmin.from("courier_shipments").insert({
-    order_id: input.orderId,
-    order_number: input.orderNumber,
-    courier_name: result.courier_name,
-    consignment_id: result.consignment_id,
-    tracking_id: result.tracking_code,
-    booking_status: "booked",
-    delivery_status: "in_transit",
-    cod_amount: input.codAmount,
-    booked_at: new Date().toISOString(),
-  });
+  try {
+    await supabaseAdmin.from("courier_shipments").insert({
+      order_id: input.orderId,
+      courier_name: result.courier_name,
+      consignment_id: result.consignment_id,
+      tracking_id: result.tracking_code,
+      booking_status: "booked",
+      delivery_status: "in_transit",
+      cod_amount: input.codAmount,
+      booked_at: new Date().toISOString(),
+    });
+  } catch (shipErr) {
+    console.warn("courier_shipments insert skipped:", shipErr);
+  }
 
   // 5. Append to Order Status Audit History
-  await supabaseAdmin.from("order_status_history").insert({
-    order_id: input.orderId,
-    status: "shipped",
-    note: `1-Click Dispatch: Booked with ${result.courier_name}. Consignment ID: ${result.consignment_id}, Tracking Code: ${result.tracking_code}, COD Amount: ৳${input.codAmount}`,
-    created_by: input.userId || null,
-  });
+  try {
+    await supabaseAdmin.from("order_status_history").insert({
+      order_id: input.orderId,
+      status: "shipped",
+      note: `1-Click Dispatch: Booked with ${result.courier_name}. Consignment ID: ${result.consignment_id}, Tracking Code: ${result.tracking_code}, COD Amount: ৳${input.codAmount}`,
+      created_by: input.userId || null,
+    });
+  } catch (histErr) {
+    console.warn("order_status_history insert skipped:", histErr);
+  }
 
   return result;
 }
