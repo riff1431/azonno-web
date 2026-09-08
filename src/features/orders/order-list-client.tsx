@@ -108,6 +108,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
   const { t } = useAdminLang();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  const [actionLoadingKey, setActionLoadingKey] = useState<string | null>(null);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [syncingCourierId, setSyncingCourierId] = useState<string | null>(null);
   const [bulkSyncLoading, setBulkSyncLoading] = useState(false);
@@ -397,6 +398,8 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
     customNote?: string,
     customCod?: number
   ) => {
+    const loadingKey = `${order.id}-${courierCode}`;
+    setActionLoadingKey(loadingKey);
     setActionLoadingId(order.id);
     setBannerMsg(null);
 
@@ -442,13 +445,15 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
         )
       );
       setBannerMsg({
-        text: `Dispatched Order #${order.order_number} to ${res.courierName}! Consignment: ${res.consignmentId} (COD: ৳${codDue})`,
+        text: `Successfully Dispatched Order #${order.order_number} to ${res.courierName}! Consignment: ${res.consignmentId} (COD: ৳${codDue})`,
         isError: false,
       });
-      setTimeout(() => setBannerMsg(null), 4500);
+      setTimeout(() => setBannerMsg(null), 6000);
     } else {
       setBannerMsg({ text: res.error || "Courier booking failed.", isError: true });
+      setTimeout(() => setBannerMsg(null), 8000);
     }
+    setActionLoadingKey(null);
     setActionLoadingId(null);
   };
 
@@ -947,17 +952,25 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
         </div>
       </div>
 
-      {/* Global Notification Banner */}
+      {/* Global Notification Banner (Floating & In-page) */}
       {bannerMsg && (
         <div
-          className={`rounded-2xl border p-4 text-xs font-bold flex items-center justify-between animate-in fade-in-0 ${
+          className={`fixed top-5 right-5 z-50 max-w-lg rounded-2xl border p-4 text-xs font-bold shadow-2xl flex items-start justify-between gap-3 animate-in slide-in-from-top-4 duration-200 ${
             bannerMsg.isError
-              ? "border-red-200 bg-red-50 text-red-700"
-              : "border-emerald-200 bg-emerald-50 text-emerald-800"
+              ? "border-red-300 bg-red-600 text-white shadow-red-500/20"
+              : "border-emerald-300 bg-emerald-600 text-white shadow-emerald-500/20"
           }`}
         >
-          <span>{bannerMsg.text}</span>
-          <button onClick={() => setBannerMsg(null)} className="opacity-60 hover:opacity-100 p-1">
+          <div className="flex items-start gap-2.5">
+            <span className="p-1 bg-white/20 rounded-lg shrink-0 mt-0.5">
+              {bannerMsg.isError ? <X className="h-4 w-4 text-white" /> : <Zap className="h-4 w-4 text-white" />}
+            </span>
+            <span className="leading-relaxed whitespace-pre-wrap">{bannerMsg.text}</span>
+          </div>
+          <button
+            onClick={() => setBannerMsg(null)}
+            className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/20 transition-colors shrink-0"
+          >
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -1691,16 +1704,20 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                             ord.status === "ready_for_pickup";
 
                           if (isDispatchable) {
+                            const isSteadfastLoading = actionLoadingKey === `${ord.id}-steadfast`;
+                            const isPathaoLoading = actionLoadingKey === `${ord.id}-pathao`;
+                            const isAnyLoading = isLoading || isSteadfastLoading || isPathaoLoading;
+
                             return (
-                              <div className="flex items-center justify-center gap-1">
+                              <div className="flex items-center justify-center gap-1.5">
                                 <Button
                                   onClick={() => handleOneClickDispatch(ord, "steadfast")}
-                                  disabled={isLoading}
+                                  disabled={isAnyLoading}
                                   size="sm"
-                                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] h-7 px-2 rounded-lg shadow-xs"
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] h-7 px-2 rounded-lg shadow-xs transition-all active:scale-95 disabled:opacity-75"
                                   title="1-Click Dispatch to SteadFast Courier"
                                 >
-                                  {isLoading ? (
+                                  {isSteadfastLoading ? (
                                     <Loader2 className="h-3 w-3 animate-spin" />
                                   ) : (
                                     <span className="inline-flex items-center gap-1">
@@ -1711,20 +1728,27 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                 </Button>
                                 <Button
                                   onClick={() => handleOneClickDispatch(ord, "pathao")}
-                                  disabled={isLoading}
+                                  disabled={isAnyLoading}
                                   size="sm"
                                   variant="outline"
-                                  className="border-red-200 text-red-700 hover:bg-red-50 font-black text-[11px] h-7 px-1.5 rounded-lg"
+                                  className="border-red-300 bg-red-50/50 text-red-700 hover:bg-red-100/80 font-black text-[11px] h-7 px-2 rounded-lg shadow-xs transition-all active:scale-95 disabled:opacity-75"
                                   title="1-Click Dispatch to Pathao Express"
                                 >
-                                  Pathao
+                                  {isPathaoLoading ? (
+                                    <Loader2 className="h-3 w-3 animate-spin text-red-600" />
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1">
+                                      <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                                      <span>Pathao</span>
+                                    </span>
+                                  )}
                                 </Button>
                                 <button
                                   type="button"
                                   onClick={() => handleOpenCustomDispatch(ord, "steadfast")}
-                                  disabled={isLoading}
-                                  className="h-7 w-7 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors"
-                                  title="Custom Dispatch (Edit COD Amount, Weight & Delivery Note before booking)"
+                                  disabled={isAnyLoading}
+                                  className="h-7 w-7 flex items-center justify-center rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-50"
+                                  title="Custom Dispatch (Edit COD Amount, Courier Gateway, Weight & Delivery Note)"
                                 >
                                   <Sliders className="h-3 w-3" />
                                 </button>
@@ -2161,20 +2185,29 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         <>
                           <Button
                             onClick={() => handleOneClickDispatch(ord, "steadfast")}
-                            disabled={isLoading}
+                            disabled={isLoading || actionLoadingKey === `${ord.id}-steadfast` || actionLoadingKey === `${ord.id}-pathao`}
                             size="sm"
                             className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs h-7 px-2.5 rounded-xl shadow-xs"
                           >
-                            {isLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Zap className="h-3 w-3 mr-1" />}
+                            {actionLoadingKey === `${ord.id}-steadfast` ? (
+                              <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                            ) : (
+                              <Zap className="h-3 w-3 mr-1" />
+                            )}
                             SteadFast
                           </Button>
                           <Button
                             onClick={() => handleOneClickDispatch(ord, "pathao")}
-                            disabled={isLoading}
+                            disabled={isLoading || actionLoadingKey === `${ord.id}-steadfast` || actionLoadingKey === `${ord.id}-pathao`}
                             size="sm"
                             variant="outline"
-                            className="border-red-200 text-red-700 hover:bg-red-50 font-black text-xs h-7 px-2 rounded-xl"
+                            className="border-red-300 bg-red-50/50 text-red-700 hover:bg-red-100 font-black text-xs h-7 px-2 rounded-xl"
                           >
+                            {actionLoadingKey === `${ord.id}-pathao` ? (
+                              <Loader2 className="h-3 w-3 animate-spin mr-1 text-red-600" />
+                            ) : (
+                              <span className="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5" />
+                            )}
                             Pathao
                           </Button>
                           <button

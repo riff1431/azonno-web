@@ -59,6 +59,7 @@ export async function dispatchOrderToCourier(
       recipient_phone: input.recipientPhone,
       recipient_address: input.recipientAddress,
       district: input.district,
+      thana: input.thana,
       amount_to_collect: input.codAmount,
       item_quantity: input.totalQuantity || 1,
       item_weight: input.weightKg || 0.5,

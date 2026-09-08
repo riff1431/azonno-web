@@ -88,7 +88,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
   const [specialInstruction, setSpecialInstruction] = useState(
     order.public_note || "Fragile skincare cosmetics. Please handle with care and call before delivery."
   );
-  const [bookingCourier, setBookingCourier] = useState(false);
+  const [bookingCourier, setBookingCourier] = useState<"steadfast" | "pathao" | null>(null);
   const [syncingCourier, setSyncingCourier] = useState(false);
 
   // UI Interactive State
@@ -287,7 +287,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
   // Automated Courier Booking with Complete Payload
   const handleBookCourier = async (courierCode: "steadfast" | "pathao") => {
-    setBookingCourier(true);
+    setBookingCourier(courierCode);
     setMsg(null);
 
     const res = await bookCourierDelivery({
@@ -309,7 +309,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
       setConsignmentId(res.consignmentId);
       setCourierName(res.courierName);
       setMsg({
-        text: `Successfully dispatched with ${res.courierName}! Consignment: ${res.consignmentId} (${res.weightKg}kg)`,
+        text: `Successfully dispatched with ${res.courierName}! Consignment: ${res.consignmentId}`,
         isError: false,
       });
       setStatus("shipped");
@@ -325,7 +325,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
     } else {
       setMsg({ text: res.error || "Courier booking failed.", isError: true });
     }
-    setBookingCourier(false);
+    setBookingCourier(null);
   };
 
   // Sync Live Courier Status
@@ -478,21 +478,21 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
             <>
               <Button
                 onClick={() => handleBookCourier("steadfast")}
-                disabled={bookingCourier}
+                disabled={Boolean(bookingCourier)}
                 size="sm"
                 className="text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs"
               >
-                {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
+                {bookingCourier === "steadfast" ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
                 Book SteadFast Delivery
               </Button>
               <Button
                 onClick={() => handleBookCourier("pathao")}
-                disabled={bookingCourier}
+                disabled={Boolean(bookingCourier)}
                 size="sm"
                 variant="outline"
-                className="text-xs font-bold rounded-xl border-orange-300 bg-orange-50 hover:bg-orange-100 text-orange-900 shadow-xs"
+                className="text-xs font-bold rounded-xl border-red-300 bg-red-50/60 hover:bg-red-100 text-red-800 shadow-xs"
               >
-                {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
+                {bookingCourier === "pathao" ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1 text-red-600" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
                 Pathao Express
               </Button>
             </>
@@ -833,7 +833,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
                     <Button
                       onClick={() => handleBookCourier("steadfast")}
-                      disabled={bookingCourier}
+                      disabled={Boolean(bookingCourier)}
                       size="sm"
                       variant="ghost"
                       className="text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-xl"
@@ -846,20 +846,21 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <>
                     <Button
                       onClick={() => handleBookCourier("steadfast")}
-                      disabled={bookingCourier}
+                      disabled={Boolean(bookingCourier)}
                       size="sm"
                       className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs"
                     >
-                      {bookingCourier ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
+                      {bookingCourier === "steadfast" ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
                       1-Click SteadFast Dispatch
                     </Button>
                     <Button
                       onClick={() => handleBookCourier("pathao")}
-                      disabled={bookingCourier}
+                      disabled={Boolean(bookingCourier)}
                       size="sm"
                       variant="outline"
-                      className="text-xs font-bold rounded-xl border-orange-300 bg-orange-50 hover:bg-orange-100 text-orange-900 shadow-xs"
+                      className="text-xs font-bold rounded-xl border-red-300 bg-red-50/60 hover:bg-red-100 text-red-800 shadow-xs"
                     >
+                      {bookingCourier === "pathao" ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1 text-red-600" /> : <Truck className="h-3.5 w-3.5 mr-1" />}
                       Pathao Express Dispatch
                     </Button>
                   </>
