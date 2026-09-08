@@ -13,7 +13,7 @@ import { reduceOrderStock, restoreOrderStock } from "@/features/orders/actions";
 export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get("authorization") || "";
-    const settings = await getSteadfastSettings();
+    const settings = await getSteadfastSettings(true);
 
     // 1. Verify Bearer Token if configured
     if (settings.webhook_auth_token && settings.webhook_auth_token !== "••••••••") {

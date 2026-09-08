@@ -152,7 +152,7 @@ export async function createSteadfastBulkOrders(
   data?: any[];
   error?: string;
 }> {
-  const settings = await getSteadfastSettings();
+  const settings = await getSteadfastSettings(true);
   const apiKey = settings.api_key;
   const secretKey = settings.secret_key;
   const baseUrl = (settings.api_base_url || "https://portal.steadfast.com.bd/api/v1").replace(/\/$/, "");
@@ -202,7 +202,7 @@ export async function createSteadfastBulkOrders(
  * 3. Status Checking by Consignment ID: GET /status_by_cid/{id}
  */
 export async function getSteadfastStatusByCid(consignmentId: string | number) {
-  const settings = await getSteadfastSettings();
+  const settings = await getSteadfastSettings(true);
   const baseUrl = (settings.api_base_url || "https://portal.steadfast.com.bd/api/v1").replace(/\/$/, "");
   if (settings.api_key && settings.secret_key && settings.secret_key !== "••••••••") {
     try {
@@ -224,7 +224,7 @@ export async function getSteadfastStatusByCid(consignmentId: string | number) {
  * 4. Status Checking by Tracking Code: GET /status_by_trackingcode/{tracking_code}
  */
 export async function getSteadfastStatusByTrackingCode(trackingCode: string) {
-  const settings = await getSteadfastSettings();
+  const settings = await getSteadfastSettings(true);
   const baseUrl = (settings.api_base_url || "https://portal.steadfast.com.bd/api/v1").replace(/\/$/, "");
   if (settings.api_key && settings.secret_key && settings.secret_key !== "••••••••") {
     try {
@@ -246,7 +246,7 @@ export async function getSteadfastStatusByTrackingCode(trackingCode: string) {
  * 5. Status Checking by Invoice: GET /status_by_invoice/{invoice}
  */
 export async function getSteadfastStatusByInvoice(invoice: string) {
-  const settings = await getSteadfastSettings();
+  const settings = await getSteadfastSettings(true);
   const baseUrl = (settings.api_base_url || "https://portal.steadfast.com.bd/api/v1").replace(/\/$/, "");
   if (settings.api_key && settings.secret_key && settings.secret_key !== "••••••••") {
     try {
@@ -272,7 +272,7 @@ export async function getSteadfastBalance(): Promise<{
   balance: number;
   error?: string;
 }> {
-  const settings = await getSteadfastSettings();
+  const settings = await getSteadfastSettings(true);
   const baseUrl = (settings.api_base_url || "https://portal.steadfast.com.bd/api/v1").replace(/\/$/, "");
   if (settings.api_key && settings.secret_key && settings.secret_key !== "••••••••") {
     try {

@@ -180,7 +180,7 @@ export async function createPathaoConsignment(
  * GET /aladdin/api/v1/orders/{consignment_id}/info
  */
 export async function getPathaoOrderStatus(consignmentId: string) {
-  const settings = await getPathaoSettings();
+  const settings = await getPathaoSettings(true);
   const token = await getPathaoAccessToken(settings);
   const isLive = settings.environment === "live";
   const apiBase = isLive
