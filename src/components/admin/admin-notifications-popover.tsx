@@ -149,28 +149,61 @@ export function AdminNotificationsPopover() {
   const popoverRef = useRef<HTMLDivElement>(null);
   const { t } = useAdminLang();
 
-  // Check desktop notification permission on mount
+  // Check desktop notification permission on mount & on window focus
   useEffect(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      setDesktopPermission(Notification.permission);
-      if (Notification.permission === "default") {
-        setShowPermBanner(true);
-      }
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setShowPermBanner(false);
+      return;
     }
+
+    const checkPerm = () => {
+      const currentPerm = Notification.permission;
+      setDesktopPermission(currentPerm);
+      const isDismissed = localStorage.getItem("ecomx_admin_perm_banner_dismissed") === "true";
+      if (currentPerm === "default" && !isDismissed) {
+        setShowPermBanner(true);
+      } else {
+        setShowPermBanner(false);
+      }
+    };
+
+    checkPerm();
+    window.addEventListener("focus", checkPerm);
+
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions
+        .query({ name: "notifications" as PermissionName })
+        .then((status) => {
+          status.onchange = checkPerm;
+        })
+        .catch(() => {});
+    }
+
+    return () => {
+      window.removeEventListener("focus", checkPerm);
+    };
   }, []);
+
+  const dismissPermBanner = () => {
+    setShowPermBanner(false);
+    try {
+      localStorage.setItem("ecomx_admin_perm_banner_dismissed", "true");
+    } catch {}
+  };
 
   const requestDesktopPermission = async () => {
     // Also unlock audio
     getAudioContext();
     if (typeof window === "undefined" || !("Notification" in window)) {
       alert("Desktop notifications are not supported in this browser.");
+      dismissPermBanner();
       return;
     }
     try {
       const perm = await Notification.requestPermission();
       setDesktopPermission(perm);
+      dismissPermBanner();
       if (perm === "granted") {
-        setShowPermBanner(false);
         sendDesktopNotification(
           "🔔 Desktop Alerts Activated!",
           "You will receive instant pop-up notifications on your PC whenever a new order is placed.",
@@ -179,7 +212,7 @@ export function AdminNotificationsPopover() {
         playNotificationChime();
       }
     } catch {
-      // Ignore
+      dismissPermBanner();
     }
   };
 
@@ -749,8 +782,8 @@ export function AdminNotificationsPopover() {
         </div>
       )}
 
-      {/* Desktop Notification Enable Banner (Prompt once) */}
-      {showPermBanner && (
+      {/* Desktop Notification Enable Banner (Prompt once only if permission not yet decided and not dismissed) */}
+      {showPermBanner && desktopPermission === "default" && (
         <div className="fixed top-4 right-20 z-999 bg-slate-900 text-white rounded-xl shadow-xl px-3.5 py-2 flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-top-3">
           <div className="flex items-center gap-2 text-xs">
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
@@ -763,8 +796,9 @@ export function AdminNotificationsPopover() {
             {t("enable_now")}
           </button>
           <button
-            onClick={() => setShowPermBanner(false)}
-            className="text-slate-400 hover:text-white p-0.5 rounded"
+            onClick={dismissPermBanner}
+            className="text-slate-400 hover:text-white p-0.5 rounded cursor-pointer"
+            title="Dismiss"
           >
             <X className="h-3 w-3" />
           </button>
