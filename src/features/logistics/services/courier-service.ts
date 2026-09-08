@@ -37,13 +37,19 @@ export async function dispatchOrderToCourier(
     .single();
 
   if (existingOrder?.consignment_id) {
+    const rawCourier = (existingOrder as any).courier_name || (existingOrder as any).shipping_address_snapshot?.courier_name || input.courierCode;
+    const isPathao = rawCourier.toLowerCase().includes("pathao") || existingOrder.consignment_id.startsWith("PTH") || existingOrder.consignment_id.startsWith("DE");
+    const trackUrl = isPathao
+      ? `https://merchant.pathao.com/tracking?consignment_id=${existingOrder.consignment_id}`
+      : `https://steadfast.com.bd/t/${existingOrder.tracking_id || existingOrder.consignment_id}`;
+
     return {
       success: false,
-      courier_name: "SteadFast Courier",
+      courier_name: isPathao ? "Pathao Courier" : "SteadFast Courier",
       courier_code: input.courierCode,
       consignment_id: existingOrder.consignment_id,
       tracking_code: existingOrder.tracking_id || existingOrder.consignment_id,
-      tracking_url: `https://steadfast.com.bd/t/${existingOrder.tracking_id || existingOrder.consignment_id}`,
+      tracking_url: trackUrl,
       cod_amount: input.codAmount,
       error: `Order #${existingOrder.order_number} is already booked (Consignment ID: ${existingOrder.consignment_id}).`,
     };

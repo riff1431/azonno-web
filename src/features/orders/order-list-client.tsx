@@ -40,7 +40,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, buildCourierTrackingUrl } from "@/lib/utils";
 import { updateOrderStatus, createOrder, getAdminOrders } from "./actions";
 import { bookCourierDelivery, syncLiveCourierStatus } from "@/features/logistics/actions";
 import { addBlacklistEntry } from "@/features/fraud/actions";
@@ -1614,9 +1614,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           const isSyncing = syncingCourierId === ord.id;
                           const isDelivered = ord.status === "completed" || ord.status === "delivered";
                           const isHold = ord.status === "on-hold" || ord.status === "on_hold";
-                          const trackUrl = ord.tracking_url || (isPathao
-                            ? `https://pathao.com/courier/tracking/?consignment_id=${activeCid}`
-                            : `https://steadfast.com.bd/t/${activeCid}`);
+                          const trackUrl = buildCourierTrackingUrl(courier, activeCid, ord.tracking_url);
 
                           const isAlreadyDispatched = Boolean(
                             activeCid ||
@@ -2086,9 +2084,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                     const isSyncing = syncingCourierId === ord.id;
                     const isDelivered = ord.status === "completed" || ord.status === "delivered";
                     const isHold = ord.status === "on-hold" || ord.status === "on_hold";
-                    const trackUrl = ord.tracking_url || (isPathao
-                      ? `https://pathao.com/courier/tracking/?consignment_id=${activeCid}`
-                      : `https://steadfast.com.bd/t/${activeCid}`);
+                    const trackUrl = buildCourierTrackingUrl(courier, activeCid, ord.tracking_url);
 
                     const isAlreadyDispatched = Boolean(
                       activeCid ||
@@ -2380,7 +2376,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                   </span>
                   {quickViewOrder.consignment_id && (
                     <a
-                      href={quickViewOrder.tracking_url || `https://steadfast.com.bd/t/${quickViewOrder.consignment_id}`}
+                      href={buildCourierTrackingUrl(quickViewOrder.courier_name, quickViewOrder.consignment_id, quickViewOrder.tracking_url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#e91e63] font-mono font-bold text-xs hover:underline inline-flex items-center gap-1"

@@ -3,6 +3,8 @@
  * Specifically tailored for high-volume Bangladeshi logistics (SteadFast, Pathao, COD)
  */
 
+import { buildCourierTrackingUrl } from "@/lib/utils";
+
 export type OrderStatus =
   | "pending"
   | "confirmed"
@@ -460,9 +462,9 @@ export function generateWhatsAppOrderMessage(
   const items = order.order_items || order.cart_items || [];
   const itemsSummary = items.map((it: any) => `${it.product_name_snapshot || it.name} x${it.quantity}`).join(", ") || "Cosmetics Order";
   const codDue = order.amount_to_collect !== undefined ? order.amount_to_collect : (order.cart_total || order.total || 0);
-  const courier = order.courier_name || "SteadFast";
-  const tracking = order.consignment_id || order.tracking_code || "Pending";
-  const trackUrl = order.tracking_url || `https://steadfast.com.bd/t/${tracking}`;
+  const tracking = order.consignment_id || order.tracking_code || order.tracking_id || "";
+  const courier = order.courier_name || (tracking.startsWith("PTH") || tracking.startsWith("DE") ? "Pathao Courier" : "SteadFast Courier");
+  const trackUrl = buildCourierTrackingUrl(courier, tracking, order.tracking_url);
   const advanceFee = customAdvanceAmount || 120;
   const remainingDue = Math.max(0, codDue - advanceFee);
 

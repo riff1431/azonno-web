@@ -34,7 +34,7 @@ import {
   RefreshCw,
   ChevronDown,
 } from "lucide-react";
-import { formatPrice, formatShortProductId } from "@/lib/utils";
+import { formatPrice, formatShortProductId, buildCourierTrackingUrl } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { updateAdminOrderFull, triggerManualOrderCapiPurchase } from "@/features/orders/actions";
 import { bookCourierDelivery, syncLiveCourierStatus } from "@/features/logistics/actions";
@@ -365,10 +365,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
     setSaving(true);
     setMsg(null);
 
-    const trackingUrl =
-      courierName.toLowerCase().includes("pathao") || consignmentId.startsWith("PTH")
-        ? `https://pathao.com/courier/tracking/?consignment_id=${consignmentId}`
-        : `https://steadfast.com.bd/t/${consignmentId}`;
+    const trackingUrl = buildCourierTrackingUrl(courierName, consignmentId);
 
     const res = await updateAdminOrderFull(order.id, {
       courier_name: courierName,
@@ -396,13 +393,9 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
   const activeCid = order.consignment_id || consignmentId || "";
   const isBooked = Boolean(activeCid);
   const activeCourierName = order.courier_name || courierName;
-  const isPathao = activeCourierName.toLowerCase().includes("pathao") || activeCid.startsWith("PTH");
+  const isPathao = activeCourierName.toLowerCase().includes("pathao") || activeCid.startsWith("PTH") || activeCid.startsWith("DE");
 
-  const liveTrackingUrl =
-    order.tracking_url ||
-    (isPathao
-      ? `https://pathao.com/courier/tracking/?consignment_id=${activeCid}`
-      : `https://steadfast.com.bd/t/${activeCid}`);
+  const liveTrackingUrl = buildCourierTrackingUrl(activeCourierName, activeCid, order.tracking_url);
 
   const rawPhone = (addressForm.phone || order.guest_phone || "").replace(/[^0-9]/g, "");
   const formattedBdPhone = rawPhone.startsWith("88") ? rawPhone : `88${rawPhone}`;

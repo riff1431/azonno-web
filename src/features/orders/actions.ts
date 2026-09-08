@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { sendSmsNotification } from "@/features/sms/actions";
-import { generateOrderNumber, extractClientIp, getShortProductId } from "@/lib/utils";
+import { generateOrderNumber, extractClientIp, getShortProductId, buildCourierTrackingUrl } from "@/lib/utils";
 
 export interface CreateOrderInput {
   customer: {
@@ -592,15 +592,8 @@ export async function getAdminOrders(statusFilter?: string) {
       order.courier_name ||
       order.shipping_method ||
       addrSnap.courier_name ||
-      (cid.startsWith("PTH") ? "Pathao Courier" : cid.startsWith("SF") ? "SteadFast Courier" : "");
-    const trackingUrl =
-      order.tracking_url ||
-      addrSnap.tracking_url ||
-      (cid
-        ? courierName.toLowerCase().includes("pathao") || cid.startsWith("PTH")
-          ? `https://pathao.com/courier/tracking/?consignment_id=${cid}`
-          : `https://steadfast.com.bd/t/${cid}`
-        : "");
+      (cid.startsWith("PTH") || cid.startsWith("DE") ? "Pathao Courier" : cid.startsWith("SF") ? "SteadFast Courier" : "");
+    const trackingUrl = buildCourierTrackingUrl(courierName, cid, order.tracking_url || addrSnap.tracking_url);
 
     const historyList = (order.order_status_history || []).sort(
       (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()

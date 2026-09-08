@@ -25,6 +25,7 @@ import {
   Save,
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
+import { buildCourierTrackingUrl } from "@/lib/utils";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import {
   updateReturnStatus,
@@ -357,7 +358,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                     <div>{getStatusBadge(item.status)}</div>
                     {item.reverse_consignment_id && (
                       <a
-                        href={item.reverse_tracking_url || `https://steadfast.com.bd/t/${item.reverse_consignment_id}`}
+                        href={buildCourierTrackingUrl(item.reverse_courier_name, item.reverse_consignment_id, item.reverse_tracking_url)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold hover:underline"

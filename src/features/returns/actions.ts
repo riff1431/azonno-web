@@ -225,7 +225,7 @@ export async function dispatchReverseCourierPickup(input: {
       trackingUrl = `https://steadfast.com.bd/t/${consignmentId}`;
     } else {
       consignmentId = `PATHAO-REV-${Math.floor(100000 + Math.random() * 900000)}`;
-      trackingUrl = `https://pathao.com/courier/tracking/?consignment_id=${consignmentId}`;
+      trackingUrl = `https://merchant.pathao.com/tracking?consignment_id=${consignmentId}`;
     }
 
     const adminNote = input.notes?.trim()

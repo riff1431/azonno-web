@@ -192,5 +192,59 @@ export function getShortProductId(
   return formatShortProductId(candidate, fallback);
 }
 
+/**
+ * Universal resolver for Courier Public Live Tracking URLs.
+ * - Pathao uses: https://merchant.pathao.com/tracking?consignment_id={consignment_id}
+ * - Steadfast uses: https://steadfast.com.bd/t/{tracking_code}
+ * - Automatically repairs legacy broken URLs (e.g. pathao.com/courier/tracking/?consignment_id=)
+ */
+export function buildCourierTrackingUrl(
+  courier?: string | null,
+  consignmentId?: string | null,
+  existingUrl?: string | null
+): string {
+  const cid = (consignmentId || "").trim();
+  let rawUrl = (existingUrl || "").trim();
+  const cName = (courier || "").toLowerCase();
 
+  // Fix legacy broken Pathao tracking links
+  if (rawUrl.includes("pathao.com/courier/tracking")) {
+    const extractedCid = rawUrl.match(/consignment_id=([^&]+)/)?.[1] || cid;
+    if (extractedCid) {
+      return `https://merchant.pathao.com/tracking?consignment_id=${encodeURIComponent(extractedCid)}`;
+    }
+  }
 
+  const isPathao =
+    cName.includes("pathao") ||
+    cid.startsWith("PTH") ||
+    cid.startsWith("DE") ||
+    rawUrl.includes("pathao.com");
+
+  if (isPathao) {
+    if (cid) {
+      return `https://merchant.pathao.com/tracking?consignment_id=${encodeURIComponent(cid)}`;
+    }
+    if (rawUrl) {
+      return rawUrl.replace("pathao.com/courier/tracking/?consignment_id=", "merchant.pathao.com/tracking?consignment_id=");
+    }
+    return "";
+  }
+
+  const isSteadfast =
+    cName.includes("steadfast") ||
+    cid.startsWith("SF") ||
+    cid.startsWith("TRK") ||
+    rawUrl.includes("steadfast.com.bd");
+
+  if (isSteadfast || cid) {
+    if (rawUrl && rawUrl.includes("steadfast.com.bd")) {
+      return rawUrl;
+    }
+    if (cid) {
+      return `https://steadfast.com.bd/t/${encodeURIComponent(cid)}`;
+    }
+  }
+
+  return rawUrl;
+}
