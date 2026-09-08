@@ -67,12 +67,7 @@ export default async function ProductsListingPage({
       regular_price,
       sale_price,
       og_image_url,
-      skin_type,
-      skin_concern,
-      key_actives,
-      origin_country,
       country,
-      routine_step,
       shipping_class,
       brands (name),
       inventory (available)
@@ -110,7 +105,6 @@ export default async function ProductsListingPage({
       `name.ilike.%${cleanSearch}%`,
       `slug.ilike.%${cleanSearch}%`,
       `sku.ilike.%${cleanSearch}%`,
-      `origin_country.ilike.%${cleanSearch}%`,
       `country.ilike.%${cleanSearch}%`,
     ];
 
@@ -205,20 +199,20 @@ export default async function ProductsListingPage({
     if (cleanOrigin.toLowerCase() === "korea") cleanOrigin = "South Korea";
     if (cleanOrigin.toLowerCase() === "uk") cleanOrigin = "United Kingdom";
     if (cleanOrigin.toLowerCase() === "usa") cleanOrigin = "United States";
-    query = query.or(`origin_country.ilike.%${cleanOrigin}%,country.ilike.%${cleanOrigin}%`);
+    query = query.ilike("country", `%${cleanOrigin}%`);
   }
 
   // 6. Beauty Taxonomy Filters
   if (skin_type) {
-    query = query.contains("skin_type", [skin_type]);
+    query = query.or(`description.ilike.%${skin_type}%,benefits.ilike.%${skin_type}%,name.ilike.%${skin_type}%`);
   }
 
   if (skin_concern) {
-    query = query.contains("skin_concern", [skin_concern]);
+    query = query.or(`description.ilike.%${skin_concern}%,benefits.ilike.%${skin_concern}%,name.ilike.%${skin_concern}%`);
   }
 
   if (key_actives) {
-    query = query.contains("key_actives", [key_actives]);
+    query = query.or(`description.ilike.%${key_actives}%,ingredients_specifications.ilike.%${key_actives}%,name.ilike.%${key_actives}%`);
   }
 
   if (min_price) {
@@ -266,8 +260,8 @@ export default async function ProductsListingPage({
         sale_price: p.sale_price,
         image_url: p.og_image_url || null,
         brand_name: brandData?.name || null,
-        origin_country: p.origin_country || p.country || null,
-        country: p.country || p.origin_country || null,
+        origin_country: p.country || "South Korea",
+        country: p.country || "South Korea",
         is_in_stock: isAvailable,
         rating: 5.0,
         review_count: 14,
