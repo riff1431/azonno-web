@@ -116,6 +116,39 @@ export function CourierBrandLogo({ name, logoUrl, className = "h-4 w-4" }: Couri
     );
   }
 
+  if (normalized.includes("deliverytiger") || normalized.includes("tiger")) {
+    return (
+      <span
+        className={`${className} inline-flex items-center justify-center rounded-md bg-[#FF5722] text-white font-black text-[9px] shrink-0 shadow-2xs select-none`}
+        title="Delivery Tiger"
+      >
+        DT
+      </span>
+    );
+  }
+
+  if (normalized.includes("sundarban")) {
+    return (
+      <span
+        className={`${className} inline-flex items-center justify-center rounded-md bg-[#0D9488] text-white font-black text-[9px] shrink-0 shadow-2xs select-none`}
+        title="Sundarban Courier"
+      >
+        SC
+      </span>
+    );
+  }
+
+  if (normalized.includes("saparibahan") || normalized.includes("paribahan")) {
+    return (
+      <span
+        className={`${className} inline-flex items-center justify-center rounded-md bg-[#1E3A8A] text-white font-black text-[9px] shrink-0 shadow-2xs select-none`}
+        title="SA Paribahan"
+      >
+        SA
+      </span>
+    );
+  }
+
   return (
     <span
       className={`${className} inline-flex items-center justify-center rounded-md bg-gray-700 text-white shrink-0 shadow-2xs select-none`}

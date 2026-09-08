@@ -3,70 +3,14 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
-export interface BDCourierConfig {
-  apiKey: string;
-  enabled: boolean;
-  autoCheckOnOrder: boolean;
-  minSuccessRatioWarning: number; // e.g., 70%
-  blockThresholdRatio: number; // e.g., 40%
-  updated_at?: string;
-}
+import {
+  type BDCourierConfig,
+  type BDCourierReport,
+  type BDCourierCourierStat,
+  BDCOURIER_PROVIDERS,
+} from "./types";
 
-export interface BDCourierCourierStat {
-  name: string;
-  logo?: string;
-  total: number;
-  success: number;
-  cancelled: number;
-  ratio: number;
-}
-
-export interface BDCourierReport {
-  success: boolean;
-  phone: string;
-  total_parcel: number;
-  success_parcel: number;
-  cancelled_parcel: number;
-  success_ratio: number; // 0 to 100
-  risk_level: "safe" | "medium" | "high" | "critical";
-  color: "emerald" | "amber" | "red" | "zinc";
-  badge_text: string;
-  risk_verdict: string;
-  raw_risk_verdict?: any;
-  courier_details: {
-    steadfast?: BDCourierCourierStat;
-    pathao?: BDCourierCourierStat;
-    redx?: BDCourierCourierStat;
-    paperfly?: BDCourierCourierStat;
-    carrybee?: BDCourierCourierStat;
-    parceldex?: BDCourierCourierStat;
-    courrierfast?: BDCourierCourierStat;
-    ecourier?: BDCourierCourierStat;
-    [key: string]: BDCourierCourierStat | undefined;
-  };
-  reports_count: number;
-  reports: Array<{
-    id?: number;
-    name?: string;
-    reason: string;
-    date?: string;
-    courier?: string;
-    courierLogo?: string;
-  }>;
-  source: "live_api" | "cached";
-  checked_at: string;
-  message?: string;
-}
-
-const BDCOURIER_PROVIDERS = [
-  { key: "pathao", name: "Pathao", logo: "https://api.bdcourier.com/c-logo/pathao-logo.png" },
-  { key: "steadfast", name: "SteadFast", logo: "https://api.bdcourier.com/c-logo/steadfast-logo.png" },
-  { key: "redx", name: "Redx", logo: "https://api.bdcourier.com/c-logo/redx-logo.png" },
-  { key: "paperfly", name: "PaperFly", logo: "https://api.bdcourier.com/c-logo/paperfly-logo.png" },
-  { key: "carrybee", name: "CarryBee", logo: "https://api.bdcourier.com/c-logo/carrybee-logo.webp" },
-  { key: "courrierfast", name: "CourrierFast", logo: "https://api.bdcourier.com/c-logo/courierfast-logo.png" },
-  { key: "parceldex", name: "ParcelDex", logo: "https://api.bdcourier.com/c-logo/parceldex-logo.png" },
-];
+export type { BDCourierConfig, BDCourierReport, BDCourierCourierStat };
 
 const BDCOURIER_SETTINGS_KEY = "bdcourier_settings";
 const BDCOURIER_API_URL = "https://api.bdcourier.com/courier-check";
@@ -322,17 +266,51 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
     const supabase = createAdminClient();
     const { data: storeOrders } = await supabase
       .from("orders")
-      .select("id, status, created_at, total")
+      .select("id, status, created_at, total, consignment_id, is_courier_cancelled, is_courier_returned")
       .or(`guest_phone.eq.${normalizedPhone},shipping_address_snapshot->>phone.eq.${normalizedPhone}`);
 
     const ordList = storeOrders || [];
-    const delCount = ordList.filter((o) => o.status === "delivered" || o.status === "completed").length;
-    const canCount = ordList.filter((o) => ["cancelled", "returned", "failed"].includes(o.status)).length;
-    const totCount = delCount + canCount;
+    if (ordList.length > 0) {
+      const courierDetails = createEmptyCourierDetails();
+      let delCount = 0;
+      let canCount = 0;
 
-    if (totCount > 0) {
-      const storeRatio = Math.round((delCount / totCount) * 100);
-      const isRed = storeRatio < 50;
+      for (const o of ordList) {
+        const isDel = o.status === "delivered" || o.status === "completed";
+        const isCan = ["cancelled", "returned", "failed"].includes(o.status) || Boolean(o.is_courier_cancelled) || Boolean(o.is_courier_returned);
+        if (isDel) delCount++;
+        else if (isCan) canCount++;
+
+        // Map order to courier
+        let cKey = "steadfast";
+        const cid = (o.consignment_id || "").toLowerCase();
+        if (cid.startsWith("pt-") || cid.includes("pathao")) cKey = "pathao";
+        else if (cid.startsWith("rx-") || cid.includes("redx")) cKey = "redx";
+        else if (cid.startsWith("pf-") || cid.includes("paperfly")) cKey = "paperfly";
+        else if (cid.startsWith("cb-") || cid.includes("carrybee")) cKey = "carrybee";
+        else if (cid.startsWith("pd-") || cid.includes("parceldex")) cKey = "parceldex";
+        else if (cid.startsWith("ec-") || cid.includes("ecourier")) cKey = "ecourier";
+        else if (cid.startsWith("dt-") || cid.includes("deliverytiger")) cKey = "deliverytiger";
+        else if (cid.startsWith("sc-") || cid.includes("sundarban")) cKey = "sundarban";
+        else if (cid.startsWith("sa-") || cid.includes("saparibahan")) cKey = "saparibahan";
+
+        if (courierDetails[cKey]) {
+          courierDetails[cKey]!.total += 1;
+          if (isDel) courierDetails[cKey]!.success += 1;
+          else if (isCan) courierDetails[cKey]!.cancelled += 1;
+          const cTot = courierDetails[cKey]!.total;
+          const cSuc = courierDetails[cKey]!.success;
+          courierDetails[cKey]!.ratio = cTot > 0 ? Math.round((cSuc / cTot) * 100) : 100;
+        }
+      }
+
+      const totCount = ordList.length;
+      const finishedCount = delCount + canCount;
+      const storeRatio = finishedCount > 0
+        ? Math.round((delCount / finishedCount) * 100)
+        : 100; // If all are newly placed / in-transit with 0 cancellations, ratio is 100%
+
+      const isRed = storeRatio < 50 && canCount > 0;
       const isAmber = storeRatio >= 50 && storeRatio < 75;
 
       const report: BDCourierReport = {
@@ -344,9 +322,11 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
         success_ratio: storeRatio,
         risk_level: isRed ? "critical" : isAmber ? "medium" : "safe",
         color: isRed ? "red" : isAmber ? "amber" : "emerald",
-        badge_text: `${storeRatio}% Store Ratio`,
-        risk_verdict: `Store History: ${delCount}/${totCount} parcels successfully delivered (${storeRatio}% success rate).`,
-        courier_details: createEmptyCourierDetails(),
+        badge_text: `${storeRatio}% (${delCount}/${totCount})`,
+        risk_verdict: delCount === 0 && canCount === 0
+          ? `${totCount} active parcel(s) dispatched / in-transit. Clean record with 0 cancellations.`
+          : `Store History: ${delCount}/${totCount} parcels delivered (${storeRatio}% success rate, ${canCount} cancelled).`,
+        courier_details: courierDetails,
         reports_count: 0,
         reports: [],
         source: "cached",

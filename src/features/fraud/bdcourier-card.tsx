@@ -16,7 +16,8 @@ import {
   Package,
 } from "lucide-react";
 import Link from "next/link";
-import { fetchBDCourierReport, type BDCourierReport } from "./bdcourier-service";
+import { fetchBDCourierReport } from "./bdcourier-service";
+import { type BDCourierReport, BDCOURIER_PROVIDERS } from "./types";
 import { addBlacklistEntry } from "./actions";
 import { CourierBrandLogo } from "@/components/shared/courier-logo";
 
@@ -128,10 +129,22 @@ export function BDCourierHistoryCard({
       ? report.risk_verdict
       : report?.raw_risk_verdict?.action || "Customer profile evaluated across courier networks.";
 
-  // Extract all supported courier stats (Pathao, SteadFast, RedX, PaperFly, CarryBee, ParcelDex, CourrierFast)
-  const allCouriers = report?.courier_details
-    ? Object.entries(report.courier_details).filter(([_, c]) => Boolean(c))
-    : [];
+  // Extract all supported courier stats (Pathao, SteadFast, RedX, PaperFly, CarryBee, ParcelDex, CourrierFast, eCourier, Delivery Tiger, Sundarban, SA Paribahan)
+  const courierMap = report?.courier_details || {};
+  const allCouriers = BDCOURIER_PROVIDERS.map((provider) => {
+    const existing = courierMap[provider.key];
+    return {
+      key: provider.key,
+      name: provider.name,
+      bnName: provider.bnName || provider.name,
+      logo: provider.logo,
+      total: existing?.total || 0,
+      success: existing?.success || 0,
+      cancelled: existing?.cancelled || 0,
+      ratio: existing?.total ? existing.ratio : (existing?.success ? 100 : 0),
+      hasHistory: Boolean(existing && existing.total > 0),
+    };
+  });
 
   return (
     <div className={`rounded-3xl border ${colorStyles.border} ${colorStyles.bg} p-5 sm:p-6 shadow-xs space-y-4`}>
@@ -222,66 +235,63 @@ export function BDCourierHistoryCard({
             </div>
           </div>
 
-          {/* Multi-Courier Breakdown (All Supported Couriers: Pathao, SteadFast, RedX, Paperfly, Carrybee, CourrierFast, ParcelDex) */}
-          {allCouriers.length > 0 && (
-            <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-2xs space-y-2.5">
-              <div className="flex items-center justify-between border-b border-gray-100 pb-1.5">
-                <span className="font-bold text-gray-800 text-[11px] uppercase tracking-wider block">
-                  Supported Courier Services ({allCouriers.length})
-                </span>
-                <span className="text-[10px] text-gray-400 font-medium">
-                  {allCouriers.filter(([_, c]) => c && c.total > 0).length} Active Provider(s)
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 text-[11px]">
-                {allCouriers.map(([key, courier]) => {
-                  if (!courier) return null;
-                  const hasActivity = courier.total > 0;
-                  const ratioColor =
-                    courier.ratio >= 80
-                      ? "text-emerald-700"
-                      : courier.ratio >= 50
-                      ? "text-amber-700"
-                      : "text-red-700";
-
-                  return (
-                    <div
-                      key={key}
-                      className={`p-2.5 rounded-xl border space-y-1 transition-all ${
-                        hasActivity
-                          ? "bg-gray-50/90 border-gray-200 shadow-2xs"
-                          : "bg-gray-50/40 border-gray-200/60 opacity-70"
-                      }`}
-                    >
-                      <div className="font-bold text-gray-900 flex justify-between items-center">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <CourierBrandLogo name={courier.name} logoUrl={courier.logo} className="h-4 w-4" />
-                          <span className="truncate max-w-27.5">{courier.name}</span>
-                        </div>
-                        {hasActivity ? (
-                          <span className={`font-black ${ratioColor}`}>{courier.ratio}%</span>
-                        ) : (
-                          <span className="text-[10px] font-bold text-gray-400">0 Parcels</span>
-                        )}
-                      </div>
-                      <div className="text-[10px] text-gray-500 flex justify-between font-mono">
-                        {hasActivity ? (
-                          <>
-                            <span>Tot: {courier.total.toLocaleString()}</span>
-                            <span>Del: {courier.success.toLocaleString()}</span>
-                            <span>Can: {courier.cancelled.toLocaleString()}</span>
-                          </>
-                        ) : (
-                          <span className="text-gray-400 italic text-[10px]">No delivery history recorded</span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+          {/* Multi-Courier Breakdown (All Supported Couriers) */}
+          <div className="bg-white p-4 rounded-2xl border border-gray-200/80 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-1.5">
+              <span className="font-bold text-gray-800 text-[11px] uppercase tracking-wider block">
+                Supported Courier Services ({allCouriers.length})
+              </span>
+              <span className="text-[10px] text-gray-400 font-medium">
+                {allCouriers.filter((c) => c.hasHistory).length} Active Provider(s)
+              </span>
             </div>
-          )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 text-[11px]">
+              {allCouriers.map((courier) => {
+                const hasActivity = courier.hasHistory;
+                const ratioColor =
+                  courier.ratio >= 80
+                    ? "text-emerald-700 bg-emerald-50 border-emerald-200"
+                    : courier.ratio >= 50
+                    ? "text-amber-700 bg-amber-50 border-amber-200"
+                    : "text-red-700 bg-red-50 border-red-200";
+
+                return (
+                  <div
+                    key={courier.key}
+                    className={`p-2.5 rounded-xl border space-y-1 transition-all ${
+                      hasActivity
+                        ? "bg-white border-gray-300 shadow-2xs"
+                        : "bg-gray-50/40 border-gray-200/60 opacity-70"
+                    }`}
+                  >
+                    <div className="font-bold text-gray-900 flex justify-between items-center">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <CourierBrandLogo name={courier.name} logoUrl={courier.logo} className="h-4 w-4" />
+                        <span className="truncate max-w-27.5">{courier.name}</span>
+                      </div>
+                      {hasActivity ? (
+                        <span className={`font-black px-1.5 py-0.5 rounded border text-[10px] ${ratioColor}`}>{courier.ratio}%</span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-gray-400">0 Parcels</span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-gray-500 flex justify-between font-mono">
+                      {hasActivity ? (
+                        <>
+                          <span>Tot: {courier.total.toLocaleString()}</span>
+                          <span className="text-emerald-700 font-bold">Del: {courier.success.toLocaleString()}</span>
+                          <span className="text-red-700 font-bold">Can: {courier.cancelled.toLocaleString()}</span>
+                        </>
+                      ) : (
+                        <span className="text-gray-400 italic text-[10px]">No delivery history recorded</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Warning Reports from merchant community if any */}
           {report.reports && report.reports.length > 0 && (
