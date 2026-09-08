@@ -6,7 +6,8 @@ import {
   Save, Loader2, ArrowLeft, Package, FileText,
   DollarSign, Ruler, Image as ImageIcon, Search,
   Box, Layers, Upload, Trash2, Plus, Check, Sparkles, Tag, Truck,
-  AlertTriangle, AlertCircle, ShieldCheck, Clock, Calendar, Eye
+  AlertTriangle, AlertCircle, ShieldCheck, Clock, Calendar, Eye,
+  Star, ChevronLeft, ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
@@ -130,12 +131,35 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
   const [brands, setBrands] = useState<Array<{ id: string; name: string }>>([]);
   const [availableAttributes, setAvailableAttributes] = useState<AttributeOption[]>([]);
 
+  // Extract initial gallery images from initialData relations & product_media
+  const initialGalleryImages: string[] = useMemo(() => {
+    if (!initialData) return [];
+    const list: string[] = [];
+    if (Array.isArray(initialData.product_media)) {
+      const sorted = [...(initialData.product_media as any[])].sort((a, b) => {
+        if (a.is_featured) return -1;
+        if (b.is_featured) return 1;
+        return (a.position || 0) - (b.position || 0);
+      });
+      sorted.forEach((pm: any) => {
+        const url = pm.media?.secure_url || pm.secure_url;
+        if (url && typeof url === "string" && !list.includes(url)) {
+          list.push(url);
+        }
+      });
+    }
+    if (initialData.og_image_url && typeof initialData.og_image_url === "string") {
+      if (!list.includes(initialData.og_image_url)) {
+        list.unshift(initialData.og_image_url);
+      }
+    }
+    return list;
+  }, [initialData]);
+
   // Media upload state
   const [uploadingMedia, setUploadingMedia] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [galleryImages, setGalleryImages] = useState<string[]>(
-    initialData?.og_image_url ? [initialData.og_image_url as string] : []
-  );
+  const [galleryImages, setGalleryImages] = useState<string[]>(initialGalleryImages);
 
   // Variant generator state
   const [selectedAttrIds, setSelectedAttrIds] = useState<string[]>([]);
@@ -238,7 +262,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     seo_title: (initialData?.seo_title as string) ?? "",
     seo_description: (initialData?.seo_description as string) ?? "",
     canonical_override: (initialData?.canonical_override as string) ?? "",
-    og_image_url: (initialData?.og_image_url as string) ?? "",
+    og_image_url: (initialData?.og_image_url as string) ?? initialGalleryImages[0] ?? "",
     is_indexed: (initialData?.is_indexed as boolean) ?? true,
     // Inventory
     initial_stock: initialStockValue,
@@ -463,6 +487,29 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     });
   };
 
+  const setFeaturedImage = (url: string) => {
+    updateField("og_image_url", url);
+    setGalleryImages((prev) => {
+      if (!prev.includes(url)) return [url, ...prev];
+      return [url, ...prev.filter((img) => img !== url)];
+    });
+  };
+
+  const moveImage = (index: number, direction: "left" | "right") => {
+    setGalleryImages((prev) => {
+      const targetIndex = direction === "left" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[targetIndex];
+      copy[targetIndex] = temp;
+      if (targetIndex === 0 || index === 0) {
+        updateField("og_image_url", copy[0]);
+      }
+      return copy;
+    });
+  };
+
   // Toggle attribute selection for variants
   const toggleAttribute = (attrId: string) => {
     setSelectedAttrIds((prev) =>
@@ -609,11 +656,15 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           product: productData,
           category_ids: form.selectedCategories,
           tag_names: tagNames,
+          media_urls: galleryImages,
+          featured_image_url: form.og_image_url || galleryImages[0] || undefined,
         })
       : await createProduct({
           product: productData,
           category_ids: form.selectedCategories,
           tag_names: tagNames,
+          media_urls: galleryImages,
+          featured_image_url: form.og_image_url || galleryImages[0] || undefined,
           variants: variantsPayload,
           initial_stock: form.initial_stock,
         });
@@ -1491,29 +1542,111 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
 
               {/* Gallery Grid */}
               {galleryImages.length > 0 && (
-                <div className="space-y-2">
-                  <Label>{isBn ? `আপলোডকৃত ছবিসমূহ (${galleryImages.length})` : `Uploaded Photos (${galleryImages.length})`}</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {galleryImages.map((url, idx) => (
-                      <div
-                        key={idx}
-                        className="group relative aspect-square rounded-lg border border-border overflow-hidden bg-surface-secondary"
-                      >
-                        <img src={url} alt="Product" className="h-full w-full object-cover" />
-                        {idx === 0 && (
-                          <span className="absolute top-1.5 left-1.5 rounded bg-primary-600 px-1.5 py-0.5 text-[10px] font-bold text-white shadow">
-                            {isBn ? "ফিচার্ড" : "Featured"}
-                          </span>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => removeImage(url)}
-                          className="absolute top-1.5 right-1.5 rounded-full bg-red-600 p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                <div className="space-y-3 pt-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <Label className="text-xs font-bold text-gray-800">
+                      {isBn
+                        ? `আপলোডকৃত ছবিসমূহ (${galleryImages.length} টি)`
+                        : `Uploaded Product Photos (${galleryImages.length})`}
+                    </Label>
+                    <span className="text-[11px] text-gray-500">
+                      {isBn
+                        ? "যেকোনো ছবিকে মূল ফিচার্ড ছবি করতে 'ফিচার্ড করুন' বাটনে ক্লিক করুন"
+                        : "Click 'Set as Featured' on any photo to designate it as the primary product image"}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {galleryImages.map((url, idx) => {
+                      const isFeatured = (form.og_image_url ? url === form.og_image_url : idx === 0);
+                      return (
+                        <div
+                          key={`${url}-${idx}`}
+                          className={cn(
+                            "group relative flex flex-col rounded-2xl border overflow-hidden bg-white shadow-xs transition-all",
+                            isFeatured
+                              ? "border-pink-500 ring-2 ring-pink-500/20 shadow-md"
+                              : "border-gray-200 hover:border-gray-300"
+                          )}
                         >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
+                          {/* Image Box */}
+                          <div className="relative aspect-square w-full bg-gray-50 flex items-center justify-center p-2 overflow-hidden">
+                            <img
+                              src={url}
+                              alt={`Product photo ${idx + 1}`}
+                              className="h-full w-full object-contain rounded-lg transition-transform group-hover:scale-105"
+                            />
+
+                            {/* Featured Badge */}
+                            {isFeatured && (
+                              <span className="absolute top-2 left-2 z-10 flex items-center gap-1 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 px-2 py-0.5 text-[10px] font-black text-white shadow-md">
+                                <Star className="h-3 w-3 fill-white" />
+                                {isBn ? "ফিচার্ড ছবি" : "Featured Photo"}
+                              </span>
+                            )}
+
+                            {/* Position Order Number */}
+                            <span className="absolute bottom-2 left-2 z-10 rounded-md bg-black/60 backdrop-blur-xs px-1.5 py-0.5 text-[9px] font-bold text-white">
+                              #{idx + 1}
+                            </span>
+
+                            {/* Delete Button */}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeImage(url);
+                              }}
+                              title={isBn ? "ছবি মুছুন" : "Remove photo"}
+                              className="absolute top-2 right-2 z-10 rounded-full bg-red-600 p-1.5 text-white shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Action Footer */}
+                          <div className="flex items-center justify-between p-2 bg-gray-50/80 border-t border-gray-100 gap-1">
+                            {/* Reorder Buttons */}
+                            <div className="flex items-center gap-0.5">
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => moveImage(idx, "left")}
+                                title={isBn ? "বামে সরান" : "Move left"}
+                                className="p-1 rounded-lg text-gray-500 hover:bg-gray-200 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                              >
+                                <ChevronLeft className="h-3.5 w-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={idx === galleryImages.length - 1}
+                                onClick={() => moveImage(idx, "right")}
+                                title={isBn ? "ডানে সরান" : "Move right"}
+                                className="p-1 rounded-lg text-gray-500 hover:bg-gray-200 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                              >
+                                <ChevronRight className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+
+                            {/* Set As Featured Button */}
+                            {!isFeatured ? (
+                              <button
+                                type="button"
+                                onClick={() => setFeaturedImage(url)}
+                                className="flex items-center gap-1 rounded-lg bg-pink-50 hover:bg-pink-100 text-[#e91e63] px-2 py-1 text-[11px] font-bold transition-colors cursor-pointer"
+                              >
+                                <Star className="h-3 w-3" />
+                                <span>{isBn ? "ফিচার্ড করুন" : "Set Featured"}</span>
+                              </button>
+                            ) : (
+                              <span className="text-[11px] font-bold text-pink-600 px-1 flex items-center gap-1">
+                                <Check className="h-3 w-3" /> {isBn ? "মূল ছবি" : "Primary"}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}

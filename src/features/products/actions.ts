@@ -97,10 +97,76 @@ function stripMissingColumns(payload: Record<string, unknown>): Record<string, u
   return sanitized;
 }
 
+async function syncProductMedia(
+  supabase: any,
+  productId: string,
+  mediaUrls: string[],
+  featuredImageUrl?: string | null,
+  userId?: string | null
+) {
+  if (!mediaUrls || !Array.isArray(mediaUrls)) return;
+
+  // Clean obsolete product_media links
+  await supabase.from("product_media").delete().eq("product_id", productId);
+
+  const featuredUrl = featuredImageUrl || mediaUrls[0];
+
+  for (let idx = 0; idx < mediaUrls.length; idx++) {
+    const url = mediaUrls[idx];
+    if (!url || typeof url !== "string") continue;
+
+    // Check if media table already has a row for this URL
+    let mediaId: string | null = null;
+    const { data: existingMedia } = await supabase
+      .from("media")
+      .select("id")
+      .eq("secure_url", url)
+      .is("deleted_at", null)
+      .maybeSingle();
+
+    if (existingMedia?.id) {
+      mediaId = existingMedia.id;
+    } else {
+      // Insert new media row
+      const publicId = `prod_${productId.slice(0, 8)}_${Date.now()}_${idx}`;
+      const { data: newMedia, error: mediaInsertErr } = await supabase
+        .from("media")
+        .insert({
+          public_id: publicId,
+          secure_url: url,
+          resource_type: "image",
+          format: url.split(".").pop()?.split("?")[0] || "webp",
+          folder: "products",
+          alt_text: `Product Photo ${idx + 1}`,
+          created_by: userId || null,
+        })
+        .select("id")
+        .single();
+
+      if (!mediaInsertErr && newMedia?.id) {
+        mediaId = newMedia.id;
+      }
+    }
+
+    if (mediaId) {
+      const isFeatured = url === featuredUrl;
+      await supabase.from("product_media").insert({
+        product_id: productId,
+        media_id: mediaId,
+        position: idx + 1,
+        is_featured: isFeatured,
+        type: "image",
+      });
+    }
+  }
+}
+
 export async function createProduct(input: {
   product: Record<string, unknown>;
   category_ids?: string[];
   tag_names?: string[];
+  media_urls?: string[];
+  featured_image_url?: string;
   variants?: Array<{
     sku?: string;
     regular_price?: number;
@@ -142,6 +208,7 @@ export async function createProduct(input: {
     batch_number: input.product.batch_number || null,
     expiry_date: input.product.expiry_date || null,
     routine_step: input.product.routine_step || null,
+    og_image_url: input.featured_image_url || (input.media_urls && input.media_urls[0]) || safeProductInsert.og_image_url || null,
     created_by: user?.id,
     updated_by: user?.id,
   };
@@ -177,6 +244,13 @@ export async function createProduct(input: {
   }
 
   if (prodError || !product) return { error: prodError?.message || "Failed to create product" };
+
+  // Sync Gallery Media
+  if (input.media_urls && input.media_urls.length > 0) {
+    await syncProductMedia(supabase, product.id, input.media_urls, input.featured_image_url, user?.id);
+  } else if (product.og_image_url) {
+    await syncProductMedia(supabase, product.id, [product.og_image_url], product.og_image_url, user?.id);
+  }
 
   // Assign categories
   if (input.category_ids?.length) {
@@ -272,6 +346,7 @@ export async function createProduct(input: {
   });
 
   revalidatePath("/admin/products");
+  revalidatePath("/products");
   return { data: product };
 }
 
@@ -281,6 +356,8 @@ export async function updateProduct(
     product: Record<string, unknown>;
     category_ids?: string[];
     tag_names?: string[];
+    media_urls?: string[];
+    featured_image_url?: string;
   }
 ) {
   const supabase = await createClient();
@@ -296,6 +373,16 @@ export async function updateProduct(
   } else if (sku !== undefined) {
     sku = formatShortProductId(sku);
   }
+
+  // Resolve featured / OG image URL
+  const resolvedOgImageUrl =
+    input.featured_image_url !== undefined
+      ? input.featured_image_url
+      : input.media_urls && input.media_urls.length > 0
+      ? input.media_urls[0]
+      : raw.og_image_url !== undefined
+      ? raw.og_image_url
+      : undefined;
 
   // Build a safe payload containing ONLY columns that exist in the products table.
   // Beauty taxonomy columns (batch_number, expiry_date, skin_type, skin_concern,
@@ -335,7 +422,7 @@ export async function updateProduct(
     ...(raw.seo_title !== undefined && { seo_title: raw.seo_title }),
     ...(raw.seo_description !== undefined && { seo_description: raw.seo_description }),
     ...(raw.canonical_override !== undefined && { canonical_override: raw.canonical_override }),
-    ...(raw.og_image_url !== undefined && { og_image_url: raw.og_image_url }),
+    ...(resolvedOgImageUrl !== undefined && { og_image_url: resolvedOgImageUrl }),
     ...(raw.is_indexed !== undefined && { is_indexed: raw.is_indexed }),
     // Beauty taxonomy (available after migration 009)
     ...(raw.skin_type !== undefined && { skin_type: raw.skin_type }),
@@ -380,6 +467,11 @@ export async function updateProduct(
   }
 
   if (updateError || !product) return { error: updateError?.message || "Failed to update product" };
+
+  // Sync Gallery Media
+  if (input.media_urls !== undefined) {
+    await syncProductMedia(supabase, id, input.media_urls, input.featured_image_url || (resolvedOgImageUrl as string | null | undefined), user?.id);
+  }
 
   // Sync categories
   if (input.category_ids) {
@@ -428,6 +520,11 @@ export async function updateProduct(
   });
 
   revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/${id}/edit`);
+  if (product?.slug) {
+    revalidatePath(`/products/${product.slug}`);
+  }
+  revalidatePath("/products");
   return { data: product };
 }
 

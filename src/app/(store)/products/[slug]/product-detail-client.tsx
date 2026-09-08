@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -189,19 +189,39 @@ export function ProductDetailClient({
     }
   }, [product.id, selectedVariant?.id, effectivePrice, categoryName]);
 
-  // Gallery Images
-  const mediaList = product.product_media || [];
-  const imageUrls: string[] = [];
-  if (product.og_image_url) imageUrls.push(product.og_image_url);
-  mediaList.forEach((pm: any) => {
-    if (pm.media?.secure_url && !imageUrls.includes(pm.media.secure_url)) {
-      imageUrls.push(pm.media.secure_url);
+  // Gallery Images - Extract strictly from this product's own media and featured image
+  const sortedMediaList = useMemo(() => {
+    const list = Array.isArray(product.product_media) ? [...product.product_media] : [];
+    return list.sort((a, b) => {
+      if (a.is_featured) return -1;
+      if (b.is_featured) return 1;
+      return (a.position || 0) - (b.position || 0);
+    });
+  }, [product.product_media]);
+
+  const imageUrls: string[] = useMemo(() => {
+    const urls: string[] = [];
+    if (product.og_image_url) {
+      urls.push(product.og_image_url);
     }
-  });
+    sortedMediaList.forEach((pm: any) => {
+      const u = pm.media?.secure_url || pm.secure_url;
+      if (u && typeof u === "string" && !urls.includes(u)) {
+        urls.push(u);
+      }
+    });
+    return urls;
+  }, [product.og_image_url, sortedMediaList]);
 
   const [selectedImage, setSelectedImage] = useState<string>(
     imageUrls[0] || ""
   );
+
+  useEffect(() => {
+    if (imageUrls.length > 0 && (!selectedImage || !imageUrls.includes(selectedImage))) {
+      setSelectedImage(imageUrls[0]);
+    }
+  }, [imageUrls, selectedImage]);
 
   // Zoom State
   const [isZoomed, setIsZoomed] = useState(false);
