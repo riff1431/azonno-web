@@ -221,17 +221,30 @@ export async function sendSmsNotification(input: {
   };
 
   let message = template.template;
-  for (const [key, val] of Object.entries(mergedVars)) {
-    message = message.replaceAll(`{{${key}}}`, String(val ?? ""));
+  if (input.eventType === "test_sms" && input.variables.custom_message) {
+    message = input.variables.custom_message;
+  } else {
+    for (const [key, val] of Object.entries(mergedVars)) {
+      message = message.replaceAll(`{{${key}}}`, String(val ?? ""));
+    }
+    // Remove any remaining unresolved double-brace tokens cleanly
+    message = message.replace(/\{\{[^}]+\}\}/g, "").replace(/\s{2,}/g, " ").trim();
   }
-  // Remove any remaining unresolved double-brace tokens cleanly
-  message = message.replace(/\{\{[^}]+\}\}/g, "").replace(/\s{2,}/g, " ").trim();
+
+  // Real Gateway Dispatch
+  const { dispatchSmsToGateway } = await import("@/features/sms/sms-service");
+  const sendRes = await dispatchSmsToGateway(
+    providerConfig,
+    input.recipientPhone,
+    message,
+    input.eventType
+  );
 
   const logItem: SmsLogItem = {
-    id: `sms-${Date.now()}`,
+    id: sendRes.messageId || `sms-${Date.now()}`,
     recipient_phone: input.recipientPhone,
     message,
-    status: "delivered",
+    status: sendRes.success ? "delivered" : "failed",
     provider: providerConfig.provider_name || "BulkSMSBD",
     sent_at: new Date().toISOString(),
   };
@@ -243,13 +256,25 @@ export async function sendSmsNotification(input: {
     await supabase.from("sms_logs").insert({
       recipient_phone: input.recipientPhone,
       message,
-      status: "delivered",
-      provider_response: { gateway: providerConfig.provider_name || "BulkSMSBD", status: "SUCCESS", message_id: logItem.id },
+      status: sendRes.success ? "delivered" : "failed",
+      provider_response: {
+        gateway: providerConfig.provider_name || "BulkSMSBD",
+        status: sendRes.success ? "SUCCESS" : "FAILED",
+        message_id: logItem.id,
+        raw: sendRes.rawResponse,
+        error: sendRes.error,
+        latencyMs: sendRes.latencyMs,
+      },
     });
   } catch (e) {
     // Graceful fallback
   }
 
-  return { success: true, log: logItem };
+  return {
+    success: sendRes.success,
+    log: logItem,
+    error: sendRes.error,
+    providerResult: sendRes,
+  };
 }
 

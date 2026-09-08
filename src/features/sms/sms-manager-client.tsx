@@ -40,6 +40,11 @@ export function SmsManagerClient({ initialTemplates, initialLogs }: SmsManagerCl
     if (res.success && res.log) {
       setLogs([res.log, ...logs]);
       setMsg(t("sms_dispatch_success"));
+    } else {
+      setMsg(res.error || (res.skipped ? res.reason : "Failed to dispatch SMS. Check provider credentials."));
+      if (res.log) {
+        setLogs([res.log, ...logs]);
+      }
     }
     setSending(false);
   };

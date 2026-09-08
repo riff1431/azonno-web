@@ -15,6 +15,7 @@ export async function getSmsProviderConfig() {
     api_key: settings.api_key || process.env.SMS_PROVIDER_API_KEY || "",
     sender_id: settings.sender_id || process.env.SMS_PROVIDER_SENDER_ID || "8809612000000",
     username: settings.username || "",
+    password: settings.password || "",
     is_active: settings.is_active ?? true,
   };
 }
@@ -24,25 +25,66 @@ export async function saveSmsProviderConfig(data: {
   api_url: string;
   api_key: string;
   sender_id: string;
-  username: string;
-  is_active: boolean;
+  username?: string;
+  password?: string;
+  is_active?: boolean;
 }) {
   await saveModuleSettings("sms", {
     provider_name: { value: data.provider_name, valueType: "string" },
     api_url: { value: data.api_url, valueType: "string" },
     api_key: { value: data.api_key, isSecret: true },
     sender_id: { value: data.sender_id, valueType: "string" },
-    username: { value: data.username, valueType: "string" },
-    is_active: { value: data.is_active, valueType: "boolean" },
+    username: { value: data.username || "", valueType: "string" },
+    password: { value: data.password || "", isSecret: true },
+    is_active: { value: data.is_active ?? true, valueType: "boolean" },
   });
 
   revalidatePath("/admin/communication/sms");
   return { success: true };
 }
 
-export async function sendTestSms(phone: string, message: string) {
+export async function checkSmsGatewayBalanceAction(overrideConfig?: any) {
+  const { checkSmsGatewayBalance } = await import("@/features/sms/sms-service");
+  const config = overrideConfig || (await getSmsProviderConfig());
+  return await checkSmsGatewayBalance(config);
+}
+
+export async function sendTestSms(
+  phone: string,
+  message: string,
+  overrideConfig?: any
+) {
   if (!phone || !message) {
     return { success: false, message: "Phone number and message text are required." };
+  }
+
+  // If override settings are passed (e.g. testing before saving), use them directly
+  if (overrideConfig && overrideConfig.api_key) {
+    const { dispatchSmsToGateway } = await import("@/features/sms/sms-service");
+    const sendRes = await dispatchSmsToGateway(
+      overrideConfig,
+      phone,
+      message,
+      "test_sms"
+    );
+
+    if (sendRes.success) {
+      return {
+        success: true,
+        message: `Test SMS dispatched successfully via ${sendRes.provider}! (ID: ${sendRes.messageId || "ok"}, Latency: ${sendRes.latencyMs}ms)`,
+        latencyMs: sendRes.latencyMs,
+        provider: sendRes.provider,
+        raw: sendRes.rawResponse,
+      };
+    } else {
+      return {
+        success: false,
+        message: sendRes.error || `Failed to send SMS via ${sendRes.provider}. Check credentials or balance.`,
+        latencyMs: sendRes.latencyMs,
+        provider: sendRes.provider,
+        raw: sendRes.rawResponse,
+      };
+    }
   }
 
   const res = await sendSmsNotification({
@@ -51,19 +93,18 @@ export async function sendTestSms(phone: string, message: string) {
     variables: { custom_message: message },
   });
 
-  await logIntegrationEvent({
-    provider: "BulkSMSBD",
-    moduleKey: "sms",
-    event: "send_test_sms",
-    status: "success",
-    message: `Test SMS dispatched to ${phone}.`,
-    metadata: { phone, messageLength: message.length },
-  });
-
-  return {
-    success: true,
-    message: `Test SMS successfully dispatched to ${phone}! Log ID: ${res.log?.id || "sent"}`,
-  };
+  if (res.success) {
+    return {
+      success: true,
+      message: `Test SMS successfully dispatched to ${phone}! Log ID: ${res.log?.id || "sent"}`,
+      logId: res.log?.id,
+    };
+  } else {
+    return {
+      success: false,
+      message: res.error || "Failed to dispatch test SMS. Please check SMS Gateway configuration.",
+    };
+  }
 }
 
 // Email SMTP / Provider Settings

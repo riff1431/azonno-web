@@ -56,32 +56,74 @@ export async function testSteadfastConnection(formData?: { api_key?: string; sec
     secretKey = (saved.secret_key ?? "").trim();
   }
 
-  if (!apiKey) {
+  if (!apiKey || !secretKey) {
     await logIntegrationEvent({
       provider: "SteadFast",
       moduleKey: "steadfast",
       event: "test_connection",
       status: "error",
-      message: "Missing SteadFast API Key.",
+      message: "Missing SteadFast API Key or Secret Key.",
     });
     return {
       success: false,
-      message: "SteadFast API Key is required to test gateway connectivity.",
+      message: "Both SteadFast API Key and Secret Key are required to test gateway connectivity.",
     };
   }
 
-  await logIntegrationEvent({
-    provider: "SteadFast",
-    moduleKey: "steadfast",
-    event: "test_connection",
-    status: "success",
-    message: "SteadFast Courier Gateway REST API responded (200 OK). Ready for parcel booking.",
-    metadata: { endpoint: saved.api_base_url },
-  });
+  const startTime = Date.now();
+  const endpoints = [
+    (saved.api_base_url || "https://portal.steadfast.com.bd/api/v1").replace(/\/$/, ""),
+    "https://portal.packzy.com/api/v1",
+  ];
+
+  let lastError = "";
+  for (const baseUrl of endpoints) {
+    try {
+      const res = await fetch(`${baseUrl}/get_balance`, {
+        method: "GET",
+        headers: {
+          "Api-Key": apiKey,
+          "Secret-Key": secretKey,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        cache: "no-store",
+      });
+
+      const latencyMs = Date.now() - startTime;
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data && (data.status === 200 || data.current_balance !== undefined)) {
+        await logIntegrationEvent({
+          provider: "SteadFast",
+          moduleKey: "steadfast",
+          event: "test_connection",
+          status: "success",
+          message: `SteadFast Courier Gateway responded (HTTP 200 OK, latency: ${latencyMs}ms). Current Merchant Balance: ৳${data.current_balance || 0}.`,
+          metadata: { endpoint: baseUrl, balance: data.current_balance },
+        });
+
+        return {
+          success: true,
+          message: `SteadFast Courier API Handshake Successful! Connected to live portal (${latencyMs}ms response, Current Balance: ৳${data.current_balance ?? 0}). Ready for automated parcel dispatch.`,
+          balance: data.current_balance,
+        };
+      } else if (res.status === 401 || (data && data.status === 401)) {
+        return {
+          success: false,
+          message: `SteadFast Authentication Failed (401 Unauthorized): ${data?.message || "Invalid API Key or Secret Key. Please check your credentials at SteadFast portal."}`,
+        };
+      } else if (data?.message) {
+        lastError = data.message;
+      }
+    } catch (e: any) {
+      lastError = e.message;
+    }
+  }
 
   return {
-    success: true,
-    message: "SteadFast Courier API connection successful! Ready for automated consignment booking.",
+    success: false,
+    message: `Could not connect to SteadFast API: ${lastError || "Gateway unreachable"}. Please verify your API Key & Secret Key.`,
   };
 }
 
