@@ -216,8 +216,46 @@ export default function TrackOrderPage() {
               )}
             </div>
 
+            {/* Cancelled Banner */}
+            {order.status === "cancelled" && (
+              <div className="rounded-2xl border border-rose-200 bg-rose-50/70 p-4 sm:p-5 flex items-start gap-3 animate-in fade-in-0">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
+                  <AlertCircle className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-rose-900">
+                    {isBn ? "এই অর্ডারটি বাতিল করা হয়েছে" : "This order has been cancelled"}
+                  </h3>
+                  <p className="text-xs text-rose-700 mt-0.5">
+                    {isBn
+                      ? "অর্ডারটি বাতিল করা হয়েছে। কোনো প্রশ্ন বা সহায়তার প্রয়োজন হলে অনুগ্রহ করে আমাদের কাস্টমার সাপোর্টে মেসেজ দিন।"
+                      : "This order was cancelled. If you need any assistance or have questions, please reach out to our customer support."}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Returned Banner */}
+            {(order.status === "returned" || order.status === "failed") && (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 sm:p-5 flex items-start gap-3 animate-in fade-in-0">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                  <RotateCcw className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-amber-900">
+                    {isBn ? "পার্সেলটি রিটার্ন প্রক্রিয়ায় রয়েছে" : "Parcel in Return Process"}
+                  </h3>
+                  <p className="text-xs text-amber-700 mt-0.5">
+                    {isBn
+                      ? "ডেলিভারি সম্পন্ন না হওয়ায় পার্সেলটি ফেরত পাঠানো হচ্ছে। বিস্তারিত জানতে আমাদের কাস্টমার সাপোর্টে যোগাযোগ করুন।"
+                      : "The parcel could not be delivered and is currently being returned to our warehouse."}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Stepper */}
-            {order.status !== "cancelled" && order.status !== "returned" && (
+            {order.status !== "cancelled" && order.status !== "returned" && order.status !== "failed" && (
               <div className="space-y-2 py-2">
                 <div className="grid grid-cols-5 gap-1.5 text-center">
                   {statusSteps.map((step, idx) => {
@@ -250,7 +288,7 @@ export default function TrackOrderPage() {
             )}
 
             {/* Courier Dispatch Information Card */}
-            {activeCid && (
+            {activeCid && order.status !== "cancelled" && (
               <div className="rounded-2xl border border-primary-100 bg-gradient-to-r from-pink-50/50 via-rose-50/30 to-purple-50/40 p-4 sm:p-5 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5">
