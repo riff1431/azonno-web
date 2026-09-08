@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { X, Star, ShoppingBag, Plus, Minus, Zap, ShieldCheck, Heart } from "lucide-react";
+import { X, Star, ShoppingBag, Plus, Minus, ShieldCheck, Heart } from "lucide-react";
 import { formatPrice, getShortProductId } from "@/lib/utils";
 import { Button } from "@/components/shared/ui/button";
 import { useWishlist } from "@/context/wishlist-context";
@@ -246,7 +246,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
 
             <div className="pt-2 border-t border-border flex items-center gap-1.5 text-xs text-text-muted">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-              <span>{isBn ? "১০০% আসল পণ্যের নিশ্চয়তা | ক্যাশ অন ডেলিভারি সুবিধা" : "100% Genuine Guaranteed | Cash on Delivery Available"}</span>
+              <span>{isBn ? "১০০% আসল পণ্য | ক্যাশ অন ডেলিভারি সুবিধা" : "100% Authentic Products | Cash on Delivery Available"}</span>
             </div>
           </div>
         </div>

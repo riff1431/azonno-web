@@ -101,7 +101,7 @@ export function BlogPostClient({
             </Link>
           ) : (
             <span className="text-xs text-text-muted">
-              {isBn ? "ecomX বিউটি টিম" : "By ecomX Beauty Team"}
+              {isBn ? "ব্লাশ অ্যান্ড বাজেট বিউটি টিম" : "By Blush & Budget Beauty Team"}
             </span>
           )}
 

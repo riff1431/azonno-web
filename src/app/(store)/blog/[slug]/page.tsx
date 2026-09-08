@@ -29,7 +29,7 @@ export async function generateMetadata({
   if (!post) return { title: "Article Not Found" };
 
   return {
-    title: post.seo_title || `${post.title} | ecomX Beauty Journal`,
+    title: post.seo_title || `${post.title} | Blush & Budget Beauty Journal`,
     description: post.seo_description || post.excerpt,
     openGraph: {
       title: post.title,
@@ -104,7 +104,7 @@ export default async function BlogPostPage({
         image={post.featured_image}
         datePublished={post.published_at}
         author={{
-          name: post.author?.name || "ecomX Editorial Team",
+          name: post.author?.name || "Blush & Budget Editorial Team",
           url: authorUrl,
           jobTitle: post.author?.job_title,
           avatarUrl: post.author?.avatar_url,

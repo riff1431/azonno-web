@@ -16,7 +16,7 @@ export default function AccountReviewsPage() {
       rating: 5,
       date: "14 Feb 2026",
       title: "Best hydration essence ever!",
-      comment: "100% authentic product! My skin feels incredibly supple and glassy after just 1 week of use. Fast delivery inside Dhaka within 24 hours.",
+      comment: "100% authentic product! Leaves my skin feeling deeply hydrated, soft, and comfortable. Fast delivery inside Dhaka within 24 hours.",
       verified: true,
       helpful: 12,
     },

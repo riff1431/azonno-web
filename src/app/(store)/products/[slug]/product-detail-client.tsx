@@ -716,7 +716,7 @@ export function ProductDetailClient({
               ) : (
                 <span>
                   {language === "bn"
-                    ? "২,০০০ টাকার অর্ডারে সারা দেশে ফ্রি ডেলিভারি।"
+                    ? "২,৫০০ টাকার অর্ডারে সারা দেশে ফ্রি ডেলিভারি।"
                     : "Free Delivery available on orders over ৳2,500."}
                 </span>
               )}
