@@ -24,78 +24,72 @@ interface BundleProduct {
 
 interface FrequentlyBoughtTogetherProps {
   bundleData: {
-    enabled: boolean;
-    title: string;
-    discount_type: "percentage" | "fixed" | "free_shipping";
-    discount_value: number;
-    badge_text?: string;
-    products: BundleProduct[];
+    mainProduct: BundleProduct;
+    bundleProducts: BundleProduct[];
+    config: {
+      title: string;
+      offerType: "percentage" | "fixed" | "free_shipping";
+      offerValue: number;
+      badgeText: string;
+      originalTotalPrice: number;
+      comboTotalPrice: number;
+      discountAmount: number;
+      isFreeShipping: boolean;
+    };
   } | null;
-  mainProduct: any;
 }
 
-export function FrequentlyBoughtTogether({
-  bundleData,
-  mainProduct,
-}: FrequentlyBoughtTogetherProps) {
+export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogetherProps) {
   const router = useRouter();
   const { addItem, openCart } = useCart();
   const { language, t, toBn, formatPriceBn } = useLanguage();
   const [addedSuccess, setAddedSuccess] = useState(false);
   const isBn = language === "bn";
 
-  // If no active bundle configuration or fewer than 2 total products, don't display widget
-  if (!bundleData || !bundleData.enabled || !bundleData.products || bundleData.products.length === 0) {
+  if (!bundleData || !bundleData.bundleProducts || bundleData.bundleProducts.length === 0) {
     return null;
   }
 
-  const config = bundleData;
-  const allBundleProducts: BundleProduct[] = [
-    {
-      id: mainProduct.id,
-      name: mainProduct.name,
-      slug: mainProduct.slug,
-      sku: mainProduct.sku || null,
-      regular_price: Number(mainProduct.regular_price) || 0,
-      sale_price: mainProduct.sale_price ? Number(mainProduct.sale_price) : null,
-      og_image_url: mainProduct.og_image_url || null,
-      brands: mainProduct.brands || null,
-    },
-    ...config.products.filter((p) => p.id !== mainProduct.id),
-  ];
+  const { mainProduct, bundleProducts, config } = bundleData;
+  const allProducts = [mainProduct, ...bundleProducts];
 
-  // Default selection: all products in the combo
-  const [selectedIds, setSelectedIds] = useState<string[]>(
-    allBundleProducts.map((p) => p.id)
-  );
+  // State: Set of selected product IDs (all selected by default)
+  const [selectedIds, setSelectedIds] = useState<string[]>(allProducts.map((p) => p.id));
 
+  // Toggle selection
   const toggleSelect = (id: string) => {
-    // Keep main product permanently checked, or allow toggling other items
-    if (id === mainProduct.id && selectedIds.includes(id) && selectedIds.length === 1) return;
+    // Keep at least main product selected
+    if (id === mainProduct.id && selectedIds.includes(id) && selectedIds.length === 1) {
+      return;
+    }
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((pId) => pId !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
-  const selectedProducts = allBundleProducts.filter((p) => selectedIds.includes(p.id));
+  // Filter selected products
+  const selectedProducts = allProducts.filter((p) => selectedIds.includes(p.id));
+  const isComboActive = selectedProducts.length >= 2;
 
-  // Compute pricing totals for selected combination
+  // Calculate live dynamic totals based on selection
   const currentRegularTotal = selectedProducts.reduce(
-    (sum, p) => sum + Number(p.sale_price ?? p.regular_price),
+    (sum, p) => sum + (p.sale_price ?? p.regular_price),
     0
   );
 
   let currentDiscount = 0;
-  if (selectedProducts.length > 1) {
-    if (config.discount_type === "percentage") {
-      currentDiscount = Math.round((currentRegularTotal * (config.discount_value || 0)) / 100);
-    } else if (config.discount_type === "fixed") {
-      currentDiscount = Math.min(currentRegularTotal, config.discount_value || 0);
+  if (isComboActive) {
+    if (config.offerType === "percentage") {
+      currentDiscount = Math.round((currentRegularTotal * config.offerValue) / 100);
+    } else if (config.offerType === "fixed") {
+      currentDiscount = Math.min(config.offerValue, currentRegularTotal - 50);
+    } else if (config.offerType === "free_shipping") {
+      currentDiscount = 120; // Delivery value
     }
   }
 
   const finalComboPrice =
-    config.discount_type === "free_shipping"
+    config.offerType === "free_shipping"
       ? currentRegularTotal
       : Math.max(0, currentRegularTotal - currentDiscount);
 
