@@ -30,7 +30,7 @@ export function getSecurityHeaders(): Record<string, string> {
     // Base URI restriction
     "base-uri 'self'",
     // Form action restriction
-    "form-action 'self' https://*.sslcommerz.com https://*.bkash.com https://*.supabase.co",
+    "form-action 'self' https://*.sslcommerz.com https://*.bkash.com https://*.supabase.co https://www.facebook.com https://*.facebook.com https://analytics.tiktok.com https://*.tiktok.com https://ads.tiktok.com",
     // Frame Ancestors (Prevents Clickjacking)
     "frame-ancestors 'none'",
   ];

@@ -195,7 +195,9 @@ export function trackMetaEvent(
         try {
           const pixelId = (window as any).__META_PIXEL_ID__;
           if (pixelId) {
-            fbq("setUserProperties", pixelId, advancedData);
+            fbq("set", "userData", advancedData, pixelId);
+          } else {
+            fbq("set", "userData", advancedData);
           }
         } catch {}
       }
