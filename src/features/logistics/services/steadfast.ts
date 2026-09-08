@@ -221,11 +221,13 @@ export async function getSteadfastStatusByCid(consignmentId: string | number) {
       if (data && (data.status === 200 || data.delivery_status)) {
         return data;
       }
+      return { status: data.status || 404, error: data.message || "Parcel not found in Steadfast" };
     } catch (e: any) {
       console.warn("Steadfast status fetch error:", e.message);
+      return { status: 500, error: e.message };
     }
   }
-  return { status: 200, delivery_status: "in_transit", message: "Live tracking checked" };
+  return { status: 400, error: "Steadfast API credentials are not configured in Shipping Settings." };
 }
 
 /**
@@ -250,11 +252,13 @@ export async function getSteadfastStatusByTrackingCode(trackingCode: string) {
       if (data && (data.status === 200 || data.delivery_status)) {
         return data;
       }
+      return { status: data.status || 404, error: data.message || "Tracking code not found in Steadfast" };
     } catch (e: any) {
       console.warn("Steadfast tracking status fetch error:", e.message);
+      return { status: 500, error: e.message };
     }
   }
-  return { status: 200, delivery_status: "in_transit", message: "Live tracking checked" };
+  return { status: 400, error: "Steadfast API credentials are not configured in Shipping Settings." };
 }
 
 /**
@@ -279,11 +283,13 @@ export async function getSteadfastStatusByInvoice(invoice: string) {
       if (data && (data.status === 200 || data.delivery_status)) {
         return data;
       }
+      return { status: data.status || 404, error: data.message || "Invoice not found in Steadfast" };
     } catch (e: any) {
       console.warn("Steadfast invoice status fetch error:", e.message);
+      return { status: 500, error: e.message };
     }
   }
-  return { status: 200, delivery_status: "in_transit", message: "Live tracking checked" };
+  return { status: 400, error: "Steadfast API credentials are not configured in Shipping Settings." };
 }
 
 /**

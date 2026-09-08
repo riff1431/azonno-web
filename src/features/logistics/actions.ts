@@ -321,28 +321,36 @@ export async function syncLiveCourierStatus(orderId: string) {
   if (isPathaoCourier) {
     const { getPathaoOrderStatus } = await import("./services/pathao");
     const res = await getPathaoOrderStatus(cid);
+    if (!res || res.status !== 200 || !res.delivery_status) {
+      return {
+        success: false,
+        error: res?.error || "Pathao API did not return a valid delivery status for this consignment. Please verify Pathao credentials.",
+      };
+    }
     liveStatus = (res.delivery_status || "").toLowerCase();
-    statusNote = `Pathao Live API: ${(liveStatus || "IN TRANSIT").replace(/_/g, " ").toUpperCase()}`;
+    statusNote = `Pathao Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
     rawData = res;
   } else {
     // SteadFast Courier with multi-key fallback
     const { getSteadfastStatusByCid, getSteadfastStatusByInvoice, getSteadfastStatusByTrackingCode } = await import("./services/steadfast");
     const cleanCid = String(cid).replace(/^SF-/, "").trim();
     let res = await getSteadfastStatusByCid(cleanCid);
-    if ((!res || res.status === 404 || res.status === 500) && order.tracking_code) {
+    if ((!res || res.status !== 200 || !res.delivery_status) && order.tracking_code) {
       res = await getSteadfastStatusByTrackingCode(order.tracking_code);
     }
-    if ((!res || res.status === 404 || res.status === 500) && order.order_number) {
+    if ((!res || res.status !== 200 || !res.delivery_status) && order.order_number) {
       res = await getSteadfastStatusByInvoice(order.order_number);
     }
     const rawStatusVal = res?.delivery_status ?? (typeof res?.status === "string" ? res.status : "");
-    liveStatus = String(rawStatusVal || "in_transit").toLowerCase();
+    if (!res || res.status !== 200 || !rawStatusVal) {
+      return {
+        success: false,
+        error: res?.error || "SteadFast API credentials are not configured or parcel was not found on the SteadFast server.",
+      };
+    }
+    liveStatus = String(rawStatusVal).toLowerCase();
     statusNote = `SteadFast Live API: ${liveStatus.replace(/_/g, " ").toUpperCase()}`;
     rawData = res;
-  }
-
-  if (!liveStatus) {
-    liveStatus = "in_transit";
   }
 
   // Map to system OrderStatus
@@ -393,8 +401,22 @@ export async function syncLiveCourierStatus(orderId: string) {
     mappedStatus = "shipped";
   }
 
-  // Update order in Supabase
   const addrSnap = order.shipping_address_snapshot || {};
+  const isAlreadySame =
+    mappedStatus === order.status &&
+    addrSnap.courier_status === liveStatus;
+
+  if (isAlreadySame) {
+    return {
+      success: true,
+      orderId,
+      status: mappedStatus,
+      courierStatus: liveStatus,
+      message: `Order status is already up-to-date with live courier (${mappedStatus}).`,
+    };
+  }
+
+  // Update order in Supabase
   const updatedAddressSnap = {
     ...addrSnap,
     courier_name: isPathaoCourier ? "Pathao Courier" : "SteadFast Courier",
@@ -423,7 +445,7 @@ export async function syncLiveCourierStatus(orderId: string) {
     console.error("Critical: Live courier status sync update failed:", syncUpdateErr);
   }
 
-  // Insert audit record into order_status_history table
+  // Insert audit record into order_status_history table only on meaningful status changes
   try {
     await supabase.from("order_status_history").insert({
       order_id: orderId,

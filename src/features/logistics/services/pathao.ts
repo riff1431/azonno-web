@@ -527,6 +527,7 @@ export async function getPathaoOrderStatus(consignmentId: string) {
           raw: data.data,
         };
       }
+      return { status: response.status || 404, error: data.message || "Consignment not found in Pathao" };
     } catch (err: any) {
       console.error("Pathao status fetch error:", err);
       return { status: 500, error: err.message };
@@ -534,9 +535,8 @@ export async function getPathaoOrderStatus(consignmentId: string) {
   }
 
   return {
-    status: 200,
-    delivery_status: "in_transit",
-    message: "Pathao Status Checked",
+    status: 400,
+    error: "Pathao API credentials are not configured or token could not be obtained.",
   };
 }
 
