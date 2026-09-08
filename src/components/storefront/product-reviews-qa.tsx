@@ -93,8 +93,8 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
     } else {
       setReviewMsg({
         text: isBn
-          ? "ধন্যবাদ! আপনার যাচাইকৃত রিভিউ সফলভাবে প্রকাশিত হয়েছে।"
-          : "Thank you! Your verified review has been published.",
+          ? "ধন্যবাদ! আপনার রিভিউ সফলভাবে প্রকাশিত হয়েছে।"
+          : "Thank you! Your review has been published.",
         isError: false,
       });
       setTitle("");
@@ -202,12 +202,12 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
               </div>
               <div className="max-w-md mx-auto space-y-1">
                 <h3 className="text-sm sm:text-base font-black text-gray-900">
-                  {isBn ? "রিভিউ লেখার জন্য লগইন করুন" : "Sign in to Leave a Verified Review"}
+                  {isBn ? "রিভিউ লেখার জন্য লগইন করুন" : "Sign in to Leave a Review"}
                 </h3>
                 <p className="text-xs text-gray-600 leading-relaxed">
                   {isBn
-                    ? "শুধুমাত্র লগইন করা নিবন্ধিত ক্রেতাগণ তাদের বাস্তব অভিজ্ঞতা ও মতামত জানাতে পারেন। এতে সকল রিভিউ বিশ্বস্ত ও খাঁটি থাকে।"
-                    : "Only logged-in verified customers can write product reviews to ensure 100% genuine and trustworthy feedback."}
+                    ? "লগইন করে আপনার বাস্তব অভিজ্ঞতা ও মতামত শেয়ার করুন।"
+                    : "Sign in to share your genuine experience and helpful feedback."}
                 </p>
               </div>
               <div className="pt-1 flex items-center justify-center gap-2.5 flex-wrap">
@@ -231,7 +231,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-pink-100 pb-3">
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-1.5">
                   <Sparkles className="h-4 w-4 text-amber-500" />
-                  {isBn ? "যাচাইকৃত কাস্টমার রিভিউ লিখুন" : "Leave a Verified Customer Review"}
+                  {isBn ? "আপনার রিভিউ লিখুন" : "Write a Review"}
                 </h3>
                 <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
                   <Check className="h-3 w-3 text-emerald-600" />

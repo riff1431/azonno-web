@@ -119,8 +119,8 @@ export function ShoppableArticleProducts({
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">
             {language === "bn"
-              ? "এই আর্টিকেলে আলোচিত ১০০% খাঁটি ডার্মাটোলজিক্যালি পরীক্ষিত কসমেটিক্স।"
-              : "100% authentic dermatologically verified cosmetics mentioned in this editorial."}
+              ? "এই আর্টিকেলে আলোচিত ১০০% আসল ও নির্ভরযোগ্য বিউটি পণ্য।"
+              : "100% authentic beauty and skincare products mentioned in this guide."}
           </p>
         </div>
 

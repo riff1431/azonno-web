@@ -206,96 +206,96 @@ export function RichArticleEditor({
 
     if (type === "routine") {
       const template = `
-<h2>The Ultimate 5-Step Morning Skincare Routine for Bangladesh Weather</h2>
-<p>Living in Bangladesh's tropical humidity means dealing with excess sebum, sweat, pollution, and sudden breakouts. A minimalist yet powerful routine helps balance oil production while protecting your moisture barrier.</p>
+<h2>Simple 5-Step Morning Skincare Routine for Everyday Freshness</h2>
+<p>Living in humid weather means dealing with excess oil, sweat, and sun exposure. A simple daily routine helps keep skin clean, balanced, and feeling comfortable all day.</p>
 
 <h3>Step-by-Step Daily Morning Routine</h3>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
   <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#1</div>
   <div class="space-y-1">
-    <h4 class="text-sm font-black text-gray-900 m-0">Low pH Gentle Cleanser</h4>
-    <p class="text-xs text-gray-600 leading-relaxed m-0">Use a sulfate-free gel cleanser (like COSRX Low pH Good Morning Gel) to remove overnight sweat without stripping natural lipids.</p>
+    <h4 class="text-sm font-black text-gray-900 m-0">Gentle Everyday Cleanser</h4>
+    <p class="text-xs text-gray-600 leading-relaxed m-0">Use a gentle gel cleanser to wash away overnight oil and sweat without leaving your skin feeling dry or tight.</p>
   </div>
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
   <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#2</div>
   <div class="space-y-1">
-    <h4 class="text-sm font-black text-gray-900 m-0">Hydrating Toner / Essence</h4>
-    <p class="text-xs text-gray-600 leading-relaxed m-0">Pat 2-3 layers of Centella Asiatica or Snail Mucin essence to immediately calm redness and soothe heat irritation.</p>
+    <h4 class="text-sm font-black text-gray-900 m-0">Hydrating Toner or Essence</h4>
+    <p class="text-xs text-gray-600 leading-relaxed m-0">Pat a lightweight layer of Centella or Snail Mucin essence to hydrate and leave skin feeling calm and refreshed.</p>
   </div>
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
   <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#3</div>
   <div class="space-y-1">
-    <h4 class="text-sm font-black text-gray-900 m-0">Active Serum (Niacinamide 10% + Zinc)</h4>
-    <p class="text-xs text-gray-600 leading-relaxed m-0">Regulates sebum secretion, minimizes pore enlargement, and fades stubborn post-acne dark marks.</p>
+    <h4 class="text-sm font-black text-gray-900 m-0">Balancing Serum (Niacinamide)</h4>
+    <p class="text-xs text-gray-600 leading-relaxed m-0">Helps balance excess oil and leaves the skin with a smooth, even-looking finish.</p>
   </div>
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
   <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#4</div>
   <div class="space-y-1">
-    <h4 class="text-sm font-black text-gray-900 m-0">Oil-Free Gel Moisturizer</h4>
-    <p class="text-xs text-gray-600 leading-relaxed m-0">Locks in hydration with ceramides and water-based humectants without clogging pores in summer heat.</p>
+    <h4 class="text-sm font-black text-gray-900 m-0">Lightweight Gel Moisturizer</h4>
+    <p class="text-xs text-gray-600 leading-relaxed m-0">Locks in daily moisture with a non-greasy feel that keeps skin soft throughout the day.</p>
   </div>
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
   <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#5</div>
   <div class="space-y-1">
-    <h4 class="text-sm font-black text-gray-900 m-0">Broad-Spectrum SPF 50+ PA++++ Sunscreen</h4>
-    <p class="text-xs text-gray-600 leading-relaxed m-0">Apply two finger-lengths of non-greasy sunscreen to prevent sun tan, dark spots, and early signs of aging.</p>
+    <h4 class="text-sm font-black text-gray-900 m-0">Daily SPF Sunscreen</h4>
+    <p class="text-xs text-gray-600 leading-relaxed m-0">Apply sunscreen evenly to protect against sun rays and keep your complexion bright and fresh.</p>
   </div>
 </div>
 
 <div class="my-6 rounded-2xl bg-pink-50/80 border-l-4 border-[#e91e63] p-5 shadow-xs">
   <div class="flex items-center gap-2 text-xs font-black uppercase text-[#e91e63] mb-1">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.439a11.955 11.955 0 01-4.5 0m4.5 0a1.5 1.5 0 01-1.5 1.5h-1.5a1.5 1.5 0 01-1.5-1.5m3-13.5a6 6 0 10-6 0c0 2.22 1.206 4.157 3 5.195V12h6v-.555c1.794-1.038 3-2.975 3-5.195z"/></svg>
-    <span>Beauty Expert Pro Tip</span>
+    <span>Daily Skincare Tip</span>
   </div>
   <p class="text-xs text-gray-800 font-medium leading-relaxed m-0">
-    Reapply sunscreen every 2 to 3 hours if you are outdoors or sitting near windows during peak daylight hours (10 AM - 4 PM).
+    Reapply sunscreen every few hours if you spend time outdoors during sunny hours.
   </p>
 </div>
 
 <h3>Key Takeaway</h3>
-<p>Consistency matters far more than having a 10-step routine. Listen to your skin and adjust according to weather shifts between summer humidity and winter dryness.</p>
+<p>Consistency is more helpful than using too many products at once. Choose simple steps that leave your skin feeling comfortable.</p>
 `;
       onChange(template);
       if (visualEditorRef.current) visualEditorRef.current.innerHTML = template;
     } else if (type === "ingredient") {
       const template = `
-<h2>Niacinamide vs. Vitamin C: Which Active Ingredient Does Your Skin Need?</h2>
-<p>Both Niacinamide (Vitamin B3) and Vitamin C (L-Ascorbic Acid) are gold-standard dermatological actives for brightening, tone correction, and barrier enhancement. But how do you pick between them?</p>
+<h2>Niacinamide vs. Vitamin C: Which Ingredient Fits Your Routine?</h2>
+<p>Both Niacinamide (Vitamin B3) and Vitamin C are popular skincare favorites for brightening and maintaining a fresh-looking complexion. Here is a simple look at how each one works.</p>
 
 <h3>1. Understanding Niacinamide (Vitamin B3)</h3>
-<p>Niacinamide is a water-soluble vitamin that works with natural substances in your skin to visibly minimize enlarged pores, tighten lax pores, improve uneven skin tone, soften fine lines, and strengthen a weakened surface.</p>
+<p>Niacinamide is a gentle vitamin that helps balance excess oil, smooth texture, and support everyday skin moisture.</p>
 
 <ul>
-  <li><strong>Best For:</strong> Oily skin, acne-prone skin, enlarged pores, redness, and sensitive barrier.</li>
-  <li><strong>Optimal Concentration:</strong> 2% to 10% daily.</li>
-  <li><strong>Stability:</strong> Highly stable, non-oxidizing, suitable for day and night use.</li>
+  <li><strong>Good For:</strong> Balancing oil, smoothing skin texture, and everyday gentle care.</li>
+  <li><strong>How to Use:</strong> Suitable for daily use in the morning or evening.</li>
+  <li><strong>Texture:</strong> Lightweight and easy to layer with other products.</li>
 </ul>
 
-<h3>2. Understanding Vitamin C (L-Ascorbic Acid)</h3>
-<p>Vitamin C is a potent antioxidant that neutralizes free radical damage from UV rays and pollution, accelerates collagen synthesis, and fades deep sun spots and hyperpigmentation.</p>
+<h3>2. Understanding Vitamin C</h3>
+<p>Vitamin C is a trusted antioxidant that helps brighten the complexion and create a fresh, radiant look.</p>
 
 <ul>
-  <li><strong>Best For:</strong> Dull complexion, dark spots, sun damage, and anti-aging protection.</li>
-  <li><strong>Optimal Concentration:</strong> 10% to 20% in airtight or dark glass bottles.</li>
-  <li><strong>Stability:</strong> Sensitive to light and air; best stored in a cool, dark drawer.</li>
+  <li><strong>Good For:</strong> Brightening dull-looking skin and evening out sun tan.</li>
+  <li><strong>How to Use:</strong> Best used in the morning under sunscreen.</li>
+  <li><strong>Storage:</strong> Keep in a cool place away from direct sunlight.</li>
 </ul>
 
 <div class="my-6 rounded-2xl bg-pink-50/80 border-l-4 border-[#e91e63] p-5 shadow-xs">
   <div class="flex items-center gap-2 text-xs font-black uppercase text-[#e91e63] mb-1">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.439a11.955 11.955 0 01-4.5 0m4.5 0a1.5 1.5 0 01-1.5 1.5h-1.5a1.5 1.5 0 01-1.5-1.5m3-13.5a6 6 0 10-6 0c0 2.22 1.206 4.157 3 5.195V12h6v-.555c1.794-1.038 3-2.975 3-5.195z"/></svg>
-    <span>Can You Layer Both?</span>
+    <span>Can You Use Both?</span>
   </div>
   <p class="text-xs text-gray-800 font-medium leading-relaxed m-0">
-    Yes! Modern formulations allow using Vitamin C in the morning (under sunscreen for antioxidant UV shield) and Niacinamide in the evening (for barrier repair and pore refinement).
+    Yes! You can use Vitamin C in your morning routine under sunscreen and Niacinamide in your evening routine for gentle hydration.
   </p>
 </div>
 `;

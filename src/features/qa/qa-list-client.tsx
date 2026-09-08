@@ -219,8 +219,8 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
                   required
                   placeholder={
                     isBn
-                      ? "হ্যাঁ, এই পণ্যটি ডার্মাটোলজিক্যালি টেস্টেড এবং সংবেদনশীল ত্বকে ব্যবহারযোগ্য..."
-                      : "Yes, this formulation is dermatologically tested and non-comedogenic..."
+                      ? "হ্যাঁ, এই পণ্যটি প্রতিদিন সকালে বা রাতে ব্যবহারের জন্য উপযুক্ত..."
+                      : "Yes, this product is gentle and suitable for everyday use..."
                   }
                   value={answerText}
                   onChange={(e) => setAnswerText(e.target.value)}

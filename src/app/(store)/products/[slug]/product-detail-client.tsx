@@ -52,15 +52,23 @@ import { type StoreFeatureSettings } from "@/features/settings/feature-settings-
 import { useLanguage } from "@/context/language-context";
 
 const SKIN_CONCERN_MAP: Record<string, { en: string; bn: string }> = {
-  "Acne & Blemishes": { en: "Acne & Blemishes", bn: "ব্রণ ও দাগ" },
-  "Brightening & Pigmentation": { en: "Brightening & Pigmentation", bn: "উজ্জ্বলতা ও পিগমেন্টেশন" },
-  "Anti-Aging & Wrinkles": { en: "Anti-Aging & Wrinkles", bn: "অ্যান্টি-এজিং ও বলিরেখা" },
-  "Dryness & Hydration": { en: "Dryness & Hydration", bn: "শুষ্কতা ও ডিপ ময়েশ্চার" },
-  "Pore Minimizing": { en: "Pore Minimizing", bn: "পোর মিনিমাইজিং" },
-  "Redness & Rosacea": { en: "Redness & Rosacea", bn: "লালচে ভাব ও রোসেসিয়া" },
+  "Clear Skin & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
+  "Acne & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
+  "Brightening & Even Tone": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
+  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
+  "Smooth Lines & Firmness": { en: "Smooth Lines & Firmness", bn: "কোমল ও টানটান অনুভূতি" },
+  "Anti-Aging & Wrinkles": { en: "Smooth Lines & Firmness", bn: "কোমল ও টানটান অনুভূতি" },
+  "Hydration & Moisture": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
+  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
+  "Pore & Oil Care": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
+  "Pore Minimizing": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
+  "Redness & Soothing": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
+  "Redness & Rosacea": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
   "Sun Protection": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (SPF)" },
-  "Oil Control": { en: "Oil Control", bn: "তেল নিয়ন্ত্রণ" },
-  "Barrier Repair": { en: "Barrier Repair", bn: "ব্যারিয়ার রিপেয়ার" },
+  "Dark Circles & Eye Care": { en: "Dark Circles & Eye Care", bn: "চোখের নিচের যত্ন" },
+  "Oil Control": { en: "Oil Control", bn: "তেল নিয়ন্ত্রণ ও ফ্রেশ লুক" },
+  "Barrier Care": { en: "Barrier Care", bn: "স্কিন ব্যারিয়ার কেয়ার" },
+  "Barrier Repair": { en: "Barrier Care", bn: "স্কিন ব্যারিয়ার কেয়ার" },
 };
 
 const SKIN_TYPE_MAP: Record<string, { en: string; bn: string }> = {
@@ -945,15 +953,15 @@ export function ProductDetailClient({
                   <>
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
-                      <span>Deeply nourishes and restores healthy skin barrier hydration.</span>
+                      <span>Leaves skin feeling soft, comfortable, and well-hydrated.</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
-                      <span>Formulated without parabens, synthetic dyes, or harsh sulfates.</span>
+                      <span>Formulated without harsh parabens, synthetic dyes, or drying sulfates.</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
-                      <span>Certified gentle and skin-friendly for sensitive skin types.</span>
+                      <span>Gentle and suitable for everyday skincare routines.</span>
                     </div>
                   </>
                 )}
@@ -998,7 +1006,7 @@ export function ProductDetailClient({
               <div className="space-y-3 max-w-3xl">
                 {keyActives.length > 0 && (
                   <div className="space-y-1.5 pb-2">
-                    <span className="font-bold text-gray-900 block">Key Active Formulations:</span>
+                    <span className="font-bold text-gray-900 block">Key Ingredients:</span>
                     <div className="flex flex-wrap gap-1.5">
                       {keyActives.map((ka: string) => (
                         <span

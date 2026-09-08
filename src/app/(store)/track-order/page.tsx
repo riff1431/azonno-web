@@ -114,7 +114,7 @@ export default function TrackOrderPage() {
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700 border border-primary-200">
           <Truck className="h-3.5 w-3.5" />
-          {isBn ? "রিয়েল-টাইম পার্সেল ট্র্যাকিং" : "Real-Time Consignment Tracking"}
+          {isBn ? "পার্সেল ট্র্যাকিং" : "Order Tracking"}
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-text">
           {t("orders", "trackOrderTitle")}
