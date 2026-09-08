@@ -51,7 +51,7 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
     setTestResult(null);
 
     try {
-      const res = await testPathaoConnection();
+      const res = await testPathaoConnection(formData);
       setTestResult(res);
       if (res.stores && res.stores.length > 0) {
         setAvailableStores(res.stores);
@@ -64,7 +64,7 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
   const handleFetchStores = async () => {
     setFetchingStores(true);
     try {
-      const res = await fetchPathaoStoresAction();
+      const res = await fetchPathaoStoresAction(formData);
       if (res.success && res.stores) {
         setAvailableStores(res.stores);
         if (res.stores.length > 0 && !formData.store_id) {

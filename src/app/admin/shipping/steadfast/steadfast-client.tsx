@@ -49,7 +49,7 @@ export function SteadfastClient({ initialSettings }: SteadfastClientProps) {
     setTestResult(null);
 
     try {
-      const res = await testSteadfastConnection();
+      const res = await testSteadfastConnection(formData);
       setTestResult(res);
     } finally {
       setTesting(false);

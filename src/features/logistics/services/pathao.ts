@@ -86,8 +86,8 @@ export async function createPathaoConsignment(
     };
   }
 
-  // 2. Fetch settings
-  const settings = await getPathaoSettings();
+  // 2. Fetch settings (including decrypted secrets for API authentication)
+  const settings = await getPathaoSettings(true);
   const token = await getPathaoAccessToken(settings);
   const isLive = settings.environment === "live";
   const apiBase = isLive

@@ -5,12 +5,12 @@ import { logIntegrationEvent } from "@/features/modules/actions";
 import { revalidatePath } from "next/cache";
 
 // SteadFast Settings
-export async function getSteadfastSettings() {
-  const settings = await getModuleSettings("steadfast", "all", false);
+export async function getSteadfastSettings(includeSecrets = false) {
+  const settings = await getModuleSettings("steadfast", "all", includeSecrets);
   return {
-    api_key: settings.api_key || process.env.STEADFAST_API_KEY || "",
-    secret_key: settings.secret_key || (process.env.STEADFAST_SECRET_KEY ? "••••••••" : ""),
-    webhook_auth_token: settings.webhook_auth_token || process.env.STEADFAST_WEBHOOK_TOKEN || "",
+    api_key: (settings.api_key || process.env.STEADFAST_API_KEY || "").trim(),
+    secret_key: (settings.secret_key || (process.env.STEADFAST_SECRET_KEY ? (includeSecrets ? process.env.STEADFAST_SECRET_KEY : "••••••••") : "")).trim(),
+    webhook_auth_token: (settings.webhook_auth_token || (process.env.STEADFAST_WEBHOOK_TOKEN ? (includeSecrets ? process.env.STEADFAST_WEBHOOK_TOKEN : "••••••••") : "")).trim(),
     webhook_domain_override: settings.webhook_domain_override || process.env.NEXT_PUBLIC_APP_URL || "",
     api_base_url: settings.api_base_url || "https://portal.steadfast.com.bd/api/v1",
     auto_booking: settings.auto_booking ?? true,
@@ -32,11 +32,11 @@ export async function saveSteadfastSettings(data: {
   default_service: string;
 }) {
   await saveModuleSettings("steadfast", {
-    api_key: { value: data.api_key, valueType: "string" },
-    secret_key: { value: data.secret_key, isSecret: true },
-    webhook_auth_token: { value: data.webhook_auth_token || "", isSecret: true },
-    webhook_domain_override: { value: data.webhook_domain_override || "", valueType: "string" },
-    api_base_url: { value: data.api_base_url, valueType: "string" },
+    api_key: { value: data.api_key?.trim(), valueType: "string" },
+    secret_key: { value: data.secret_key?.trim(), isSecret: true },
+    webhook_auth_token: { value: data.webhook_auth_token?.trim() || "", isSecret: true },
+    webhook_domain_override: { value: data.webhook_domain_override?.trim() || "", valueType: "string" },
+    api_base_url: { value: data.api_base_url?.trim(), valueType: "string" },
     auto_booking: { value: data.auto_booking, valueType: "boolean" },
     auto_sync_status: { value: data.auto_sync_status, valueType: "boolean" },
     environment: { value: data.environment, valueType: "string" },
@@ -48,9 +48,15 @@ export async function saveSteadfastSettings(data: {
   return { success: true };
 }
 
-export async function testSteadfastConnection() {
-  const settings = await getSteadfastSettings();
-  if (!settings.api_key) {
+export async function testSteadfastConnection(formData?: { api_key?: string; secret_key?: string }) {
+  const saved = await getSteadfastSettings(true);
+  const apiKey = (formData?.api_key ?? saved.api_key ?? "").trim();
+  let secretKey = (formData?.secret_key ?? saved.secret_key ?? "").trim();
+  if (secretKey.startsWith("••••") || !secretKey) {
+    secretKey = (saved.secret_key ?? "").trim();
+  }
+
+  if (!apiKey) {
     await logIntegrationEvent({
       provider: "SteadFast",
       moduleKey: "steadfast",
@@ -70,7 +76,7 @@ export async function testSteadfastConnection() {
     event: "test_connection",
     status: "success",
     message: "SteadFast Courier Gateway REST API responded (200 OK). Ready for parcel booking.",
-    metadata: { endpoint: settings.api_base_url },
+    metadata: { endpoint: saved.api_base_url },
   });
 
   return {
@@ -80,13 +86,13 @@ export async function testSteadfastConnection() {
 }
 
 // Pathao Settings
-export async function getPathaoSettings() {
-  const settings = await getModuleSettings("pathao", "all", false);
+export async function getPathaoSettings(includeSecrets = false) {
+  const settings = await getModuleSettings("pathao", "all", includeSecrets);
   return {
-    client_id: settings.client_id || process.env.PATHAO_CLIENT_ID || "",
-    client_secret: settings.client_secret || (process.env.PATHAO_CLIENT_SECRET ? "••••••••" : ""),
-    username: settings.username || "",
-    password: settings.password || (process.env.PATHAO_PASSWORD ? "••••••••" : ""),
+    client_id: (settings.client_id || process.env.PATHAO_CLIENT_ID || "").trim(),
+    client_secret: (settings.client_secret || (process.env.PATHAO_CLIENT_SECRET ? (includeSecrets ? process.env.PATHAO_CLIENT_SECRET : "••••••••") : "")).trim(),
+    username: (settings.username || process.env.PATHAO_USERNAME || "").trim(),
+    password: (settings.password || (process.env.PATHAO_PASSWORD ? (includeSecrets ? process.env.PATHAO_PASSWORD : "••••••••") : "")).trim(),
     store_id: settings.store_id || "",
     webhook_domain_override: settings.webhook_domain_override || process.env.NEXT_PUBLIC_APP_URL || "",
     auto_booking: settings.auto_booking ?? false,
@@ -105,12 +111,12 @@ export async function savePathaoSettings(data: {
   environment: string;
 }) {
   await saveModuleSettings("pathao", {
-    client_id: { value: data.client_id, valueType: "string" },
-    client_secret: { value: data.client_secret, isSecret: true },
-    username: { value: data.username, valueType: "string" },
-    password: { value: data.password, isSecret: true },
-    store_id: { value: data.store_id, valueType: "string" },
-    webhook_domain_override: { value: data.webhook_domain_override || "", valueType: "string" },
+    client_id: { value: data.client_id?.trim(), valueType: "string" },
+    client_secret: { value: data.client_secret?.trim(), isSecret: true },
+    username: { value: data.username?.trim(), valueType: "string" },
+    password: { value: data.password?.trim(), isSecret: true },
+    store_id: { value: data.store_id?.trim(), valueType: "string" },
+    webhook_domain_override: { value: data.webhook_domain_override?.trim() || "", valueType: "string" },
     auto_booking: { value: data.auto_booking, valueType: "boolean" },
     environment: { value: data.environment, valueType: "string" },
   });
@@ -120,23 +126,44 @@ export async function savePathaoSettings(data: {
   return { success: true };
 }
 
-export async function testPathaoConnection() {
-  const settings = await getPathaoSettings();
-  if (!settings.client_id || !settings.username) {
+export async function testPathaoConnection(formData?: {
+  client_id?: string;
+  client_secret?: string;
+  username?: string;
+  password?: string;
+  environment?: string;
+}) {
+  const savedSettings = await getPathaoSettings(true);
+
+  const clientId = (formData?.client_id ?? savedSettings.client_id ?? "").trim();
+  let clientSecret = (formData?.client_secret ?? savedSettings.client_secret ?? "").trim();
+  if (clientSecret.startsWith("••••") || !clientSecret) {
+    clientSecret = (savedSettings.client_secret ?? "").trim();
+  }
+
+  const username = (formData?.username ?? savedSettings.username ?? "").trim();
+  let password = (formData?.password ?? savedSettings.password ?? "").trim();
+  if (password.startsWith("••••") || !password) {
+    password = (savedSettings.password ?? "").trim();
+  }
+
+  const environment = formData?.environment ?? savedSettings.environment ?? "live";
+
+  if (!clientId || !clientSecret || !username || !password) {
     await logIntegrationEvent({
       provider: "Pathao",
       moduleKey: "pathao",
       event: "test_connection",
       status: "error",
-      message: "Missing Pathao Client ID or Username.",
+      message: "Missing Pathao credentials (Client ID, Secret, Username, Password).",
     });
     return {
       success: false,
-      message: "Pathao Client ID and Username/Email are required to test authentication.",
+      message: "Pathao Client ID, Client Secret, Username/Email, and Password are all required.",
     };
   }
 
-  const isLive = settings.environment === "live";
+  const isLive = environment === "live";
   const authUrl = isLive
     ? "https://api-hermes.pathao.com/aladdin/api/v1/issue-token"
     : "https://courier-api-sandbox.pathao.com/aladdin/api/v1/issue-token";
@@ -146,10 +173,10 @@ export async function testPathaoConnection() {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
-        client_id: settings.client_id,
-        client_secret: settings.client_secret,
-        username: settings.username,
-        password: settings.password,
+        client_id: clientId,
+        client_secret: clientSecret,
+        username: username,
+        password: password,
         grant_type: "password",
       }),
     });
@@ -181,13 +208,13 @@ export async function testPathaoConnection() {
 
       return {
         success: true,
-        message: `Pathao OAuth2 Handshake Successful! Connected to ${isLive ? "Production" : "Sandbox"} (${storesCount} Store${storesCount === 1 ? "" : "s"} Found).`,
+        message: `Pathao OAuth2 Handshake Successful! Connected to ${isLive ? "Production (Live)" : "Sandbox"} (${storesCount} Store${storesCount === 1 ? "" : "s"} Found).`,
         stores: storeData?.data?.data || [],
       };
     } else {
       return {
         success: false,
-        message: data.message || "Pathao rejected credentials. Please verify Client ID, Secret, Email, and Password.",
+        message: data.message || data.error || "Pathao rejected credentials. Please verify Client ID, Secret, Email, and Password.",
       };
     }
   } catch (err: any) {
@@ -198,8 +225,8 @@ export async function testPathaoConnection() {
   }
 }
 
-export async function fetchPathaoStoresAction() {
-  const result = await testPathaoConnection();
+export async function fetchPathaoStoresAction(formData?: any) {
+  const result = await testPathaoConnection(formData);
   if (result.success && result.stores) {
     return { success: true, stores: result.stores };
   }

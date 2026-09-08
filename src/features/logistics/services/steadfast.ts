@@ -65,8 +65,8 @@ export async function createSteadfastConsignment(
     };
   }
 
-  // 2. Fetch configured credentials
-  const settings = await getSteadfastSettings();
+  // 2. Fetch configured credentials (including decrypted secrets)
+  const settings = await getSteadfastSettings(true);
   const apiKey = settings.api_key;
   const secretKey = settings.secret_key;
   const baseUrl = (settings.api_base_url || "https://portal.steadfast.com.bd/api/v1").replace(/\/$/, "");
