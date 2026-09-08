@@ -84,6 +84,99 @@ export async function uploadMediaDirectly(formData: FormData) {
   }
 }
 
+export interface GalleryImageItem {
+  id: string;
+  url: string;
+  title: string;
+  source: "media" | "product" | "banner";
+  created_at?: string;
+}
+
+export async function getStoreGalleryImages(search?: string): Promise<GalleryImageItem[]> {
+  const supabase = await createClient();
+  const items: GalleryImageItem[] = [];
+  const seenUrls = new Set<string>();
+
+  try {
+    // 1. Fetch from media table
+    let mediaQuery = supabase
+      .from("media")
+      .select("id, secure_url, alt_text, created_at")
+      .is("deleted_at", null)
+      .order("created_at", { ascending: false })
+      .limit(40);
+
+    if (search && search.trim()) {
+      mediaQuery = mediaQuery.or(`alt_text.ilike.%${search.trim()}%,public_id.ilike.%${search.trim()}%`);
+    }
+
+    const { data: mediaRows } = await mediaQuery;
+    if (mediaRows) {
+      for (const m of mediaRows) {
+        if (m.secure_url && !seenUrls.has(m.secure_url)) {
+          seenUrls.add(m.secure_url);
+          items.push({
+            id: `media-${m.id}`,
+            url: m.secure_url,
+            title: m.alt_text || "Store Image",
+            source: "media",
+            created_at: m.created_at,
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Error fetching media table images:", err);
+  }
+
+  try {
+    // 2. Fetch from products table (product thumbnails & gallery images)
+    let prodQuery = supabase
+      .from("products")
+      .select("id, name, thumbnail_url, images, created_at")
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    if (search && search.trim()) {
+      prodQuery = prodQuery.ilike("name", `%${search.trim()}%`);
+    }
+
+    const { data: prodRows } = await prodQuery;
+    if (prodRows) {
+      for (const p of prodRows) {
+        if (p.thumbnail_url && !seenUrls.has(p.thumbnail_url)) {
+          seenUrls.add(p.thumbnail_url);
+          items.push({
+            id: `prod-thumb-${p.id}`,
+            url: p.thumbnail_url,
+            title: p.name || "Product Thumbnail",
+            source: "product",
+            created_at: p.created_at,
+          });
+        }
+        if (Array.isArray(p.images)) {
+          p.images.forEach((imgUrl: string, idx: number) => {
+            if (imgUrl && typeof imgUrl === "string" && !seenUrls.has(imgUrl)) {
+              seenUrls.add(imgUrl);
+              items.push({
+                id: `prod-img-${p.id}-${idx}`,
+                url: imgUrl,
+                title: `${p.name || "Product"} (${idx + 1})`,
+                source: "product",
+                created_at: p.created_at,
+              });
+            }
+          });
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Error fetching product images for gallery:", err);
+  }
+
+  return items;
+}
+
 export async function getMedia(filters?: {
   folder?: string;
   search?: string;
