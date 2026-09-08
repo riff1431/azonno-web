@@ -269,12 +269,42 @@ export function formatCustomerLogEntry(
   const noteLower = note.toLowerCase();
   const isBn = language === "bn";
 
-  // 1. Shipped / Courier Dispatch Handled
+  // 1. Out for delivery
+  if (noteLower.includes("out for delivery") || status === "out_for_delivery") {
+    return {
+      title: isBn ? "ডেলিভারি রাইডার পথে আছে" : "Out for Delivery",
+      description: isBn
+        ? "ডেলিভারি রাইডার আপনার পার্সেলটি নিয়ে বের হয়েছে। অনুগ্রহ করে আপনার মোবাইল সচল রাখুন।"
+        : "The delivery rider is on the way to your address with your parcel. Please keep your phone active.",
+      badge: isBn ? "রাইডার পথে আছে" : "Out for Delivery",
+      badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    };
+  }
+
+  // 2. In Transit / Courier hub movement (Live API Sync)
+  if (
+    noteLower.includes("in transit") ||
+    noteLower.includes("in_transit") ||
+    noteLower.includes("hub") ||
+    (status === "in_transit") ||
+    (status === "shipped" && noteLower.includes("live api"))
+  ) {
+    return {
+      title: isBn ? "পার্সেল ট্রানজিটে রয়েছে" : "Parcel In Transit",
+      description: isBn
+        ? "পার্সেলটি আপনার স্থানীয় ডেলিভারি সেন্টারে পৌঁছানোর জন্য ট্রানজিটে রয়েছে।"
+        : "Parcel is in transit to your local delivery hub.",
+      badge: isBn ? "ট্রানজিটে আছে" : "In Transit",
+      badgeColor: "bg-sky-50 text-sky-700 border-sky-200",
+    };
+  }
+
+  // 3. Shipped / Initial Courier Dispatch Handled
   if (
     noteLower.includes("dispatch") ||
     noteLower.includes("booked with") ||
     noteLower.includes("consignment") ||
-    (status === "shipped" && (noteLower.includes("steadfast") || noteLower.includes("pathao") || noteLower.includes("courier")))
+    status === "shipped"
   ) {
     const courier = noteLower.includes("pathao")
       ? "Pathao Courier"
@@ -292,30 +322,6 @@ export function formatCustomerLogEntry(
         : `Your parcel has been handed over to ${courier} and is now on the way.${trackCode ? ` (Tracking: ${trackCode})` : ""}`,
       badge: isBn ? "ডেলিভারিতে আছে" : "In Transit",
       badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
-    };
-  }
-
-  // 2. Out for delivery
-  if (noteLower.includes("out for delivery") || status === "out_for_delivery") {
-    return {
-      title: isBn ? "ডেলিভারি রাইডার পথে আছে" : "Out for Delivery",
-      description: isBn
-        ? "ডেলিভারি রাইডার আপনার পার্সেলটি নিয়ে বের হয়েছে। অনুগ্রহ করে আপনার মোবাইল সচল রাখুন।"
-        : "The delivery rider is on the way to your address with your parcel. Please keep your phone active.",
-      badge: isBn ? "রাইডার পথে আছে" : "Out for Delivery",
-      badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    };
-  }
-
-  // 3. In Transit / Courier hub movement
-  if (noteLower.includes("in transit") || noteLower.includes("live api") || status === "in_transit") {
-    return {
-      title: isBn ? "পার্সেল ট্রানজিটে রয়েছে" : "Parcel In Transit",
-      description: isBn
-        ? "পার্সেলটি আপনার স্থানীয় ডেলিভারি সেন্টারের উদ্দেশ্যে ট্রানজিটে রয়েছে।"
-        : "Parcel is in transit to your local delivery hub.",
-      badge: isBn ? "ট্রানজিটে আছে" : "In Transit",
-      badgeColor: "bg-sky-50 text-sky-700 border-sky-200",
     };
   }
 
