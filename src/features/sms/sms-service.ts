@@ -2,13 +2,13 @@
  * SMS Provider Gateway Service & API Dispatcher
  * Implements official REST/HTTP adapters for:
  * 1. BulkSMSBD (Bangladesh #1 SMS Gateway)
- * 2. MiM SMS / Greenweb BD
- * 3. Twilio Global REST API
- * 4. Onnorokom SMS
- * 5. Custom HTTP Dynamic Gateway
+ * 2. MiMSMS V2 Official REST API (https://www.mimsms.com/api-documentation)
+ * 3. Greenweb BD Token API (https://api.greenweb.com.bd/api.php)
+ * 4. Twilio Global REST API
+ * 5. Onnorokom SMS
+ * 6. Custom HTTP Dynamic Gateway
  */
 
-import { createAdminClient } from "@/lib/supabase/admin";
 import { logIntegrationEvent } from "@/features/modules/actions";
 
 export interface SmsSendResult {
@@ -24,11 +24,11 @@ export interface SmsSendResult {
 }
 
 export interface SmsProviderSettings {
-  provider_name: string; // "BulkSMSBD" | "MIMSMS" | "Twilio" | "Onnorokom" | "Custom"
+  provider_name: string; // "BulkSMSBD" | "MIMSMS" | "Greenweb" | "Twilio" | "Onnorokom" | "Custom"
   api_url?: string;
   api_key?: string;
   sender_id?: string;
-  username?: string; // or Twilio Account SID
+  username?: string; // MiMSMS Login Email or Twilio Account SID
   password?: string; // or Twilio Auth Token
   is_active?: boolean;
   custom_headers?: Record<string, string>;
@@ -160,7 +160,137 @@ export async function sendBulkSmsBd(
 }
 
 /**
- * 2. MiM SMS / Greenweb BD Driver
+ * 2. MiMSMS Official API V2 Driver
+ * Official Docs: https://www.mimsms.com/api-documentation (OpenAPI v2.0)
+ * Base URL: https://api.mimsms.com/api/V2/SMS
+ */
+export async function sendMimSmsV2(
+  config: SmsProviderSettings,
+  phone: string,
+  message: string
+): Promise<SmsSendResult> {
+  const startTime = Date.now();
+  const apiKey = (config.api_key || "").trim();
+  const userName = (config.username || "").trim();
+  const senderName = (config.sender_id || "").trim();
+  const apiUrl = (config.api_url || "https://api.mimsms.com/api/V2/SMS").trim();
+  const formattedPhone = formatBdSmsPhone(phone, "bd_country"); // 8801XXXXXXXXX
+
+  if (!apiKey || !userName) {
+    return {
+      success: false,
+      provider: "MiMSMS",
+      latencyMs: 0,
+      error: "MiMSMS requires both Account Email (User Name) and API Key. Please configure them in SMS settings.",
+    };
+  }
+
+  // Primary: JSON POST to /api/V2/SMS
+  try {
+    const payload = {
+      apiKey: apiKey,
+      userName: userName,
+      senderName: senderName || "8809612444598",
+      transactionType: "T",
+      mobileNumber: formattedPhone,
+      message: message,
+    };
+
+    const res = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    });
+
+    const latencyMs = Date.now() - startTime;
+    const json = await res.json().catch(() => null);
+
+    // MiMSMS response: { statusCode: "200", status: "Success", responseResult: "SMS Send Successfuly", trxnId: "...", success_Data: [...] }
+    if (
+      json &&
+      (json.statusCode === "200" ||
+        json.statusCode === 200 ||
+        json.status === "Success" ||
+        (Array.isArray(json.success_Data) && json.success_Data.length > 0))
+    ) {
+      const trackingId =
+        json.success_Data?.[0]?.trackingId || json.trxnId || `mim-${Date.now()}`;
+      return {
+        success: true,
+        provider: "MiMSMS",
+        responseCode: json.statusCode || "200",
+        messageId: String(trackingId),
+        message: json.responseResult || "SMS sent successfully via MiMSMS V2 API.",
+        rawResponse: json,
+        latencyMs,
+      };
+    }
+
+    // Capture error message from error_Data or responseResult
+    let errorMsg = "Failed to send SMS via MiMSMS.";
+    if (Array.isArray(json?.error_Data) && json.error_Data.length > 0) {
+      errorMsg = json.error_Data.map((e: any) => e.error || e.res_Code).join("; ");
+    } else if (json?.responseResult) {
+      errorMsg = json.responseResult;
+    } else if (json?.message) {
+      errorMsg = json.message;
+    } else if (json?.status) {
+      errorMsg = `MiMSMS Status: ${json.status} (Code: ${json.statusCode || res.status})`;
+    }
+
+    return {
+      success: false,
+      provider: "MiMSMS",
+      responseCode: json?.statusCode || res.status,
+      error: errorMsg,
+      rawResponse: json,
+      latencyMs,
+    };
+  } catch (err: any) {
+    // Attempt GET fallback if network / POST failed
+    try {
+      const fallbackUrl = `https://api.mimsms.com/api/V2/Send?userName=${encodeURIComponent(userName)}&apiKey=${encodeURIComponent(apiKey)}&mobileNumber=${formattedPhone}&senderName=${encodeURIComponent(senderName)}&transactionType=T&message=${encodeURIComponent(message)}`;
+      const res = await fetch(fallbackUrl, { cache: "no-store" });
+      const json = await res.json().catch(() => null);
+      const latencyMs = Date.now() - startTime;
+
+      if (
+        json &&
+        (json.statusCode === "200" ||
+          json.statusCode === 200 ||
+          json.status === "Success" ||
+          (Array.isArray(json.success_Data) && json.success_Data.length > 0))
+      ) {
+        return {
+          success: true,
+          provider: "MiMSMS",
+          messageId: String(json.success_Data?.[0]?.trackingId || json.trxnId || `mim-${Date.now()}`),
+          message: json.responseResult || "SMS sent successfully via MiMSMS GET API.",
+          rawResponse: json,
+          latencyMs,
+        };
+      }
+    } catch {
+      // ignore fallback error
+    }
+
+    return {
+      success: false,
+      provider: "MiMSMS",
+      error:
+        err.message ||
+        "Failed to reach MiMSMS API server. Ensure your Server IP/Domain is whitelisted in MiMSMS Developer Portal.",
+      latencyMs: Date.now() - startTime,
+    };
+  }
+}
+
+/**
+ * 3. Greenweb BD Token API Driver
  * Official Docs: https://api.greenweb.com.bd/api.php
  */
 export async function sendGreenwebSms(
@@ -176,9 +306,9 @@ export async function sendGreenwebSms(
   if (!token) {
     return {
       success: false,
-      provider: "MIMSMS",
+      provider: "Greenweb",
       latencyMs: 0,
-      error: "MiM SMS / Greenweb API Token is missing.",
+      error: "Greenweb API Token is missing.",
     };
   }
 
@@ -212,25 +342,25 @@ export async function sendGreenwebSms(
     if (Array.isArray(json) && json[0]?.status === "SENT") {
       return {
         success: true,
-        provider: "MIMSMS",
+        provider: "Greenweb",
         messageId: json[0].msgid,
-        message: json[0].statusmsg || "SMS dispatched successfully via MiM SMS (Greenweb).",
+        message: json[0].statusmsg || "SMS dispatched successfully via Greenweb BD.",
         rawResponse: json,
         latencyMs,
       };
     } else if (text.includes("Ok: ") || text.includes("SENT") || text.includes("Success")) {
       return {
         success: true,
-        provider: "MIMSMS",
+        provider: "Greenweb",
         message: text.trim(),
         latencyMs,
       };
     }
 
-    const err = (Array.isArray(json) && json[0]?.statusmsg) || text || "Failed to dispatch SMS via Greenweb/MiM SMS.";
+    const err = (Array.isArray(json) && json[0]?.statusmsg) || text || "Failed to dispatch SMS via Greenweb.";
     return {
       success: false,
-      provider: "MIMSMS",
+      provider: "Greenweb",
       error: err,
       rawResponse: json || text,
       latencyMs,
@@ -239,7 +369,7 @@ export async function sendGreenwebSms(
     const latencyMs = Date.now() - startTime;
     return {
       success: false,
-      provider: "MIMSMS",
+      provider: "Greenweb",
       error: err.message || "Failed to reach Greenweb API.",
       latencyMs,
     };
@@ -247,7 +377,7 @@ export async function sendGreenwebSms(
 }
 
 /**
- * 3. Twilio Global REST API Driver
+ * 4. Twilio Global REST API Driver
  * Official Docs: https://api.twilio.com/2010-04-01/Accounts/{AccountSid}/Messages.json
  */
 export async function sendTwilioSms(
@@ -332,7 +462,7 @@ export async function sendTwilioSms(
 }
 
 /**
- * 4. Onnorokom SMS Driver
+ * 5. Onnorokom SMS Driver
  * Official Docs: https://api2.onnorokomsms.com/HttpSendSms.ashx
  */
 export async function sendOnnorokomSms(
@@ -401,7 +531,7 @@ export async function sendOnnorokomSms(
 }
 
 /**
- * 5. Custom HTTP Gateway Driver with Dynamic Placeholder Substitution
+ * 6. Custom HTTP Gateway Driver with Dynamic Placeholder Substitution
  */
 export async function sendCustomHttpSms(
   config: SmsProviderSettings,
@@ -474,8 +604,8 @@ export async function sendCustomHttpSms(
 }
 
 /**
- * 6. Live SMS Balance Checker
- * Queries BulkSMSBD / Greenweb live balance APIs
+ * 7. Live SMS Balance Checker
+ * Queries BulkSMSBD, MiMSMS V2, or Greenweb live balance APIs
  */
 export async function checkSmsGatewayBalance(config: SmsProviderSettings): Promise<{
   success: boolean;
@@ -485,8 +615,9 @@ export async function checkSmsGatewayBalance(config: SmsProviderSettings): Promi
   message: string;
   raw?: any;
 }> {
-  const provider = (config.provider_name || "BulkSMSBD").toUpperCase();
+  const provider = (config.provider_name || "BulkSMSBD").trim();
   const apiKey = (config.api_key || "").trim();
+  const userName = (config.username || "").trim();
 
   if (!apiKey) {
     return {
@@ -496,7 +627,8 @@ export async function checkSmsGatewayBalance(config: SmsProviderSettings): Promi
     };
   }
 
-  if (provider.includes("BULK") || provider === "BULKSMSBD") {
+  // BulkSMSBD Balance
+  if (provider === "BulkSMSBD" || provider.toLowerCase().includes("bulk")) {
     try {
       const url = `https://bulksmsbd.net/api/getBalanceApi?api_key=${apiKey}`;
       const res = await fetch(url, { cache: "no-store" });
@@ -527,7 +659,67 @@ export async function checkSmsGatewayBalance(config: SmsProviderSettings): Promi
     }
   }
 
-  if (provider.includes("MIM") || provider.includes("GREENWEB")) {
+  // MiMSMS Official V2 Balance Check (POST /api/V2/BalanceCheck)
+  if (provider === "MIMSMS" || provider.toLowerCase() === "mimsms") {
+    if (!userName) {
+      return {
+        success: false,
+        provider: "MiMSMS",
+        message: "MiMSMS requires your Account Login Email (User Name) to query balance.",
+      };
+    }
+
+    try {
+      const res = await fetch("https://api.mimsms.com/api/V2/BalanceCheck", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ userName, apiKey }),
+        cache: "no-store",
+      });
+
+      const json = await res.json().catch(() => null);
+
+      if (
+        json &&
+        (json.statusCode === "200" ||
+          json.statusCode === 200 ||
+          json.status === "Ok" ||
+          json.responseResult !== undefined)
+      ) {
+        const bal = json.responseResult || json.balance || "0.00";
+        return {
+          success: true,
+          provider: "MiMSMS",
+          balance: bal,
+          currency: "BDT",
+          message: `MiMSMS Live Account Balance: ৳${bal}`,
+          raw: json,
+        };
+      }
+
+      return {
+        success: false,
+        provider: "MiMSMS",
+        message:
+          json?.responseResult ||
+          json?.message ||
+          "Failed to query MiMSMS balance. Ensure API Key is active and IP/Domain is whitelisted at mimsms.com.",
+        raw: json,
+      };
+    } catch (e: any) {
+      return {
+        success: false,
+        provider: "MiMSMS",
+        message: e.message || "Failed to reach MiMSMS Balance API.",
+      };
+    }
+  }
+
+  // Greenweb BD Balance
+  if (provider === "Greenweb" || provider.toLowerCase().includes("greenweb")) {
     try {
       const url = `https://api.greenweb.com.bd/gbalance.php?token=${apiKey}&json`;
       const res = await fetch(url, { cache: "no-store" });
@@ -536,23 +728,23 @@ export async function checkSmsGatewayBalance(config: SmsProviderSettings): Promi
       if (Array.isArray(json) && json[0]?.balance !== undefined) {
         return {
           success: true,
-          provider: "MiM SMS (Greenweb)",
+          provider: "Greenweb BD",
           balance: json[0].balance,
           currency: "BDT",
-          message: `MiM SMS Balance: ৳${json[0].balance}`,
+          message: `Greenweb Balance: ৳${json[0].balance}`,
           raw: json,
         };
       }
       return {
         success: false,
-        provider: "MiM SMS (Greenweb)",
+        provider: "Greenweb BD",
         message: "Invalid Greenweb Token or balance check error.",
         raw: json,
       };
     } catch (e: any) {
       return {
         success: false,
-        provider: "MiM SMS (Greenweb)",
+        provider: "Greenweb BD",
         message: e.message || "Failed to reach Greenweb balance API.",
       };
     }
@@ -561,12 +753,12 @@ export async function checkSmsGatewayBalance(config: SmsProviderSettings): Promi
   return {
     success: true,
     provider,
-    message: `${provider} active. Balance check not supported via API; check dashboard portal.`,
+    message: `${provider} active. Balance check via API not supported; please check provider dashboard.`,
   };
 }
 
 /**
- * 7. Unified Master Dispatcher: routes SMS to appropriate provider and logs event
+ * 8. Unified Master Dispatcher: routes SMS to appropriate provider and logs event
  */
 export async function dispatchSmsToGateway(
   config: SmsProviderSettings,
@@ -580,7 +772,9 @@ export async function dispatchSmsToGateway(
 
   if (providerKey === "bulksmsbd" || providerKey.includes("bulk")) {
     result = await sendBulkSmsBd(config, phone, message);
-  } else if (providerKey === "mimsms" || providerKey.includes("mim") || providerKey.includes("greenweb")) {
+  } else if (providerKey === "mimsms" || (providerKey.includes("mim") && !providerKey.includes("greenweb"))) {
+    result = await sendMimSmsV2(config, phone, message);
+  } else if (providerKey === "greenweb" || providerKey.includes("greenweb")) {
     result = await sendGreenwebSms(config, phone, message);
   } else if (providerKey === "twilio") {
     result = await sendTwilioSms(config, phone, message);
@@ -591,21 +785,25 @@ export async function dispatchSmsToGateway(
   }
 
   // Record into system integration logs
-  await logIntegrationEvent({
-    provider: result.provider,
-    moduleKey: "sms",
-    event: eventType,
-    status: result.success ? "success" : "error",
-    message: result.success
-      ? `SMS sent to ${phone} (Latency: ${result.latencyMs}ms, ID: ${result.messageId || "ok"})`
-      : `SMS to ${phone} failed: ${result.error}`,
-    metadata: {
-      phone,
-      messageLength: message.length,
-      responseCode: result.responseCode,
-      raw: result.rawResponse,
-    },
-  });
+  try {
+    await logIntegrationEvent({
+      provider: result.provider,
+      moduleKey: "sms",
+      event: eventType,
+      status: result.success ? "success" : "error",
+      message: result.success
+        ? `SMS sent to ${phone} (Latency: ${result.latencyMs}ms, ID: ${result.messageId || "ok"})`
+        : `SMS to ${phone} failed: ${result.error}`,
+      metadata: {
+        phone,
+        messageLength: message.length,
+        responseCode: result.responseCode,
+        raw: result.rawResponse,
+      },
+    });
+  } catch (logErr) {
+    // Non-blocking log
+  }
 
   return result;
 }

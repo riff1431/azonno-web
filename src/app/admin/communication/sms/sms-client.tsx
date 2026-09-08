@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Info,
   ShieldCheck,
+  ExternalLink,
 } from "lucide-react";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { SecretField } from "@/components/admin/module-settings/secret-field";
@@ -27,36 +28,65 @@ interface SmsClientProps {
   initialSettings: any;
 }
 
-const PROVIDER_DEFAULTS: Record<string, { url: string; senderPlaceholder: string; keyLabel: string; keyDesc: string }> = {
+const PROVIDER_DEFAULTS: Record<
+  string,
+  {
+    url: string;
+    senderPlaceholder: string;
+    keyLabel: string;
+    keyDesc: string;
+    docsUrl?: string;
+    showUsername?: boolean;
+    usernameLabel?: string;
+    usernamePlaceholder?: string;
+  }
+> = {
   BulkSMSBD: {
     url: "https://bulksmsbd.net/api/smsapi",
-    senderPlaceholder: "8809612000000 or BrandName",
+    senderPlaceholder: "8809612000000 or ApprovedMasking",
     keyLabel: "BulkSMSBD API Key",
-    keyDesc: "Found in your BulkSMSBD User Portal -> API Settings.",
+    keyDesc: "Found in your BulkSMSBD Portal -> API Settings.",
+    docsUrl: "https://bulksmsbd.net/api-docs",
   },
   MIMSMS: {
+    url: "https://api.mimsms.com/api/V2/SMS",
+    senderPlaceholder: "8809612444598 or Approved Sender ID",
+    keyLabel: "MiMSMS API Key",
+    keyDesc: "Found in sms.mimsms.com → Utility → Developer (Must be Activated).",
+    docsUrl: "https://www.mimsms.com/api-documentation",
+    showUsername: true,
+    usernameLabel: "MiMSMS Account Email (User Name)",
+    usernamePlaceholder: "your_panel_login_email@gmail.com",
+  },
+  Greenweb: {
     url: "https://api.greenweb.com.bd/api.php",
     senderPlaceholder: "Optional Sender / Masking",
-    keyLabel: "MiM SMS / Greenweb API Token",
-    keyDesc: "API Token generated from your Greenweb/MiM SMS account.",
+    keyLabel: "Greenweb BD API Token",
+    keyDesc: "API Token generated from your Greenweb SMS account.",
+    docsUrl: "https://greenweb.com.bd",
   },
   Twilio: {
     url: "https://api.twilio.com",
     senderPlaceholder: "+1234567890 or Twilio Sender ID",
     keyLabel: "Twilio Auth Token",
     keyDesc: "Primary Auth Token from your Twilio Console dashboard.",
+    docsUrl: "https://www.twilio.com/docs/sms",
+    showUsername: true,
+    usernameLabel: "Twilio Account SID",
+    usernamePlaceholder: "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   },
   Onnorokom: {
     url: "https://api2.onnorokomsms.com/HttpSendSms.ashx",
     senderPlaceholder: "Masking Name / Sender ID",
     keyLabel: "Onnorokom SMS API Key",
     keyDesc: "API Key from Onnorokom SMS developer portal.",
+    docsUrl: "https://onnorokomsms.com",
   },
   Custom: {
     url: "https://api.example.com/sms/send?apiKey={apiKey}&to={phone}&msg={message}&sender={senderId}",
     senderPlaceholder: "Sender ID",
     keyLabel: "API Key / Authorization Token",
-    keyDesc: "Auth token replaced in {apiKey} placeholder or sent as Bearer header.",
+    keyDesc: "Auth token replaced in {apiKey} placeholder or sent via HTTP.",
   },
 };
 
@@ -98,6 +128,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
       api_url: meta.url,
     });
     setBalanceResult(null);
+    setTestResult(null);
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -144,8 +175,8 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
         title={isBn ? "এসএমএস গেটওয়ে ও বাল্ক প্রেরণ প্রভাইডার" : "SMS Gateway & Bulk Dispatch Providers"}
         description={
           isBn
-            ? "তাত্ক্ষণিক ওটিপি, অর্ডার নিশ্চিতকরণ ও ডেসপ্যাচ সতর্কবার্তার জন্য বাল্কএসএমএসবিডি, মিম এসএমএস, টুইলিও বা অন্য গেটওয়ে কনফিগার করুন।"
-            : "Configure dynamic HTTP/REST SMS providers (BulkSMSBD, MIM SMS, Twilio, Onnorokom, Custom) for instant OTP, order confirmations, and dispatch alerts."
+            ? "তাত্ক্ষণিক ওটিপি, অর্ডার নিশ্চিতকরণ ও ডেসপ্যাচ সতর্কবার্তার জন্য বাল্কএসএমএসবিডি, মিম এসএমএস V2, গ্রীনওয়েব বা টুইলিও সংযোগ করুন।"
+            : "Configure dynamic HTTP/REST SMS providers (BulkSMSBD, MiMSMS V2, Greenweb, Twilio, Onnorokom, Custom) for instant OTP, order confirmations, and dispatch alerts."
         }
         icon={MessageSquare}
         status={formData.api_key ? "connected" : "not_configured"}
@@ -168,7 +199,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
             </span>
             <div className="flex items-center gap-1.5 font-bold text-sm text-text">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
-              {currentProvider}
+              {currentProvider === "MIMSMS" ? "MiMSMS Official V2" : currentProvider}
             </div>
           </div>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 border border-primary-100">
@@ -224,10 +255,17 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 <Server className="h-4 w-4 text-primary-600" />
                 {isBn ? "প্রধান এসএমএস গেটওয়ে কনফিগারেশন" : "Primary SMS Gateway Configuration"}
               </h2>
-              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                <span>{isBn ? "অফিসিয়াল এপিআই ডক সমর্থিত" : "Official API Ready"}</span>
-              </div>
+              {providerMeta.docsUrl && (
+                <a
+                  href={providerMeta.docsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1 text-[11px] font-semibold text-primary-600 hover:text-primary-700 underline"
+                >
+                  <span>{isBn ? "অফিসিয়াল ডক" : "API Docs"}</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -241,7 +279,8 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                   className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none focus:ring-1 focus:ring-primary-500"
                 >
                   <option value="BulkSMSBD">BulkSMSBD ({isBn ? "বাংলাদেশীদের জন্য সেরা" : "Recommended Bangladesh"})</option>
-                  <option value="MIMSMS">MIM SMS / Greenweb BD</option>
+                  <option value="MIMSMS">MiMSMS (Official V2 REST API)</option>
+                  <option value="Greenweb">Greenweb BD (Token API)</option>
                   <option value="Twilio">Twilio Global REST API</option>
                   <option value="Onnorokom">Onnorokom SMS</option>
                   <option value="Custom">{isBn ? "কাস্টম এইচটিটিপি গেটওয়ে" : "Custom HTTP Gateway"}</option>
@@ -261,19 +300,26 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 />
               </div>
 
-              {currentProvider === "Twilio" && (
+              {providerMeta.showUsername && (
                 <div>
                   <label className="block font-semibold text-text mb-1">
-                    {isBn ? "টুইলিও একাউন্ট এসআইডি (Account SID)" : "Twilio Account SID"}
+                    {providerMeta.usernameLabel} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.username || ""}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    placeholder="ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                    placeholder={providerMeta.usernamePlaceholder}
                     className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-mono text-text focus:outline-none focus:ring-1 focus:ring-primary-500"
                   />
+                  {currentProvider === "MIMSMS" && (
+                    <p className="text-[10px] text-text-muted mt-1">
+                      {isBn
+                        ? "আপনার sms.mimsms.com প্যানেলে লগইন করার ইমেইল অ্যাড্রেসটি দিন।"
+                        : "Enter your registered login email for the MiMSMS panel."}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -292,9 +338,13 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                   className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-mono text-text focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
                 <p className="text-[10px] text-text-muted mt-1">
-                  {isBn
-                    ? "নন-মাস্কিং এর ক্ষেত্রে ৮৮০৯৬... বা অনুমোদিত আলফানিউমেরিক ব্র্যান্ড নাম।"
-                    : "For non-masking, use your 88096... virtual number or approved alphanumeric brand name."}
+                  {currentProvider === "MIMSMS"
+                    ? (isBn
+                        ? "sms.mimsms.com এর Utility → Sender ID অপশনে লিস্টে থাকা সঠিক Sender ID দিন।"
+                        : "Enter the approved Sender ID from sms.mimsms.com → Utility → Sender ID.")
+                    : (isBn
+                        ? "নন-মাস্কিং এর ক্ষেত্রে ৮৮০৯৬... বা অনুমোদিত আলফানিউমেরিক ব্র্যান্ড নাম।"
+                        : "For non-masking, use your 88096... virtual number or approved alphanumeric brand name.")}
                 </p>
               </div>
 
@@ -306,6 +356,27 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 description={providerMeta.keyDesc}
                 required
               />
+
+              {currentProvider === "MIMSMS" && (
+                <div className="rounded-xl bg-amber-50/80 border border-amber-200/80 p-3 text-[11px] text-amber-900 space-y-1">
+                  <div className="font-bold flex items-center gap-1.5 text-amber-900">
+                    <ShieldCheck className="h-4 w-4 text-amber-600 shrink-0" />
+                    <span>{isBn ? "MiMSMS V2 গুরুত্বপূর্ণ নির্দেশিকা:" : "MiMSMS V2 Important Prerequisites:"}</span>
+                  </div>
+                  <ul className="list-disc list-inside space-y-0.5 text-[10px] text-amber-800 pt-1">
+                    <li>
+                      {isBn
+                        ? "sms.mimsms.com এর Utility → Developer থেকে আপনার API Key অবশ্যই 'Activate' করতে হবে।"
+                        : "Your API Key must be Activated under Utility → Developer."}
+                    </li>
+                    <li>
+                      {isBn
+                        ? "আপনার সার্ভার আইপি (বা লোকালহোস্ট আইপি) এবং ডোমেন Utility → Developer-এ Whitelist করা থাকতে হবে।"
+                        : "Your server/hosting IP address and domain must be whitelisted under Utility → Developer."}
+                    </li>
+                  </ul>
+                </div>
+              )}
 
               {currentProvider === "Custom" && (
                 <div className="rounded-xl bg-zinc-50 border border-border p-3 text-[11px] text-text-secondary space-y-1">
@@ -353,7 +424,9 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 <Send className="h-4 w-4 text-primary-600" />
                 {isBn ? "লাইভ টেস্ট এসএমএস প্রেরণ" : "Live Test SMS Dispatch"}
               </h2>
-              <span className="text-[10px] text-text-muted">Real Gateway</span>
+              <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                Live Gateway
+              </span>
             </div>
 
             {testResult && (
@@ -373,7 +446,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                   <p>{testResult.message}</p>
                   {testResult.latencyMs !== undefined && (
                     <span className="text-[10px] font-normal text-text-muted mt-1 block">
-                      Gateway: {testResult.provider || currentProvider} • Handshake Latency: {testResult.latencyMs}ms
+                      Gateway: {testResult.provider || currentProvider} • Latency: {testResult.latencyMs}ms
                     </span>
                   )}
                 </div>
@@ -393,7 +466,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-mono text-text focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
               <span className="text-[10px] text-text-muted mt-0.5 block">
-                {isBn ? "স্বয়ংক্রিয়ভাবে সঠিক ফরম্যাটে কনভার্ট হবে (01... / 8801...)" : "Auto-normalized to required gateway format (01... / 8801...)"}
+                {isBn ? "স্বয়ংক্রিয়ভাবে 8801... বা 01... ফরম্যাটে সাজানো হবে" : "Auto-normalized to required gateway format (8801... / 01...)"}
               </span>
             </div>
 
@@ -413,7 +486,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                   {testMessage.length} {isBn ? "টি অক্ষর" : "characters"}
                 </span>
                 <span>
-                  {testMessage.length <= 160 ? "1 Credit (English) / 1 Credit (Unicode)" : "Multi-part SMS"}
+                  {testMessage.length <= 160 ? "1 Credit (English/Unicode)" : "Multi-part SMS"}
                 </span>
               </div>
             </div>
