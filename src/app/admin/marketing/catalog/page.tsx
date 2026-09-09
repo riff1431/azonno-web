@@ -146,6 +146,19 @@ export default function AdminCatalogFeedsPage() {
         </p>
       </div>
 
+      {/* Localhost Dynamic Domain Notice */}
+      {origin.includes("localhost") || origin.includes("127.0.0.1") ? (
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 text-xs shadow-xs">
+          <Globe className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-bold">Dynamic Domain Auto-Detection Active</p>
+            <p className="text-amber-800 text-[11px] leading-relaxed">
+              You are currently accessing this panel from <strong>localhost:3000</strong>. These feed URLs are 100% dynamic and auto-generated based on your active hostname. When accessed on your live production domain (e.g. <code className="bg-amber-100 px-1 py-0.5 rounded font-mono text-[10px]">https://yourbrand.com</code>), all XML & CSV feed URLs will automatically switch to your live domain.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       {/* Feed Cards */}
       <div className="space-y-6">
         {feeds.map((feed) => {
