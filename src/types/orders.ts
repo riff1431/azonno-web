@@ -490,8 +490,7 @@ export function generateWhatsAppOrderMessage(
       tracking_id: String(tracking),
       tracking_url: trackUrl,
       advance_amount: String(feeToUse),
-      remaining_due: String(remToUse),
-      checkout_url: order.checkout_url || "https://blushbudget.com/checkout",
+      remaining_due: String(remToUse),      checkout_url: order.checkout_url || (getBaseUrl() ? `${getBaseUrl()}/checkout` : "https://blushbudget.com/checkout"),
       discount_code: "BLUSH5",
     };
 
@@ -501,8 +500,9 @@ export function generateWhatsAppOrderMessage(
     text = customText;
   } else {
     // Standard system default templates (Humanized Bangla with English Order Numbers)
+    const fallbackCheckoutUrl = order.checkout_url || (getBaseUrl() ? `${getBaseUrl()}/checkout` : "https://blushbudget.com/checkout");
     if (templateType === "abandoned") {
-      text = `প্রিয় ${name}, আসসালামু আলাইকুম! 🌸 আপনি Blush & Budget-এ আপনার পছন্দের কিছু প্রোডাক্ট কার্টে রেখে গিয়েছিলেন (${itemsSummary})।\n\nআপনি চাইলে এখনই আপনার অর্ডারটি কনফার্ম করতে পারেন। আপনার সুবিধার্থে আমরা দিচ্ছি দ্রুত হোম ডেলিভারি।\n\nঅর্ডার সম্পূর্ণ করতে ভিজিট করুন: ${order.checkout_url || "https://blushbudget.com/checkout"}\nযেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের মেসেজ দিন। ধন্যবাদ!`;
+      text = `প্রিয় ${name}, আসসালামু আলাইকুম! 🌸 আপনি Blush & Budget-এ আপনার পছন্দের কিছু প্রোডাক্ট কার্টে রেখে গিয়েছিলেন (${itemsSummary})。\n\nআপনি চাইলে এখনই আপনার অর্ডারটি কনফার্ম করতে পারেন। আপনার সুবিধার্থে আমরা দিচ্ছি দ্রুত হোম ডেলিভারি।\n\nঅর্ডার সম্পূর্ণ করতে ভিজিট করুন: ${fallbackCheckoutUrl}\nযেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের মেসেজ দিন। ধন্যবাদ!`;
     } else if (templateType === "confirm") {
       text = `প্রিয় ${name}, Blush & Budget-এ আপনার অর্ডারটির জন্য আন্তরিক ধন্যবাদ! 🌸\n\nঅর্ডার নাম্বার: #${orderNum}\nপ্রোডাক্ট: ${itemsSummary}\nক্যাশ অন ডেলিভারি বিল: ৳${codDue}\n\nআমরা আপনার পার্সেলটি যত্ন সহকারে প্যাক করছি এবং দ্রুততম সময়ে ডেলিভারির জন্য প্রস্তুত করছি। ডেলিভারি রাইডার কল করলে অনুগ্রহ করে রিসিভ করবেন।`;
     } else if (templateType === "shipped") {
@@ -529,7 +529,8 @@ export function generateWhatsAppAbandonedMessage(
   originUrl: string = "",
   customTemplates?: Array<{ template_type: string; template: string; advance_amount?: number; is_active?: boolean }>
 ): string {
-  const checkoutUrl = `${originUrl || "https://blushbudget.com"}/checkout`;
+  const base = originUrl || getBaseUrl() || "https://blushbudget.com";
+  const checkoutUrl = `${base.replace(/\/$/, "")}/checkout`;
   return generateWhatsAppOrderMessage(
     {
       ...lead,
@@ -540,5 +541,6 @@ export function generateWhatsAppAbandonedMessage(
     customTemplates
   );
 }
+
 
 
