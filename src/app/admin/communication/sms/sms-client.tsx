@@ -90,7 +90,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
   const [saving, setSaving] = useState(false);
   const [testPhone, setTestPhone] = useState("01712345678");
   const [testMessage, setTestMessage] = useState(
-    isBn ? "ecomXbd অ্যাডমিন গেটওয়ে থেকে টেস্ট এসএমএস।" : "Test SMS alert from ecomXbangladesh admin gateway."
+    isBn ? "ecomXbd অ্যাডমিন গেটওয়ে থেকে টেস্ট এসএমএস।" : "Test SMS alert from Blush & Budget admin gateway."
   );
   const [sendingTest, setSendingTest] = useState(false);
   const [testResult, setTestResult] = useState<{

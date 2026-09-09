@@ -2,8 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { BrandsClient } from "./brands-client";
 
 export const metadata = {
-  title: "All Brands — Blush & Budget",
-  description: "Explore 100% authentic international skincare, K-beauty, and cosmetics brands in Bangladesh.",
+  title: "All Brands — 100% Authentic Korean & Global Beauty Brands | Blush & Budget",
+  description: "Explore 100% authentic international skincare, K-beauty, and cosmetics brands in Bangladesh at Blush & Budget.",
+  alternates: {
+    canonical: "/brands",
+  },
 };
 
 export default async function BrandsIndexPage() {

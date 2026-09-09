@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ProductCardData } from "@/components/storefront/product-card";
 import { BrandDetailClient } from "./brand-detail-client";
+import { BreadcrumbJsonLd, ItemListJsonLd } from "@/components/seo/json-ld";
+import { getBaseUrl } from "@/lib/utils";
 
 export async function generateMetadata({
   params,
@@ -11,17 +13,41 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
+  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+
   const { data: brand } = await supabase
     .from("brands")
-    .select("name, seo_title, seo_description")
+    .select("name, seo_title, seo_description, logo_url")
     .eq("slug", slug)
     .single();
 
   if (!brand) return { title: "Brand Not Found" };
 
+  const title = brand.seo_title || `${brand.name} in Bangladesh — 100% Authentic | Blush & Budget`;
+  const description =
+    brand.seo_description ||
+    `Shop 100% genuine ${brand.name} skincare and cosmetics in Bangladesh with fast nationwide doorstep delivery & cash on delivery from Blush & Budget.`;
+  const canonicalUrl = `${baseUrl}/brands/${slug}`;
+
   return {
-    title: brand.seo_title || `${brand.name} Authentic Products — Blush & Budget`,
-    description: brand.seo_description || `Shop 100% genuine ${brand.name} products in Bangladesh with cash on delivery.`,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Blush & Budget",
+      images: brand.logo_url ? [brand.logo_url] : [],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -32,6 +58,7 @@ export default async function BrandDetailPage({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
+  const baseUrl = getBaseUrl() || "https://blushbudget.com";
 
   // Fetch Brand with slug fallback
   let { data: brand } = await supabase
@@ -66,7 +93,8 @@ export default async function BrandDetailPage({
       country,
       shipping_class,
       brands (name),
-      inventory (available)
+      inventory (available),
+      reviews (rating, status)
     `)
     .or(`brand_id.eq.${brand.id},name.ilike.%${brand.name}%`)
     .eq("status", "active")
@@ -76,6 +104,18 @@ export default async function BrandDetailPage({
     const inv = p.inventory as Array<{ available: number }> | null;
     const isAvailable = inv ? inv.some((i) => i.available > 0) : true;
     const brandData = (Array.isArray(p.brands) ? p.brands[0] : p.brands) as { name: string } | null;
+
+    const approvedReviews = (p.reviews || []).filter((r: any) => r.status === "approved");
+    const reviewCount = approvedReviews.length;
+    const averageRating =
+      reviewCount > 0
+        ? Number(
+            (
+              approvedReviews.reduce((acc: number, r: any) => acc + (r.rating || 5), 0) /
+              reviewCount
+            ).toFixed(1)
+          )
+        : 4.9;
 
     return {
       id: p.id,
@@ -89,17 +129,38 @@ export default async function BrandDetailPage({
       origin_country: p.country || "South Korea",
       country: p.country || "South Korea",
       is_in_stock: isAvailable,
-      rating: 5.0,
-      review_count: 14,
+      rating: averageRating,
+      review_count: reviewCount > 0 ? reviewCount : undefined,
       is_free_shipping: p.shipping_class === "free_shipping",
       shipping_class: p.shipping_class || null,
     };
   });
 
+  const breadcrumbs = [
+    { name: "Home", url: `${baseUrl}` },
+    { name: "Brands", url: `${baseUrl}/brands` },
+    { name: brand.name, url: `${baseUrl}/brands/${brand.slug}` },
+  ];
+
+  const itemList = productCards.map((p, idx) => ({
+    name: p.name,
+    url: `${baseUrl}/products/${p.slug}`,
+    position: idx + 1,
+  }));
+
   return (
-    <BrandDetailClient
-      brand={brand}
-      productCards={productCards}
-    />
+    <>
+      <BreadcrumbJsonLd items={breadcrumbs} />
+      <ItemListJsonLd
+        name={`${brand.name} Products — Blush & Budget`}
+        url={`${baseUrl}/brands/${brand.slug}`}
+        items={itemList}
+      />
+      <BrandDetailClient
+        brand={brand}
+        productCards={productCards}
+      />
+    </>
   );
 }
+

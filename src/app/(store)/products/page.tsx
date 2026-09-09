@@ -6,11 +6,80 @@ import { getBeautyTaxonomyMap, getCustomTaxonomyOptions } from "@/features/produ
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-export const metadata = {
-  title: "Authentic Skincare & Beauty Catalogue — Blush & Budget",
-  description:
-    "Explore 100% genuine skincare, cosmetics, sunscreens, and K-Beauty bestsellers imported from authorized distributors.",
-};
+import { getBaseUrl } from "@/lib/utils";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    category?: string;
+    type?: string;
+    brand?: string;
+    tag?: string;
+    skin_concern?: string;
+    skin_type?: string;
+    search?: string;
+  }>;
+}) {
+  const { category, type, brand, tag, skin_concern, search } = await searchParams;
+  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+
+  let title = "Authentic Skincare & Beauty Catalogue — Blush & Budget";
+  let description = "Explore 100% genuine skincare, cosmetics, sunscreens, and K-Beauty bestsellers imported from authorized distributors in Bangladesh.";
+  let canonicalUrl = `${baseUrl}/products`;
+
+  if (search) {
+    title = `Search Results for "${search}" | Blush & Budget`;
+    description = `Find authentic beauty and skincare products matching "${search}" at Blush & Budget with cash on delivery.`;
+  } else if (brand) {
+    const formattedBrand = brand.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    title = `${formattedBrand} Products in Bangladesh — 100% Authentic | Blush & Budget`;
+    description = `Shop genuine ${formattedBrand} skincare, makeup, and cosmetics in Bangladesh with fast doorstep delivery from Blush & Budget.`;
+    canonicalUrl = `${baseUrl}/products?brand=${brand}`;
+  } else if (category && type) {
+    const formattedCat = category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const formattedType = type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    title = `${formattedCat}: ${formattedType} — Authentic Beauty in Bangladesh | Blush & Budget`;
+    description = `Buy authentic ${formattedType} under ${formattedCat} at best BDT prices from Blush & Budget.`;
+    canonicalUrl = `${baseUrl}/products?category=${category}&type=${type}`;
+  } else if (category) {
+    const formattedCat = category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    title = `${formattedCat} Products in Bangladesh — 100% Genuine | Blush & Budget`;
+    description = `Explore 100% original ${formattedCat} items from top Korean, UK, and US brands at Blush & Budget.`;
+    canonicalUrl = `${baseUrl}/products?category=${category}`;
+  } else if (skin_concern) {
+    title = `${skin_concern} Skincare Solutions in Bangladesh | Blush & Budget`;
+    description = `Target ${skin_concern} with clinically proven, authentic Korean and international skincare routines from Blush & Budget.`;
+    canonicalUrl = `${baseUrl}/products?skin_concern=${encodeURIComponent(skin_concern)}`;
+  } else if (tag) {
+    title = `#${tag} Collection | Blush & Budget Bangladesh`;
+    description = `Shop authentic trending products tagged #${tag} at Blush & Budget with cash on delivery nationwide.`;
+    canonicalUrl = `${baseUrl}/products?tag=${tag}`;
+  }
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Blush & Budget",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    robots: search
+      ? { index: false, follow: true }
+      : { index: true, follow: true },
+  };
+}
 
 export const BEAUTY_TYPE_SYNONYMS: Record<string, string[]> = {
   lotion: ["lotion", "cream", "moisturi", "gel", "body wash", "shower gel", "care", "hydrat"],
@@ -122,6 +191,18 @@ function mapProductToCard(p: any): ProductCardData {
   const isAvailable = inv ? inv.some((i) => i.available > 0) : true;
   const brandData = (Array.isArray(p.brands) ? p.brands[0] : p.brands) as { name: string } | null;
 
+  const approvedReviews = (p.reviews || []).filter((r: any) => r.status === "approved");
+  const reviewCount = approvedReviews.length;
+  const averageRating =
+    reviewCount > 0
+      ? Number(
+          (
+            approvedReviews.reduce((acc: number, r: any) => acc + (r.rating || 5), 0) /
+            reviewCount
+          ).toFixed(1)
+        )
+      : 4.9;
+
   return {
     id: p.id,
     name: p.name,
@@ -134,12 +215,13 @@ function mapProductToCard(p: any): ProductCardData {
     origin_country: p.country || "South Korea",
     country: p.country || "South Korea",
     is_in_stock: isAvailable,
-    rating: 5.0,
-    review_count: 14,
+    rating: averageRating,
+    review_count: reviewCount > 0 ? reviewCount : undefined,
     is_free_shipping: p.shipping_class === "free_shipping",
     shipping_class: p.shipping_class || null,
   };
 }
+
 
 export default async function ProductsListingPage({
   searchParams,
@@ -217,7 +299,8 @@ export default async function ProductsListingPage({
         country,
         shipping_class,
         brands (name),
-        inventory (available)
+        inventory (available),
+        reviews (rating, status)
       `)
       .eq("status", "active")
       .is("deleted_at", null);

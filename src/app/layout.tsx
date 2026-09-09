@@ -34,12 +34,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const proto = headerList?.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
   const requestUrl = host ? `${proto}://${host}` : undefined;
 
-  const siteUrl = seo?.canonical_url || store?.store_url || requestUrl || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://blushandbudget.com";
+  const siteUrl = seo?.canonical_url || store?.store_url || requestUrl || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://blushbudget.com";
   const storeName = store?.store_name || "Blush & Budget";
-  const title = seo?.meta_title || `${storeName} | Authentic Skincare & Beauty in Bangladesh`;
+  const title = seo?.meta_title || `${storeName} | 100% Authentic Cosmetics & Skincare in Bangladesh`;
   const description =
     seo?.meta_description ||
-    "Shop authentic skincare, makeup, and beauty products from trusted global brands. Fast doorstep delivery with Cash on Delivery across Bangladesh.";
+    "Shop 100% authentic Korean skincare, makeup, and beauty products from trusted global brands in Bangladesh. Best prices, fast nationwide doorstep delivery & Cash on Delivery.";
   const ogImage = seo?.og_image_url || undefined;
 
   return {
@@ -49,6 +49,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+    alternates: {
+      canonical: "/",
+    },
     openGraph: {
       type: "website",
       locale: "en_BD",
@@ -64,6 +67,13 @@ export async function generateMetadata(): Promise<Metadata> {
     robots: {
       index: true,
       follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -87,7 +97,7 @@ export default async function RootLayout({
   };
 
   let storeName = "Blush & Budget";
-  let storeDesc = "Premier retail e-commerce shop for authentic cosmetics, skincare, and makeup products in Bangladesh.";
+  let storeDesc = "Premier retail e-commerce shop for 100% authentic cosmetics, skincare, and makeup products in Bangladesh.";
   let storeCurrency = "BDT";
 
   try {
@@ -116,19 +126,48 @@ export default async function RootLayout({
     // Non-blocking fallback to defaults
   }
 
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: storeName,
+    url: "https://blushbudget.com",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: "https://blushbudget.com/products?search={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   const storeSchema = {
     "@context": "https://schema.org",
     "@type": "OnlineStore",
     name: storeName,
     description: storeDesc,
+    url: "https://blushbudget.com",
     currenciesAccepted: storeCurrency,
     paymentAccepted: "Cash on Delivery, bKash, Nagad, Visa, Mastercard",
     priceRange: "৳৳",
+    areaServed: "BD",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+880 1700-000000",
+      email: "support@blushbudget.com",
+      contactType: "customer service",
+      areaServed: "BD",
+      availableLanguage: ["English", "Bengali"],
+    },
   };
 
   return (
     <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} lang-bn`}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(storeSchema) }}

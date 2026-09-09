@@ -14,13 +14,13 @@ export default function AdminEmailSettingsPage() {
     port: 465,
     username: "resend",
     password: "",
-    from_name: "ecomXbangladesh Orders",
-    from_email: "orders@ecomxbangladesh.com",
+    from_name: "Blush & Budget Orders",
+    from_email: "orders@blushbudget.com",
     encryption: "ssl",
   });
 
   const [saving, setSaving] = useState(false);
-  const [testEmail, setTestEmail] = useState("admin@ecomxbangladesh.com");
+  const [testEmail, setTestEmail] = useState("admin@blushbudget.com");
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
   const [successMsg, setSuccessMsg] = useState(false);

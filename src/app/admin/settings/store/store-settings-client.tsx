@@ -19,9 +19,9 @@ export function StoreSettingsClient({
   const { t, lang, setLang } = useAdminLang();
 
   const [formData, setFormData] = useState({
-    store_name: initialSettings.store_name || "ecomXbangladesh",
+    store_name: initialSettings.store_name || "Blush & Budget",
     store_url: initialSettings.store_url || (typeof window !== "undefined" ? window.location.origin : ""),
-    store_email: initialSettings.store_email || "support@ecomxbangladesh.com",
+    store_email: initialSettings.store_email || "support@blushbudget.com",
     store_phone: initialSettings.store_phone || "+880 1700-000000",
     store_address: initialSettings.store_address || "Gulshan 2, Dhaka 1212, Bangladesh",
     currency: initialSettings.currency || "BDT",

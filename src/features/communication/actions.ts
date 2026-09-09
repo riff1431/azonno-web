@@ -117,8 +117,8 @@ export async function getEmailProviderConfig() {
     port: settings.port ? Number(settings.port) : 465,
     username: settings.username || "resend",
     password: settings.password || (process.env.SMTP_PASSWORD ? "••••••••" : ""),
-    from_name: settings.from_name || "ecomXbangladesh Orders",
-    from_email: settings.from_email || "orders@ecomxbangladesh.com",
+    from_name: settings.from_name || "Blush & Budget Orders",
+    from_email: settings.from_email || "orders@blushbudget.com",
     encryption: settings.encryption || "ssl",
   };
 }

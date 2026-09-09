@@ -4,9 +4,12 @@ import { getHomepageConfig } from "@/features/marketing/homepage-actions";
 import { HomepageInteractive } from "./homepage-interactive";
 
 export const metadata = {
-  title: "Blush & Budget — Buy Authentic Cosmetic and Beauty Products Online in Bangladesh",
+  title: "Blush & Budget — 100% Authentic Korean Skincare & Cosmetics in Bangladesh",
   description:
-    "Shop 100% authentic beauty products online in Bangladesh at Blush & Budget: makeup, skincare, and haircare from 450+ brands, at the best BDT prices with fast nationwide delivery.",
+    "Shop 100% genuine skincare, makeup, and haircare from top international and Korean brands in Bangladesh at Blush & Budget with Cash on Delivery nationwide.",
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default async function HomePage() {

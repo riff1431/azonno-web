@@ -6,7 +6,7 @@ import { getHomepageConfig } from "@/features/marketing/homepage-actions";
 export const metadata: Metadata = {
   title: {
     default: "Admin",
-    template: "%s | Admin — ecomXbangladesh",
+    template: "%s | Admin — Blush & Budget",
   },
   robots: { index: false, follow: false },
 };

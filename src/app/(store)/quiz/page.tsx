@@ -3,8 +3,11 @@ import { isModuleEnabled } from "@/lib/settings/config-service";
 import { SkincareQuizClient } from "./quiz-client";
 
 export const metadata = {
-  title: "Skincare Routine Finder — Blush & Budget",
-  description: "Find your customized skincare routine tailored to your skin type in 60 seconds.",
+  title: "Skincare Routine Finder — Personalized Beauty Quiz | Blush & Budget",
+  description: "Find your customized skincare routine tailored to your skin type and concerns in 60 seconds with Blush & Budget.",
+  alternates: {
+    canonical: "/quiz",
+  },
 };
 
 export default async function SkincareQuizPage() {

@@ -279,7 +279,7 @@ export function TeamClient({ initialUsers }: TeamClientProps) {
                 <Input
                   id="mem-email"
                   type="email"
-                  placeholder={isBn ? "যেমন: nusrat@ecomxbd.com" : "e.g. nusrat@ecomxbangladesh.com"}
+                  placeholder={isBn ? "যেমন: nusrat@ecomxbd.com" : "e.g. nusrat@blushbudget.com"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

@@ -1,5 +1,5 @@
 // ============================================================
-// Core Database Types — ecomXbangladesh
+// Core Database Types — Blush & Budget
 // ============================================================
 
 // --- Auth & RBAC ---

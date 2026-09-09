@@ -240,7 +240,7 @@ export function CustomPaymentsClient({ initialMethods }: CustomPaymentsClientPro
                   <Label htmlFor="pm-holder">Account Name</Label>
                   <Input
                     id="pm-holder"
-                    placeholder="e.g. ecomXbangladesh Ltd."
+                    placeholder="e.g. Blush & Budget Ltd."
                     value={accountName}
                     onChange={(e) => setAccountName(e.target.value)}
                     required

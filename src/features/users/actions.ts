@@ -38,7 +38,7 @@ export async function getTeamUsers(): Promise<TeamMember[]> {
       {
         id: "u1",
         name: "Master Admin",
-        email: "admin@ecomxbangladesh.com",
+        email: "admin@blushbudget.com",
         role: "admin",
         permissions: ROLE_PERMISSIONS.admin,
         status: "Active",
@@ -48,7 +48,7 @@ export async function getTeamUsers(): Promise<TeamMember[]> {
       {
         id: "u2",
         name: "Catalog Manager",
-        email: "moderator@ecomxbangladesh.com",
+        email: "moderator@blushbudget.com",
         role: "moderator",
         permissions: ROLE_PERMISSIONS.moderator,
         status: "Active",
@@ -67,7 +67,7 @@ export async function getTeamUsers(): Promise<TeamMember[]> {
     return {
       id: p.id,
       name: p.full_name || p.email?.split("@")[0] || "Staff Member",
-      email: p.email || "staff@ecomxbangladesh.com",
+      email: p.email || "staff@blushbudget.com",
       role: p.role || "staff",
       permissions,
       status: "Active",

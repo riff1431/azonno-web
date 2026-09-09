@@ -26,18 +26,35 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
+  const baseUrl = getBaseUrl() || "https://blushbudget.com";
   if (!post) return { title: "Article Not Found" };
 
+  const title = post.seo_title || `${post.title} | Blush & Budget Journal`;
+  const description = post.seo_description || post.excerpt;
+  const canonicalUrl = `${baseUrl}/blog/${slug}`;
+  const ogImages = post.featured_image ? [post.featured_image] : [];
+
   return {
-    title: post.seo_title || `${post.title} | Blush & Budget Beauty Journal`,
-    description: post.seo_description || post.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      images: post.featured_image ? [post.featured_image] : [],
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Blush & Budget",
+      images: ogImages,
       type: "article",
       publishedTime: post.published_at,
       authors: post.author ? [post.author.name] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImages,
     },
   };
 }

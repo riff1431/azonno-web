@@ -345,7 +345,7 @@ export async function resolveUserAuthEmail(identifier: string): Promise<string> 
     // Fallback to synthetic phone email
   }
 
-  return `${cleanPhone}@customer.blushandbudget.com`.toLowerCase();
+  return `${cleanPhone}@customer.blushbudget.com`.toLowerCase();
 }
 
 

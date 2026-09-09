@@ -15,7 +15,7 @@ interface SeoSettingsClientProps {
 export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
   const { t } = useAdminLang();
   const [formData, setFormData] = useState({
-    meta_title: initialSettings.meta_title || "ecomXbangladesh — Premium E-Commerce Platform",
+    meta_title: initialSettings.meta_title || "Blush & Budget — Premium E-Commerce Platform",
     meta_description:
       initialSettings.meta_description ||
       "Shop authentic international skincare, beauty formulas, and lifestyle essentials in Bangladesh with verified fast nationwide delivery.",

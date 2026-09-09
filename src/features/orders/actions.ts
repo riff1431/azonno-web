@@ -286,7 +286,7 @@ export async function createOrder(input: CreateOrderInput) {
     let autoCreatedAccount: { email: string; tempPassword?: string; isNewUser: boolean } | null = null;
 
     if (!orderUserId) {
-      const customerEmail = (input.customer.email?.trim() || `${verifiedPhone}@customer.blushandbudget.com`).toLowerCase();
+      const customerEmail = (input.customer.email?.trim() || `${verifiedPhone}@customer.blushbudget.com`).toLowerCase();
 
       try {
         // Check if user with phone or email already exists in profiles

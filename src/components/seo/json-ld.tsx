@@ -77,11 +77,12 @@ export function ProductJsonLd({
     },
   };
 
-  if (ratingValue && reviewCount && reviewCount > 0) {
+  // Google Search Guidelines Compliance: ONLY emit aggregateRating when genuine reviews exist (> 0)
+  if (ratingValue && reviewCount && Number(reviewCount) > 0) {
     data.aggregateRating = {
       "@type": "AggregateRating",
-      ratingValue: ratingValue.toFixed(1),
-      reviewCount: reviewCount,
+      ratingValue: Number(ratingValue).toFixed(1),
+      reviewCount: Number(reviewCount),
       bestRating: "5",
       worstRating: "1",
     };
@@ -235,26 +236,31 @@ export function FaqJsonLd({ items }: { items: FaqItem[] }) {
 
 export function OrganizationJsonLd({
   name = "Blush & Budget",
-  url,
+  url = "https://blushbudget.com",
   logo,
   contactPhone = "+880 1700-000000",
-  contactEmail = "support@example.com",
+  contactEmail = "support@blushbudget.com",
 }: {
   name?: string;
-  url: string;
+  url?: string;
   logo?: string;
   contactPhone?: string;
   contactEmail?: string;
 }) {
   const data = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "OnlineStore",
     name,
     url,
     logo,
+    description: "Premier online shop for 100% authentic cosmetics, skincare, and beauty products in Bangladesh.",
+    currenciesAccepted: "BDT",
+    paymentAccepted: "Cash on Delivery, bKash, Nagad, Visa, Mastercard",
+    priceRange: "৳৳",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: contactPhone,
+      email: contactEmail,
       contactType: "customer service",
       areaServed: "BD",
       availableLanguage: ["English", "Bengali"],
@@ -263,3 +269,55 @@ export function OrganizationJsonLd({
 
   return <JsonLd data={data} />;
 }
+
+export function WebSiteJsonLd({
+  url = "https://blushbudget.com",
+  name = "Blush & Budget",
+}: {
+  url?: string;
+  name?: string;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name,
+    url,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${url}/products?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  return <JsonLd data={data} />;
+}
+
+export function ItemListJsonLd({
+  name,
+  url,
+  items,
+}: {
+  name: string;
+  url: string;
+  items: Array<{ name: string; url: string; position: number }>;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    url,
+    numberOfItems: items.length,
+    itemListElement: items.map((item) => ({
+      "@type": "ListItem",
+      position: item.position,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+
+  return <JsonLd data={data} />;
+}
+

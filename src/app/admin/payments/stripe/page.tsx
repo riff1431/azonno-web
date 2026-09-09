@@ -166,7 +166,7 @@ export default function AdminStripePage() {
             </p>
 
             <div className="rounded-xl border border-border bg-surface-secondary p-3 font-mono text-xs text-primary-700 select-all">
-              https://ecomxbangladesh.com/api/webhooks/payments/stripe
+              https://blushbudget.com/api/webhooks/payments/stripe
             </div>
           </div>
         </div>

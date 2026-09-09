@@ -17,22 +17,43 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
+  const baseUrl = getBaseUrl() || "https://blushbudget.com";
 
   const { data: product } = await supabase
     .from("products")
-    .select("name, seo_title, seo_description, og_image_url")
+    .select("name, seo_title, seo_description, og_image_url, regular_price, sale_price, brands(name)")
     .eq("slug", slug)
     .single();
 
   if (!product) return { title: "Product Not Found" };
 
+  const brandName = (Array.isArray(product.brands) ? product.brands[0] : product.brands) as { name: string } | null;
+  const title = product.seo_title || `${product.name} — 100% Authentic | Blush & Budget`;
+  const description =
+    product.seo_description ||
+    `Buy 100% genuine ${product.name}${brandName?.name ? ` by ${brandName.name}` : ""} in Bangladesh at best price with cash on delivery from Blush & Budget.`;
+  const canonicalUrl = `${baseUrl}/products/${slug}`;
+  const ogImage = product.og_image_url ? [product.og_image_url] : [];
+
   return {
-    title: product.seo_title || `${product.name} — 100% Authentic Online Bangladesh`,
-    description:
-      product.seo_description ||
-      `Buy genuine ${product.name} with fast delivery and Cash on Delivery in Bangladesh from Blush & Budget.`,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      images: product.og_image_url ? [product.og_image_url] : [],
+      title,
+      description,
+      url: canonicalUrl,
+      siteName: "Blush & Budget",
+      images: ogImage,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImage,
     },
   };
 }
@@ -106,7 +127,7 @@ export default async function ProductDetailPage({
       ? productReviews.reduce((sum: number, r: any) => sum + (Number(r.rating) || 5), 0) / realReviewsCount
       : 0;
 
-  const baseUrl = getBaseUrl();
+  const baseUrl = getBaseUrl() || "https://blushbudget.com";
   const productUrl = `${baseUrl}/products/${product.slug}`;
   const images = (product.product_media || [])
     .map((pm: any) => pm.media?.secure_url)
@@ -156,8 +177,8 @@ export default async function ProductDetailPage({
             : "OutOfStock"
         }
         url={productUrl}
-        ratingValue={realReviewsCount > 0 ? Number(realAverageRating.toFixed(1)) : 5.0}
-        reviewCount={realReviewsCount > 0 ? realReviewsCount : 1}
+        ratingValue={realReviewsCount > 0 ? Number(realAverageRating.toFixed(1)) : undefined}
+        reviewCount={realReviewsCount > 0 ? realReviewsCount : undefined}
       />
       <BreadcrumbJsonLd items={breadcrumbItems} />
 

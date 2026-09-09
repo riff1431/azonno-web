@@ -6,9 +6,12 @@ import { isModuleEnabled } from "@/lib/settings/config-service";
 import { BlogListingClient } from "./blog-listing-client";
 
 export const metadata = {
-  title: "Beauty & Skincare Journal — Expert Advice, Routines & Ingredient Guides",
+  title: "Beauty & Skincare Journal — Expert Advice & Guides | Blush & Budget",
   description:
-    "Expert skincare advice, routine breakdowns, and active ingredient guides curated for Bangladeshi climate and Asian skin types.",
+    "Expert skincare advice, K-Beauty routine breakdowns, and active ingredient guides curated for Bangladeshi climate by Blush & Budget.",
+  alternates: {
+    canonical: "/blog",
+  },
 };
 
 export default async function BlogIndexPage({

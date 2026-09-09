@@ -305,7 +305,7 @@ export function PagesClient({ initialPages }: PagesClientProps) {
                       type="text"
                       value={editingPage.seo_title || ""}
                       onChange={(e) => setEditingPage({ ...editingPage, seo_title: e.target.value })}
-                      placeholder={isBn ? "যেমন: আমাদের সম্পর্কে — ecomXbd" : "e.g. About Us — ecomXbangladesh"}
+                      placeholder={isBn ? "যেমন: আমাদের সম্পর্কে — ecomXbd" : "e.g. About Us — Blush & Budget"}
                       className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs focus:outline-none"
                     />
                   </div>
