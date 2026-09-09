@@ -16,25 +16,21 @@ export interface MatchedProduct {
 }
 
 const SKIN_CONCERN_KEYWORDS: Record<string, string[]> = {
-  "Clear Skin & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
-  "Acne & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
+  "Clear Skin & Blemishes": ["clarif", "blemish", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clean"],
+  "Pore Clarifying Care": ["clarif", "blemish", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clean"],
   "Brightening & Even Tone": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
-  "Brightening & Pigmentation": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
-  "Smoothing & Firming Care": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
-  "Smooth Lines & Firmness": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
-  "Anti-Aging & Wrinkles": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
+  "Brightening & Radiance": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
+  "Smoothing & Firming Care": ["firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail", "smooth"],
+  "Smooth Texture & Firmness": ["firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail", "smooth"],
   "Hydration & Moisture": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
   "Dryness & Hydration": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
   "Pore & Oil Care": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
-  "Pore Minimizing": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
-  "Redness & Soothing": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
-  "Redness & Rosacea": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
+  "Pore Refining": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
+  "Calming & Soothing Care": ["calm", "sooth", "cica", "centella", "sensitive", "gentle", "comfort", "kind to skin"],
   "Sun Protection": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
   "Sun Protection (SPF)": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
   "Oil Control": ["oil", "matte", "shine", "sebum", "greas", "balance", "lightweight", "gel", "non-oily", "soap-free"],
-  "Barrier Care & Comfort": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
-  "Barrier Care": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
-  "Barrier Repair": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
+  "Moisture Barrier & Nourishing Care": ["ceramide", "protect", "snail", "mucin", "pro-vitamin", "nourish", "comfort"],
 };
 
 const SKIN_TYPE_KEYWORDS: Record<string, string[]> = {
@@ -45,6 +41,12 @@ const SKIN_TYPE_KEYWORDS: Record<string, string[]> = {
   Normal: ["normal", "daily", "all skin", "gentle", "everyday"],
   "All Skin Types": ["all skin", "gentle", "daily", "suitable for all", "kind to skin"],
 };
+
+function matchesConcern(product: any, concern: string): boolean {
+  const text = `${product.name} ${product.description || ""} ${product.short_description || ""} ${product.benefits || ""} ${product.ingredients_specifications || ""}`.toLowerCase();
+  const kws = SKIN_CONCERN_KEYWORDS[concern] || [concern.toLowerCase()];
+  return kws.some((k) => text.includes(k.toLowerCase()));
+}
 
 export async function getMatchedQuizRoutine(
   skinType: string,
@@ -57,7 +59,6 @@ export async function getMatchedQuizRoutine(
   try {
     const supabase = await createClient();
 
-    // Query active in-stock products from Supabase
     const { data: allProducts, error } = await supabase
       .from("products")
       .select(`
@@ -82,60 +83,62 @@ export async function getMatchedQuizRoutine(
       return getFallbackRoutine(skinType, concern);
     }
 
-    // Step 1: Find a cleanser / prep product
-    const cleanserCandidates = allProducts.filter((p: any) => {
-      const combined = `${p.name} ${p.description || ""} ${p.short_description || ""}`.toLowerCase();
+    // Step 1: Cleanser
+    const cleanserCandidates = allProducts.filter((p) => {
+      const text = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
       return (
-        combined.includes("cleanser") ||
-        combined.includes("wash") ||
-        combined.includes("foam") ||
-        combined.includes("facial wash")
+        text.includes("cleanser") ||
+        text.includes("wash") ||
+        text.includes("foam") ||
+        text.includes("gel cleanser")
       );
     });
 
-    // Step 2: Find treatment / active / essence product matching concern or skinType
-    const concernKws = SKIN_CONCERN_KEYWORDS[concern] || [concern.toLowerCase()];
-    const typeKws = SKIN_TYPE_KEYWORDS[skinType] || [skinType.toLowerCase()];
-
-    const treatmentCandidates = allProducts.filter((p: any) => {
-      const combined = `${p.name} ${p.description || ""} ${p.short_description || ""} ${p.benefits || ""} ${p.ingredients_specifications || ""}`.toLowerCase();
-
-      const concernMatch = concernKws.some((k) => combined.includes(k.toLowerCase()));
-      const typeMatch = typeKws.some((k) => combined.includes(k.toLowerCase()));
-      const isTreatmentType =
-        combined.includes("serum") ||
-        combined.includes("essence") ||
-        combined.includes("mucin") ||
-        combined.includes("niacinamide") ||
-        combined.includes("hyaluronic");
-
-      return (concernMatch || typeMatch) && isTreatmentType;
-    });
-
-    // Step 3: Find sunscreen or moisturizer
-    const protectCandidates = allProducts.filter((p: any) => {
-      const combined = `${p.name} ${p.description || ""} ${p.short_description || ""}`.toLowerCase();
+    // Step 2: Serum / Essence
+    const serumCandidates = allProducts.filter((p) => {
+      const text = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
       return (
-        combined.includes("sunscreen") ||
-        combined.includes("sun") ||
-        combined.includes("spf") ||
-        combined.includes("cream") ||
-        combined.includes("moisturi") ||
-        combined.includes("gel")
+        text.includes("serum") ||
+        text.includes("essence") ||
+        text.includes("ampoule") ||
+        text.includes("niacinamide") ||
+        text.includes("snail") ||
+        text.includes("hyaluronic")
       );
     });
 
-    const chosenCleanser = cleanserCandidates[0] || allProducts[0];
-    const chosenTreatment =
-      treatmentCandidates.find((p) => p.id !== chosenCleanser.id) ||
+    // Step 3: Moisturizer / Sunscreen
+    const protectCandidates = allProducts.filter((p) => {
+      const text = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
+      return (
+        text.includes("cream") ||
+        text.includes("moisturi") ||
+        text.includes("gel cream") ||
+        text.includes("sun") ||
+        text.includes("spf") ||
+        text.includes("lotion")
+      );
+    });
+
+    const chosenCleanser =
+      cleanserCandidates.find((p) =>
+        matchesConcern(p, concern)
+      ) ||
+      cleanserCandidates[0] ||
+      allProducts[0];
+    const chosenSerum =
+      serumCandidates.find(
+        (p) => p.id !== chosenCleanser.id && matchesConcern(p, concern)
+      ) ||
+      serumCandidates.find((p) => p.id !== chosenCleanser.id) ||
       allProducts.find((p) => p.id !== chosenCleanser.id) ||
       allProducts[0];
     const chosenProtect =
       protectCandidates.find(
-        (p) => p.id !== chosenCleanser.id && p.id !== chosenTreatment.id
+        (p) => p.id !== chosenCleanser.id && p.id !== chosenSerum.id
       ) ||
       allProducts.find(
-        (p) => p.id !== chosenCleanser.id && p.id !== chosenTreatment.id
+        (p) => p.id !== chosenCleanser.id && p.id !== chosenSerum.id
       );
 
     const matchedList: MatchedProduct[] = [];
@@ -155,18 +158,18 @@ export async function getMatchedQuizRoutine(
       });
     }
 
-    if (chosenTreatment) {
+    if (chosenSerum) {
       matchedList.push({
-        id: chosenTreatment.id,
-        name: chosenTreatment.name,
-        slug: chosenTreatment.slug,
-        regular_price: chosenTreatment.regular_price,
-        sale_price: chosenTreatment.sale_price,
-        image_url: chosenTreatment.og_image_url || null,
-        brand_name: (chosenTreatment.brands as any)?.name || null,
+        id: chosenSerum.id,
+        name: chosenSerum.name,
+        slug: chosenSerum.slug,
+        regular_price: chosenSerum.regular_price,
+        sale_price: chosenSerum.sale_price,
+        image_url: chosenSerum.og_image_url || null,
+        brand_name: (chosenSerum.brands as any)?.name || null,
         step_label: "Step 2: Essence & Serum",
         step_description: `Lightweight formula that provides daily hydration and helps create a smooth, even-looking complexion.`,
-        country: chosenTreatment.country || "Korea / UK",
+        country: chosenSerum.country || "Korea / UK",
       });
     }
 
