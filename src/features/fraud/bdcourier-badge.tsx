@@ -60,7 +60,7 @@ export function BDCourierBadge({
   initialRatio,
   initialTotal,
   autoFetch = true,
-  showInlineCouriers = true,
+  showInlineCouriers = false,
 }: BDCourierBadgeProps) {
   const { lang } = useAdminLang();
   const isBn = lang === "bn";

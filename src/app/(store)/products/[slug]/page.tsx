@@ -6,6 +6,7 @@ import { ProductDetailClient } from "./product-detail-client";
 import { getFrequentlyBoughtTogetherBundle } from "@/features/products/combo-actions";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { getProductReviews } from "@/features/reviews/actions";
+import { getBeautyTaxonomyMap } from "@/features/products/actions";
 import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
 import { getBaseUrl, getShortProductId } from "@/lib/utils";
 
@@ -67,6 +68,24 @@ export default async function ProductDetailPage({
 
   if (!product) {
     notFound();
+  }
+
+  try {
+    const taxonomyMap = await getBeautyTaxonomyMap(supabase);
+    const tax = taxonomyMap[product.id];
+    if (tax) {
+      if (tax.skin_type !== undefined && (!product.skin_type || product.skin_type.length === 0)) product.skin_type = tax.skin_type;
+      if (tax.skin_concern !== undefined && (!product.skin_concern || product.skin_concern.length === 0)) product.skin_concern = tax.skin_concern;
+      if (tax.key_actives !== undefined && (!product.key_actives || product.key_actives.length === 0)) product.key_actives = tax.key_actives;
+      if (tax.routine_step !== undefined && !product.routine_step) product.routine_step = tax.routine_step;
+      if (tax.batch_number !== undefined && !product.batch_number) product.batch_number = tax.batch_number;
+      if (tax.expiry_date !== undefined && !product.expiry_date) product.expiry_date = tax.expiry_date;
+      if (tax.origin_country !== undefined && !product.origin_country) product.origin_country = tax.origin_country;
+      if (tax.volume_ml !== undefined && !product.volume_ml) product.volume_ml = tax.volume_ml;
+      if (tax.net_weight !== undefined && !product.net_weight) product.net_weight = tax.net_weight;
+    }
+  } catch (err) {
+    console.error("[products/[slug]] Failed to enrich product with taxonomy:", err);
   }
 
   // Fetch related products, combo bundle, and verified real reviews

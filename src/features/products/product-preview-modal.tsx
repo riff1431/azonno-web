@@ -54,6 +54,7 @@ interface ProductPreviewModalProps {
     regular_price: number;
     sale_price: number;
     weight: number;
+    volume_ml?: string;
     initial_stock: number;
     expiry_date?: string;
   };
@@ -341,8 +342,8 @@ export function ProductPreviewModal({
                     {form.name || (isBn ? "পণ্যের নাম এখানে প্রদর্শিত হবে" : "Product Title Will Render Here")}
                   </h1>
 
-                  {/* Rating & SKU */}
-                  <div className="flex items-center gap-3 text-xs text-gray-500">
+                  {/* Rating & SKU & Volume */}
+                  <div className="flex items-center gap-3 text-xs text-gray-500 flex-wrap">
                     <div className="flex items-center gap-1">
                       <div className="flex items-center text-amber-400">
                         <Star className="h-3.5 w-3.5 fill-current" />
@@ -359,6 +360,15 @@ export function ProductPreviewModal({
                     <span className="font-mono text-gray-500 font-bold">
                       SKU: {form.sku || "PRD-AUTO"}
                     </span>
+
+                    {form.volume_ml && (
+                      <>
+                        <span>•</span>
+                        <span className="inline-flex items-center gap-1 font-bold text-pink-700 bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-full">
+                          🧴 {form.volume_ml}
+                        </span>
+                      </>
+                    )}
                   </div>
 
                   {/* Price Section */}

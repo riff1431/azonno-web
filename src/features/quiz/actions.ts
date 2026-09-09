@@ -16,14 +16,24 @@ export interface MatchedProduct {
 }
 
 const SKIN_CONCERN_KEYWORDS: Record<string, string[]> = {
+  "Clear Skin & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
   "Acne & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
+  "Brightening & Even Tone": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
   "Brightening & Pigmentation": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
+  "Smoothing & Firming Care": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
+  "Smooth Lines & Firmness": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
   "Anti-Aging & Wrinkles": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
+  "Hydration & Moisture": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
   "Dryness & Hydration": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
+  "Pore & Oil Care": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
   "Pore Minimizing": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
+  "Redness & Soothing": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
   "Redness & Rosacea": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
   "Sun Protection": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
+  "Sun Protection (SPF)": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
   "Oil Control": ["oil", "matte", "shine", "sebum", "greas", "balance", "lightweight", "gel", "non-oily", "soap-free"],
+  "Barrier Care & Comfort": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
+  "Barrier Care": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
   "Barrier Repair": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
 };
 

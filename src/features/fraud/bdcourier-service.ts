@@ -47,6 +47,7 @@ function cleanBdPhoneNumber(rawPhone: string): string {
  * 1. Get BDCourier Settings from Supabase store_settings
  */
 export async function getBDCourierSettings(): Promise<BDCourierConfig> {
+  const envApiKey = (process.env.BDCOURIER_API_KEY || "").trim();
   try {
     const supabase = createAdminClient();
     const { data } = await supabase
@@ -56,12 +57,20 @@ export async function getBDCourierSettings(): Promise<BDCourierConfig> {
       .maybeSingle();
 
     if (data && data.value && typeof data.value === "object") {
-      return { ...DEFAULT_BDCOURIER_CONFIG, ...(data.value as Partial<BDCourierConfig>) };
+      const saved = data.value as Partial<BDCourierConfig>;
+      return {
+        ...DEFAULT_BDCOURIER_CONFIG,
+        ...saved,
+        apiKey: (saved.apiKey || envApiKey).trim(),
+      };
     }
   } catch (err) {
     console.warn("Error reading BDCourier settings:", err);
   }
-  return DEFAULT_BDCOURIER_CONFIG;
+  return {
+    ...DEFAULT_BDCOURIER_CONFIG,
+    apiKey: envApiKey,
+  };
 }
 
 /**
@@ -284,15 +293,17 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
         // Map order to courier
         let cKey = "steadfast";
         const cid = (o.consignment_id || "").toLowerCase();
-        if (cid.startsWith("pt-") || cid.includes("pathao")) cKey = "pathao";
+        if (cid.startsWith("pt-") || cid.startsWith("pth-") || cid.startsWith("de-") || cid.includes("pathao")) cKey = "pathao";
         else if (cid.startsWith("rx-") || cid.includes("redx")) cKey = "redx";
         else if (cid.startsWith("pf-") || cid.includes("paperfly")) cKey = "paperfly";
         else if (cid.startsWith("cb-") || cid.includes("carrybee")) cKey = "carrybee";
         else if (cid.startsWith("pd-") || cid.includes("parceldex")) cKey = "parceldex";
+        else if (cid.startsWith("cf-") || cid.startsWith("crf-") || cid.includes("courierfast")) cKey = "courrierfast";
         else if (cid.startsWith("ec-") || cid.includes("ecourier")) cKey = "ecourier";
         else if (cid.startsWith("dt-") || cid.includes("deliverytiger")) cKey = "deliverytiger";
         else if (cid.startsWith("sc-") || cid.includes("sundarban")) cKey = "sundarban";
         else if (cid.startsWith("sa-") || cid.includes("saparibahan")) cKey = "saparibahan";
+        else if (cid.startsWith("sf-") || cid.includes("steadfast")) cKey = "steadfast";
 
         if (courierDetails[cKey]) {
           courierDetails[cKey]!.total += 1;
@@ -392,27 +403,34 @@ function createEmptyCourierDetails(): BDCourierReport["courier_details"] {
  * Parse live BDCourier response format into standard BDCourierReport
  */
 function parseBDCourierApiResponse(phone: string, data: any): BDCourierReport | null {
-  if (!data || data.status === "error") return null;
+  if (!data || data.status === "error" || data.status === false) return null;
 
-  const dataObj = data.data || {};
+  // Courier breakdown lives under data.data (nested) OR directly under data
+  const dataObj: Record<string, any> = (data.data && typeof data.data === "object") ? data.data : data;
   const summary = dataObj.summary || {};
 
   // Extract totals from summary object or calculate across all couriers
   let total = Number(summary.total_parcel ?? data.total_parcel ?? 0);
   let success = Number(summary.success_parcel ?? data.success_parcel ?? 0);
   let cancelled = Number(summary.cancelled_parcel ?? data.cancelled_parcel ?? 0);
-  let ratio = Number(summary.success_ratio ?? data.success_ratio ?? (total > 0 ? Math.round((success / total) * 100) : 100));
+  // Real API returns success_ratio at ROOT level (not nested in data); prefer that
+  let ratio = Number(data.success_ratio ?? summary.success_ratio ?? 0);
+  if (ratio === 0 && total > 0) ratio = Math.round((success / total) * 100);
 
   // Extract ALL courier provider breakdowns (All 7 supported couriers)
   const courierDetails: BDCourierReport["courier_details"] = {};
 
   for (const provider of BDCOURIER_PROVIDERS) {
-    const raw = dataObj[provider.key];
+    // Try nested (data.data.steadfast) first, then flat (data.steadfast)
+    const raw = dataObj[provider.key] ?? data[provider.key];
     if (raw && typeof raw === "object") {
       const cTot = Number(raw.total_parcel ?? raw.total ?? 0);
       const cSuc = Number(raw.success_parcel ?? raw.success ?? 0);
       const cCan = Number(raw.cancelled_parcel ?? raw.cancelled ?? 0);
-      const cRatio = Number(raw.success_ratio ?? raw.ratio ?? (cTot > 0 ? Math.round((cSuc / cTot) * 100) : 0));
+      // Prefer API-provided success_ratio; calculate only as fallback
+      const cRatio = raw.success_ratio !== undefined
+        ? Number(raw.success_ratio)
+        : (cTot > 0 ? Math.round((cSuc / cTot) * 100) : 0);
 
       courierDetails[provider.key] = {
         name: raw.name || provider.name,
@@ -470,7 +488,9 @@ function parseBDCourierApiResponse(phone: string, data: any): BDCourierReport | 
       total = calcTot;
       success = calcSuc;
       cancelled = calcCan;
-      ratio = Math.round((success / total) * 100);
+      if (data.success_ratio === undefined && summary.success_ratio === undefined) {
+        ratio = Math.round((success / total) * 100);
+      }
     }
   }
 
@@ -493,6 +513,8 @@ function parseBDCourierApiResponse(phone: string, data: any): BDCourierReport | 
   // Format risk verdict safely as a string
   const rawVerdict = data.risk_verdict;
   let verdictString = "";
+  // Real BDCourier API risk_level values: "low" | "medium" | "high"
+  const apiRiskLevel = (data.risk_level || "").toLowerCase();
   let riskLevel: "safe" | "medium" | "high" | "critical" = "safe";
   let color: "emerald" | "amber" | "red" | "zinc" = "emerald";
   let badgeText = "";
@@ -502,36 +524,24 @@ function parseBDCourierApiResponse(phone: string, data: any): BDCourierReport | 
       ? rawVerdict.reasons.join(". ")
       : "";
     verdictString = [rawVerdict.label, rawVerdict.action, reasonsStr].filter(Boolean).join(" • ");
-
-    const lvl = (rawVerdict.level || "").toLowerCase();
-    if (lvl === "danger" || lvl === "high_risk" || lvl === "high" || reports.length > 0) {
-      riskLevel = "critical";
-      color = "red";
-    } else if (lvl === "medium" || ratio < 70) {
-      riskLevel = "medium";
-      color = "amber";
-    } else if (lvl === "low" || lvl === "safe") {
-      riskLevel = "safe";
-      color = "emerald";
-    }
   } else if (typeof rawVerdict === "string") {
     verdictString = rawVerdict;
   }
 
-  // Determine badge and color indicator
+  // Determine badge text and color — use real API risk_level if available
   if (total === 0 && reports.length === 0) {
     riskLevel = "safe";
     color = "zinc";
     badgeText = "New Buyer";
-    verdictString = "First-time buyer with 0 courier parcels recorded. No cancellation history found.";
-  } else if (reports.length > 0) {
+    verdictString = verdictString || "First-time buyer with 0 courier parcels recorded. No cancellation history found.";
+  } else if (reports.length > 0 || apiRiskLevel === "high") {
     riskLevel = "critical";
     color = "red";
-    badgeText = `${reports.length} Fraud Reports`;
-  } else if (ratio < 50) {
-    riskLevel = "critical";
-    color = "red";
-    badgeText = `${ratio}% Low Ratio`;
+    badgeText = reports.length > 0 ? `${reports.length} Fraud Report${reports.length > 1 ? "s" : ""}` : `${ratio}% Low Ratio`;
+  } else if (apiRiskLevel === "medium" || ratio < 50) {
+    riskLevel = ratio < 50 ? "critical" : "medium";
+    color = ratio < 50 ? "red" : "amber";
+    badgeText = `${ratio}% ${ratio < 50 ? "Low Ratio" : "Moderate"}`;
   } else if (ratio < 75) {
     riskLevel = "medium";
     color = "amber";

@@ -138,13 +138,13 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
               <div>
                 <span className="text-text-muted block text-[11px]">{isBn ? "মোট পার্সেল" : "Total Shipments"}</span>
                 <strong className="text-text font-bold text-sm">
-                  {courier.shipments_count || 100}+
+                  {courier.shipments_count ?? 0}
                 </strong>
               </div>
               <div>
                 <span className="text-text-muted block text-[11px]">{isBn ? "সফলতার হার" : "Success Rate"}</span>
                 <strong className="text-emerald-700 font-bold text-sm">
-                  {courier.success_rate || "98%"}
+                  {courier.success_rate || "N/A"}
                 </strong>
               </div>
             </div>

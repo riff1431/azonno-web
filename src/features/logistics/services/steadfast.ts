@@ -319,7 +319,7 @@ export async function getSteadfastBalance(): Promise<{
       return { success: false, balance: 0, error: e.message };
     }
   }
-  return { success: true, balance: 25480.0 };
+  return { success: false, balance: 0, error: "SteadFast API credentials are not configured. Please add your API Key and Secret Key in Shipping Settings." };
 }
 
 /**

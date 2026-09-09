@@ -344,7 +344,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
               onClick={handleAddBundleToCart}
               disabled={selectedProducts.length === 0}
               className={cn(
-                "ripple-container w-full h-11 rounded-xl font-black text-xs shadow-md transition-all active:scale-95",
+                "ripple-container w-full h-11 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 uppercase tracking-wide",
                 addedSuccess
                   ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                   : "bg-[#e91e63] hover:bg-sg-pink-hover text-white"
@@ -369,7 +369,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
               onClick={handleBuyBundleNow}
               disabled={selectedProducts.length === 0}
               variant="outline"
-              className="w-full h-10 rounded-xl font-bold text-xs border-pink-200 text-gray-800 hover:bg-pink-50 hover:text-black"
+              className="w-full h-10 rounded-xl font-bold text-xs sm:text-[13px] border-pink-200 text-gray-800 hover:bg-pink-50 hover:text-black"
             >
               <Zap className="h-3.5 w-3.5 mr-1 text-[#e91e63] fill-[#e91e63]" />
               {isBn ? "কম্বো কিনুন (ক্যাশ অন ডেলিভারি)" : "Buy Combo (Cash on Delivery)"}

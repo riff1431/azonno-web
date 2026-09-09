@@ -5,15 +5,23 @@ import { useRouter } from "next/navigation";
 import {
   Save, Loader2, ArrowLeft, Package, FileText,
   DollarSign, Ruler, Image as ImageIcon, Search,
-  Box, Layers, Upload, Trash2, Plus, Check, Sparkles, Tag, Truck,
+  Box, Layers, Upload, Trash2, Plus, Check, X, Sparkles, Tag, Truck,
   AlertTriangle, AlertCircle, ShieldCheck, Clock, Calendar, Eye,
-  Star, ChevronLeft, ChevronRight
+  Star, ChevronLeft, ChevronRight, Beaker, Scale
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { generateSlug, cn, formatShortProductId } from "@/lib/utils";
-import { createProduct, updateProduct, getProducts, getNextProductSerial } from "@/features/products/actions";
+import {
+  createProduct,
+  updateProduct,
+  getProducts,
+  getNextProductSerial,
+  getCustomTaxonomyOptions,
+  saveCustomTaxonomyOption,
+  deleteCustomTaxonomyOption,
+} from "@/features/products/actions";
 import { getCategories } from "@/features/categories/actions";
 import { getBrands } from "@/features/brands/actions";
 import { getAttributes } from "@/features/attributes/actions";
@@ -22,6 +30,19 @@ import { RichTextEditor } from "@/components/shared/rich-text-editor";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
 import { useAdminLang } from "@/lib/admin-lang-context";
 import { ProductPreviewModal } from "./product-preview-modal";
+
+function parseInitialArray(val: unknown): string[] {
+  if (!val) return [];
+  if (Array.isArray(val)) return val.map(String).filter(Boolean);
+  if (typeof val === "string") {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+    } catch {}
+    return val.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
 
 const SKIN_TYPES_DATA = [
   { value: "Oily", en: "Oily", bn: "তৈলাক্ত ত্বক (Oily)" },
@@ -237,9 +258,9 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     country: (initialData?.country as string) ?? (initialData?.origin_country as string) ?? "",
     warranty: (initialData?.warranty as string) ?? "",
     // Beauty & Skin Taxonomy
-    skin_type: (initialData?.skin_type as string[]) ?? [],
-    skin_concern: (initialData?.skin_concern as string[]) ?? [],
-    key_actives: (initialData?.key_actives as string[]) ?? [],
+    skin_type: parseInitialArray(initialData?.skin_type),
+    skin_concern: parseInitialArray(initialData?.skin_concern),
+    key_actives: parseInitialArray(initialData?.key_actives),
     origin_country: (initialData?.origin_country as string) ?? (initialData?.country as string) ?? "South Korea",
     routine_step: (initialData?.routine_step as string) ?? "",
     batch_number: (initialData?.batch_number as string) ?? "",
@@ -251,7 +272,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     sale_price: (initialData?.sale_price as number) ?? 0,
     sale_start: (initialData?.sale_start as string) ?? "",
     sale_end: (initialData?.sale_end as string) ?? "",
-    // Physical
+    // Physical & Packaging (ml / g)
+    volume_ml: (initialData?.volume_ml as string) ?? (initialData?.net_weight as string) ?? "",
     weight: (initialData?.weight as number) ?? 0,
     length: (initialData?.length as number) ?? 0,
     width: (initialData?.width as number) ?? 0,
@@ -267,6 +289,40 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
     // Inventory
     initial_stock: initialStockValue,
   });
+
+  // Extract initial custom items from initialData not in predefined lists
+  const initialCustomSkinTypes = useMemo(() => {
+    const predefined = new Set(SKIN_TYPES_DATA.map((d) => d.value.toLowerCase()));
+    const raw = parseInitialArray(initialData?.skin_type);
+    return raw.filter((v) => v && !predefined.has(v.toLowerCase()));
+  }, [initialData]);
+
+  const initialCustomSkinConcerns = useMemo(() => {
+    const predefined = new Set(SKIN_CONCERNS_DATA.map((d) => d.value.toLowerCase()));
+    const raw = parseInitialArray(initialData?.skin_concern);
+    return raw.filter((v) => v && !predefined.has(v.toLowerCase()));
+  }, [initialData]);
+
+  const initialCustomKeyActives = useMemo(() => {
+    const predefined = new Set(KEY_ACTIVES_DATA.map((d) => d.value.toLowerCase()));
+    const raw = parseInitialArray(initialData?.key_actives);
+    return raw.filter((v) => v && !predefined.has(v.toLowerCase()));
+  }, [initialData]);
+
+  // Dynamic custom taxonomy states
+  const [customSkinTypes, setCustomSkinTypes] = useState<string[]>(initialCustomSkinTypes);
+  const [customSkinConcerns, setCustomSkinConcerns] = useState<string[]>(initialCustomSkinConcerns);
+  const [customKeyActives, setCustomKeyActives] = useState<string[]>(initialCustomKeyActives);
+
+  // Input states for inline adding
+  const [showAddSkinType, setShowAddSkinType] = useState(false);
+  const [newSkinTypeInput, setNewSkinTypeInput] = useState("");
+
+  const [showAddSkinConcern, setShowAddSkinConcern] = useState(false);
+  const [newSkinConcernInput, setNewSkinConcernInput] = useState("");
+
+  const [showAddKeyActive, setShowAddKeyActive] = useState(false);
+  const [newKeyActiveInput, setNewKeyActiveInput] = useState("");
 
   // Dynamic Batch & Expiry Date Alert Computation
   const expiryAlertInfo = useMemo(() => {
@@ -350,6 +406,18 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
       }
     });
 
+    getCustomTaxonomyOptions().then((opts) => {
+      if (opts.skin_types.length > 0) {
+        setCustomSkinTypes((prev) => [...new Set([...prev, ...opts.skin_types])]);
+      }
+      if (opts.skin_concerns.length > 0) {
+        setCustomSkinConcerns((prev) => [...new Set([...prev, ...opts.skin_concerns])]);
+      }
+      if (opts.key_actives.length > 0) {
+        setCustomKeyActives((prev) => [...new Set([...prev, ...opts.key_actives])]);
+      }
+    }).catch(() => {});
+
     if (!isEditing) {
       getNextProductSerial()
         .then((serial) => setSuggestedSku(serial))
@@ -427,6 +495,94 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
         key_actives: exists ? prev.key_actives.filter((a) => a !== item) : [...prev.key_actives, item],
       };
     });
+  };
+
+  // Add Custom Handlers
+  const handleAddCustomSkinType = (e?: React.FormEvent | React.MouseEvent | React.KeyboardEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const val = newSkinTypeInput.trim();
+    if (!val) return;
+    
+    if (!customSkinTypes.some((item) => item.toLowerCase() === val.toLowerCase()) &&
+        !SKIN_TYPES_DATA.some((item) => item.value.toLowerCase() === val.toLowerCase())) {
+      setCustomSkinTypes((prev) => [...prev, val]);
+      saveCustomTaxonomyOption("skin_type", val).catch(() => {});
+    }
+    
+    if (!form.skin_type.includes(val)) {
+      setForm((prev) => ({ ...prev, skin_type: [...prev.skin_type, val] }));
+    }
+    setNewSkinTypeInput("");
+    setShowAddSkinType(false);
+  };
+
+  const handleRemoveCustomSkinType = (val: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCustomSkinTypes((prev) => prev.filter((item) => item !== val));
+    setForm((prev) => ({ ...prev, skin_type: prev.skin_type.filter((item) => item !== val) }));
+    deleteCustomTaxonomyOption("skin_type", val).catch(() => {});
+  };
+
+  const handleAddCustomSkinConcern = (e?: React.FormEvent | React.MouseEvent | React.KeyboardEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const val = newSkinConcernInput.trim();
+    if (!val) return;
+
+    if (!customSkinConcerns.some((item) => item.toLowerCase() === val.toLowerCase()) &&
+        !SKIN_CONCERNS_DATA.some((item) => item.value.toLowerCase() === val.toLowerCase())) {
+      setCustomSkinConcerns((prev) => [...prev, val]);
+      saveCustomTaxonomyOption("skin_concern", val).catch(() => {});
+    }
+
+    if (!form.skin_concern.includes(val)) {
+      setForm((prev) => ({ ...prev, skin_concern: [...prev.skin_concern, val] }));
+    }
+    setNewSkinConcernInput("");
+    setShowAddSkinConcern(false);
+  };
+
+  const handleRemoveCustomSkinConcern = (val: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCustomSkinConcerns((prev) => prev.filter((item) => item !== val));
+    setForm((prev) => ({ ...prev, skin_concern: prev.skin_concern.filter((item) => item !== val) }));
+    deleteCustomTaxonomyOption("skin_concern", val).catch(() => {});
+  };
+
+  const handleAddCustomKeyActive = (e?: React.FormEvent | React.MouseEvent | React.KeyboardEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const val = newKeyActiveInput.trim();
+    if (!val) return;
+
+    if (!customKeyActives.some((item) => item.toLowerCase() === val.toLowerCase()) &&
+        !KEY_ACTIVES_DATA.some((item) => item.value.toLowerCase() === val.toLowerCase())) {
+      setCustomKeyActives((prev) => [...prev, val]);
+      saveCustomTaxonomyOption("key_actives", val).catch(() => {});
+    }
+
+    if (!form.key_actives.includes(val)) {
+      setForm((prev) => ({ ...prev, key_actives: [...prev.key_actives, val] }));
+    }
+    setNewKeyActiveInput("");
+    setShowAddKeyActive(false);
+  };
+
+  const handleRemoveCustomKeyActive = (val: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCustomKeyActives((prev) => prev.filter((item) => item !== val));
+    setForm((prev) => ({ ...prev, key_actives: prev.key_actives.filter((item) => item !== val) }));
+    deleteCustomTaxonomyOption("key_actives", val).catch(() => {});
   };
 
   // Upload images (handles both input change and drag & drop)
@@ -621,6 +777,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
       sale_price: form.sale_price || null,
       sale_start: form.sale_start || null,
       sale_end: form.sale_end || null,
+      volume_ml: form.volume_ml || null,
       weight: form.weight || null,
       length: form.length || null,
       width: form.width || null,
@@ -658,6 +815,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
           tag_names: tagNames,
           media_urls: galleryImages,
           featured_image_url: form.og_image_url || galleryImages[0] || undefined,
+          variants: variantsPayload,
+          initial_stock: form.initial_stock,
         })
       : await createProduct({
           product: productData,
@@ -918,10 +1077,15 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
 
               {/* Skin Types (Multi-select) */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-700">
-                  {isBn ? "কোন ধরণের ত্বকের জন্য উপযোগী (প্রযোজ্য সবগুলো সিলেক্ট করুন)" : "Suitable Skin Types (Select all that apply)"}
-                </Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "কোন ধরণের ত্বকের জন্য উপযোগী (প্রযোজ্য সবগুলো সিলেক্ট করুন)" : "Suitable Skin Types (Select all that apply)"}
+                  </Label>
+                  <span className="text-[11px] text-gray-400 font-medium">
+                    {form.skin_type.length} {isBn ? "টি নির্বাচিত" : "selected"}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
                   {SKIN_TYPES_DATA.map((item) => {
                     const active = form.skin_type.includes(item.value);
                     return (
@@ -930,7 +1094,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         type="button"
                         onClick={() => toggleSkinType(item.value)}
                         className={cn(
-                          "rounded-full px-3.5 py-1.5 text-xs font-bold transition-all border",
+                          "rounded-full px-3.5 py-1.5 text-xs font-bold transition-all border cursor-pointer",
                           active
                             ? "bg-pink-600 text-white border-pink-600 shadow-xs"
                             : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300"
@@ -941,15 +1105,115 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                       </button>
                     );
                   })}
+
+                  {/* Custom Added Skin Types */}
+                  {customSkinTypes.map((customVal) => {
+                    const active = form.skin_type.includes(customVal);
+                    return (
+                      <div
+                        key={customVal}
+                        onClick={() => toggleSkinType(customVal)}
+                        className={cn(
+                          "group inline-flex items-center gap-1.5 rounded-full pl-3.5 pr-2 py-1.5 text-xs font-bold transition-all border cursor-pointer",
+                          active
+                            ? "bg-pink-600 text-white border-pink-600 shadow-xs"
+                            : "bg-pink-50/50 text-pink-900 border-pink-200 hover:border-pink-300"
+                        )}
+                      >
+                        {active && <Check className="h-3.5 w-3.5 -mt-0.5" />}
+                        <span>{customVal}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => handleRemoveCustomSkinType(customVal, e)}
+                          className={cn(
+                            "rounded-full p-0.5 hover:bg-black/10 transition-colors",
+                            active ? "text-white/80 hover:text-white" : "text-pink-600 hover:text-pink-900"
+                          )}
+                          title={isBn ? "মুছে ফেলুন" : "Remove"}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    );
+                  })}
+
+                  {/* Inline Add Custom Skin Type */}
+                  {showAddSkinType ? (
+                    <div className="inline-flex items-center gap-1 bg-pink-50 border-2 border-pink-500 rounded-full px-2.5 py-0.5 shadow-2xs animate-in zoom-in-95">
+                      <input
+                        type="text"
+                        value={newSkinTypeInput}
+                        onChange={(e) => setNewSkinTypeInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddCustomSkinType(e);
+                          } else if (e.key === "Escape") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowAddSkinType(false);
+                            setNewSkinTypeInput("");
+                          }
+                        }}
+                        placeholder={isBn ? "যেমন: Blemish-Prone..." : "e.g. Blemish-Prone..."}
+                        autoFocus
+                        className="bg-transparent text-xs font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none px-1 py-0.5 w-28 sm:w-36"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddCustomSkinType(e);
+                        }}
+                        className="rounded-full bg-pink-600 text-white p-1 hover:bg-pink-700 transition-colors cursor-pointer"
+                        title={isBn ? "যোগ করুন" : "Add"}
+                      >
+                        <Check className="h-3 w-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowAddSkinType(false);
+                          setNewSkinTypeInput("");
+                        }}
+                        className="rounded-full p-1 text-gray-500 hover:bg-gray-200 transition-colors cursor-pointer"
+                        title={isBn ? "বাতিল" : "Cancel"}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowAddSkinType(true);
+                      }}
+                      className="rounded-full border border-dashed border-pink-400 bg-pink-50/60 px-3 py-1.5 text-xs font-bold text-pink-700 hover:bg-pink-100/80 hover:border-pink-500 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>{isBn ? "কাস্টম স্কিন টাইপ যোগ করুন" : "+ Add Custom"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
               {/* Skin Concerns (Multi-select) */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-700">
-                  {isBn ? "টার্গেট স্কিন সমস্যা (ক্যাটালগে ফিল্টার করার জন্য)" : "Target Skin Concerns (Filterable in Catalog)"}
-                </Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "টার্গেট স্কিন সমস্যা (ক্যাটালগে ফিল্টার করার জন্য)" : "Target Skin Concerns (Filterable in Catalog)"}
+                  </Label>
+                  <span className="text-[11px] text-gray-400 font-medium">
+                    {form.skin_concern.length} {isBn ? "টি নির্বাচিত" : "selected"}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
                   {SKIN_CONCERNS_DATA.map((concern) => {
                     const active = form.skin_concern.includes(concern.value);
                     return (
@@ -958,7 +1222,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         type="button"
                         onClick={() => toggleSkinConcern(concern.value)}
                         className={cn(
-                          "rounded-full px-3 py-1.5 text-xs font-bold transition-all border",
+                          "rounded-full px-3 py-1.5 text-xs font-bold transition-all border cursor-pointer",
                           active
                             ? "bg-purple-600 text-white border-purple-600 shadow-xs"
                             : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300"
@@ -969,15 +1233,115 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                       </button>
                     );
                   })}
+
+                  {/* Custom Added Skin Concerns */}
+                  {customSkinConcerns.map((customVal) => {
+                    const active = form.skin_concern.includes(customVal);
+                    return (
+                      <div
+                        key={customVal}
+                        onClick={() => toggleSkinConcern(customVal)}
+                        className={cn(
+                          "group inline-flex items-center gap-1.5 rounded-full pl-3.5 pr-2 py-1.5 text-xs font-bold transition-all border cursor-pointer",
+                          active
+                            ? "bg-purple-600 text-white border-purple-600 shadow-xs"
+                            : "bg-purple-50/50 text-purple-900 border-purple-200 hover:border-purple-300"
+                        )}
+                      >
+                        {active && <Check className="h-3.5 w-3.5 -mt-0.5" />}
+                        <span>{customVal}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => handleRemoveCustomSkinConcern(customVal, e)}
+                          className={cn(
+                            "rounded-full p-0.5 hover:bg-black/10 transition-colors",
+                            active ? "text-white/80 hover:text-white" : "text-purple-600 hover:text-purple-900"
+                          )}
+                          title={isBn ? "মুছে ফেলুন" : "Remove"}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    );
+                  })}
+
+                  {/* Inline Add Custom Skin Concern */}
+                  {showAddSkinConcern ? (
+                    <div className="inline-flex items-center gap-1 bg-purple-50 border-2 border-purple-500 rounded-full px-2.5 py-0.5 shadow-2xs animate-in zoom-in-95">
+                      <input
+                        type="text"
+                        value={newSkinConcernInput}
+                        onChange={(e) => setNewSkinConcernInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddCustomSkinConcern(e);
+                          } else if (e.key === "Escape") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowAddSkinConcern(false);
+                            setNewSkinConcernInput("");
+                          }
+                        }}
+                        placeholder={isBn ? "যেমন: Hyperpigmentation..." : "e.g. Hyperpigmentation..."}
+                        autoFocus
+                        className="bg-transparent text-xs font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none px-1 py-0.5 w-32 sm:w-44"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddCustomSkinConcern(e);
+                        }}
+                        className="rounded-full bg-purple-600 text-white p-1 hover:bg-purple-700 transition-colors cursor-pointer"
+                        title={isBn ? "যোগ করুন" : "Add"}
+                      >
+                        <Check className="h-3 w-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowAddSkinConcern(false);
+                          setNewSkinConcernInput("");
+                        }}
+                        className="rounded-full p-1 text-gray-500 hover:bg-gray-200 transition-colors cursor-pointer"
+                        title={isBn ? "বাতিল" : "Cancel"}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowAddSkinConcern(true);
+                      }}
+                      className="rounded-full border border-dashed border-purple-400 bg-purple-50/60 px-3 py-1.5 text-xs font-bold text-purple-700 hover:bg-purple-100/80 hover:border-purple-500 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>{isBn ? "কাস্টম সমস্যা যোগ করুন" : "+ Add Custom"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
               {/* Key Actives (Multi-select + Input) */}
               <div className="space-y-2">
-                <Label className="text-xs font-bold text-gray-700">
-                  {isBn ? "মূল সক্রিয় উপাদানসমূহ (Key Active Ingredients)" : "Key Active Ingredients"}
-                </Label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "মূল সক্রিয় উপাদানসমূহ (Key Active Ingredients)" : "Key Active Ingredients"}
+                  </Label>
+                  <span className="text-[11px] text-gray-400 font-medium">
+                    {form.key_actives.length} {isBn ? "টি নির্বাচিত" : "selected"}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
                   {KEY_ACTIVES_DATA.map((active) => {
                     const isSelected = form.key_actives.includes(active.value);
                     return (
@@ -986,7 +1350,7 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                         type="button"
                         onClick={() => toggleKeyActive(active.value)}
                         className={cn(
-                          "rounded-full px-3 py-1.5 text-xs font-bold transition-all border",
+                          "rounded-full px-3 py-1.5 text-xs font-bold transition-all border cursor-pointer",
                           isSelected
                             ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
                             : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300"
@@ -997,6 +1361,101 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                       </button>
                     );
                   })}
+
+                  {/* Custom Added Key Actives */}
+                  {customKeyActives.map((customVal) => {
+                    const isSelected = form.key_actives.includes(customVal);
+                    return (
+                      <div
+                        key={customVal}
+                        onClick={() => toggleKeyActive(customVal)}
+                        className={cn(
+                          "group inline-flex items-center gap-1.5 rounded-full pl-3.5 pr-2 py-1.5 text-xs font-bold transition-all border cursor-pointer",
+                          isSelected
+                            ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
+                            : "bg-emerald-50/50 text-emerald-900 border-emerald-200 hover:border-emerald-300"
+                        )}
+                      >
+                        {isSelected && <Check className="h-3.5 w-3.5 -mt-0.5" />}
+                        <span>{customVal}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => handleRemoveCustomKeyActive(customVal, e)}
+                          className={cn(
+                            "rounded-full p-0.5 hover:bg-black/10 transition-colors",
+                            isSelected ? "text-white/80 hover:text-white" : "text-emerald-600 hover:text-emerald-900"
+                          )}
+                          title={isBn ? "মুছে ফেলুন" : "Remove"}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    );
+                  })}
+
+                  {/* Inline Add Custom Key Active */}
+                  {showAddKeyActive ? (
+                    <div className="inline-flex items-center gap-1 bg-emerald-50 border-2 border-emerald-500 rounded-full px-2.5 py-0.5 shadow-2xs animate-in zoom-in-95">
+                      <input
+                        type="text"
+                        value={newKeyActiveInput}
+                        onChange={(e) => setNewKeyActiveInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddCustomKeyActive(e);
+                          } else if (e.key === "Escape") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowAddKeyActive(false);
+                            setNewKeyActiveInput("");
+                          }
+                        }}
+                        placeholder={isBn ? "যেমন: Bakuchiol..." : "e.g. Bakuchiol..."}
+                        autoFocus
+                        className="bg-transparent text-xs font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none px-1 py-0.5 w-28 sm:w-36"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddCustomKeyActive(e);
+                        }}
+                        className="rounded-full bg-emerald-600 text-white p-1 hover:bg-emerald-700 transition-colors cursor-pointer"
+                        title={isBn ? "যোগ করুন" : "Add"}
+                      >
+                        <Check className="h-3 w-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowAddKeyActive(false);
+                          setNewKeyActiveInput("");
+                        }}
+                        className="rounded-full p-1 text-gray-500 hover:bg-gray-200 transition-colors cursor-pointer"
+                        title={isBn ? "বাতিল" : "Cancel"}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowAddKeyActive(true);
+                      }}
+                      className="rounded-full border border-dashed border-emerald-400 bg-emerald-50/60 px-3 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100/80 hover:border-emerald-500 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>{isBn ? "কাস্টম উপাদান যোগ করুন" : "+ Add Custom"}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -1174,8 +1633,8 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
                 onChange={(val) => updateField("benefits", val)}
                 placeholder={
                   isBn
-                    ? "• ৭২ ঘণ্টা গভীর ময়েশ্চারাইজিং ব্যারিয়ার\n• নন-স্টিকি গ্লাস স্কিন গ্লো\n• ডার্মাটোলজিক্যালি টেস্টেড ও নিরাপদ"
-                    : "• 72hr Intense hydration barrier\n• Non-sticky glass skin glow\n• Dermatologically tested"
+                    ? "• গভীর ময়েশ্চারাইজিং ব্যারিয়ার ও কোমল ত্বক\n• নন-স্টিকি গ্লাস স্কিন গ্লো\n• প্রতিদিনের ব্যবহারের জন্য নিরাপদ ও কোমল"
+                    : "• Deep hydration barrier & soft skin feel\n• Non-sticky glass skin natural glow\n• Gentle & evaluated for everyday skincare"
                 }
                 minHeight="160px"
               />
@@ -1401,73 +1860,235 @@ export default function ProductForm({ initialData }: { initialData?: Record<stri
             </div>
           )}
 
-          {/* 5. Physical Specs */}
+          {/* 5. Physical Specs & Net Volume (ml / g) */}
           {activeTab === "physical" && (
-            <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-4">
-              <h2 className="text-lg font-semibold text-text">{isBn ? "ওজন ও পরিমাপ" : "Physical Dimensions"}</h2>
-              <div className="space-y-2">
-                <Label>{isBn ? "ওজন (কেজি)" : "Weight (kg)"}</Label>
-                <Input type="number" step="0.001" min="0" value={form.weight || ""} onChange={(e) => updateField("weight", parseFloat(e.target.value) || 0)} />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-3">
-                <div className="space-y-2">
-                  <Label>{isBn ? "দৈর্ঘ্য (সেমি)" : "Length (cm)"}</Label>
-                  <Input type="number" step="0.01" min="0" value={form.length || ""} onChange={(e) => updateField("length", parseFloat(e.target.value) || 0)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>{isBn ? "প্রস্থ (সেমি)" : "Width (cm)"}</Label>
-                  <Input type="number" step="0.01" min="0" value={form.width || ""} onChange={(e) => updateField("width", parseFloat(e.target.value) || 0)} />
-                </div>
-                <div className="space-y-2">
-                  <Label>{isBn ? "উচ্চতা (সেমি)" : "Height (cm)"}</Label>
-                  <Input type="number" step="0.01" min="0" value={form.height || ""} onChange={(e) => updateField("height", parseFloat(e.target.value) || 0)} />
-                </div>
-              </div>
-              <div className="space-y-3 pt-2 border-t border-gray-100">
-                <Label>{isBn ? "শিপিং ক্লাস ও ডেলিভারি অপশন" : "Shipping Class & Delivery Option"}</Label>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => updateField("is_free_shipping", false)}
-                    className={cn(
-                      "flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all",
-                      !form.is_free_shipping
-                        ? "border-[#e91e63] bg-pink-50/50 shadow-xs"
-                        : "border-gray-200 bg-white hover:bg-gray-50"
-                    )}
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-700">
-                      <Box className="h-4 w-4" />
+            <div className="space-y-5">
+              {/* Net Volume / Beauty Size Card */}
+              <div className="rounded-xl border border-pink-200/80 bg-linear-to-r from-pink-50/40 via-white to-purple-50/30 p-6 shadow-card space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-100 text-[#e91e63]">
+                      <Beaker className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-gray-900">{isBn ? "সাধারণ শিপিং" : "Standard Shipping"}</p>
-                      <p className="text-[11px] text-gray-500">{isBn ? "স্বাভাবিক ডেলিভারি চার্জ প্রযোজ্য" : "Regular shipping rates apply"}</p>
+                      <h2 className="text-base font-bold text-gray-950">
+                        {isBn ? "নেট ভলিউম ও সাইজ (ml / g)" : "Net Volume & Size (ml / g)"}
+                      </h2>
+                      <p className="text-xs text-gray-500">
+                        {isBn
+                          ? "কসমেটিকস ও স্কিনকেয়ার পণ্যের নেট পরিমাণ নির্ধারণ করুন (যেমন: 30 ml, 50 ml, 100 ml, 50 g)"
+                          : "Configure the net cosmetic volume or weight for storefront badge & specs"}
+                      </p>
                     </div>
-                  </button>
+                  </div>
+                  {form.volume_ml && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 border border-pink-300 px-3 py-1 text-xs font-black text-[#e91e63] shadow-2xs">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      {form.volume_ml}
+                    </span>
+                  )}
+                </div>
 
-                  <button
-                    type="button"
-                    onClick={() => updateField("is_free_shipping", true)}
-                    className={cn(
-                      "flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all",
-                      form.is_free_shipping
-                        ? "border-[#e91e63] bg-pink-50/70 shadow-xs ring-1 ring-[#e91e63]"
-                        : "border-gray-200 bg-white hover:bg-gray-50"
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-gray-700">
+                    {isBn ? "নেট ভলিউম / সাইজ লিখুন বা বাছাই করুন" : "Enter or Select Net Volume (ml / g)"}
+                  </Label>
+                  <div className="relative max-w-md">
+                    <Input
+                      value={form.volume_ml}
+                      onChange={(e) => updateField("volume_ml", e.target.value)}
+                      placeholder={isBn ? "যেমন: 30 ml, 50 ml, 100 ml বা 50 g" : "e.g. 30 ml, 50 ml, 100 ml or 50 g"}
+                      className="pr-12 text-sm font-semibold text-gray-900 border-pink-200 focus:border-[#e91e63] focus:ring-pink-200"
+                    />
+                    {form.volume_ml && (
+                      <button
+                        type="button"
+                        onClick={() => updateField("volume_ml", "")}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 p-1"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
                     )}
-                  >
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-[#e91e63]">
-                      <Truck className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-gray-900">{isBn ? "ফ্রি ডেলিভারি" : "Free Delivery"}</p>
-                        <span className="rounded bg-[#e91e63] px-1.5 py-0.2 text-[9px] font-black uppercase text-white">
-                          {isBn ? "ফ্রি" : "ফ্রি"}
-                        </span>
+                  </div>
+                </div>
+
+                {/* Popular Cosmetics Quick-Select Pills */}
+                <div className="space-y-2 pt-1">
+                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">
+                    {isBn ? "জনপ্রিয় ভলিউম ও সাইজ প্রিসেট (এক ক্লিকে বাছাই):" : "Popular Volume Presets (One-click):"}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {[
+                      { label: "15 ml", val: "15 ml", estKg: 0.04 },
+                      { label: "30 ml", val: "30 ml", estKg: 0.06 },
+                      { label: "50 ml", val: "50 ml", estKg: 0.09 },
+                      { label: "60 ml", val: "60 ml", estKg: 0.10 },
+                      { label: "100 ml", val: "100 ml", estKg: 0.15 },
+                      { label: "120 ml", val: "120 ml", estKg: 0.18 },
+                      { label: "150 ml", val: "150 ml", estKg: 0.22 },
+                      { label: "200 ml", val: "200 ml", estKg: 0.28 },
+                      { label: "250 ml", val: "250 ml", estKg: 0.35 },
+                      { label: "300 ml", val: "300 ml", estKg: 0.40 },
+                      { label: "400 ml", val: "400 ml", estKg: 0.50 },
+                      { label: "500 ml", val: "500 ml", estKg: 0.60 },
+                      { label: "1000 ml (1L)", val: "1000 ml", estKg: 1.15 },
+                      { label: "30 g", val: "30 g", estKg: 0.05 },
+                      { label: "50 g", val: "50 g", estKg: 0.08 },
+                      { label: "100 g", val: "100 g", estKg: 0.14 },
+                      { label: "1 Pc", val: "1 pc", estKg: 0.05 },
+                    ].map((preset) => {
+                      const isSelected = form.volume_ml.toLowerCase().trim() === preset.val.toLowerCase().trim() ||
+                        form.volume_ml.toLowerCase().trim() === preset.label.toLowerCase().trim();
+                      return (
+                        <button
+                          key={preset.val}
+                          type="button"
+                          onClick={() => {
+                            updateField("volume_ml", preset.val);
+                            if (!form.weight || form.weight === 0) {
+                              updateField("weight", preset.estKg);
+                            }
+                          }}
+                          className={cn(
+                            "inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-bold transition-all shadow-2xs",
+                            isSelected
+                              ? "bg-[#e91e63] text-white ring-2 ring-pink-300 ring-offset-1 scale-105"
+                              : "bg-white border border-gray-200 text-gray-700 hover:border-pink-300 hover:bg-pink-50/60"
+                          )}
+                        >
+                          {isSelected && <Check className="h-3 w-3" />}
+                          <span>{preset.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Weight & Shipping Dimensions Card */}
+              <div className="rounded-xl border border-border bg-white p-6 shadow-card space-y-4">
+                <div className="flex items-center gap-2.5 pb-1 border-b border-gray-100">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-700">
+                    <Scale className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-text">
+                      {isBn ? "শিপিং ওজন ও প্যাকেজ মাপ" : "Shipping Weight & Dimensions"}
+                    </h2>
+                    <p className="text-xs text-text-secondary">
+                      {isBn
+                        ? "কুরিয়ার বিলিং (পাঠাও / স্টেডফাস্ট) এর জন্য মোট ওজন ও বক্স সাইজ"
+                        : "Used for Steadfast & Pathao courier weight tiers and shipping calculation"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-bold text-gray-800">
+                      {isBn ? "কুরিয়ার গ্রস ওজন (Weight in kg)" : "Gross Shipping Weight (kg)"}
+                    </Label>
+                    {form.weight > 0 && (
+                      <span className="text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-md">
+                        ≈ {(form.weight * 1000).toFixed(0)} grams
+                      </span>
+                    )}
+                  </div>
+                  <Input
+                    type="number"
+                    step="0.001"
+                    min="0"
+                    value={form.weight || ""}
+                    onChange={(e) => updateField("weight", parseFloat(e.target.value) || 0)}
+                    placeholder="0.100"
+                  />
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    {[
+                      { label: "50g (0.05 kg)", val: 0.05 },
+                      { label: "100g (0.10 kg)", val: 0.10 },
+                      { label: "150g (0.15 kg)", val: 0.15 },
+                      { label: "250g (0.25 kg)", val: 0.25 },
+                      { label: "500g (0.50 kg)", val: 0.50 },
+                      { label: "1 kg (1.00 kg)", val: 1.00 },
+                    ].map((wPreset) => (
+                      <button
+                        key={wPreset.val}
+                        type="button"
+                        onClick={() => updateField("weight", wPreset.val)}
+                        className={cn(
+                          "rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors",
+                          form.weight === wPreset.val
+                            ? "border-pink-400 bg-pink-50 text-[#e91e63] font-bold"
+                            : "border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100"
+                        )}
+                      >
+                        {wPreset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3 pt-2 border-t border-gray-100">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-gray-700">{isBn ? "দৈর্ঘ্য (সেমি)" : "Length (cm)"}</Label>
+                    <Input type="number" step="0.01" min="0" value={form.length || ""} onChange={(e) => updateField("length", parseFloat(e.target.value) || 0)} placeholder="0" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-gray-700">{isBn ? "প্রস্থ (সেমি)" : "Width (cm)"}</Label>
+                    <Input type="number" step="0.01" min="0" value={form.width || ""} onChange={(e) => updateField("width", parseFloat(e.target.value) || 0)} placeholder="0" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-gray-700">{isBn ? "উচ্চতা (সেমি)" : "Height (cm)"}</Label>
+                    <Input type="number" step="0.01" min="0" value={form.height || ""} onChange={(e) => updateField("height", parseFloat(e.target.value) || 0)} placeholder="0" />
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-3 border-t border-gray-100">
+                  <Label className="text-xs font-bold text-gray-800">{isBn ? "শিপিং ক্লাস ও ডেলিভারি অপশন" : "Shipping Class & Delivery Option"}</Label>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => updateField("is_free_shipping", false)}
+                      className={cn(
+                        "flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all",
+                        !form.is_free_shipping
+                          ? "border-[#e91e63] bg-pink-50/50 shadow-xs"
+                          : "border-gray-200 bg-white hover:bg-gray-50"
+                      )}
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-700">
+                        <Box className="h-4 w-4" />
                       </div>
-                      <p className="text-[11px] text-[#e91e63] font-medium">{isBn ? "সারা দেশে ফ্রি ডেলিভারি ব্যাজ" : "Free nationwide shipping badge"}</p>
-                    </div>
-                  </button>
+                      <div>
+                        <p className="text-xs font-bold text-gray-900">{isBn ? "সাধারণ শিপিং" : "Standard Shipping"}</p>
+                        <p className="text-[11px] text-gray-500">{isBn ? "স্বাভাবিক ডেলিভারি চার্জ প্রযোজ্য" : "Regular shipping rates apply"}</p>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => updateField("is_free_shipping", true)}
+                      className={cn(
+                        "flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all",
+                        form.is_free_shipping
+                          ? "border-[#e91e63] bg-pink-50/70 shadow-xs ring-1 ring-[#e91e63]"
+                          : "border-gray-200 bg-white hover:bg-gray-50"
+                      )}
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-[#e91e63]">
+                        <Truck className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-gray-900">{isBn ? "ফ্রি ডেলিভারি" : "Free Delivery"}</p>
+                          <span className="rounded bg-[#e91e63] px-1.5 py-0.2 text-[9px] font-black uppercase text-white">
+                            {isBn ? "ফ্রি" : "FREE"}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#e91e63] font-medium">{isBn ? "সারা দেশে ফ্রি ডেলিভারি ব্যাজ" : "Free nationwide shipping badge"}</p>
+                      </div>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

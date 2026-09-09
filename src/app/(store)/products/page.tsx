@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProductsListingClient } from "./products-listing-client";
 import { type ProductCardData } from "@/components/storefront/product-card";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
+import { getBeautyTaxonomyMap, getCustomTaxonomyOptions } from "@/features/products/actions";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
@@ -73,14 +74,23 @@ export const TYPE_NAME_MAP: Record<string, { en: string; bn: string }> = {
 };
 
 export const SKIN_CONCERN_KEYWORDS: Record<string, string[]> = {
+  "Clear Skin & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
   "Acne & Blemishes": ["acne", "blemish", "pimple", "breakout", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif"],
+  "Brightening & Even Tone": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
   "Brightening & Pigmentation": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
+  "Smoothing & Firming Care": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
   "Anti-Aging & Wrinkles": ["aging", "wrinkle", "fine line", "firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail"],
+  "Hydration & Moisture": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
   "Dryness & Hydration": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
+  "Pore & Oil Care": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
   "Pore Minimizing": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
+  "Redness & Soothing": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
   "Redness & Rosacea": ["redness", "calm", "sooth", "cica", "centella", "sensitive", "irritat", "gentle", "comfort", "kind to skin"],
   "Sun Protection": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
+  "Sun Protection (SPF)": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
   "Oil Control": ["oil", "matte", "shine", "sebum", "greas", "balance", "lightweight", "gel", "non-oily", "soap-free"],
+  "Oil Balance & Freshness": ["oil", "matte", "shine", "sebum", "greas", "balance", "lightweight", "gel", "non-oily", "soap-free"],
+  "Barrier Care & Comfort": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
   "Barrier Repair": ["barrier", "ceramide", "repair", "protect", "strengthen", "snail", "mucin", "recover", "pro-vitamin"],
 };
 
@@ -175,11 +185,21 @@ export default async function ProductsListingPage({
   const supabase = await createClient();
   const featureSettings = await getStoreFeatureSettings();
 
-  // Fetch Categories, Brands & Tags for filters
-  const [{ data: categories }, { data: brands }, { data: tags }] = await Promise.all([
+  // Fetch Categories, Brands, Tags & Taxonomy Maps for dynamic filters
+  const [
+    { data: categories },
+    { data: brands },
+    { data: tags },
+    { data: productTagRows },
+    customTaxonomyOptions,
+    taxonomyMap,
+  ] = await Promise.all([
     supabase.from("categories").select("id, name, slug, parent_id").eq("status", "active"),
     supabase.from("brands").select("id, name, slug").eq("status", "active"),
     supabase.from("tags").select("id, name, slug").order("name"),
+    supabase.from("product_tags").select("product_id, tag_id"),
+    getCustomTaxonomyOptions(supabase),
+    getBeautyTaxonomyMap(supabase),
   ]);
 
   // Dynamic Product Query Builder function
@@ -304,9 +324,24 @@ export default async function ProductsListingPage({
           t.slug.replace(/-/g, "").toLowerCase() === cleanTag ||
           t.name.toLowerCase() === activeTag.toLowerCase()
       );
+      const matchingTagProdIds = selectedTag
+        ? (productTagRows || [])
+            .filter((pt) => pt.tag_id === selectedTag.id)
+            .map((pt) => pt.product_id)
+        : [];
+
+      const orConditions = [
+        `name.ilike.%${activeTag}%`,
+        `slug.ilike.%${activeTag}%`,
+      ];
       if (selectedTag) {
-        q = q.or(`name.ilike.%${selectedTag.name}%,slug.ilike.%${selectedTag.slug}%`);
+        orConditions.push(`name.ilike.%${selectedTag.name}%`);
+        orConditions.push(`slug.ilike.%${selectedTag.slug}%`);
       }
+      if (matchingTagProdIds.length > 0) {
+        orConditions.push(`id.in.(${matchingTagProdIds.join(",")})`);
+      }
+      q = q.or(orConditions.join(","));
     }
 
     // 5. Origin
@@ -318,7 +353,7 @@ export default async function ProductsListingPage({
       q = q.ilike("country", `%${cleanOrigin}%`);
     }
 
-    // 6. Beauty Taxonomy Filters (Intelligent Domain-Aware Keyword Matching)
+    // 6. Beauty Taxonomy Filters (Intelligent Domain-Aware Keyword Matching + Taxonomy Map)
     if (skin_type) {
       const typeWords = SKIN_TYPE_KEYWORDS[skin_type] || [skin_type];
       const orList: string[] = [];
@@ -328,6 +363,18 @@ export default async function ProductsListingPage({
         orList.push(`benefits.ilike.%${kw}%`);
         orList.push(`short_description.ilike.%${kw}%`);
       });
+
+      const stLower = skin_type.toLowerCase();
+      const matchingIds: string[] = [];
+      for (const [prodId, tax] of Object.entries(taxonomyMap)) {
+        const arr = Array.isArray(tax.skin_type) ? tax.skin_type : typeof tax.skin_type === "string" ? [tax.skin_type] : [];
+        if (arr.some((s: string) => s.toLowerCase() === stLower || s.toLowerCase().includes(stLower))) {
+          matchingIds.push(prodId);
+        }
+      }
+      if (matchingIds.length > 0) {
+        orList.push(`id.in.(${matchingIds.join(",")})`);
+      }
       q = q.or(orList.join(","));
     }
 
@@ -340,6 +387,18 @@ export default async function ProductsListingPage({
         orList.push(`benefits.ilike.%${kw}%`);
         orList.push(`short_description.ilike.%${kw}%`);
       });
+
+      const scLower = skin_concern.toLowerCase();
+      const matchingIds: string[] = [];
+      for (const [prodId, tax] of Object.entries(taxonomyMap)) {
+        const arr = Array.isArray(tax.skin_concern) ? tax.skin_concern : typeof tax.skin_concern === "string" ? [tax.skin_concern] : [];
+        if (arr.some((s: string) => s.toLowerCase() === scLower || s.toLowerCase().includes(scLower))) {
+          matchingIds.push(prodId);
+        }
+      }
+      if (matchingIds.length > 0) {
+        orList.push(`id.in.(${matchingIds.join(",")})`);
+      }
       q = q.or(orList.join(","));
     }
 
@@ -352,6 +411,18 @@ export default async function ProductsListingPage({
         orList.push(`ingredients_specifications.ilike.%${kw}%`);
         orList.push(`short_description.ilike.%${kw}%`);
       });
+
+      const kaLower = key_actives.toLowerCase();
+      const matchingIds: string[] = [];
+      for (const [prodId, tax] of Object.entries(taxonomyMap)) {
+        const arr = Array.isArray(tax.key_actives) ? tax.key_actives : typeof tax.key_actives === "string" ? [tax.key_actives] : [];
+        if (arr.some((s: string) => s.toLowerCase() === kaLower || s.toLowerCase().includes(kaLower))) {
+          matchingIds.push(prodId);
+        }
+      }
+      if (matchingIds.length > 0) {
+        orList.push(`id.in.(${matchingIds.join(",")})`);
+      }
       q = q.or(orList.join(","));
     }
     if (min_price) {
@@ -548,6 +619,9 @@ export default async function ProductsListingPage({
         currentOrigin={origin}
         currentInStock={in_stock === "true" || in_stock === "1"}
         enableBeautyFilters={featureSettings.enable_beauty_filters}
+        customSkinTypes={customTaxonomyOptions.skin_types}
+        customSkinConcerns={customTaxonomyOptions.skin_concerns}
+        customKeyActives={customTaxonomyOptions.key_actives}
       />
     </div>
   );

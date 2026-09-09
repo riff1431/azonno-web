@@ -24,9 +24,8 @@ import { Button } from "@/components/shared/ui/button";
 import { useCart } from "@/context/cart-context";
 import { useLanguage } from "@/context/language-context";
 import {
-  trackStartTrial,
-  trackSchedule,
-  trackSubmitApplication,
+  trackViewItemList,
+  pushToDataLayer,
 } from "@/lib/analytics/datalayer";
 import { getMatchedQuizRoutine, type MatchedProduct } from "@/features/quiz/actions";
 
@@ -142,7 +141,10 @@ export function SkincareQuizClient() {
 
   const handleSelectOption = async (value: string) => {
     if (currentStep === 0) {
-      trackStartTrial("skincare_routine_quiz", "routine_match");
+      pushToDataLayer({
+        event: "start_routine_finder",
+        category: "beauty_quiz",
+      });
     }
 
     const updated = { ...answers, [currentStep]: value };
@@ -151,14 +153,25 @@ export function SkincareQuizClient() {
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      trackSchedule("routine_finder_results");
-      trackSubmitApplication("routine_match_completed");
       setCurrentStep(questions.length); // Results screen
 
       setLoadingResults(true);
       try {
         const result = await getMatchedQuizRoutine(updated[0] || "combo", updated[1] || "hydration");
         setMatchedData(result);
+
+        if (result.products && result.products.length > 0) {
+          trackViewItemList(
+            result.products.map((p, idx) => ({
+              item_id: p.id,
+              item_name: p.name,
+              item_brand: p.brand_name || undefined,
+              price: p.sale_price ?? p.regular_price,
+              index: idx + 1,
+            })),
+            "Beauty Routine Match Results"
+          );
+        }
       } catch (err) {
         console.error(err);
       } finally {

@@ -30,6 +30,143 @@ export async function getNextProductSerial(): Promise<number> {
   return maxSerial > 0 ? maxSerial + 1 : data.length + 1;
 }
 
+export async function getBeautyTaxonomyMap(supabaseClient?: any): Promise<Record<string, any>> {
+  try {
+    const supabase = supabaseClient || (await createClient());
+    const { data } = await supabase
+      .from("store_settings")
+      .select("value")
+      .eq("key", "products_beauty_taxonomy")
+      .maybeSingle();
+
+    if (!data?.value) return {};
+    return typeof data.value === "string" ? JSON.parse(data.value) : data.value;
+  } catch (err) {
+    console.error("[products/actions] Failed to load beauty taxonomy map:", err);
+    return {};
+  }
+}
+
+export interface CustomTaxonomyOptions {
+  skin_types: string[];
+  skin_concerns: string[];
+  key_actives: string[];
+}
+
+export async function getCustomTaxonomyOptions(supabaseClient?: any): Promise<CustomTaxonomyOptions> {
+  try {
+    const supabase = supabaseClient || (await createClient());
+    const { data } = await supabase
+      .from("store_settings")
+      .select("value")
+      .eq("key", "custom_beauty_taxonomy_options")
+      .maybeSingle();
+
+    if (!data?.value) return { skin_types: [], skin_concerns: [], key_actives: [] };
+    const parsed = typeof data.value === "string" ? JSON.parse(data.value) : data.value;
+    return {
+      skin_types: Array.isArray(parsed.skin_types) ? parsed.skin_types : [],
+      skin_concerns: Array.isArray(parsed.skin_concerns) ? parsed.skin_concerns : [],
+      key_actives: Array.isArray(parsed.key_actives) ? parsed.key_actives : [],
+    };
+  } catch (err) {
+    console.error("[products/actions] Failed to load custom taxonomy options:", err);
+    return { skin_types: [], skin_concerns: [], key_actives: [] };
+  }
+}
+
+export async function saveCustomTaxonomyOption(
+  type: "skin_type" | "skin_concern" | "key_actives",
+  value: string
+): Promise<{ success: boolean }> {
+  try {
+    const cleanVal = value.trim();
+    if (!cleanVal) return { success: false };
+    const supabase = await createClient();
+    const current = await getCustomTaxonomyOptions(supabase);
+    const key = type === "skin_type" ? "skin_types" : type === "skin_concern" ? "skin_concerns" : "key_actives";
+    
+    if (!current[key].some((v) => v.toLowerCase() === cleanVal.toLowerCase())) {
+      current[key].push(cleanVal);
+      await supabase.from("store_settings").upsert(
+        {
+          key: "custom_beauty_taxonomy_options",
+          value: current,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "key" }
+      );
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("[products/actions] Failed to save custom taxonomy option:", err);
+    return { success: false };
+  }
+}
+
+export async function deleteCustomTaxonomyOption(
+  type: "skin_type" | "skin_concern" | "key_actives",
+  value: string
+): Promise<{ success: boolean }> {
+  try {
+    const cleanVal = value.trim();
+    const supabase = await createClient();
+    const current = await getCustomTaxonomyOptions(supabase);
+    const key = type === "skin_type" ? "skin_types" : type === "skin_concern" ? "skin_concerns" : "key_actives";
+    
+    current[key] = current[key].filter((v) => v.toLowerCase() !== cleanVal.toLowerCase());
+    await supabase.from("store_settings").upsert(
+      {
+        key: "custom_beauty_taxonomy_options",
+        value: current,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "key" }
+    );
+    return { success: true };
+  } catch (err) {
+    console.error("[products/actions] Failed to delete custom taxonomy option:", err);
+    return { success: false };
+  }
+}
+
+export async function saveBeautyTaxonomyForProduct(
+  supabaseClient: any,
+  productId: string,
+  taxonomyData: {
+    skin_type?: string[] | null;
+    skin_concern?: string[] | null;
+    key_actives?: string[] | null;
+    routine_step?: string | null;
+    batch_number?: string | null;
+    expiry_date?: string | null;
+    origin_country?: string | null;
+    volume_ml?: string | number | null;
+    net_weight?: string | null;
+  }
+) {
+  try {
+    const supabase = supabaseClient || (await createClient());
+    const currentMap = await getBeautyTaxonomyMap(supabase);
+    const existing = currentMap[productId] || {};
+    currentMap[productId] = {
+      ...existing,
+      ...Object.fromEntries(Object.entries(taxonomyData).filter(([_, v]) => v !== undefined)),
+    };
+
+    await supabase.from("store_settings").upsert(
+      {
+        key: "products_beauty_taxonomy",
+        value: currentMap,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "key" }
+    );
+  } catch (err) {
+    console.error("[products/actions] Failed to save beauty taxonomy for product:", productId, err);
+  }
+}
+
 export async function getProducts(filters?: {
   status?: string;
   brand_id?: string;
@@ -39,7 +176,7 @@ export async function getProducts(filters?: {
   const supabase = await createClient();
   let query = supabase
     .from("products")
-    .select("*, brands(name), inventory(on_hand, available)")
+    .select("*, brands(id, name), product_categories(category_id, categories(id, name)), inventory(on_hand, available)")
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
@@ -52,6 +189,30 @@ export async function getProducts(filters?: {
 
   const { data, error } = await query;
   if (error) throw error;
+  if (!data || data.length === 0) return data;
+
+  try {
+    const taxonomyMap = await getBeautyTaxonomyMap(supabase);
+    if (taxonomyMap && Object.keys(taxonomyMap).length > 0) {
+      for (const prod of data) {
+        const tax = taxonomyMap[prod.id];
+        if (tax) {
+          if (tax.skin_type !== undefined && (!prod.skin_type || prod.skin_type.length === 0)) prod.skin_type = tax.skin_type;
+          if (tax.skin_concern !== undefined && (!prod.skin_concern || prod.skin_concern.length === 0)) prod.skin_concern = tax.skin_concern;
+          if (tax.key_actives !== undefined && (!prod.key_actives || prod.key_actives.length === 0)) prod.key_actives = tax.key_actives;
+          if (tax.routine_step !== undefined && !prod.routine_step) prod.routine_step = tax.routine_step;
+          if (tax.batch_number !== undefined && !prod.batch_number) prod.batch_number = tax.batch_number;
+          if (tax.expiry_date !== undefined && !prod.expiry_date) prod.expiry_date = tax.expiry_date;
+          if (tax.origin_country !== undefined && !prod.origin_country) prod.origin_country = tax.origin_country;
+          if (tax.volume_ml !== undefined && !prod.volume_ml) prod.volume_ml = tax.volume_ml;
+          if (tax.net_weight !== undefined && !prod.net_weight) prod.net_weight = tax.net_weight;
+        }
+      }
+    }
+  } catch (err) {
+    console.error("[products/actions] Failed to enrich products list with taxonomy:", err);
+  }
+
   return data;
 }
 
@@ -71,6 +232,26 @@ export async function getProductById(id: string) {
     .eq("id", id)
     .single();
   if (error) throw error;
+  if (!data) return data;
+
+  try {
+    const taxonomyMap = await getBeautyTaxonomyMap(supabase);
+    const tax = taxonomyMap[id];
+    if (tax) {
+      if (tax.skin_type !== undefined && (!data.skin_type || data.skin_type.length === 0)) data.skin_type = tax.skin_type;
+      if (tax.skin_concern !== undefined && (!data.skin_concern || data.skin_concern.length === 0)) data.skin_concern = tax.skin_concern;
+      if (tax.key_actives !== undefined && (!data.key_actives || data.key_actives.length === 0)) data.key_actives = tax.key_actives;
+      if (tax.routine_step !== undefined && !data.routine_step) data.routine_step = tax.routine_step;
+      if (tax.batch_number !== undefined && !data.batch_number) data.batch_number = tax.batch_number;
+      if (tax.expiry_date !== undefined && !data.expiry_date) data.expiry_date = tax.expiry_date;
+      if (tax.origin_country !== undefined && !data.origin_country) data.origin_country = tax.origin_country;
+      if (tax.volume_ml !== undefined && !data.volume_ml) data.volume_ml = tax.volume_ml;
+      if (tax.net_weight !== undefined && !data.net_weight) data.net_weight = tax.net_weight;
+    }
+  } catch (err) {
+    console.error("[products/actions] Failed to enrich product with taxonomy:", err);
+  }
+
   return data;
 }
 
@@ -338,6 +519,19 @@ export async function createProduct(input: {
     });
   }
 
+  // Persist beauty taxonomy into store_settings cache to ensure retention
+  await saveBeautyTaxonomyForProduct(supabase, product.id, {
+    skin_type: input.product.skin_type as string[] | null | undefined,
+    skin_concern: input.product.skin_concern as string[] | null | undefined,
+    key_actives: input.product.key_actives as string[] | null | undefined,
+    routine_step: input.product.routine_step as string | null | undefined,
+    batch_number: input.product.batch_number as string | null | undefined,
+    expiry_date: input.product.expiry_date as string | null | undefined,
+    origin_country: (input.product.origin_country || input.product.country) as string | null | undefined,
+    volume_ml: input.product.volume_ml as string | number | null | undefined,
+    net_weight: input.product.net_weight as string | null | undefined,
+  });
+
   await logActivity({
     action: "product.create",
     targetType: "product",
@@ -358,6 +552,17 @@ export async function updateProduct(
     tag_names?: string[];
     media_urls?: string[];
     featured_image_url?: string;
+    variants?: Array<{
+      id?: string;
+      sku?: string;
+      regular_price?: number;
+      sale_price?: number;
+      cost_price?: number;
+      weight?: number;
+      status: string;
+      attribute_value_ids: string[];
+    }>;
+    initial_stock?: number;
   }
 ) {
   const supabase = await createClient();
@@ -511,6 +716,51 @@ export async function updateProduct(
       await supabase.from("product_tags").insert({ product_id: id, tag_id: tagId });
     }
   }
+
+  // Sync Inventory for Simple Products
+  if (input.initial_stock !== undefined) {
+    const stock = Math.max(0, Number(input.initial_stock) || 0);
+    const { data: existingInv } = await supabase
+      .from("inventory")
+      .select("id, reserved")
+      .eq("product_id", id)
+      .is("variant_id", null)
+      .maybeSingle();
+
+    if (existingInv) {
+      const reserved = existingInv.reserved || 0;
+      await supabase
+        .from("inventory")
+        .update({
+          on_hand: stock,
+          available: Math.max(0, stock - reserved),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existingInv.id);
+    } else {
+      await supabase.from("inventory").insert({
+        product_id: id,
+        variant_id: null,
+        on_hand: stock,
+        reserved: 0,
+        available: stock,
+        low_stock_threshold: 5,
+      });
+    }
+  }
+
+  // Persist beauty taxonomy into store_settings cache to ensure retention
+  await saveBeautyTaxonomyForProduct(supabase, id, {
+    skin_type: raw.skin_type as string[] | null | undefined,
+    skin_concern: raw.skin_concern as string[] | null | undefined,
+    key_actives: raw.key_actives as string[] | null | undefined,
+    routine_step: raw.routine_step as string | null | undefined,
+    batch_number: raw.batch_number as string | null | undefined,
+    expiry_date: raw.expiry_date as string | null | undefined,
+    origin_country: (raw.origin_country || raw.country) as string | null | undefined,
+    volume_ml: raw.volume_ml as string | number | null | undefined,
+    net_weight: raw.net_weight as string | null | undefined,
+  });
 
   await logActivity({
     action: "product.update",

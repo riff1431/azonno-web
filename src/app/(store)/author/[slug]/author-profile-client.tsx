@@ -60,9 +60,9 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
             )}
           </div>
 
-          <p className="text-xs sm:text-sm font-semibold text-[#e91e63]">{author.job_title}</p>
+          <p className="text-sm sm:text-base font-semibold text-[#e91e63]">{author.job_title}</p>
 
-          <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-2xl">
+          <p className="text-sm sm:text-base md:text-[17px] text-text-secondary leading-relaxed max-w-2xl">
             {author.bio}
           </p>
 
@@ -74,10 +74,10 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
                   href={socialLinks.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-8 w-8 rounded-full bg-pink-50 text-[#e91e63] flex items-center justify-center hover:bg-pink-100 transition-colors"
+                  className="h-9 w-9 rounded-full bg-pink-50 text-[#e91e63] flex items-center justify-center hover:bg-pink-100 transition-colors font-bold text-xs"
                   aria-label="Instagram"
                 >
-                  <span className="font-bold text-xs">IG</span>
+                  <span>IG</span>
                 </a>
               )}
               {socialLinks.linkedin && (
@@ -85,10 +85,10 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
                   href={socialLinks.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-8 w-8 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center hover:bg-blue-100 transition-colors"
+                  className="h-9 w-9 rounded-full bg-blue-50 text-blue-700 flex items-center justify-center hover:bg-blue-100 transition-colors font-bold text-xs"
                   aria-label="LinkedIn"
                 >
-                  <span className="font-bold text-xs">IN</span>
+                  <span>IN</span>
                 </a>
               )}
               {socialLinks.website && (
@@ -96,7 +96,7 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
                   href={socialLinks.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-8 w-8 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                  className="h-9 w-9 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center hover:bg-gray-200 transition-colors"
                   aria-label="Website"
                 >
                   <Globe className="h-4 w-4" />
@@ -124,7 +124,7 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
               {post.featured_image && (
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="relative h-44 w-full overflow-hidden bg-zinc-100 block"
+                  className="relative h-48 w-full overflow-hidden bg-zinc-100 block"
                 >
                   <img
                     src={post.featured_image}
@@ -132,36 +132,36 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   {post.category && (
-                    <span className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                    <span className="absolute bottom-3 left-3 bg-black/70 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full">
                       {post.category.name}
                     </span>
                   )}
                 </Link>
               )}
 
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
-                <div className="space-y-1.5">
+              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-3.5">
+                <div className="space-y-2">
                   <div className="flex items-center gap-2 text-xs text-text-muted">
-                    <Clock className="h-3 w-3" />
+                    <Clock className="h-3.5 w-3.5" />
                     <span>{isBn ? `${toBn(post.reading_time_minutes)} মিনিট পাঠ` : `${post.reading_time_minutes} min read`}</span>
                   </div>
 
                   <Link href={`/blog/${post.slug}`}>
-                    <h3 className="text-sm sm:text-base font-bold text-text group-hover:text-primary-600 transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-base sm:text-lg font-bold text-text group-hover:text-primary-600 transition-colors line-clamp-2 leading-snug">
                       {post.title}
                     </h3>
                   </Link>
 
-                  <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
+                  <p className="text-sm text-text-secondary line-clamp-2 leading-relaxed">
                     {post.excerpt}
                   </p>
                 </div>
 
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-[#e91e63] pt-2"
+                  className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#e91e63] pt-2"
                 >
-                  {isBn ? "আর্টিকেলটি পড়ুন" : "Read Article"} <ArrowRight className="h-3.5 w-3.5" />
+                  {isBn ? "আর্টিকেলটি পড়ুন" : "Read Article"} <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </article>

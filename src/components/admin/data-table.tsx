@@ -30,7 +30,7 @@ interface DataTableProps<T> {
   onSearch?: (query: string) => void;
   pageSize?: number;
   actions?: (row: T) => React.ReactNode;
-  bulkActions?: React.ReactNode;
+  bulkActions?: React.ReactNode | ((selectedIds: string[], clearSelection: () => void) => React.ReactNode);
   emptyMessage?: string;
   emptyIcon?: React.ReactNode;
   headerActions?: React.ReactNode;
@@ -159,8 +159,10 @@ export function DataTable<T>({
           </div>
           {selected.size > 0 && bulkActions && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-text-secondary">{selected.size} {t("results")}</span>
-              {bulkActions}
+              <span className="text-xs font-semibold text-text-secondary bg-surface-secondary px-2 py-1 rounded-md border border-border">
+                {selected.size} {t("results")}
+              </span>
+              {typeof bulkActions === "function" ? bulkActions(Array.from(selected), () => setSelected(new Set())) : bulkActions}
             </div>
           )}
         </div>

@@ -162,16 +162,19 @@ html, body {
   background-color: var(--color-surface);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   max-width: 100vw;
+  font-size: 100%;
+  line-height: 1.6;
 }
 
 /* Authentic Bengali Typography: Applies Hind Siliguri exclusively when Bangla is active */
 html[lang="bn"],
 html.lang-bn {
   --font-sans: var(--font-bengali), "Hind Siliguri", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 106%; /* Optical height compensation: prevents Hind Siliguri from appearing smaller than Inter */
-  line-height: 1.6;
+  font-size: 100%;
+  line-height: 1.65;
 }
 
 html[lang="bn"],
@@ -197,31 +200,60 @@ html.lang-bn [class*="tracking-"] {
   letter-spacing: 0.01em !important;
 }
 
-/* Optical scale protection: ensure Bengali text never looks tiny or cramped */
-html[lang="bn"] .text-xs,
-html.lang-bn .text-xs {
-  font-size: 0.8125rem; /* ~13px minimum legible size for Bengali characters */
-  line-height: 1.35;
+/* Optical scale protection: ensure text never looks tiny or cramped in either English or Bangla */
+.text-xs {
+  font-size: 0.8125rem !important; /* ~13px minimum legible size */
+  line-height: 1.45 !important;
 }
 
-html[lang="bn"] [class*="text-[9px]"],
-html.lang-bn [class*="text-[9px]"],
-html[lang="bn"] [class*="text-[10px]"],
-html.lang-bn [class*="text-[10px]"] {
-  font-size: 0.725rem !important; /* ~11.6px optical minimum */
+.text-sm {
+  font-size: 0.90625rem !important; /* ~14.5px comfortable size */
+  line-height: 1.5 !important;
+}
+
+.text-base {
+  font-size: 1rem !important; /* 16px standard body */
+  line-height: 1.6 !important;
+}
+
+.text-lg {
+  font-size: 1.125rem !important; /* 18px */
+  line-height: 1.5 !important;
+}
+
+.text-xl {
+  font-size: 1.25rem !important; /* 20px */
+  line-height: 1.4 !important;
+}
+
+.text-2xl {
+  font-size: 1.5rem !important; /* 24px */
+  line-height: 1.35 !important;
+}
+
+.text-3xl {
+  font-size: 1.875rem !important; /* 30px */
   line-height: 1.3 !important;
 }
 
-html[lang="bn"] h1, html.lang-bn h1 { font-weight: 800; }
-html[lang="bn"] h2, html.lang-bn h2 { font-weight: 800; }
-html[lang="bn"] h3, html.lang-bn h3 { font-weight: 800; }
-html[lang="bn"] h4, html.lang-bn h4 { font-weight: 700; }
+/* Minimum font clamp: prevent micro text clipping across all mobile devices */
+[class*="text-[9px]"],
+[class*="text-[10px]"] {
+  font-size: 0.75rem !important; /* ~12px optical minimum */
+  line-height: 1.35 !important;
+}
+
+html[lang="bn"] h1, html.lang-bn h1 { font-weight: 800; line-height: 1.3; }
+html[lang="bn"] h2, html.lang-bn h2 { font-weight: 800; line-height: 1.35; }
+html[lang="bn"] h3, html.lang-bn h3 { font-weight: 800; line-height: 1.4; }
+html[lang="bn"] h4, html.lang-bn h4 { font-weight: 700; line-height: 1.45; }
 
 /* English Typography: Strictly Inter / Standard Sans (Never Hind Siliguri) */
 html[lang="en"],
 html.lang-en {
   --font-sans: var(--font-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   font-size: 100%;
+  line-height: 1.6;
 }
 
 html[lang="en"],

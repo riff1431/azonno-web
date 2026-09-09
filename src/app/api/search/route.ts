@@ -22,13 +22,13 @@ const BEAUTY_INGREDIENTS = [
 ];
 
 const BEAUTY_CONCERNS = [
-  { name: "Blemish & Pore Care", slug: "acne", match: ["acne", "blemish", "pimple", "breakout", "oil"] },
-  { name: "Brightening & Even Tone", slug: "dark_spots", match: ["brighten", "dark spot", "pigment", "melasma", "spots", "dull", "tone"] },
-  { name: "Smoothing & Firming Care", slug: "anti_aging", match: ["aging", "wrinkle", "fine line", "firming", "mature", "smooth"] },
-  { name: "Hydration & Moisture", slug: "dry_skin", match: ["dry", "hydration", "dehydrat", "moisture"] },
-  { name: "Pore Care & Oil Balance", slug: "oil_control", match: ["pore", "oil", "sebum", "blackhead", "whitehead"] },
-  { name: "Barrier Care & Soothing", slug: "barrier_repair", match: ["barrier", "repair", "sensitive", "soothing", "calming", "redness"] },
-  { name: "Sun Protection (SPF)", slug: "sun_protection", match: ["sun", "sunscreen", "spf", "uv"] },
+  { name: "Clear Skin & Blemish Care", slug: "acne", match: ["blemish", "acne", "pimple", "breakout", "oil", "clarif"] },
+  { name: "Brightening & Even Tone", slug: "dark_spots", match: ["brighten", "dark spot", "even tone", "sun spot", "glow", "dull", "tone"] },
+  { name: "Smoothing & Firming Care", slug: "anti_aging", match: ["smooth", "firming", "elasticity", "youthful", "lines", "plump"] },
+  { name: "Hydration & Moisture", slug: "dry_skin", match: ["dry", "hydration", "dehydrat", "moisture", "water", "nourish"] },
+  { name: "Pore Care & Oil Balance", slug: "oil_control", match: ["pore", "oil", "sebum", "blackhead", "whitehead", "matte"] },
+  { name: "Barrier Care & Soothing", slug: "barrier_repair", match: ["barrier", "care", "sensitive", "soothing", "calming", "redness", "gentle"] },
+  { name: "Sun Protection (SPF)", slug: "sun_protection", match: ["sun", "sunscreen", "spf", "uv", "sunblock", "protect"] },
 ];
 
 export async function GET(request: Request) {

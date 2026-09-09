@@ -212,7 +212,7 @@ export function ProductCard({
             style={{ position: "absolute", top: "10px", left: "10px", zIndex: 20 }}
             className="pointer-events-none"
           >
-            <span className="rounded-md bg-[#e91e63] px-2 py-0.5 text-[10px] font-black text-white shadow-xs tracking-wider">
+            <span className="rounded-md bg-[#e91e63] px-2 py-0.5 text-[11px] sm:text-xs font-black text-white shadow-xs tracking-wider">
               {toBn(discountPercent)}% {language === "bn" ? "ছাড়" : "OFF"}
             </span>
           </div>
@@ -259,7 +259,7 @@ export function ProductCard({
             style={{ position: "absolute", bottom: "0px", left: "0px", right: "0px", zIndex: 10 }}
             className="bg-[#e91e63] py-1 text-center shadow-xs pointer-events-none"
           >
-            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white">
+            <span className="text-xs sm:text-[12.5px] font-black uppercase tracking-wider text-white">
               {language === "bn" ? "ফ্রি ডেলিভারি" : (cardSettings?.freeShippingText || "FREE SHIPPING")}
             </span>
           </div>
@@ -274,10 +274,10 @@ export function ProductCard({
       />
 
       {/* 2. Product Information Body */}
-      <div className="flex flex-1 flex-col p-3 sm:p-3.5 space-y-2">
+      <div className="flex flex-1 flex-col p-3 sm:p-4 space-y-2">
         {/* Brand & Sourcing Origin Row */}
         {(product.brand_name || product.origin_country || product.country) && (
-          <div className="flex items-center justify-between gap-1 text-[10px] font-bold text-gray-500">
+          <div className="flex items-center justify-between gap-1 text-xs font-bold text-gray-500">
             {product.brand_name ? (
               <span className="truncate text-[#e91e63] uppercase tracking-wider font-extrabold hover:underline">
                 {product.brand_name}
@@ -285,11 +285,11 @@ export function ProductCard({
             ) : <span />}
             {(product.origin_country || product.country) && (
               <span
-                className="inline-flex items-center gap-1 text-gray-600 shrink-0 bg-gray-50 px-1.5 py-0.5 rounded-md border border-gray-200/70 font-semibold text-[10px]"
+                className="inline-flex items-center gap-1 text-gray-600 shrink-0 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200/70 font-semibold text-xs"
                 title={`Made in / Sourced from: ${product.origin_country || product.country}`}
               >
                 <span>{getCountryFlagEmoji(product.origin_country || product.country)}</span>
-                <span className="truncate max-w-[85px]">{product.origin_country || product.country}</span>
+                <span className="truncate max-w-[95px]">{product.origin_country || product.country}</span>
               </span>
             )}
           </div>
@@ -298,7 +298,7 @@ export function ProductCard({
         {/* Product Title */}
         <Link
           href={`/products/${product.slug}`}
-          className="line-clamp-2 text-xs sm:text-sm font-bold text-gray-900 leading-snug hover:text-[#e91e63] transition-colors min-h-8"
+          className="line-clamp-2 text-sm sm:text-[15px] font-bold text-gray-900 leading-snug hover:text-[#e91e63] transition-colors min-h-[2.75rem]"
           title={product.name}
         >
           {product.name}
@@ -310,13 +310,13 @@ export function ProductCard({
           {cardSettings?.showRating !== false ? (
             <div className="flex items-center gap-1">
               <div className="flex items-center text-amber-400">
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current" />
-                <Star className="h-3 w-3 fill-current text-amber-200" />
+                <Star className="h-3.5 w-3.5 fill-current" />
+                <Star className="h-3.5 w-3.5 fill-current" />
+                <Star className="h-3.5 w-3.5 fill-current" />
+                <Star className="h-3.5 w-3.5 fill-current" />
+                <Star className="h-3.5 w-3.5 fill-current text-amber-200" />
               </div>
-              <span className="text-[11px] text-gray-600 font-bold">
+              <span className="text-xs sm:text-[13px] text-gray-600 font-bold">
                 ({toBn(product.rating ? product.rating.toFixed(1) : "4.3")})
               </span>
             </div>
@@ -324,7 +324,7 @@ export function ProductCard({
 
           {/* Size / Volume Pill Badge */}
           {cardSettings?.showSizeBadge !== false && detectedSize && (
-            <span className="rounded-md bg-pink-50 border border-pink-100 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-[#e91e63] whitespace-nowrap">
+            <span className="rounded-md bg-pink-50 border border-pink-100 px-2 py-0.5 text-xs font-bold text-[#e91e63] whitespace-nowrap">
               {detectedSize}
             </span>
           )}
@@ -332,11 +332,11 @@ export function ProductCard({
 
         {/* Pricing Row */}
         <div className="flex items-baseline gap-2 pt-0.5">
-          <span className="text-sm sm:text-base font-black text-[#e91e63]">
+          <span className="text-base sm:text-lg font-black text-[#e91e63]">
             {formatPriceBn(product.sale_price ?? product.regular_price)}
           </span>
           {product.sale_price && product.sale_price < product.regular_price && (
-            <span className="text-[11px] sm:text-xs text-gray-400 line-through font-medium">
+            <span className="text-xs sm:text-sm text-gray-400 line-through font-medium">
               {formatPriceBn(product.regular_price)}
             </span>
           )}
@@ -352,7 +352,7 @@ export function ProductCard({
               disabled={product.is_in_stock === false}
               aria-label={`Add ${product.name} to cart`}
               className={cn(
-                "ripple-container w-full rounded-xl py-2 px-2 text-xs font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
+                "ripple-container w-full rounded-xl py-2.5 px-2 text-xs sm:text-[13.5px] font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
                 justAdded
                   ? "bg-emerald-600! text-white shadow-sm"
                   : product.is_in_stock === false
@@ -362,14 +362,14 @@ export function ProductCard({
             >
               {justAdded ? (
                 <>
-                  <Check className="h-3 w-3 stroke-3 animate-in zoom-in-50" />
+                  <Check className="h-3.5 w-3.5 stroke-3 animate-in zoom-in-50" />
                   <span>{language === "bn" ? "যোগ হয়েছে!" : "ADDED!"}</span>
                 </>
               ) : product.is_in_stock === false ? (
                 <span>{language === "bn" ? "স্টক শেষ" : "OUT OF STOCK"}</span>
               ) : (
                 <>
-                  <ShoppingBag className="h-3 w-3" />
+                  <ShoppingBag className="h-3.5 w-3.5" />
                   <span>{language === "bn" ? "কার্টে যোগ করুন" : (cardSettings?.addToCartText || "ADD TO CART")}</span>
                 </>
               )}
@@ -382,7 +382,7 @@ export function ProductCard({
               disabled={product.is_in_stock === false}
               aria-label={`Order ${product.name} now`}
               className={cn(
-                "ripple-container w-full rounded-xl py-2 px-2 text-xs font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
+                "ripple-container w-full rounded-xl py-2.5 px-2 text-xs sm:text-[13.5px] font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
                 product.is_in_stock === false
                   ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                   : "btn-order-now-action"

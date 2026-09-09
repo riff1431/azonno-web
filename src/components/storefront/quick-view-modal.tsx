@@ -219,7 +219,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
             <div className="space-y-2 pt-2">
               <Button
                 onClick={handleAddToCartClick}
-                className="btn-add-to-cart ripple-container w-full py-5 text-xs font-bold shadow-sm flex items-center justify-center gap-2"
+                className="btn-add-to-cart ripple-container w-full py-5 text-xs sm:text-sm font-black shadow-sm flex items-center justify-center gap-2 uppercase tracking-wide"
               >
                 <ShoppingBag className="h-4 w-4" />
                 {isBn ? `কার্টে যোগ করুন (${toBn(quantity)})` : `Add to Cart (${quantity})`}
@@ -230,22 +230,22 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
                   variant="outline"
                   size="sm"
                   onClick={handleWishlistClick}
-                  className="flex-1 text-xs"
+                  className="flex-1 text-xs sm:text-[13px] font-bold"
                 >
                   <Heart className={`h-3.5 w-3.5 mr-1 ${inWishlist ? "fill-accent-500 text-accent-500" : ""}`} />
                   {inWishlist ? (isBn ? "সংরক্ষিত" : "Saved") : (isBn ? "উইশলিস্ট" : "Wishlist")}
                 </Button>
 
                 <Link href={`/products/${product.slug}`} onClick={onClose} className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full text-xs">
+                  <Button variant="outline" size="sm" className="w-full text-xs sm:text-[13px] font-bold">
                     {isBn ? "বিস্তারিত দেখুন" : "Full Details"} &rarr;
                   </Button>
                 </Link>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-border flex items-center gap-1.5 text-xs text-text-muted">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+            <div className="pt-2 border-t border-border flex items-center gap-1.5 text-xs sm:text-[13px] text-text-muted font-medium">
+              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
               <span>{isBn ? "১০০% আসল পণ্য | ক্যাশ অন ডেলিভারি সুবিধা" : "100% Authentic Products | Cash on Delivery Available"}</span>
             </div>
           </div>

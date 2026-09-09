@@ -762,19 +762,19 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
         <div className="container-main">
           <div className="flex items-center justify-between py-2 overflow-x-auto no-scrollbar">
             {/* Left: Interactive Category Links with Mega Menu Triggers */}
-            <div className="flex items-center gap-6 xl:gap-8 text-xs font-bold text-gray-700">
+            <div className="flex items-center gap-6 xl:gap-8 text-sm font-bold text-gray-700">
               {navCategories.map((cat) => {
                 const isHovered = activeMegaCategory?.id === cat.id;
                 return (
                   <div
                     key={cat.id}
                     onMouseEnter={() => handleMouseEnterCategory(cat)}
-                    className="relative py-1"
+                    className="relative py-1.5"
                   >
                     <Link
                       href={cat.href || `/products?category=${cat.slug}`}
                       className={cn(
-                        "hover:text-sg-pink transition-colors whitespace-nowrap flex items-center gap-1",
+                        "hover:text-sg-pink transition-colors whitespace-nowrap flex items-center gap-1.5 text-sm sm:text-[14.5px] font-bold",
                         isHovered ? "text-sg-pink" : ""
                       )}
                     >
@@ -782,7 +782,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       {cat.subcategories?.length > 0 && (
                         <ChevronDown
                           className={cn(
-                            "h-3 w-3 transition-transform duration-200",
+                            "h-3.5 w-3.5 transition-transform duration-200",
                             isHovered ? "rotate-180 text-sg-pink" : "text-gray-400"
                           )}
                         />
@@ -1023,10 +1023,10 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                 const isExpanded = expandedMobileCategories.includes(cat.name);
                 return (
                   <div key={cat.id} className="py-1">
-                    <div className="flex items-center justify-between px-4 py-2.5">
+                    <div className="flex items-center justify-between px-4 py-3">
                       <Link
                         href={cat.href || `/products?category=${cat.slug}`}
-                        className="text-xs font-bold text-gray-800 hover:text-[#e91e63]"
+                        className="text-sm font-bold text-gray-900 hover:text-[#e91e63] transition-colors"
                       >
                         {cat.name}
                       </Link>
@@ -1053,7 +1053,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                           <Link
                             key={idx}
                             href={sub.href}
-                            className="block text-[11px] font-semibold text-gray-600 hover:text-[#e91e63] py-1 pl-2 border-l-2 border-transparent hover:border-[#e91e63]"
+                            className="block text-xs sm:text-[13px] font-semibold text-gray-700 hover:text-[#e91e63] py-1.5 pl-2 border-l-2 border-transparent hover:border-[#e91e63] transition-colors"
                           >
                             {sub.name}
                           </Link>

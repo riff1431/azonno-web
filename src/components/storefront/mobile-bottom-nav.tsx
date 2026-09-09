@@ -95,8 +95,7 @@ export function MobileBottomNav() {
               </div>
               <span
                 className={cn(
-                  "mt-1 font-extrabold transition-colors leading-tight",
-                  language === "bn" ? "text-[11.5px]" : "text-[10px] sm:text-[11px]",
+                  "mt-1 text-xs font-black transition-colors leading-tight",
                   item.isActive ? "text-[#e91e63]" : "text-gray-700"
                 )}
               >

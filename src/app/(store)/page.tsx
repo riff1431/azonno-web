@@ -37,8 +37,12 @@ export default async function HomePage() {
 
   // Map to ProductCardData with dynamic review rating calculation
   const productCardItems: ProductCardData[] = (products || []).map((p: any) => {
-    const inv = p.inventory as Array<{ available: number }> | null;
-    const isAvailable = inv ? inv.some((i) => i.available > 0) : true;
+    const inv = p.inventory;
+    const isAvailable = Array.isArray(inv)
+      ? (inv.length > 0 ? inv.some((i: any) => Number(i.available) > 0) : true)
+      : inv && typeof inv === "object" && "available" in inv
+      ? Number((inv as any).available) > 0
+      : true;
     const brandData = (Array.isArray(p.brands) ? p.brands[0] : p.brands) as { name: string } | null;
 
     // Filter approved reviews only

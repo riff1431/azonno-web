@@ -4,50 +4,51 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { sendSmsNotification } from "@/features/sms/actions";
 
-// Default couriers in Bangladesh
+// Default courier list — credentials intentionally empty so UI shows "Not Configured".
+// Real credentials come from store_settings via getSteadfastSettings / getPathaoSettings.
 const DEFAULT_COURIERS = [
   {
     id: "c1",
     name: "SteadFast Courier",
     code: "steadfast",
     api_base_url: "https://portal.steadfast.com.bd/api/v1",
-    status: "active",
+    status: "not_configured",
     config: {
-      api_key: "sf_live_sample_key_bd",
-      secret_key: "sf_live_sample_secret",
-      auto_booking: true,
+      api_key: "",
+      secret_key: "",
+      auto_booking: false,
       service_type: "standard",
     },
-    shipments_count: 142,
-    success_rate: "98.4%",
+    shipments_count: 0,
+    success_rate: "N/A",
   },
   {
     id: "c2",
     name: "Pathao Courier",
     code: "pathao",
     api_base_url: "https://api-hermes.pathao.com/aladdin/api/v1",
-    status: "active",
+    status: "not_configured",
     config: {
-      client_id: "pathao_client_id_live",
-      client_secret: "pathao_secret_live",
+      client_id: "",
+      client_secret: "",
       auto_booking: false,
-      store_id: "store_gulshan_hq",
+      store_id: "",
     },
-    shipments_count: 98,
-    success_rate: "97.8%",
+    shipments_count: 0,
+    success_rate: "N/A",
   },
   {
     id: "c3",
     name: "RedX Delivery",
     code: "redx",
     api_base_url: "https://openapi.redx.com.bd/v1.0.0-beta",
-    status: "inactive",
+    status: "not_configured",
     config: {
       api_key: "",
       auto_booking: false,
     },
-    shipments_count: 35,
-    success_rate: "94.2%",
+    shipments_count: 0,
+    success_rate: "N/A",
   },
 ];
 
@@ -72,21 +73,8 @@ export async function getCourierShipments() {
     return data;
   }
 
-  // Fallback initial sample shipments
-  return [
-    {
-      id: "sh-101",
-      order_id: "542e5f96-a55f-4133-9620-a136586258db",
-      order_number: "ORD-2026-895823",
-      courier_name: "SteadFast Courier",
-      consignment_id: "SF-895823-BD",
-      tracking_id: "STF-2026-90412",
-      booking_status: "booked",
-      delivery_status: "in_transit",
-      cod_amount: 1365,
-      booked_at: new Date(Date.now() - 3600000).toISOString(),
-    },
-  ];
+  // Return empty array — no fake/hardcoded fallback shipments
+  return [];
 }
 
 export async function bookCourierDelivery(input: {

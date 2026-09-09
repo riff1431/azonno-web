@@ -204,38 +204,38 @@ export function BlogListingClient({
                 )}
               </Link>
 
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-[11px] text-text-muted">
-                    <Clock className="h-3 w-3" />
+              <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2 text-xs text-text-muted">
+                    <Clock className="h-3.5 w-3.5" />
                     <span>{toBn(post.reading_time_minutes || 3)} {t("blog", "minRead")}</span>
                   </div>
 
                   <Link href={`/blog/${post.slug}`}>
-                    <h3 className="text-sm sm:text-base font-bold text-text group-hover:text-[#e91e63] transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-base sm:text-lg font-bold text-text group-hover:text-[#e91e63] transition-colors line-clamp-2 leading-snug">
                       {post.title}
                     </h3>
                   </Link>
 
-                  <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
+                  <p className="text-sm text-text-secondary line-clamp-2 leading-relaxed">
                     {post.excerpt}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-border flex items-center justify-between text-xs">
+                <div className="pt-3.5 border-t border-border flex items-center justify-between text-xs sm:text-sm">
                   {post.author ? (
                     <Link
                       href={`/author/${post.author.slug}`}
-                      className="flex items-center gap-2 text-[11px] font-semibold text-text-secondary hover:text-text truncate"
+                      className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-text-secondary hover:text-text truncate"
                     >
-                      <User className="h-3.5 w-3.5 text-text-muted shrink-0" />
+                      <User className="h-4 w-4 text-text-muted shrink-0" />
                       <span className="truncate">{post.author.name}</span>
                     </Link>
                   ) : null}
 
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="text-[11px] font-bold text-[#e91e63] shrink-0"
+                    className="text-xs sm:text-sm font-bold text-[#e91e63] shrink-0"
                   >
                     {t("blog", "readArticle")} &rarr;
                   </Link>

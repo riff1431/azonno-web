@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -49,6 +49,9 @@ interface ProductsListingClientProps {
   currentOrigin?: string;
   currentInStock?: boolean;
   enableBeautyFilters?: boolean;
+  customSkinTypes?: string[];
+  customSkinConcerns?: string[];
+  customKeyActives?: string[];
 }
 
 const TYPE_NAME_MAP: Record<string, { en: string; bn: string }> = {
@@ -89,27 +92,38 @@ const PRICE_PRESETS = [
 ];
 
 const SKIN_CONCERNS = [
-  "Acne & Blemishes",
-  "Brightening & Pigmentation",
-  "Anti-Aging & Wrinkles",
-  "Dryness & Hydration",
-  "Pore Minimizing",
-  "Redness & Rosacea",
-  "Sun Protection",
-  "Oil Control",
-  "Barrier Repair",
+  "Clear Skin & Blemishes",
+  "Brightening & Even Tone",
+  "Smoothing & Firming Care",
+  "Hydration & Moisture",
+  "Pore & Oil Care",
+  "Redness & Soothing",
+  "Sun Protection (SPF)",
+  "Oil Balance & Freshness",
+  "Barrier Care & Comfort",
 ];
 
 const SKIN_CONCERN_MAP: Record<string, { en: string; bn: string }> = {
-  "Acne & Blemishes": { en: "Blemish & Pore Care", bn: "দাগ ও পোর কেয়ার" },
-  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "উজ্জ্বল ও সমান স্কিন টোন" },
-  "Anti-Aging & Wrinkles": { en: "Smoothing & Firming Care", bn: "মসৃণ ও কোমল স্কিন কেয়ার" },
-  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "হালকা ময়েশ্চার ও হাইড্রেশন" },
-  "Pore Minimizing": { en: "Pore Care & Clean Feel", bn: "পোর কেয়ার ও ক্লিন ফিলিং" },
-  "Redness & Rosacea": { en: "Soothing & Gentle Care", bn: "শান্ত ও আরামদায়ক অনুভূতি" },
-  "Sun Protection": { en: "Sun Protection (SPF)", bn: "সান প্রোটেকশন (SPF)" },
-  "Oil Control": { en: "Oil Balance & Freshness", bn: "অয়েল ব্যালেন্স ও ফ্রেশ ভাব" },
-  "Barrier Repair": { en: "Barrier Care & Comfort", bn: "ব্যারিয়ার কেয়ার ও আরাম" },
+  "Clear Skin & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
+  "Acne & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
+  "Brightening & Even Tone": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
+  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
+  "Smoothing & Firming Care": { en: "Smoothing & Firming Care", bn: "কোমল ও টানটান অনুভূতি" },
+  "Smooth Lines & Firmness": { en: "Smoothing & Firming Care", bn: "কোমল ও টানটান অনুভূতি" },
+  "Anti-Aging & Wrinkles": { en: "Smoothing & Firming Care", bn: "কোমল ও টানটান অনুভূতি" },
+  "Hydration & Moisture": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
+  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
+  "Pore & Oil Care": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
+  "Pore Minimizing": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
+  "Redness & Soothing": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
+  "Redness & Rosacea": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
+  "Sun Protection": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (Sun Protection / SPF)" },
+  "Sun Protection (SPF)": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (Sun Protection / SPF)" },
+  "Oil Control": { en: "Oil Balance & Freshness", bn: "তেল নিয়ন্ত্রণ ও ফ্রেশ লুক" },
+  "Oil Balance & Freshness": { en: "Oil Balance & Freshness", bn: "তেল নিয়ন্ত্রণ ও ফ্রেশ লুক" },
+  "Barrier Care & Comfort": { en: "Barrier Care & Comfort", bn: "স্কিন ব্যারিয়ার কেয়ার ও স্বস্তি" },
+  "Barrier Repair": { en: "Barrier Care & Comfort", bn: "স্কিন ব্যারিয়ার কেয়ার ও স্বস্তি" },
+  "Barrier Care": { en: "Barrier Care & Comfort", bn: "স্কিন ব্যারিয়ার কেয়ার ও স্বস্তি" },
 };
 
 const SKIN_TYPES = [
@@ -181,11 +195,26 @@ export function ProductsListingClient({
   currentOrigin,
   currentInStock,
   enableBeautyFilters = true,
+  customSkinTypes = [],
+  customSkinConcerns = [],
+  customKeyActives = [],
 }: ProductsListingClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const { language, t, toBn, formatPriceBn } = useLanguage();
+
+  const allSkinConcerns = useMemo(() => {
+    return [...new Set([...SKIN_CONCERNS, ...(customSkinConcerns || [])])];
+  }, [customSkinConcerns]);
+
+  const allSkinTypes = useMemo(() => {
+    return [...new Set([...SKIN_TYPES, ...(customSkinTypes || [])])];
+  }, [customSkinTypes]);
+
+  const allKeyActives = useMemo(() => {
+    return [...new Set([...KEY_ACTIVES, ...(customKeyActives || [])])];
+  }, [customKeyActives]);
 
   // Track view_item_list event on product catalog load
   useEffect(() => {
@@ -320,7 +349,7 @@ export function ProductsListingClient({
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            {SKIN_CONCERNS.map((concern) => {
+            {allSkinConcerns.map((concern) => {
               const isSelected = currentSkinConcern === concern;
               const label = language === "bn" ? (SKIN_CONCERN_MAP[concern]?.bn || concern) : (SKIN_CONCERN_MAP[concern]?.en || concern);
               return (
@@ -366,7 +395,7 @@ export function ProductsListingClient({
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            {SKIN_TYPES.map((type) => {
+            {allSkinTypes.map((type) => {
               const isSelected = currentSkinType === type;
               const label = language === "bn" ? (SKIN_TYPE_MAP[type]?.bn || type) : (SKIN_TYPE_MAP[type]?.en || type);
               return (
@@ -412,7 +441,7 @@ export function ProductsListingClient({
           </div>
 
           <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto pr-1">
-            {KEY_ACTIVES.map((active) => {
+            {allKeyActives.map((active) => {
               const isSelected = currentKeyActive === active;
               return (
                 <button

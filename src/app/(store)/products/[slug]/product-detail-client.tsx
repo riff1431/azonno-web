@@ -288,8 +288,12 @@ export function ProductDetailClient({
         )
       : 0;
 
-  const inv = product.inventory as Array<{ available: number }> | null;
-  const availableStock = inv && inv.length > 0 ? inv[0].available : 10;
+  const inv = product.inventory;
+  const availableStock = Array.isArray(inv)
+    ? (inv.length > 0 ? Number(inv[0]?.available ?? 0) : 0)
+    : inv && typeof inv === "object" && "available" in inv
+    ? Number((inv as any).available ?? 0)
+    : 0;
   const isOutOfStock = availableStock <= 0;
 
   const handleShare = () => {
@@ -405,6 +409,18 @@ export function ProductDetailClient({
   const skinConcerns = product.skin_concern || [];
   const keyActives = product.key_actives || [];
   const originCountry = product.origin_country || product.country || "South Korea";
+
+  const productTags = useMemo(() => {
+    if (Array.isArray(product.product_tags)) {
+      return product.product_tags
+        .map((pt: any) => (pt?.tags ? pt.tags : pt))
+        .filter(Boolean);
+    }
+    if (Array.isArray(product.tags)) {
+      return product.tags.filter(Boolean);
+    }
+    return [];
+  }, [product.product_tags, product.tags]);
 
   return (
     <div className="space-y-12">
@@ -621,6 +637,11 @@ export function ProductDetailClient({
               <span className="inline-flex items-center gap-1 rounded-md bg-zinc-100 border border-zinc-200 px-2 py-0.5 font-mono text-[11px] font-bold text-zinc-600">
                 {language === "bn" ? "প্রোডাক্ট আইডি / এসকেইউ:" : "ID / SKU:"} #{toBn(getShortProductId(product))}
               </span>
+              {product.volume_ml && (
+                <span className="inline-flex items-center gap-1 rounded-md bg-pink-50 border border-pink-200 px-2 py-0.5 text-[11px] font-extrabold text-[#e91e63]">
+                  🧴 {product.volume_ml}
+                </span>
+              )}
             </div>
             <h1 className="mt-1 text-xl sm:text-2xl lg:text-3xl font-black text-text leading-tight">
               {product.name}
@@ -803,7 +824,9 @@ export function ProductDetailClient({
               )}
             >
               <Check className="h-3 w-3" />
-              {isOutOfStock ? t("productDetail", "outOfStock") : t("productDetail", "inStock")}
+              {isOutOfStock
+                ? t("productDetail", "outOfStock")
+                : `${t("productDetail", "inStock")} (${toBn(availableStock)} ${language === "bn" ? "টি স্টকে আছে" : "in stock"})`}
             </span>
           </div>
 
@@ -930,78 +953,6 @@ export function ProductDetailClient({
               <span className="text-[10px] text-text-muted">{language === "bn" ? "সহজ এক্সচেঞ্জ" : "Easy Wallet Refund"}</span>
             </div>
           </div>
-
-          {/* Product Tags & Taxonomy Pills (Below Product Info) */}
-          {(() => {
-            const prodCats = (product.product_categories || []).map((pc: any) => pc.categories).filter(Boolean);
-            const prodTags = (product.product_tags || []).map((pt: any) => pt.tags).filter(Boolean);
-            const hasTaxonomies = prodCats.length > 0 || prodTags.length > 0 || skinConcerns.length > 0 || skinTypes.length > 0;
-            if (!hasTaxonomies) return null;
-
-            return (
-              <div className="pt-2 border-t border-gray-100 space-y-2">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-gray-500 flex items-center gap-1">
-                  <Tag className="h-3 w-3 text-[#e91e63]" />
-                  {language === "bn" ? "ট্যাগ ও সংশ্লিষ্ট ক্যাটাগরি:" : "Tags & Related Categories:"}
-                </span>
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {/* Categories */}
-                  {prodCats.map((c: any) => (
-                    <Link
-                      key={c.id}
-                      href={`/categories/${c.slug}`}
-                      className="inline-flex items-center gap-1 rounded-full bg-pink-50 border border-pink-200 px-2.5 py-1 text-xs font-bold text-[#e91e63] hover:bg-pink-100 hover:border-pink-300 transition-colors"
-                    >
-                      <FolderTree className="h-3 w-3 shrink-0" />
-                      <span>{c.name}</span>
-                    </Link>
-                  ))}
-
-                  {/* Tags */}
-                  {prodTags.map((tg: any) => (
-                    <Link
-                      key={tg.id}
-                      href={`/tags/${tg.slug}`}
-                      className="inline-flex items-center gap-1 rounded-full bg-gray-50 border border-gray-200 px-2.5 py-1 text-xs font-bold text-gray-700 hover:bg-[#e91e63] hover:text-white hover:border-[#e91e63] transition-all shadow-2xs"
-                    >
-                      <Tag className="h-3 w-3 shrink-0" />
-                      <span>#{tg.name}</span>
-                    </Link>
-                  ))}
-
-                  {/* Concerns */}
-                  {skinConcerns.map((sc: string) => {
-                    const label = language === "bn" ? (SKIN_CONCERN_MAP[sc]?.bn || sc) : (SKIN_CONCERN_MAP[sc]?.en || sc);
-                    return (
-                      <Link
-                        key={sc}
-                        href={`/products?skin_concern=${encodeURIComponent(sc)}`}
-                        className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-2.5 py-1 text-xs font-bold text-purple-700 hover:bg-purple-100 transition-colors"
-                      >
-                        <Sparkles className="h-3 w-3 shrink-0" />
-                        <span>{label}</span>
-                      </Link>
-                    );
-                  })}
-
-                  {/* Skin Types */}
-                  {skinTypes.map((st: string) => {
-                    const label = language === "bn" ? (SKIN_TYPE_MAP[st]?.bn || st) : (SKIN_TYPE_MAP[st]?.en || st);
-                    return (
-                      <Link
-                        key={st}
-                        href={`/products?skin_type=${encodeURIComponent(st)}`}
-                        className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100 transition-colors"
-                      >
-                        <Droplets className="h-3 w-3 shrink-0" />
-                        <span>{label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })()}
         </div>
       </div>
 
@@ -1268,6 +1219,144 @@ export function ProductDetailClient({
           );
         })}
       </div>
+
+      {/* 3.5 Beauty Taxonomy, Key Specs & Product Tags Section */}
+      {((skinTypes && skinTypes.length > 0) ||
+        (skinConcerns && skinConcerns.length > 0) ||
+        (keyActives && keyActives.length > 0) ||
+        product.routine_step ||
+        (productTags && productTags.length > 0)) && (
+        <div className="rounded-3xl border border-pink-100 bg-linear-to-b from-pink-50/40 via-white to-purple-50/20 p-5 sm:p-7 shadow-xs space-y-5">
+          <div className="flex items-center justify-between border-b border-pink-100/80 pb-3">
+            <h3 className="text-sm sm:text-base font-black text-gray-900 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-[#e91e63]" />
+              {language === "bn"
+                ? "বিউটি স্পেসিফিকেশন ও প্রোডাক্ট ট্যাগস"
+                : "Beauty Taxonomy Specs & Tags"}
+            </h3>
+            <span className="text-[11px] font-bold text-gray-400">
+              {language === "bn" ? "পণ্য খুঁজতে ট্যাগ এ ক্লিক করুন" : "Click to explore similar products"}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            {/* Skin Types */}
+            {skinTypes && skinTypes.length > 0 && (
+              <div className="rounded-2xl border border-blue-100 bg-white/90 p-4 space-y-2 shadow-2xs">
+                <div className="flex items-center gap-1.5 font-extrabold text-blue-900 text-xs uppercase tracking-wider">
+                  <Droplets className="h-3.5 w-3.5 text-blue-600" />
+                  <span>{language === "bn" ? "স্কিন টাইপ / উপযোগী ত্বক" : "Target Skin Types"}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {skinTypes.map((st: string) => (
+                    <Link
+                      key={st}
+                      href={`/products?skin_type=${encodeURIComponent(st)}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-bold text-blue-800 hover:bg-blue-600 hover:text-white transition-all shadow-2xs"
+                    >
+                      <span>💧</span>
+                      <span>{st}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Skin Concerns */}
+            {skinConcerns && skinConcerns.length > 0 && (
+              <div className="rounded-2xl border border-purple-100 bg-white/90 p-4 space-y-2 shadow-2xs">
+                <div className="flex items-center gap-1.5 font-extrabold text-purple-900 text-xs uppercase tracking-wider">
+                  <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+                  <span>{language === "bn" ? "স্কিন কনসার্ন / ত্বকের সমস্যা সমাধান" : "Skin Concerns & Benefits"}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {skinConcerns.map((sc: string) => (
+                    <Link
+                      key={sc}
+                      href={`/products?skin_concern=${encodeURIComponent(sc)}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-purple-50 border border-purple-200 px-3 py-1 text-xs font-bold text-purple-800 hover:bg-purple-600 hover:text-white transition-all shadow-2xs"
+                    >
+                      <span>🎯</span>
+                      <span>{sc}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Key Active Ingredients */}
+            {keyActives && keyActives.length > 0 && (
+              <div className="rounded-2xl border border-emerald-100 bg-white/90 p-4 space-y-2 shadow-2xs">
+                <div className="flex items-center gap-1.5 font-extrabold text-emerald-900 text-xs uppercase tracking-wider">
+                  <Zap className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>{language === "bn" ? "মূল উপাদান ও অ্যাক্টিভস" : "Key Active Ingredients"}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {keyActives.map((ka: string) => (
+                    <Link
+                      key={ka}
+                      href={`/products?key_actives=${encodeURIComponent(ka)}`}
+                      className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-600 hover:text-white transition-all shadow-2xs"
+                    >
+                      <span>⚡</span>
+                      <span>{ka}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Routine Step & Country Details */}
+            {(product.routine_step || originCountry) && (
+              <div className="rounded-2xl border border-pink-100 bg-white/90 p-4 space-y-2 shadow-2xs">
+                <div className="flex items-center gap-1.5 font-extrabold text-pink-900 text-xs uppercase tracking-wider">
+                  <Tag className="h-3.5 w-3.5 text-[#e91e63]" />
+                  <span>{language === "bn" ? "স্কিনকেয়ার রুটিন ও অরিজিন" : "Routine Step & Origin"}</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {product.routine_step && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-pink-50 border border-pink-200 px-3 py-1 text-xs font-bold text-[#e91e63]">
+                      <span>✨</span>
+                      <span>{language === "bn" ? `ধাপ: ${product.routine_step}` : `Step: ${product.routine_step}`}</span>
+                    </span>
+                  )}
+                  {originCountry && (
+                    <Link
+                      href={`/products?origin=${encodeURIComponent(originCountry)}`}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-gray-50 border border-gray-200 px-3 py-1 text-xs font-bold text-gray-800 hover:bg-gray-900 hover:text-white transition-all"
+                    >
+                      <span>🌍</span>
+                      <span>{language === "bn" ? (ORIGIN_MAP[originCountry]?.bn || originCountry) : (ORIGIN_MAP[originCountry]?.en || originCountry)}</span>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Product Tags */}
+          {productTags && productTags.length > 0 && (
+            <div className="pt-2 border-t border-pink-100/60">
+              <div className="flex items-center gap-1.5 mb-2.5 font-extrabold text-gray-800 text-xs uppercase tracking-wider">
+                <Tag className="h-3.5 w-3.5 text-[#e91e63]" />
+                <span>{language === "bn" ? "প্রোডাক্ট ট্যাগস (#Tags)" : "Related Product Tags"}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {productTags.map((tag: any) => (
+                  <Link
+                    key={tag.id || tag.slug || tag.name}
+                    href={`/products?tag=${encodeURIComponent(tag.slug || tag.name)}`}
+                    className="inline-flex items-center gap-1 rounded-full bg-gray-100/80 border border-gray-200 hover:border-[#e91e63] hover:bg-pink-50 hover:text-[#e91e63] px-3 py-1 text-xs font-bold text-gray-700 transition-all shadow-2xs"
+                  >
+                    <span className="text-[#e91e63] font-black">#</span>
+                    <span>{tag.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 4. Related Products Section */}
       {relatedProducts && relatedProducts.length > 0 && (
