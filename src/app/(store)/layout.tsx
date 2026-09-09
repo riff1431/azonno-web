@@ -6,7 +6,7 @@ import { StorefrontFooter } from "@/components/storefront/storefront-footer";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
 import { CartDrawer } from "@/components/storefront/cart-drawer";
 import { StorefrontMaintenanceScreen } from "@/components/storefront/storefront-maintenance-screen";
-import { getLocalizationSettings, getThemeSettings } from "@/features/settings/actions";
+import { getLocalizationSettings, getStoreSettings, getThemeSettings } from "@/features/settings/actions";
 import { getSettingsByGroup } from "@/lib/settings/config-service";
 import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
@@ -16,10 +16,11 @@ export default async function StorefrontLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [localizationSettings, systemSettings, themeSettings] = await Promise.all([
+  const [localizationSettings, systemSettings, themeSettings, storeSettings] = await Promise.all([
     getLocalizationSettings(),
     getSettingsByGroup("system"),
     getThemeSettings(),
+    getStoreSettings(),
   ]);
 
   let isAdminUser = false;
@@ -33,11 +34,11 @@ export default async function StorefrontLayout({
       headerList.get("x-real-ip") ||
       "";
 
-    // Clean bypass IPs (ignore default localhost strings)
+    // Dynamically parse whitelisted bypass IPs from database settings
     const bypassIps = (systemSettings.bypass_ips || "")
       .split(",")
       .map((ip: string) => ip.trim())
-      .filter((ip: string) => Boolean(ip && ip !== "127.0.0.1" && ip !== "::1"));
+      .filter(Boolean);
 
     const isIpWhitelisted =
       bypassIps.length > 0 &&
@@ -74,11 +75,11 @@ export default async function StorefrontLayout({
     if (!isIpWhitelisted && !isExplicitAdminPreview) {
       return (
         <StorefrontMaintenanceScreen
-          message={
-            systemSettings.maintenance_message ||
-            "We are performing scheduled updates to improve your beauty shopping experience. We will return shortly!"
-          }
+          message={systemSettings.maintenance_message}
           isAdminUser={isAdminUser}
+          supportPhone={storeSettings?.store_phone || themeSettings?.supportPhone}
+          storeName={storeSettings?.store_name || themeSettings?.footerTagline}
+          copyrightText={themeSettings?.copyrightText}
         />
       );
     }

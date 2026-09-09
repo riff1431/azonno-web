@@ -5,12 +5,26 @@ import { Sparkles, PhoneCall, ShieldAlert, Clock, ArrowRight, Lock, Eye, Setting
 interface StorefrontMaintenanceScreenProps {
   message?: string;
   isAdminUser?: boolean;
+  supportPhone?: string;
+  storeName?: string;
+  copyrightText?: string;
 }
 
 export function StorefrontMaintenanceScreen({
   message = "We are performing scheduled updates to improve your beauty shopping experience. We will return shortly!",
   isAdminUser = false,
+  supportPhone,
+  storeName,
+  copyrightText,
 }: StorefrontMaintenanceScreenProps) {
+  const displayStoreName = storeName || "Store Online";
+  const cleanPhone = (supportPhone || "").replace(/[^0-9]/g, "");
+  const waUrl = cleanPhone
+    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+        `Hello ${displayStoreName}, I have an inquiry regarding my order.`
+      )}`
+    : "#";
+
   return (
     <div className="min-h-screen bg-linear-to-b from-rose-50/60 via-white to-pink-50/40 flex flex-col justify-between selection:bg-rose-100 overflow-x-hidden">
       {/* Admin Quick Action Banner if logged in as Admin */}
@@ -47,11 +61,16 @@ export function StorefrontMaintenanceScreen({
       <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 md:p-12 pb-0 md:pb-0 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
           <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-2xl bg-linear-to-tr from-rose-500 to-pink-500 flex items-center justify-center text-white font-black text-base sm:text-lg shadow-md shadow-rose-200 shrink-0">
-            BB
+            {displayStoreName
+              .split(" ")
+              .filter(Boolean)
+              .slice(0, 2)
+              .map((w) => w[0]?.toUpperCase())
+              .join("") || "BB"}
           </div>
           <div>
             <span className="font-black text-sm sm:text-base tracking-wider text-gray-900 block">
-              BLUSH &amp; BUDGET
+              {displayStoreName.toUpperCase()}
             </span>
             <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-rose-600 block">
               Authentic Beauty Bangladesh
@@ -107,7 +126,7 @@ export function StorefrontMaintenanceScreen({
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-2 w-full max-w-md mx-auto">
           <a
-            href="https://wa.me/8801753804797?text=Hello%20Blush%20%26%20Budget,%20I%20have%20an%20urgent%20inquiry%20regarding%20my%20order."
+            href={waUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold shadow-md shadow-emerald-200 hover:bg-emerald-700 transition-colors"
@@ -128,7 +147,7 @@ export function StorefrontMaintenanceScreen({
 
       {/* Footer info */}
       <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 md:p-12 pt-6 sm:pt-8 border-t border-gray-200/60 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left text-[11px] sm:text-xs text-gray-500">
-        <p>© {new Date().getFullYear()} Blush &amp; Budget. Authentic Skincare &amp; Cosmetics Bangladesh.</p>
+        <p>{copyrightText || `© ${new Date().getFullYear()} ${storeName || "Blush & Budget"}. Authentic Skincare & Cosmetics Bangladesh.`}</p>
         <p className="text-[10px] sm:text-[11px] text-gray-400">
           Need order tracking? Your courier SMS updates remain active.
         </p>
