@@ -392,9 +392,9 @@ export function SearchAnalyticsClient({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full md:w-auto">
             {/* Filter search box */}
-            <div className="relative w-48 sm:w-56">
+            <div className="relative w-full sm:w-56">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
               <input
                 type="text"
@@ -406,11 +406,11 @@ export function SearchAnalyticsClient({
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center bg-gray-200/80 p-0.5 rounded-xl text-xs font-medium border border-gray-300/60">
+            <div className="flex items-center overflow-x-auto bg-gray-200/80 p-0.5 rounded-xl text-xs font-medium border border-gray-300/60 no-scrollbar">
               <button
                 type="button"
                 onClick={() => setActiveTab("all")}
-                className={`px-3 py-1 rounded-lg transition-all ${
+                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
                   activeTab === "all" ? "bg-white text-gray-900 font-bold shadow-2xs" : "text-gray-600"
                 }`}
               >
@@ -419,7 +419,7 @@ export function SearchAnalyticsClient({
               <button
                 type="button"
                 onClick={() => setActiveTab("trending")}
-                className={`px-3 py-1 rounded-lg transition-all ${
+                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
                   activeTab === "trending" ? "bg-white text-gray-900 font-bold shadow-2xs" : "text-gray-600"
                 }`}
               >
@@ -428,18 +428,18 @@ export function SearchAnalyticsClient({
               <button
                 type="button"
                 onClick={() => setActiveTab("zero")}
-                className={`px-3 py-1 rounded-lg transition-all ${
+                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
                   activeTab === "zero"
                     ? "bg-amber-500 text-white font-bold shadow-2xs"
                     : "text-amber-800 hover:text-amber-900"
                 }`}
               >
-                ⚠️ Zero Results ({summary.zeroResultQueries.length})
+                ⚠️ Zero ({summary.zeroResultQueries.length})
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab("high_intent")}
-                className={`px-3 py-1 rounded-lg transition-all ${
+                className={`px-3 py-1 rounded-lg whitespace-nowrap transition-all ${
                   activeTab === "high_intent" ? "bg-white text-gray-900 font-bold shadow-2xs" : "text-gray-600"
                 }`}
               >
