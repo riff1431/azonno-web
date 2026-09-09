@@ -33,14 +33,16 @@ export default async function StorefrontLayout({
       headerList.get("x-real-ip") ||
       "";
 
+    // Clean bypass IPs (ignore default localhost strings)
     const bypassIps = (systemSettings.bypass_ips || "")
       .split(",")
       .map((ip: string) => ip.trim())
-      .filter(Boolean);
+      .filter((ip: string) => Boolean(ip && ip !== "127.0.0.1" && ip !== "::1"));
 
     const isIpWhitelisted =
       bypassIps.length > 0 &&
-      bypassIps.some((ip: string) => ip === clientIp || (clientIp && clientIp.startsWith(ip)));
+      Boolean(clientIp) &&
+      bypassIps.some((ip: string) => ip === clientIp || clientIp.startsWith(ip));
 
     try {
       const supabase = await createClient();
@@ -62,13 +64,21 @@ export default async function StorefrontLayout({
       // Ignore auth check error
     }
 
-    if (!isAdminUser && !isIpWhitelisted) {
+    // Check if admin has explicitly requested live storefront preview mode
+    const referer = headerList.get("referer") || "";
+    const xUrl = headerList.get("x-url") || "";
+    const isExplicitAdminPreview =
+      isAdminUser && (referer.includes("admin_preview=1") || xUrl.includes("admin_preview=1"));
+
+    // If not on whitelisted external IP and not in explicit admin preview, render the maintenance screen!
+    if (!isIpWhitelisted && !isExplicitAdminPreview) {
       return (
         <StorefrontMaintenanceScreen
           message={
             systemSettings.maintenance_message ||
             "We are performing scheduled updates to improve your beauty shopping experience. We will return shortly!"
           }
+          isAdminUser={isAdminUser}
         />
       );
     }

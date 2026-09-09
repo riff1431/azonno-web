@@ -319,8 +319,10 @@ export async function saveMaintenanceSettings(settings: Partial<MaintenanceSetti
     bypass_ips: String(settings.bypass_ips || ""),
   });
   revalidatePath("/admin/settings/maintenance");
+  revalidatePath("/(store)", "layout");
   revalidatePath("/", "layout");
   revalidatePath("/");
+  revalidatePath("/shop");
   return { success: true };
 }
 
