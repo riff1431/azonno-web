@@ -3,7 +3,7 @@
  * Specifically tailored for high-volume Bangladeshi logistics (SteadFast, Pathao, COD)
  */
 
-import { buildCourierTrackingUrl } from "@/lib/utils";
+import { buildCourierTrackingUrl, getBaseUrl } from "@/lib/utils";
 
 export type OrderStatus =
   | "pending"

@@ -99,16 +99,29 @@ export default async function RootLayout({
   let storeName = "Blush & Budget";
   let storeDesc = "Premier retail e-commerce shop for 100% authentic cosmetics, skincare, and makeup products in Bangladesh.";
   let storeCurrency = "BDT";
+  let dynamicSiteUrl = "https://blushbudget.com";
+  let storeEmail = "support@blushbudget.com";
+  let storePhone = "+880 1700-000000";
 
   try {
-    const [metaSettings, ttSettings, storeSettings] = await Promise.all([
+    const [metaSettings, ttSettings, storeSettings, headerList] = await Promise.all([
       getMarketingAnalyticsSettings().catch(() => null),
       getTikTokSettings().catch(() => null),
       getStoreSettings().catch(() => null),
+      headers().catch(() => null),
     ]);
+
+    const host = headerList?.get("x-forwarded-host") || headerList?.get("host") || "";
+    const proto = headerList?.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
+    const reqUrl = host ? `${proto}://${host}` : "";
 
     if (storeSettings?.store_name) storeName = storeSettings.store_name;
     if (storeSettings?.currency) storeCurrency = storeSettings.currency;
+    if (storeSettings?.store_email) storeEmail = storeSettings.store_email;
+    if (storeSettings?.store_phone) storePhone = storeSettings.store_phone;
+    if (storeSettings?.description) storeDesc = storeSettings.description;
+
+    dynamicSiteUrl = storeSettings?.store_url || reqUrl || getBaseUrl() || "https://blushbudget.com";
 
     initialConfig = {
       meta_pixel_id: metaSettings?.meta_pixel_id || initialConfig.meta_pixel_id,
@@ -124,18 +137,19 @@ export default async function RootLayout({
     };
   } catch {
     // Non-blocking fallback to defaults
+    dynamicSiteUrl = getBaseUrl() || "https://blushbudget.com";
   }
 
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: storeName,
-    url: "https://blushbudget.com",
+    url: dynamicSiteUrl,
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://blushbudget.com/products?search={search_term_string}",
+        urlTemplate: `${dynamicSiteUrl}/products?search={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -146,15 +160,15 @@ export default async function RootLayout({
     "@type": "OnlineStore",
     name: storeName,
     description: storeDesc,
-    url: "https://blushbudget.com",
+    url: dynamicSiteUrl,
     currenciesAccepted: storeCurrency,
     paymentAccepted: "Cash on Delivery, bKash, Nagad, Visa, Mastercard",
     priceRange: "৳৳",
     areaServed: "BD",
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+880 1700-000000",
-      email: "support@blushbudget.com",
+      telephone: storePhone,
+      email: storeEmail,
       contactType: "customer service",
       areaServed: "BD",
       availableLanguage: ["English", "Bengali"],
