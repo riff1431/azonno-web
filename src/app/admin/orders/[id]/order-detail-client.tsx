@@ -1368,21 +1368,21 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                 <div className="space-y-3">
                   <div className="p-3 rounded-2xl bg-gray-50 border border-gray-200/80 space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600 font-semibold">Server CAPI Status:</span>
+                      <span className="text-gray-600 font-semibold">Server CAPI Trigger:</span>
                       {firedAt ? (
                         <span className="inline-flex items-center gap-1 font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-lg text-[10px] uppercase">
-                          <CheckCircle2 className="h-3 w-3" /> Dispatched
+                          <CheckCircle2 className="h-3 w-3" /> Auto-Dispatched ✓
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-lg text-[10px] uppercase">
-                          Awaiting Status Trigger
+                          ⚡ Auto-Armed (Pending Delivered/Paid)
                         </span>
                       )}
                     </div>
 
                     {firedAt && (
                       <div className="text-[11px] text-gray-500 font-mono">
-                        Fired at: {new Date(firedAt).toLocaleString("en-GB")}
+                        Dispatched at: {new Date(firedAt).toLocaleString("en-GB")}
                       </div>
                     )}
 
@@ -1391,13 +1391,13 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                         <div>
                           <span className="font-bold text-gray-700">Meta CAPI:</span>{" "}
                           <span className={results.meta_success ? "text-emerald-700 font-bold" : "text-gray-500"}>
-                            {results.meta_success ? "Delivered ✓" : "Not Fired"}
+                            {results.meta_success ? "Sent & Tracked ✓" : "Not Fired"}
                           </span>
                         </div>
                         <div>
                           <span className="font-bold text-gray-700">TikTok CAPI:</span>{" "}
                           <span className={results.tiktok_success ? "text-emerald-700 font-bold" : "text-gray-500"}>
-                            {results.tiktok_success ? "Delivered ✓" : "Not Fired"}
+                            {results.tiktok_success ? "Sent & Tracked ✓" : "Not Fired"}
                           </span>
                         </div>
                       </div>
@@ -1405,7 +1405,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   </div>
 
                   <p className="text-[11px] text-gray-500 leading-relaxed">
-                    Under Status-Gated mode, Purchase CAPI automatically dispatches when order transitions to <strong>Completed / Delivered</strong>. You can also manually trigger it anytime below.
+                    ⚡ <strong>স্বয়ংক্রিয় ট্র্যাকিং সক্রিয় (Auto-Trigger Active):</strong> অর্ডারটি <strong>Completed / Delivered</strong> অথবা <strong>Paid</strong> হওয়া মাত্র (অথবা কুরিয়ার ডেলিভারি কনফার্ম করামাত্র) সার্ভার অটোমেটিক Meta ও TikTok CAPI Purchase ফায়ার করে দিবে। নিচের বাটনটি শুধুমাত্র এডমিনদের ম্যানুয়াল টেস্ট বা এমার্জেন্সি ওভাররাইডের জন্য।
                   </p>
 
                   <Button
@@ -1442,7 +1442,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     ) : (
                       <Sparkles className="h-3.5 w-3.5 mr-1.5" />
                     )}
-                    {firedAt ? "Re-Dispatch CAPI Purchase Event" : "Dispatch Server CAPI Purchase Now"}
+                    {firedAt ? "Re-Dispatch CAPI Purchase (Manual Override)" : "Dispatch Server CAPI Now (Manual Override)"}
                   </Button>
                 </div>
               );

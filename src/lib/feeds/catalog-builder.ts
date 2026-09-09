@@ -5,9 +5,10 @@ import { getShortProductId } from "@/lib/utils";
 export type FeedPlatform = "meta" | "tiktok" | "google";
 export type FeedFormat = "xml" | "csv";
 
-interface ProductFeedItem {
+export interface ProductFeedItem {
   id: string;
   sku: string;
+  barcode: string | null;
   name: string;
   slug: string;
   description: string;
@@ -16,19 +17,32 @@ interface ProductFeedItem {
   status: string;
   country: string | null;
   og_image_url: string | null;
+  additional_images: string[];
   is_featured: boolean;
+  weight: number;
+  available_qty: number;
   brand_name: string;
   category_name: string;
-  additional_images: string[];
+  custom_label_0: string; // Origin Country
+  custom_label_1: string; // Featured / Best Seller
+  custom_label_2: string; // Price Bracket
+  custom_label_3: string; // Stock Level
+  custom_label_4: string; // Promotion Status
 }
 
 /**
- * Strips HTML tags and excessive whitespace for clean feed descriptions
+ * Strips HTML tags, non-printable characters, and excessive whitespace for clean feed descriptions
  */
 function cleanDescription(text: string | null | undefined): string {
   if (!text) return "";
   return text
     .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
     .replace(/\s+/g, " ")
     .replace(/[\r\n\t]/g, " ")
     .trim()
@@ -45,16 +59,33 @@ function escapeCsv(val: string | number | null | undefined): string {
 }
 
 /**
- * Fetch all active published products with enriched brand, category, and media data
+ * Determine dynamic price bracket for segmentation & bidding
  */
-async function fetchPublishedProducts(): Promise<{ products: ProductFeedItem[]; storeName: string; currency: string }> {
-  const [supabase, generalSettings] = await Promise.all([
+function getPriceBracket(price: number, currency: string): string {
+  if (price < 1000) return `Under 1000 ${currency}`;
+  if (price <= 2000) return `1000-2000 ${currency}`;
+  if (price <= 3000) return `2000-3000 ${currency}`;
+  return `Above 3000 ${currency}`;
+}
+
+/**
+ * Fetch all active published products with enriched brand, category, media gallery, and inventory data
+ */
+async function fetchPublishedProducts(): Promise<{
+  products: ProductFeedItem[];
+  storeName: string;
+  currency: string;
+  deliveryCharge: number;
+}> {
+  const [supabase, generalSettings, logisticsSettings] = await Promise.all([
     createAdminClient(),
     getSettingsByGroup("general").catch(() => ({} as Record<string, any>)),
+    getSettingsByGroup("logistics").catch(() => ({} as Record<string, any>)),
   ]);
 
   const defaultStoreName = generalSettings.store_name || "Blush & Budget";
   const defaultCurrency = generalSettings.currency || "BDT";
+  const defaultDeliveryCharge = Number(logisticsSettings.inside_dhaka_delivery_fee) || 60;
 
   const { data: products, error } = await supabase
     .from("products")
@@ -63,6 +94,8 @@ async function fetchPublishedProducts(): Promise<{ products: ProductFeedItem[]; 
       name,
       slug,
       sku,
+      barcode,
+      weight,
       description,
       short_description,
       regular_price,
@@ -76,44 +109,95 @@ async function fetchPublishedProducts(): Promise<{ products: ProductFeedItem[]; 
       ),
       categories (
         name
+      ),
+      product_media (
+        position,
+        is_featured,
+        media (
+          secure_url
+        )
+      ),
+      inventory (
+        available
       )
     `)
-    .eq("status", "published");
+    .or("status.eq.active,status.eq.published")
+    .is("deleted_at", null);
 
   if (error || !products) {
-    return { products: [], storeName: defaultStoreName, currency: defaultCurrency };
+    return {
+      products: [],
+      storeName: defaultStoreName,
+      currency: defaultCurrency,
+      deliveryCharge: defaultDeliveryCharge,
+    };
   }
 
-  const mapped = products.map((p: any) => {
+  const mapped: ProductFeedItem[] = products.map((p: any) => {
     const brandName = p.brands?.name || defaultStoreName;
-    const categoryName = p.categories?.name || "Skincare & Cosmetics";
+    const categoryName = p.categories?.[0]?.name || p.categories?.name || "Skincare & Cosmetics";
+    const regularPrice = Number(p.regular_price) || 0;
+    const salePrice = p.sale_price && Number(p.sale_price) < regularPrice ? Number(p.sale_price) : null;
+    const availableQty = Number(p.inventory?.[0]?.available) || 15;
+    const effectivePrice = salePrice || regularPrice;
+
+    // Collect gallery images
+    const galleryImages: string[] = [];
+    if (Array.isArray(p.product_media)) {
+      p.product_media.forEach((pm: any) => {
+        const url = pm.media?.secure_url;
+        if (url && url !== p.og_image_url && !galleryImages.includes(url)) {
+          galleryImages.push(url);
+        }
+      });
+    }
+
+    const countryName = p.country?.trim() || "South Korea";
+    const isFeatured = Boolean(p.is_featured);
 
     return {
       id: p.id,
-      sku: getShortProductId(p),
+      sku: getShortProductId(p) || p.sku || p.id.slice(0, 8),
+      barcode: p.barcode || null,
       name: p.name,
       slug: p.slug,
       description: cleanDescription(p.description || p.short_description || p.name),
-      regular_price: Number(p.regular_price) || 0,
-      sale_price: p.sale_price ? Number(p.sale_price) : null,
+      regular_price: regularPrice,
+      sale_price: salePrice,
       status: p.status,
-      country: p.country || "South Korea",
-      og_image_url: p.og_image_url || null,
-      is_featured: Boolean(p.is_featured),
+      country: countryName,
+      og_image_url: p.og_image_url || (galleryImages[0] ?? null),
+      additional_images: galleryImages.slice(0, 10),
+      is_featured: isFeatured,
+      weight: Number(p.weight) || 0.15,
+      available_qty: availableQty,
       brand_name: brandName,
       category_name: categoryName,
-      additional_images: [],
+      custom_label_0: countryName,
+      custom_label_1: isFeatured ? "Featured" : "Standard",
+      custom_label_2: getPriceBracket(effectivePrice, defaultCurrency),
+      custom_label_3: availableQty > 10 ? "In Stock Ready" : availableQty > 0 ? "Low Stock" : "Out of Stock",
+      custom_label_4: salePrice ? "On Sale (Discounted)" : "Regular Price",
     };
   });
 
-  return { products: mapped, storeName: defaultStoreName, currency: defaultCurrency };
+  return {
+    products: mapped,
+    storeName: defaultStoreName,
+    currency: defaultCurrency,
+    deliveryCharge: defaultDeliveryCharge,
+  };
 }
 
 /**
  * Build Meta Commerce Manager Catalog (Facebook & Instagram Shop)
+ * Complete 22+ Parameter Compliance with RSS 2.0 XML & RFC-4180 CSV
  */
-export async function generateMetaFeed(baseUrl: string, format: FeedFormat = "xml"): Promise<{ content: string; contentType: string; filename: string }> {
-  const { products, storeName, currency } = await fetchPublishedProducts();
+export async function generateMetaFeed(
+  baseUrl: string,
+  format: FeedFormat = "xml"
+): Promise<{ content: string; contentType: string; filename: string }> {
+  const { products, storeName, currency, deliveryCharge } = await fetchPublishedProducts();
 
   if (format === "csv") {
     const headers = [
@@ -126,36 +210,54 @@ export async function generateMetaFeed(baseUrl: string, format: FeedFormat = "xm
       "sale_price",
       "link",
       "image_link",
+      "additional_image_link",
       "brand",
       "google_product_category",
       "fb_product_category",
       "product_type",
+      "item_group_id",
+      "gtin",
+      "inventory",
+      "shipping",
       "custom_label_0",
       "custom_label_1",
+      "custom_label_2",
+      "custom_label_3",
+      "custom_label_4",
     ];
 
     const rows = products.map((p) => {
       const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
+      const salePriceStr = p.sale_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
       const productUrl = `${baseUrl}/products/${p.slug}`;
-      const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
+      const imageUrl = p.og_image_url || `${baseUrl}/images/product_placeholder.svg`;
+      const additionalImagesStr = p.additional_images.join(",");
+      const shippingStr = `BD:Standard:${deliveryCharge.toFixed(2)} ${currency}`;
 
       return [
         escapeCsv(p.sku),
         escapeCsv(p.name),
         escapeCsv(p.description),
-        escapeCsv(p.status === "published" ? "in stock" : "out of stock"),
+        escapeCsv(p.available_qty > 0 ? "in stock" : "out of stock"),
         escapeCsv("new"),
         escapeCsv(priceStr),
         escapeCsv(salePriceStr),
         escapeCsv(productUrl),
         escapeCsv(imageUrl),
+        escapeCsv(additionalImagesStr),
         escapeCsv(p.brand_name),
         escapeCsv("Health & Beauty > Personal Care > Cosmetics > Skin Care"),
         escapeCsv("Health & Beauty > Personal Care > Cosmetics"),
-        escapeCsv(p.category_name),
-        escapeCsv(p.country || "Authentic"),
-        escapeCsv(p.is_featured ? "Featured" : "Standard"),
+        escapeCsv(`Health & Beauty > ${p.category_name}`),
+        escapeCsv(p.id),
+        escapeCsv(p.barcode || ""),
+        escapeCsv(p.available_qty),
+        escapeCsv(shippingStr),
+        escapeCsv(p.custom_label_0),
+        escapeCsv(p.custom_label_1),
+        escapeCsv(p.custom_label_2),
+        escapeCsv(p.custom_label_3),
+        escapeCsv(p.custom_label_4),
       ].join(",");
     });
 
@@ -171,25 +273,41 @@ export async function generateMetaFeed(baseUrl: string, format: FeedFormat = "xm
   const itemsXml = products
     .map((p) => {
       const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
+      const salePriceStr = p.sale_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
       const productUrl = `${baseUrl}/products/${p.slug}`;
-      const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
+      const imageUrl = p.og_image_url || `${baseUrl}/images/product_placeholder.svg`;
+      const additionalImagesXml = p.additional_images
+        .map((img) => `      <g:additional_image_link>${img}</g:additional_image_link>`)
+        .join("\n");
 
       return `    <item>
       <g:id>${p.sku}</g:id>
+      <g:item_group_id>${p.id}</g:item_group_id>
       <g:title><![CDATA[${p.name}]]></g:title>
       <g:description><![CDATA[${p.description}]]></g:description>
       <g:link>${productUrl}</g:link>
       <g:image_link>${imageUrl}</g:image_link>
+${additionalImagesXml ? `${additionalImagesXml}\n` : ""}\
       <g:brand><![CDATA[${p.brand_name}]]></g:brand>
       <g:condition>new</g:condition>
-      <g:availability>${p.status === "published" ? "in stock" : "out of stock"}</g:availability>
+      <g:availability>${p.available_qty > 0 ? "in stock" : "out of stock"}</g:availability>
       <g:price>${priceStr}</g:price>
-      ${salePriceStr ? `<g:sale_price>${salePriceStr}</g:sale_price>\n      ` : ""}<g:google_product_category><![CDATA[Health & Beauty > Personal Care > Cosmetics > Skin Care]]></g:google_product_category>
+      ${salePriceStr ? `<g:sale_price>${salePriceStr}</g:sale_price>\n      ` : ""}\
+<g:google_product_category><![CDATA[Health & Beauty > Personal Care > Cosmetics > Skin Care]]></g:google_product_category>
       <g:fb_product_category><![CDATA[Health & Beauty > Personal Care > Cosmetics]]></g:fb_product_category>
-      <g:product_type><![CDATA[${p.category_name}]]></g:product_type>
-      <g:custom_label_0><![CDATA[${p.country || "Authentic"}]]></g:custom_label_0>
-      <g:custom_label_1><![CDATA[${p.is_featured ? "Featured" : "Standard"}]]></g:custom_label_1>
+      <g:product_type><![CDATA[Health & Beauty > ${p.category_name}]]></g:product_type>
+      ${p.barcode ? `<g:gtin>${p.barcode}</g:gtin>\n      ` : ""}\
+<g:inventory>${p.available_qty}</g:inventory>
+      <g:shipping>
+        <g:country>BD</g:country>
+        <g:service>Standard Doorstep Delivery</g:service>
+        <g:price>${deliveryCharge.toFixed(2)} ${currency}</g:price>
+      </g:shipping>
+      <g:custom_label_0><![CDATA[${p.custom_label_0}]]></g:custom_label_0>
+      <g:custom_label_1><![CDATA[${p.custom_label_1}]]></g:custom_label_1>
+      <g:custom_label_2><![CDATA[${p.custom_label_2}]]></g:custom_label_2>
+      <g:custom_label_3><![CDATA[${p.custom_label_3}]]></g:custom_label_3>
+      <g:custom_label_4><![CDATA[${p.custom_label_4}]]></g:custom_label_4>
     </item>`;
     })
     .join("\n");
@@ -213,13 +331,18 @@ ${itemsXml}
 
 /**
  * Build TikTok Catalog Manager Feed (TikTok Shop & Dynamic Showcase Ads)
+ * Complete 20+ Parameter Compliance with RSS 2.0 XML & RFC-4180 CSV
  */
-export async function generateTikTokFeed(baseUrl: string, format: FeedFormat = "xml"): Promise<{ content: string; contentType: string; filename: string }> {
+export async function generateTikTokFeed(
+  baseUrl: string,
+  format: FeedFormat = "xml"
+): Promise<{ content: string; contentType: string; filename: string }> {
   const { products, storeName, currency } = await fetchPublishedProducts();
 
   if (format === "csv") {
     const headers = [
       "sku_id",
+      "item_group_id",
       "title",
       "description",
       "availability",
@@ -228,34 +351,52 @@ export async function generateTikTokFeed(baseUrl: string, format: FeedFormat = "
       "sale_price",
       "link",
       "image_link",
+      "additional_image_link",
       "brand",
       "google_product_category",
       "product_type",
+      "mpn",
+      "gtin",
+      "age_group",
+      "gender",
       "custom_label_0",
       "custom_label_1",
+      "custom_label_2",
+      "custom_label_3",
+      "custom_label_4",
     ];
 
     const rows = products.map((p) => {
       const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
+      const salePriceStr = p.sale_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
       const productUrl = `${baseUrl}/products/${p.slug}`;
-      const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
+      const imageUrl = p.og_image_url || `${baseUrl}/images/product_placeholder.svg`;
+      const additionalImagesStr = p.additional_images.join(",");
 
       return [
         escapeCsv(p.sku),
+        escapeCsv(p.id),
         escapeCsv(p.name),
         escapeCsv(p.description),
-        escapeCsv(p.status === "published" ? "in_stock" : "out_of_stock"),
+        escapeCsv(p.available_qty > 0 ? "in_stock" : "out_of_stock"),
         escapeCsv("new"),
         escapeCsv(priceStr),
         escapeCsv(salePriceStr),
         escapeCsv(productUrl),
         escapeCsv(imageUrl),
+        escapeCsv(additionalImagesStr),
         escapeCsv(p.brand_name),
         escapeCsv("Health & Beauty > Personal Care > Cosmetics > Skin Care"),
-        escapeCsv(p.category_name),
+        escapeCsv(`Health & Beauty > ${p.category_name}`),
+        escapeCsv(p.sku),
+        escapeCsv(p.barcode || ""),
+        escapeCsv("adult"),
+        escapeCsv("unisex"),
         escapeCsv("TikTok Showcase"),
-        escapeCsv(p.country || "Authentic"),
+        escapeCsv(p.custom_label_0),
+        escapeCsv(p.custom_label_2),
+        escapeCsv(p.custom_label_3),
+        escapeCsv(p.custom_label_4),
       ].join(",");
     });
 
@@ -271,25 +412,39 @@ export async function generateTikTokFeed(baseUrl: string, format: FeedFormat = "
   const itemsXml = products
     .map((p) => {
       const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
+      const salePriceStr = p.sale_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
       const productUrl = `${baseUrl}/products/${p.slug}`;
-      const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
+      const imageUrl = p.og_image_url || `${baseUrl}/images/product_placeholder.svg`;
+      const additionalImagesXml = p.additional_images
+        .map((img) => `      <g:additional_image_link>${img}</g:additional_image_link>`)
+        .join("\n");
 
       return `    <item>
       <g:id>${p.sku}</g:id>
-      <g:sku><![CDATA[${p.sku}]]></g:sku>
+      <g:sku_id>${p.sku}</g:sku_id>
+      <g:sku>${p.sku}</g:sku>
+      <g:item_group_id>${p.id}</g:item_group_id>
       <g:title><![CDATA[${p.name}]]></g:title>
       <g:description><![CDATA[${p.description}]]></g:description>
       <g:link>${productUrl}</g:link>
       <g:image_link>${imageUrl}</g:image_link>
+${additionalImagesXml ? `${additionalImagesXml}\n` : ""}\
       <g:brand><![CDATA[${p.brand_name}]]></g:brand>
       <g:condition>new</g:condition>
-      <g:availability>${p.status === "published" ? "in_stock" : "out_of_stock"}</g:availability>
+      <g:availability>${p.available_qty > 0 ? "in_stock" : "out_of_stock"}</g:availability>
       <g:price>${priceStr}</g:price>
-      ${salePriceStr ? `<g:sale_price>${salePriceStr}</g:sale_price>\n      ` : ""}<g:google_product_category><![CDATA[Health & Beauty > Personal Care > Cosmetics > Skin Care]]></g:google_product_category>
-      <g:product_type><![CDATA[${p.category_name}]]></g:product_type>
+      ${salePriceStr ? `<g:sale_price>${salePriceStr}</g:sale_price>\n      ` : ""}\
+<g:google_product_category><![CDATA[Health & Beauty > Personal Care > Cosmetics > Skin Care]]></g:google_product_category>
+      <g:product_type><![CDATA[Health & Beauty > ${p.category_name}]]></g:product_type>
+      <g:mpn>${p.sku}</g:mpn>
+      ${p.barcode ? `<g:gtin>${p.barcode}</g:gtin>\n      ` : ""}\
+<g:age_group>adult</g:age_group>
+      <g:gender>unisex</g:gender>
       <g:custom_label_0><![CDATA[TikTok Showcase]]></g:custom_label_0>
-      <g:custom_label_1><![CDATA[${p.country || "Authentic"}]]></g:custom_label_1>
+      <g:custom_label_1><![CDATA[${p.custom_label_0}]]></g:custom_label_1>
+      <g:custom_label_2><![CDATA[${p.custom_label_2}]]></g:custom_label_2>
+      <g:custom_label_3><![CDATA[${p.custom_label_3}]]></g:custom_label_3>
+      <g:custom_label_4><![CDATA[${p.custom_label_4}]]></g:custom_label_4>
     </item>`;
     })
     .join("\n");
@@ -313,17 +468,24 @@ ${itemsXml}
 
 /**
  * Build Google Merchant Center Product Feed (Google Shopping & Free Listings)
+ * Complete 24+ Parameter Compliance with RSS 2.0 XML & TSV/CSV
  */
-export async function generateGoogleFeed(baseUrl: string, format: FeedFormat = "xml"): Promise<{ content: string; contentType: string; filename: string }> {
-  const { products, storeName, currency } = await fetchPublishedProducts();
+export async function generateGoogleFeed(
+  baseUrl: string,
+  format: FeedFormat = "xml"
+): Promise<{ content: string; contentType: string; filename: string }> {
+  const { products, storeName, currency, deliveryCharge } = await fetchPublishedProducts();
 
   if (format === "csv") {
     const headers = [
       "id",
+      "mpn",
+      "item_group_id",
       "title",
       "description",
       "link",
       "image_link",
+      "additional_image_link",
       "availability",
       "price",
       "sale_price",
@@ -332,34 +494,55 @@ export async function generateGoogleFeed(baseUrl: string, format: FeedFormat = "
       "google_product_category",
       "product_type",
       "identifier_exists",
-      "mpn",
+      "gtin",
+      "shipping_weight",
+      "shipping",
+      "adult",
+      "gender",
+      "age_group",
       "custom_label_0",
       "custom_label_1",
+      "custom_label_2",
+      "custom_label_3",
+      "custom_label_4",
     ];
 
     const rows = products.map((p) => {
       const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
+      const salePriceStr = p.sale_price ? `${p.sale_price.toFixed(2)} ${currency}` : "";
       const productUrl = `${baseUrl}/products/${p.slug}`;
-      const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
+      const imageUrl = p.og_image_url || `${baseUrl}/images/product_placeholder.svg`;
+      const additionalImagesStr = p.additional_images.join(",");
+      const shippingStr = `BD:Standard:${deliveryCharge.toFixed(2)} ${currency}`;
 
       return [
         escapeCsv(p.sku),
+        escapeCsv(p.sku),
+        escapeCsv(p.id),
         escapeCsv(p.name),
         escapeCsv(p.description),
         escapeCsv(productUrl),
         escapeCsv(imageUrl),
-        escapeCsv(p.status === "published" ? "in stock" : "out of stock"),
+        escapeCsv(additionalImagesStr),
+        escapeCsv(p.available_qty > 0 ? "in stock" : "out of stock"),
         escapeCsv(priceStr),
         escapeCsv(salePriceStr),
         escapeCsv(p.brand_name),
         escapeCsv("new"),
         escapeCsv("Health & Beauty > Personal Care > Cosmetics > Skin Care"),
-        escapeCsv(p.category_name),
+        escapeCsv(`Health & Beauty > ${p.category_name}`),
+        escapeCsv(p.barcode ? "yes" : "no"),
+        escapeCsv(p.barcode || ""),
+        escapeCsv(`${p.weight.toFixed(2)} kg`),
+        escapeCsv(shippingStr),
         escapeCsv("no"),
-        escapeCsv(p.sku),
-        escapeCsv(p.country || "Authentic"),
-        escapeCsv(p.is_featured ? "Featured" : "Standard"),
+        escapeCsv("unisex"),
+        escapeCsv("adult"),
+        escapeCsv(p.custom_label_0),
+        escapeCsv(p.custom_label_1),
+        escapeCsv(p.custom_label_2),
+        escapeCsv(p.custom_label_3),
+        escapeCsv(p.custom_label_4),
       ].join(",");
     });
 
@@ -375,26 +558,45 @@ export async function generateGoogleFeed(baseUrl: string, format: FeedFormat = "
   const itemsXml = products
     .map((p) => {
       const priceStr = `${p.regular_price.toFixed(2)} ${currency}`;
-      const salePriceStr = p.sale_price && p.sale_price < p.regular_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
+      const salePriceStr = p.sale_price ? `${p.sale_price.toFixed(2)} ${currency}` : null;
       const productUrl = `${baseUrl}/products/${p.slug}`;
-      const imageUrl = p.og_image_url || `${baseUrl}/images/product-placeholder.png`;
+      const imageUrl = p.og_image_url || `${baseUrl}/images/product_placeholder.svg`;
+      const additionalImagesXml = p.additional_images
+        .map((img) => `      <g:additional_image_link>${img}</g:additional_image_link>`)
+        .join("\n");
 
       return `    <item>
       <g:id>${p.sku}</g:id>
-      <g:mpn><![CDATA[${p.sku}]]></g:mpn>
+      <g:mpn>${p.sku}</g:mpn>
+      <g:item_group_id>${p.id}</g:item_group_id>
       <g:title><![CDATA[${p.name}]]></g:title>
       <g:description><![CDATA[${p.description}]]></g:description>
       <g:link>${productUrl}</g:link>
       <g:image_link>${imageUrl}</g:image_link>
+${additionalImagesXml ? `${additionalImagesXml}\n` : ""}\
       <g:brand><![CDATA[${p.brand_name}]]></g:brand>
       <g:condition>new</g:condition>
-      <g:availability>${p.status === "published" ? "in stock" : "out of stock"}</g:availability>
+      <g:availability>${p.available_qty > 0 ? "in stock" : "out of stock"}</g:availability>
       <g:price>${priceStr}</g:price>
-      ${salePriceStr ? `<g:sale_price>${salePriceStr}</g:sale_price>\n      ` : ""}<g:google_product_category><![CDATA[Health & Beauty > Personal Care > Cosmetics > Skin Care]]></g:google_product_category>
-      <g:product_type><![CDATA[${p.category_name}]]></g:product_type>
-      <g:identifier_exists>no</g:identifier_exists>
-      <g:custom_label_0><![CDATA[${p.country || "Authentic"}]]></g:custom_label_0>
-      <g:custom_label_1><![CDATA[${p.is_featured ? "Featured" : "Standard"}]]></g:custom_label_1>
+      ${salePriceStr ? `<g:sale_price>${salePriceStr}</g:sale_price>\n      ` : ""}\
+<g:google_product_category><![CDATA[Health & Beauty > Personal Care > Cosmetics > Skin Care]]></g:google_product_category>
+      <g:product_type><![CDATA[Health & Beauty > ${p.category_name}]]></g:product_type>
+      <g:identifier_exists>${p.barcode ? "yes" : "no"}</g:identifier_exists>
+      ${p.barcode ? `<g:gtin>${p.barcode}</g:gtin>\n      ` : ""}\
+<g:shipping_weight>${p.weight.toFixed(2)} kg</g:shipping_weight>
+      <g:shipping>
+        <g:country>BD</g:country>
+        <g:service>Standard Doorstep Delivery</g:service>
+        <g:price>${deliveryCharge.toFixed(2)} ${currency}</g:price>
+      </g:shipping>
+      <g:adult>no</g:adult>
+      <g:gender>unisex</g:gender>
+      <g:age_group>adult</g:age_group>
+      <g:custom_label_0><![CDATA[${p.custom_label_0}]]></g:custom_label_0>
+      <g:custom_label_1><![CDATA[${p.custom_label_1}]]></g:custom_label_1>
+      <g:custom_label_2><![CDATA[${p.custom_label_2}]]></g:custom_label_2>
+      <g:custom_label_3><![CDATA[${p.custom_label_3}]]></g:custom_label_3>
+      <g:custom_label_4><![CDATA[${p.custom_label_4}]]></g:custom_label_4>
     </item>`;
     })
     .join("\n");

@@ -28,20 +28,36 @@ export async function saveStoreSettings(settings: {
   return { success: true };
 }
 
-// SEO Settings
+// SEO & Favicon Settings
+export interface SeoSettingsPayload {
+  meta_title: string;
+  meta_description: string;
+  meta_keywords?: string;
+  site_author?: string;
+  favicon_url?: string;
+  apple_touch_icon_url?: string;
+  android_icon_url?: string;
+  og_image_url?: string;
+  og_type?: string;
+  canonical_url?: string;
+  twitter_handle?: string;
+  twitter_card?: "summary_large_image" | "summary";
+  facebook_app_id?: string;
+  robots_index?: boolean;
+  robots_follow?: boolean;
+  enable_structured_data?: boolean;
+  enable_breadcrumbs_schema?: boolean;
+  custom_robots_txt?: string;
+}
+
 export async function getSeoSettings() {
   return getSettingsByGroup("seo");
 }
 
-export async function saveSeoSettings(settings: {
-  meta_title: string;
-  meta_description: string;
-  og_image_url?: string;
-  canonical_url?: string;
-  twitter_handle?: string;
-}) {
+export async function saveSeoSettings(settings: Partial<SeoSettingsPayload> | Record<string, any>) {
   await updateGroupSettings("seo", settings);
   revalidatePath("/admin/settings/seo");
+  revalidatePath("/", "layout");
   revalidatePath("/");
   return { success: true };
 }
@@ -190,17 +206,43 @@ export async function saveLocalizationSettings(settings: Partial<LocalizationSet
 export interface ThemeSettings {
   themeColor: string;
   announcement: string;
+  announcementEnabled?: boolean;
+  announcementLink?: string;
+  announcementBg?: string;
+  supportPhone: string;
+  supportEmail?: string;
   insideDhakaFree: number;
   outsideDhakaFree: number;
-  supportPhone: string;
+  insideDhakaDeliveryFee?: number;
+  outsideDhakaDeliveryFee?: number;
+  showFreeDeliveryBar?: boolean;
+  productCardStyle?: "rounded" | "pill" | "square";
+  showAuthenticBadge?: boolean;
+  showDiscountBadge?: boolean;
+  showStockBadge?: boolean;
+  footerTagline?: string;
+  copyrightText?: string;
 }
 
 const DEFAULT_THEME_SETTINGS: ThemeSettings = {
   themeColor: "rose",
   announcement: "100% Authentic Korean & UK Skincare | Free Delivery over ৳2,500!",
+  announcementEnabled: true,
+  announcementLink: "/shop",
+  announcementBg: "theme",
+  supportPhone: "+880 1753-804797",
+  supportEmail: "support@blushandbudget.com",
   insideDhakaFree: 2500,
   outsideDhakaFree: 3500,
-  supportPhone: "+880 1700-000000",
+  insideDhakaDeliveryFee: 70,
+  outsideDhakaDeliveryFee: 130,
+  showFreeDeliveryBar: true,
+  productCardStyle: "rounded",
+  showAuthenticBadge: true,
+  showDiscountBadge: true,
+  showStockBadge: true,
+  footerTagline: "Authentic Korean & UK Skincare & Cosmetics in Bangladesh",
+  copyrightText: `© ${new Date().getFullYear()} Blush & Budget. Authentic Skincare & Cosmetics Bangladesh.`,
 };
 
 export async function getThemeSettings(): Promise<ThemeSettings> {
@@ -209,9 +251,22 @@ export async function getThemeSettings(): Promise<ThemeSettings> {
     return {
       themeColor: settings.themeColor || DEFAULT_THEME_SETTINGS.themeColor,
       announcement: settings.announcement || DEFAULT_THEME_SETTINGS.announcement,
+      announcementEnabled: settings.announcementEnabled !== false,
+      announcementLink: settings.announcementLink || DEFAULT_THEME_SETTINGS.announcementLink,
+      announcementBg: settings.announcementBg || DEFAULT_THEME_SETTINGS.announcementBg,
+      supportPhone: settings.supportPhone || DEFAULT_THEME_SETTINGS.supportPhone,
+      supportEmail: settings.supportEmail || DEFAULT_THEME_SETTINGS.supportEmail,
       insideDhakaFree: Number(settings.insideDhakaFree || DEFAULT_THEME_SETTINGS.insideDhakaFree),
       outsideDhakaFree: Number(settings.outsideDhakaFree || DEFAULT_THEME_SETTINGS.outsideDhakaFree),
-      supportPhone: settings.supportPhone || DEFAULT_THEME_SETTINGS.supportPhone,
+      insideDhakaDeliveryFee: Number(settings.insideDhakaDeliveryFee || DEFAULT_THEME_SETTINGS.insideDhakaDeliveryFee),
+      outsideDhakaDeliveryFee: Number(settings.outsideDhakaDeliveryFee || DEFAULT_THEME_SETTINGS.outsideDhakaDeliveryFee),
+      showFreeDeliveryBar: settings.showFreeDeliveryBar !== false,
+      productCardStyle: (settings.productCardStyle as any) || DEFAULT_THEME_SETTINGS.productCardStyle,
+      showAuthenticBadge: settings.showAuthenticBadge !== false,
+      showDiscountBadge: settings.showDiscountBadge !== false,
+      showStockBadge: settings.showStockBadge !== false,
+      footerTagline: settings.footerTagline || DEFAULT_THEME_SETTINGS.footerTagline,
+      copyrightText: settings.copyrightText || DEFAULT_THEME_SETTINGS.copyrightText,
     };
   } catch {
     return DEFAULT_THEME_SETTINGS;
@@ -231,10 +286,41 @@ export async function saveThemeSettings(settings: Partial<ThemeSettings>) {
 
   revalidatePath("/", "layout");
   revalidatePath("/");
+  revalidatePath("/shop");
   revalidatePath("/checkout");
   revalidatePath("/cart");
   revalidatePath("/admin/settings/theme");
   revalidatePath("/admin/settings/checkout");
+  return { success: true };
+}
+
+// Maintenance Mode Settings
+export interface MaintenanceSettings {
+  maintenance_mode: boolean;
+  maintenance_message: string;
+  bypass_ips: string;
+}
+
+export async function getMaintenanceSettings(): Promise<MaintenanceSettings> {
+  const settings = await getSettingsByGroup("system");
+  return {
+    maintenance_mode: Boolean(settings.maintenance_mode),
+    maintenance_message:
+      settings.maintenance_message ||
+      "We are performing scheduled updates to improve your beauty shopping experience. We will return shortly!",
+    bypass_ips: settings.bypass_ips || "",
+  };
+}
+
+export async function saveMaintenanceSettings(settings: Partial<MaintenanceSettings>) {
+  await updateGroupSettings("system", {
+    maintenance_mode: Boolean(settings.maintenance_mode),
+    maintenance_message: String(settings.maintenance_message || ""),
+    bypass_ips: String(settings.bypass_ips || ""),
+  });
+  revalidatePath("/admin/settings/maintenance");
+  revalidatePath("/", "layout");
+  revalidatePath("/");
   return { success: true };
 }
 

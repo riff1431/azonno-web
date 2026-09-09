@@ -747,7 +747,9 @@ export async function triggerStatusGatedPurchaseCapi(
     if (!isStatusGated) return;
 
     const targetTriggerStatus = marketingConfig.purchase_trigger_status || "completed";
+    const isPaymentPaid = orderData?.payment_status === "paid" || newStatus === "paid";
     const isTriggerMatched =
+      isPaymentPaid ||
       newStatus === targetTriggerStatus ||
       ((targetTriggerStatus === "completed" || targetTriggerStatus === "delivered") &&
         (newStatus === "completed" || newStatus === "delivered")) ||
@@ -1068,8 +1070,8 @@ export async function updateAdminOrderFull(orderId: string, payload: {
     }
 
     // Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger
-    if (payload.status) {
-      await triggerStatusGatedPurchaseCapi(orderId, payload.status, data, authData?.user?.id || null, supabaseAdmin);
+    if (payload.status || payload.payment_status === "paid" || data?.payment_status === "paid") {
+      await triggerStatusGatedPurchaseCapi(orderId, payload.status || data?.status, data, authData?.user?.id || null, supabaseAdmin);
     }
   }
 

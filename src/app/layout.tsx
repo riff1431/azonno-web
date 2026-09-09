@@ -7,6 +7,8 @@ import { CookieTracker } from "@/components/analytics/cookie-tracker";
 import { getMarketingAnalyticsSettings } from "@/features/marketing/meta-actions";
 import { getTikTokSettings } from "@/features/marketing/tiktok-actions";
 import { getStoreSettings, getSeoSettings } from "@/features/settings/actions";
+import { getCustomScriptsSettings, type CustomScriptsSettings } from "@/features/settings/custom-scripts-actions";
+import { getBaseUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +26,10 @@ const hindSiliguri = Hind_Siliguri({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [seo, store, headerList] = await Promise.all([
+  const [seo, store, customScripts, headerList] = await Promise.all([
     getSeoSettings().catch(() => ({} as Record<string, any>)),
     getStoreSettings().catch(() => ({} as Record<string, any>)),
+    getCustomScriptsSettings().catch(() => ({} as CustomScriptsSettings)),
     headers().catch(() => null),
   ]);
 
@@ -42,6 +45,23 @@ export async function generateMetadata(): Promise<Metadata> {
     "Shop 100% authentic Korean skincare, makeup, and beauty products from trusted global brands in Bangladesh. Best prices, fast nationwide doorstep delivery & Cash on Delivery.";
   const ogImage = seo?.og_image_url || undefined;
 
+  const otherMeta: Record<string, string> = {
+    "og:category": "shopping.retail",
+    "product:retailer_category": "Cosmetics & Beauty",
+  };
+
+  if (customScripts.is_enabled) {
+    if (customScripts.facebook_domain_verification) {
+      otherMeta["facebook-domain-verification"] = customScripts.facebook_domain_verification;
+    }
+    if (customScripts.pinterest_verification) {
+      otherMeta["p:domain_verify"] = customScripts.pinterest_verification;
+    }
+    if (customScripts.bing_site_verification) {
+      otherMeta["msvalidate.01"] = customScripts.bing_site_verification;
+    }
+  }
+
   return {
     title: {
       default: title,
@@ -49,27 +69,44 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description,
     metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+    verification: customScripts.is_enabled && customScripts.google_site_verification
+      ? { google: customScripts.google_site_verification }
+      : undefined,
+    icons: {
+      icon: seo?.favicon_url ? [{ url: seo.favicon_url }] : [{ url: "/favicon.ico" }],
+      apple: seo?.apple_touch_icon_url ? [{ url: seo.apple_touch_icon_url }] : undefined,
+      shortcut: seo?.favicon_url ? [{ url: seo.favicon_url }] : undefined,
+    },
+    keywords: seo?.meta_keywords
+      ? seo.meta_keywords.split(",").map((k: string) => k.trim()).filter(Boolean)
+      : undefined,
+    authors: seo?.site_author ? [{ name: seo.site_author }] : undefined,
     alternates: {
       canonical: "/",
     },
     openGraph: {
-      type: "website",
+      type: (seo?.og_type as any) || "website",
       locale: "en_BD",
       siteName: storeName,
       title,
       description,
       images: ogImage ? [{ url: ogImage }] : undefined,
     },
-    other: {
-      "og:category": "shopping.retail",
-      "product:retailer_category": "Cosmetics & Beauty",
+    twitter: {
+      card: (seo?.twitter_card as any) || "summary_large_image",
+      site: seo?.twitter_handle || undefined,
+      creator: seo?.twitter_handle || undefined,
+      title,
+      description,
+      images: ogImage ? [ogImage] : undefined,
     },
+    other: otherMeta,
     robots: {
-      index: true,
-      follow: true,
+      index: seo?.robots_index !== false,
+      follow: seo?.robots_follow !== false,
       googleBot: {
-        index: true,
-        follow: true,
+        index: seo?.robots_index !== false,
+        follow: seo?.robots_follow !== false,
         "max-video-preview": -1,
         "max-image-preview": "large",
         "max-snippet": -1,
@@ -103,13 +140,28 @@ export default async function RootLayout({
   let storeEmail = "support@blushbudget.com";
   let storePhone = "+880 1700-000000";
 
+  let customScripts: CustomScriptsSettings = {
+    is_enabled: true,
+    header_scripts: "",
+    body_top_scripts: "",
+    footer_scripts: "",
+    google_site_verification: "",
+    facebook_domain_verification: "",
+    bing_site_verification: "",
+    pinterest_verification: "",
+    custom_head_tags: "",
+  };
+
   try {
-    const [metaSettings, ttSettings, storeSettings, headerList] = await Promise.all([
+    const [metaSettings, ttSettings, storeSettings, fetchedCustomScripts, headerList] = await Promise.all([
       getMarketingAnalyticsSettings().catch(() => null),
       getTikTokSettings().catch(() => null),
       getStoreSettings().catch(() => null),
+      getCustomScriptsSettings().catch(() => null),
       headers().catch(() => null),
     ]);
+
+    if (fetchedCustomScripts) customScripts = fetchedCustomScripts;
 
     const host = headerList?.get("x-forwarded-host") || headerList?.get("host") || "";
     const proto = headerList?.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
@@ -186,6 +238,30 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(storeSchema) }}
         />
+
+        {/* 100% Reliable HTML Domain Verification Meta Tags */}
+        {customScripts.is_enabled && customScripts.google_site_verification && (
+          <meta name="google-site-verification" content={customScripts.google_site_verification} />
+        )}
+        {customScripts.is_enabled && customScripts.facebook_domain_verification && (
+          <meta name="facebook-domain-verification" content={customScripts.facebook_domain_verification} />
+        )}
+        {customScripts.is_enabled && customScripts.pinterest_verification && (
+          <meta name="p:domain_verify" content={customScripts.pinterest_verification} />
+        )}
+        {customScripts.is_enabled && customScripts.bing_site_verification && (
+          <meta name="msvalidate.01" content={customScripts.bing_site_verification} />
+        )}
+
+        {/* Custom Header Scripts & Styles (<head>) */}
+        {customScripts.is_enabled && customScripts.header_scripts && (
+          <div
+            id="custom-header-scripts-container"
+            style={{ display: "contents" }}
+            dangerouslySetInnerHTML={{ __html: customScripts.header_scripts }}
+          />
+        )}
+
         {/* Meta Pixel Base Code in Head with Test Code Support */}
         {initialConfig.meta_pixel_id && (
           <script
@@ -250,9 +326,26 @@ export default async function RootLayout({
         )}
       </head>
       <body className="min-h-screen bg-white antialiased">
+        {/* Custom Body Top Scripts (Immediately after <body>) */}
+        {customScripts.is_enabled && customScripts.body_top_scripts && (
+          <div
+            id="custom-body-top-scripts"
+            style={{ display: "contents" }}
+            dangerouslySetInnerHTML={{ __html: customScripts.body_top_scripts }}
+          />
+        )}
         <CookieTracker />
         <StorefrontAnalytics initialConfig={initialConfig} />
         {children}
+
+        {/* Custom Footer Scripts (Before </body>) */}
+        {customScripts.is_enabled && customScripts.footer_scripts && (
+          <div
+            id="custom-footer-scripts"
+            style={{ display: "contents" }}
+            dangerouslySetInnerHTML={{ __html: customScripts.footer_scripts }}
+          />
+        )}
       </body>
     </html>
   );

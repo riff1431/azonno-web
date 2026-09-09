@@ -172,6 +172,7 @@ export async function getProducts(filters?: {
   brand_id?: string;
   category_id?: string;
   search?: string;
+  includeArchived?: boolean;
 }) {
   const supabase = await createClient();
   let query = supabase
@@ -188,7 +189,10 @@ export async function getProducts(filters?: {
   }
 
   const { data, error } = await query;
-  if (error) throw error;
+  if (error) {
+    console.error("[getProducts] Supabase Query Error:", error);
+    throw error;
+  }
   if (!data || data.length === 0) return data;
 
   try {
@@ -781,7 +785,7 @@ export async function updateProduct(
 export async function deleteProduct(id: string) {
   const supabase = await createClient();
 
-  // Soft delete
+  // Soft delete (archive)
   const { error } = await supabase
     .from("products")
     .update({ deleted_at: new Date().toISOString(), status: "archived" })
@@ -791,18 +795,250 @@ export async function deleteProduct(id: string) {
 
   await logActivity({ action: "product.delete", targetType: "product", targetId: id });
   revalidatePath("/admin/products");
+  revalidatePath("/products");
   return { success: true };
+}
+
+export async function restoreProduct(id: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("products")
+    .update({ deleted_at: null, status: "draft" })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  await logActivity({ action: "product.restore", targetType: "product", targetId: id });
+  revalidatePath("/admin/products");
+  revalidatePath("/products");
+  return { success: true };
+}
+
+export async function permanentDeleteProduct(id: string) {
+  const supabase = await createClient();
+
+  try {
+    // 1. Delete dependent relations first
+    await supabase.from("inventory").delete().eq("product_id", id);
+    await supabase.from("product_categories").delete().eq("product_id", id);
+    await supabase.from("product_tags").delete().eq("product_id", id);
+    await supabase.from("product_media").delete().eq("product_id", id);
+    await supabase.from("product_variants").delete().eq("product_id", id);
+
+    // 2. Hard delete product
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (error) return { error: error.message };
+
+    await logActivity({ action: "product.permanent_delete", targetType: "product", targetId: id });
+    revalidatePath("/admin/products");
+    revalidatePath("/products");
+    return { success: true };
+  } catch (err: any) {
+    console.error("[permanentDeleteProduct] Error:", err);
+    return { error: err.message || "Failed to permanently delete product" };
+  }
+}
+
+export async function bulkDeleteProducts(ids: string[], permanent = false) {
+  const supabase = await createClient();
+  if (!ids || ids.length === 0) return { success: true };
+
+  try {
+    if (permanent) {
+      await supabase.from("inventory").delete().in("product_id", ids);
+      await supabase.from("product_categories").delete().in("product_id", ids);
+      await supabase.from("product_tags").delete().in("product_id", ids);
+      await supabase.from("product_media").delete().in("product_id", ids);
+      await supabase.from("product_variants").delete().in("product_id", ids);
+      const { error } = await supabase.from("products").delete().in("id", ids);
+      if (error) return { error: error.message };
+    } else {
+      const { error } = await supabase
+        .from("products")
+        .update({ deleted_at: new Date().toISOString(), status: "archived" })
+        .in("id", ids);
+      if (error) return { error: error.message };
+    }
+
+    revalidatePath("/admin/products");
+    revalidatePath("/products");
+    return { success: true };
+  } catch (err: any) {
+    return { error: err.message || "Bulk delete failed" };
+  }
 }
 
 export async function bulkUpdateProductStatus(ids: string[], status: string) {
   const supabase = await createClient();
+  const updatePayload: Record<string, any> = { status };
+  if (status === "archived") {
+    updatePayload.deleted_at = new Date().toISOString();
+  } else {
+    updatePayload.deleted_at = null;
+  }
+
   const { error } = await supabase
     .from("products")
-    .update({ status })
+    .update(updatePayload)
     .in("id", ids);
 
   if (error) return { error: error.message };
 
   revalidatePath("/admin/products");
+  revalidatePath("/products");
   return { success: true };
 }
+
+export async function duplicateProduct(id: string) {
+  const supabase = await createClient();
+
+  try {
+    const original = await getProductById(id);
+    if (!original) return { error: "Original product not found" };
+
+    const nextSerial = await getNextProductSerial();
+    const newSku = formatShortProductId(nextSerial);
+    const newSlug = `${original.slug || "product"}-copy-${Date.now().toString(36)}`;
+
+    // Create new product
+    const { data: newProd, error: insertErr } = await supabase
+      .from("products")
+      .insert({
+        name: `${original.name} (Copy)`,
+        slug: newSlug,
+        sku: newSku,
+        barcode: original.barcode,
+        product_type: original.product_type || "simple",
+        brand_id: original.brand_id,
+        status: "draft",
+        is_featured: false,
+        short_description: original.short_description,
+        description: original.description,
+        benefits: original.benefits,
+        usage: original.usage,
+        ingredients_specifications: original.ingredients_specifications,
+        country: original.country,
+        origin_country: original.origin_country,
+        warranty: original.warranty,
+        cost_price: original.cost_price,
+        regular_price: original.regular_price,
+        sale_price: original.sale_price,
+        shipping_class: original.shipping_class,
+        og_image_url: original.og_image_url,
+      })
+      .select()
+      .single();
+
+    if (insertErr || !newProd) {
+      return { error: insertErr?.message || "Failed to create duplicated product" };
+    }
+
+    // Duplicate Categories
+    if (original.product_categories && original.product_categories.length > 0) {
+      const catInserts = original.product_categories.map((pc: any) => ({
+        product_id: newProd.id,
+        category_id: pc.category_id,
+      }));
+      await supabase.from("product_categories").insert(catInserts);
+    }
+
+    // Duplicate Tags
+    if (original.product_tags && original.product_tags.length > 0) {
+      const tagInserts = original.product_tags.map((pt: any) => ({
+        product_id: newProd.id,
+        tag_id: pt.tag_id,
+      }));
+      await supabase.from("product_tags").insert(tagInserts);
+    }
+
+    // Duplicate Media
+    if (original.product_media && original.product_media.length > 0) {
+      const mediaInserts = original.product_media.map((pm: any) => ({
+        product_id: newProd.id,
+        media_id: pm.media_id,
+        is_primary: pm.is_primary,
+        display_order: pm.display_order,
+      }));
+      await supabase.from("product_media").insert(mediaInserts);
+    }
+
+    // Initial Inventory (set to 0 for duplicated product to avoid inventory drift)
+    await supabase.from("inventory").insert({
+      product_id: newProd.id,
+      variant_id: null,
+      on_hand: 0,
+      reserved: 0,
+      available: 0,
+      low_stock_threshold: 5,
+    });
+
+    revalidatePath("/admin/products");
+    return { success: true, product: newProd };
+  } catch (err: any) {
+    console.error("[duplicateProduct] Error:", err);
+    return { error: err.message || "Failed to duplicate product" };
+  }
+}
+
+export async function quickUpdateProductStock(productId: string, newStock: number) {
+  const supabase = await createClient();
+  const safeStock = Math.max(0, Number(newStock) || 0);
+
+  const { data: existingInv } = await supabase
+    .from("inventory")
+    .select("id, reserved")
+    .eq("product_id", productId)
+    .is("variant_id", null)
+    .maybeSingle();
+
+  if (existingInv) {
+    const reserved = existingInv.reserved || 0;
+    await supabase
+      .from("inventory")
+      .update({
+        on_hand: safeStock,
+        available: Math.max(0, safeStock - reserved),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", existingInv.id);
+  } else {
+    await supabase.from("inventory").insert({
+      product_id: productId,
+      variant_id: null,
+      on_hand: safeStock,
+      reserved: 0,
+      available: safeStock,
+      low_stock_threshold: 5,
+    });
+  }
+
+  revalidatePath("/admin/products");
+  return { success: true };
+}
+
+export async function quickUpdateProductPrice(
+  productId: string,
+  regularPrice: number,
+  salePrice?: number | null
+) {
+  const supabase = await createClient();
+
+  const updateData: Record<string, any> = {
+    regular_price: Number(regularPrice) || 0,
+    sale_price: salePrice !== undefined && salePrice !== null && salePrice > 0 ? Number(salePrice) : null,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from("products")
+    .update(updateData)
+    .eq("id", productId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/products");
+  revalidatePath("/products");
+  return { success: true };
+}
+

@@ -30,6 +30,7 @@ import { useCart } from "@/context/cart-context";
 import { Button } from "@/components/shared/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { getHomepageConfig } from "@/features/marketing/homepage-actions";
+import { getStorefrontBrands, type StorefrontBrand } from "@/features/brands/actions";
 import {
   type HomepageFullConfig,
   type HeaderNavCategory,
@@ -57,15 +58,19 @@ interface SearchResult {
   concerns?: Array<{ name: string; slug: string }>;
 }
 
-const TOP_BRANDS_DEFAULT = [
-  { name: "COSRX", slug: "cosrx" },
-  { name: "The Ordinary", slug: "the-ordinary" },
-  { name: "CeraVe", slug: "cerave" },
-  { name: "Beauty of Joseon", slug: "beauty-of-joseon" },
-  { name: "Cetaphil", slug: "cetaphil" },
-  { name: "Neutrogena", slug: "neutrogena" },
-  { name: "Simple", slug: "simple" },
-  { name: "L'Oréal Paris", slug: "loreal" },
+const TOP_BRANDS_FALLBACK: StorefrontBrand[] = [
+  { id: "cosrx", name: "COSRX", slug: "cosrx", logo_url: "/images/brands/cosrx.svg", description: "South Korean Derm Skincare", product_count: 2 },
+  { id: "the-ordinary", name: "The Ordinary", slug: "the-ordinary", logo_url: "/images/brands/the-ordinary.svg", description: "Clinical Formulations", product_count: 1 },
+  { id: "cerave", name: "CeraVe", slug: "cerave", logo_url: "/images/brands/cerave.svg", description: "Dermatologist Skincare", product_count: 1 },
+  { id: "beauty-of-joseon", name: "Beauty of Joseon", slug: "beauty-of-joseon", logo_url: "/images/brands/beauty-of-joseon.svg", description: "Traditional Hanbang", product_count: 3 },
+  { id: "cetaphil", name: "Cetaphil", slug: "cetaphil", logo_url: "/images/brands/cetaphil.svg", description: "Gentle Skin Care", product_count: 1 },
+  { id: "neutrogena", name: "Neutrogena", slug: "neutrogena", logo_url: "/images/brands/neutrogena.svg", description: "Hydro Boost & Derm Care", product_count: 0 },
+  { id: "simple", name: "Simple", slug: "simple", logo_url: "/images/brands/simple.svg", description: "Kind to Skin", product_count: 2 },
+  { id: "loreal", name: "L'Oréal Paris", slug: "loreal", logo_url: "/images/brands/loreal.svg", description: "Paris Skincare", product_count: 1 },
+  { id: "anua", name: "Anua", slug: "anua", logo_url: "/images/brands/anua.svg", description: "Heartleaf K-Beauty", product_count: 2 },
+  { id: "skin1004", name: "SKIN1004", slug: "skin1004", logo_url: "/images/brands/skin1004.svg", description: "Centella Asiatica", product_count: 1 },
+  { id: "purito-seoul", name: "PURITO SEOUL", slug: "purito-seoul", logo_url: "/images/brands/purito-seoul.svg", description: "Eco Clean Skincare", product_count: 2 },
+  { id: "innisfree", name: "Innisfree", slug: "innisfree", logo_url: "/images/brands/innisfree.svg", description: "Jeju Botanical Beauty", product_count: 0 },
 ];
 
 export interface StorefrontHeaderProps {
@@ -78,17 +83,24 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
   const { wishlistCount } = useWishlist();
   const { itemCount, openCart } = useCart();
   const { language, t, isSwitcherEnabled, toBn, formatPriceBn } = useLanguage();
+  const isBn = language === "bn";
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedMobileCategories, setExpandedMobileCategories] = useState<string[]>([]);
 
-  // Config from Admin Dashboard
+  // Config & Brands from Database
   const [config, setConfig] = useState<HomepageFullConfig>(DEFAULT_HOMEPAGE_CONFIG);
+  const [headerBrands, setHeaderBrands] = useState<StorefrontBrand[]>(TOP_BRANDS_FALLBACK);
 
   useEffect(() => {
     getHomepageConfig().then((data) => {
       if (data) setConfig(data);
+    });
+    getStorefrontBrands().then((brands) => {
+      if (brands && brands.length > 0) {
+        setHeaderBrands(brands);
+      }
     });
   }, []);
 
@@ -356,7 +368,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             {searchResults.tags && searchResults.tags.length > 0 && (
               <div className="pt-2 border-t border-gray-100">
                 <span className="px-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1">
-                  <Tag className="h-2.5 w-2.5" />
+                  <Tag className="h-3 w-3 text-pink-500" />
                   {language === "bn" ? "ট্যাগস" : "Tags"}
                 </span>
                 <div className="mt-1 flex flex-wrap gap-1.5">
@@ -385,7 +397,16 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                     <Link
                       key={prod.id}
                       href={`/products/${prod.slug}`}
-                      onClick={() => setShowSearchDropdown(false)}
+                      onClick={() => {
+                        setShowSearchDropdown(false);
+                        if (searchQuery) {
+                          fetch("/api/search/click", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ query: searchQuery, productId: prod.id, productName: prod.name }),
+                          }).catch(() => {});
+                        }
+                      }}
                       className="flex items-center justify-between gap-3 rounded-xl p-2 hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
@@ -619,28 +640,60 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
 
               {/* Brands Mega-Dropdown Menu */}
               {brandsMegaOpen && (
-                <div className="absolute top-full left-0 z-50 w-80 rounded-2xl border border-gray-200 bg-white p-4 shadow-xl animate-in fade-in-0 zoom-in-95">
-                  <div className="border-b border-gray-100 pb-2 mb-3 flex items-center justify-between">
-                    <span className="text-xs font-black uppercase text-gray-900 tracking-wider">
-                      {t("header", "topBrands")}
-                    </span>
+                <div className="absolute top-full left-0 z-50 w-96 rounded-3xl border border-pink-100 bg-white p-4 shadow-2xl animate-in fade-in-0 zoom-in-95">
+                  <div className="border-b border-gray-100 pb-2.5 mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-[#e91e63]" />
+                      <span className="text-xs font-black uppercase text-gray-900 tracking-wider">
+                        {t("header", "topBrands")}
+                      </span>
+                    </div>
                     <Link
-                      href="/products"
-                      className="text-[11px] font-bold text-[#e91e63] hover:underline"
+                      href="/brands"
+                      onClick={() => setBrandsMegaOpen(false)}
+                      className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-0.5"
                     >
                       {t("header", "viewAll")} &rarr;
                     </Link>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {TOP_BRANDS_DEFAULT.map((brand) => (
+
+                  {/* Dynamic Brands Grid */}
+                  <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+                    {headerBrands.map((brand) => (
                       <Link
-                        key={brand.name}
-                        href={`/products?brand=${brand.slug}`}
-                        className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+                        key={brand.slug}
+                        href={`/brands/${brand.slug}`}
+                        onClick={() => setBrandsMegaOpen(false)}
+                        className="flex items-center gap-2 rounded-xl p-2 text-xs font-bold text-gray-800 hover:bg-pink-50/80 hover:text-[#e91e63] border border-transparent hover:border-pink-200 transition-all group"
                       >
-                        {brand.name}
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-50 p-1 border border-gray-100 group-hover:bg-white group-hover:border-pink-200 transition-colors">
+                          {brand.logo_url ? (
+                            <img
+                              src={brand.logo_url}
+                              alt={brand.name}
+                              className="max-h-full max-w-full object-contain"
+                            />
+                          ) : (
+                            <span className="text-[10px] font-black text-[#e91e63]">
+                              {brand.name.substring(0, 2).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <span className="truncate flex-1">{brand.name}</span>
                       </Link>
                     ))}
+                  </div>
+
+                  {/* Footer CTA */}
+                  <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[11px]">
+                    <span className="text-gray-400 font-medium">১০০% আসল ও অনুমোদিত</span>
+                    <Link
+                      href="/brands"
+                      onClick={() => setBrandsMegaOpen(false)}
+                      className="font-black text-[#e91e63] hover:underline"
+                    >
+                      {language === "bn" ? "সকল ব্র্যান্ড দেখুন" : "View All Brands"} &rarr;
+                    </Link>
                   </div>
                 </div>
               )}
@@ -1000,8 +1053,22 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
               </div>
             )}
 
-              {/* Beauty Blog & Editorial Guide Link */}
-              <div className="py-1">
+              {/* Beauty Blog & All Brands Quick Links */}
+              <div className="py-1 divide-y divide-gray-100 bg-gray-50/50">
+                <div className="flex items-center justify-between px-4 py-2.5">
+                  <Link
+                    href="/brands"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-xs font-black text-gray-900 hover:text-[#e91e63] flex items-center gap-2"
+                  >
+                    <ShieldCheck className="h-4 w-4 text-[#e91e63]" />
+                    <span>{t("header", "brands")} ({isBn ? "সকল ব্র্যান্ড" : "All Brands"})</span>
+                  </Link>
+                  <span className="text-[10px] font-extrabold text-[#e91e63] bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+                    {toBn(headerBrands.length || 20)}+
+                  </span>
+                </div>
+
                 <div className="flex items-center justify-between px-4 py-2.5">
                   <Link
                     href="/blog"

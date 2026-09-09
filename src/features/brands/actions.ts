@@ -5,6 +5,39 @@ import { createClient } from "@/lib/supabase/server";
 import { brandSchema, type BrandFormData } from "@/validators";
 import { logActivity } from "@/services/activity-log";
 
+export interface StorefrontBrand {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  description: string | null;
+  product_count: number;
+}
+
+export async function getStorefrontBrands(): Promise<StorefrontBrand[]> {
+  try {
+    const supabase = await createClient();
+    const { data: brands, error } = await supabase
+      .from("brands")
+      .select("id, name, slug, logo_url, description, products(count)")
+      .eq("status", "active")
+      .order("name");
+
+    if (error || !brands) return [];
+
+    return brands.map((b: any) => ({
+      id: b.id,
+      name: b.name,
+      slug: b.slug,
+      logo_url: b.logo_url || `/images/brands/${b.slug}.svg`,
+      description: b.description,
+      product_count: Number(b.products?.[0]?.count) || 0,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getBrands() {
   const supabase = await createClient();
   const { data, error } = await supabase

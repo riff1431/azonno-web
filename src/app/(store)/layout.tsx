@@ -22,24 +22,26 @@ export default async function StorefrontLayout({
     getThemeSettings(),
   ]);
 
+  let isAdminUser = false;
+  let showAdminMaintenanceBanner = false;
+
   // Check Maintenance Mode
   if (systemSettings?.maintenance_mode) {
     const headerList = await headers();
     const clientIp =
       headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       headerList.get("x-real-ip") ||
-      "127.0.0.1";
+      "";
 
-    const bypassIps = (systemSettings.bypass_ips || "127.0.0.1, ::1")
+    const bypassIps = (systemSettings.bypass_ips || "")
       .split(",")
       .map((ip: string) => ip.trim())
       .filter(Boolean);
 
-    const isIpWhitelisted = bypassIps.some(
-      (ip: string) => ip === clientIp || ip === "127.0.0.1" || ip === "::1" || clientIp.includes(ip)
-    );
+    const isIpWhitelisted =
+      bypassIps.length > 0 &&
+      bypassIps.some((ip: string) => ip === clientIp || (clientIp && clientIp.startsWith(ip)));
 
-    let isAdminUser = false;
     try {
       const supabase = await createClient();
       const {
@@ -70,6 +72,10 @@ export default async function StorefrontLayout({
         />
       );
     }
+
+    if (isAdminUser) {
+      showAdminMaintenanceBanner = true;
+    }
   }
 
   return (
@@ -80,6 +86,24 @@ export default async function StorefrontLayout({
             data-theme={themeSettings.themeColor || "rose"}
             className="flex min-h-screen flex-col bg-white"
           >
+            {showAdminMaintenanceBanner && (
+              <div className="bg-amber-500 text-slate-950 px-4 py-2 text-xs font-semibold shadow-md z-50 sticky top-0">
+                <div className="flex flex-wrap items-center justify-between gap-2 max-w-7xl mx-auto">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-2 w-2 rounded-full bg-red-600 animate-ping" />
+                    <span>
+                      ⚠️ <strong>Maintenance Mode is Active:</strong> Public visitors are currently shown the maintenance screen. You are viewing as Admin.
+                    </span>
+                  </div>
+                  <a
+                    href="/admin/settings/maintenance"
+                    className="underline font-bold text-slate-900 hover:text-black ml-auto"
+                  >
+                    Manage Settings →
+                  </a>
+                </div>
+              </div>
+            )}
             <StorefrontHeader initialThemeSettings={themeSettings} />
             <main className="flex-1 min-h-[calc(100vh-80px)]">{children}</main>
             <StorefrontFooter />

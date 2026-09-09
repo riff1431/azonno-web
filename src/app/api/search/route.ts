@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { recordSearchLog, getSearchSynonyms } from "@/lib/analytics/search-analytics-service";
 
 const BEAUTY_INGREDIENTS = [
   { name: "Niacinamide (Vitamin B3)", slug: "niacinamide", match: ["niacinamide", "vitamin b3", "b3"] },
@@ -34,7 +35,7 @@ const BEAUTY_CONCERNS = [
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const rawQuery = searchParams.get("q")?.trim() || "";
-  const query = rawQuery.replace(/^#/, "").trim().toLowerCase();
+  let query = rawQuery.replace(/^#/, "").trim().toLowerCase();
 
   if (!query) {
     return NextResponse.json({
@@ -45,6 +46,15 @@ export async function GET(request: Request) {
       concerns: [],
     });
   }
+
+  // Check synonym expansion
+  try {
+    const synonyms = await getSearchSynonyms();
+    const matchedSyn = synonyms.find((s) => s.term.toLowerCase() === query);
+    if (matchedSyn && matchedSyn.mapsTo) {
+      query = matchedSyn.mapsTo.toLowerCase();
+    }
+  } catch {}
 
   const supabase = await createClient();
 
@@ -90,10 +100,31 @@ export async function GET(request: Request) {
     item.match.some((m) => m.includes(query) || query.includes(m))
   ).slice(0, 3);
 
+  const matchedProductList = products || [];
+  const matchedCategoryList = categories || [];
+  const matchedBrandList = brands || [];
+
+  // Asynchronously record search analytics log without blocking user response
+  const resultsTotal =
+    matchedProductList.length +
+    matchedCategoryList.length +
+    matchedBrandList.length +
+    matchedIngredients.length;
+
+  recordSearchLog({
+    query: rawQuery,
+    resultsCount: matchedProductList.length,
+    hasMatches: resultsTotal > 0,
+    matchedCategories: matchedCategoryList.map((c) => c.name),
+    matchedBrands: matchedBrandList.map((b) => b.name),
+    matchedIngredients: matchedIngredients.map((i) => i.name),
+    source: "header_search",
+  }).catch(() => {});
+
   return NextResponse.json({
-    products: products || [],
-    categories: categories || [],
-    brands: brands || [],
+    products: matchedProductList,
+    categories: matchedCategoryList,
+    brands: matchedBrandList,
     tags: tags || [],
     ingredients: matchedIngredients,
     concerns: matchedConcerns,

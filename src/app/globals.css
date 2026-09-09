@@ -155,6 +155,74 @@
   --color-primary-900: #000000;
 }
 
+[data-theme="coral"] {
+  --color-sg-pink: #ea580c;
+  --color-sg-pink-hover: #c2410c;
+  --color-sg-pink-light: #fff7ed;
+  --color-sg-pink-border: #fb923c;
+  --color-primary-50: #fff7ed;
+  --color-primary-100: #ffedd5;
+  --color-primary-200: #fed7aa;
+  --color-primary-300: #fdba74;
+  --color-primary-400: #fb923c;
+  --color-primary-500: #f97316;
+  --color-primary-600: #ea580c;
+  --color-primary-700: #c2410c;
+  --color-primary-800: #9a3412;
+  --color-primary-900: #7c2d12;
+}
+
+[data-theme="berry"] {
+  --color-sg-pink: #be185d;
+  --color-sg-pink-hover: #9d174d;
+  --color-sg-pink-light: #fdf2f8;
+  --color-sg-pink-border: #f472b6;
+  --color-primary-50: #fdf2f8;
+  --color-primary-100: #fce7f3;
+  --color-primary-200: #fbcfe8;
+  --color-primary-300: #f472b6;
+  --color-primary-400: #ec4899;
+  --color-primary-500: #db2777;
+  --color-primary-600: #be185d;
+  --color-primary-700: #9d174d;
+  --color-primary-800: #831843;
+  --color-primary-900: #500724;
+}
+
+[data-theme="ocean"] {
+  --color-sg-pink: #0891b2;
+  --color-sg-pink-hover: #0e7490;
+  --color-sg-pink-light: #ecfeff;
+  --color-sg-pink-border: #22d3ee;
+  --color-primary-50: #ecfeff;
+  --color-primary-100: #cffafe;
+  --color-primary-200: #a5f3fc;
+  --color-primary-300: #67e8f9;
+  --color-primary-400: #22d3ee;
+  --color-primary-500: #06b6d4;
+  --color-primary-600: #0891b2;
+  --color-primary-700: #0e7490;
+  --color-primary-800: #155e75;
+  --color-primary-900: #164e63;
+}
+
+[data-theme="amber"] {
+  --color-sg-pink: #d97706;
+  --color-sg-pink-hover: #b45309;
+  --color-sg-pink-light: #fffbeb;
+  --color-sg-pink-border: #fbbf24;
+  --color-primary-50: #fffbeb;
+  --color-primary-100: #fef3c7;
+  --color-primary-200: #fde68a;
+  --color-primary-300: #fcd34d;
+  --color-primary-400: #fbbf24;
+  --color-primary-500: #f59e0b;
+  --color-primary-600: #d97706;
+  --color-primary-700: #b45309;
+  --color-primary-800: #92400e;
+  --color-primary-900: #78350f;
+}
+
 /* --- Base Styles --- */
 html, body {
   font-family: var(--font-sans);
