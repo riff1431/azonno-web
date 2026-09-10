@@ -79,10 +79,24 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       rawFooter?.categoryLinks && rawFooter.categoryLinks.length > 0
         ? rawFooter.categoryLinks
         : defaultFooter.categoryLinks!,
-    customerCareLinks:
-      rawFooter?.customerCareLinks && rawFooter.customerCareLinks.length > 0
-        ? rawFooter.customerCareLinks
-        : defaultFooter.customerCareLinks!,
+    customerCareLinks: (() => {
+      const raw =
+        rawFooter?.customerCareLinks && rawFooter.customerCareLinks.length > 0
+          ? rawFooter.customerCareLinks
+          : defaultFooter.customerCareLinks!;
+      const exists = raw.some((l: any) => l.href === "/quiz" || l.href?.includes("quiz"));
+      if (exists) return raw;
+      return [
+        ...raw.slice(0, 2),
+        {
+          label: "Routine Finder (Quiz)",
+          labelBn: "রুটিন ফাইন্ডার (কুইজ)",
+          href: "/quiz",
+          isHighlight: true,
+        },
+        ...raw.slice(2),
+      ];
+    })(),
   };
 
   const updateFooter = (field: keyof FooterConfig, value: any) => {

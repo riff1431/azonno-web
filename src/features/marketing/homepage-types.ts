@@ -824,6 +824,7 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
     customerCareLinks: [
       { label: "My Account", labelBn: "আমার অ্যাকাউন্ট", href: "/account" },
       { label: "Track Order", labelBn: "অর্ডার ট্র্যাক", href: "/track-order", isHighlight: true },
+      { label: "Routine Finder (Quiz)", labelBn: "রুটিন ফাইন্ডার (কুইজ)", href: "/quiz", isHighlight: true },
       { label: "Wishlist", labelBn: "উইশলিস্ট", href: "/wishlist" },
       { label: "Return Policy", labelBn: "রিটার্ন পলিসি", href: "/page/returns" },
       { label: "Terms & Conditions", labelBn: "শর্তাবলী ও নিয়মাবলী", href: "/page/terms" },

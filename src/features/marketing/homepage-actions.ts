@@ -38,10 +38,24 @@ export async function getHomepageConfig(): Promise<HomepageFullConfig> {
             parsed.footerConfig?.categoryLinks?.length > 0
               ? parsed.footerConfig.categoryLinks
               : DEFAULT_HOMEPAGE_CONFIG.footerConfig?.categoryLinks,
-          customerCareLinks:
-            parsed.footerConfig?.customerCareLinks?.length > 0
-              ? parsed.footerConfig.customerCareLinks
-              : DEFAULT_HOMEPAGE_CONFIG.footerConfig?.customerCareLinks,
+          customerCareLinks: (() => {
+            const raw =
+              parsed.footerConfig?.customerCareLinks?.length > 0
+                ? parsed.footerConfig.customerCareLinks
+                : DEFAULT_HOMEPAGE_CONFIG.footerConfig?.customerCareLinks || [];
+            const exists = raw.some((l: any) => l.href === "/quiz" || l.href?.includes("quiz"));
+            if (exists) return raw;
+            return [
+              ...raw.slice(0, 2),
+              {
+                label: "Routine Finder (Quiz)",
+                labelBn: "রুটিন ফাইন্ডার (কুইজ)",
+                href: "/quiz",
+                isHighlight: true,
+              },
+              ...raw.slice(2),
+            ];
+          })(),
         },
       };
     }

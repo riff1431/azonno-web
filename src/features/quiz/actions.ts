@@ -10,52 +10,253 @@ export interface MatchedProduct {
   sale_price: number | null;
   image_url: string | null;
   brand_name: string | null;
+  step_key: string;
   step_label: string;
   step_description: string;
   country: string | null;
+  match_score?: number;
+  match_reasons?: string[];
+  alternatives?: MatchedProduct[];
 }
 
-const SKIN_CONCERN_KEYWORDS: Record<string, string[]> = {
-  "Clear Skin & Blemishes": ["clarif", "blemish", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clean"],
-  "Pore Clarifying Care": ["clarif", "blemish", "salicylic", "niacinamide", "tea tree", "zinc", "spot", "clean"],
-  "Brightening & Even Tone": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
-  "Brightening & Radiance": ["brighten", "glow", "pigment", "dark spot", "vitamin c", "niacinamide", "arbutin", "radian", "dull", "even tone", "glutathione", "gluta"],
-  "Smoothing & Firming Care": ["firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail", "smooth"],
-  "Smooth Texture & Firmness": ["firm", "retinol", "collagen", "elastic", "plump", "hyaluronic", "revitalift", "snail", "smooth"],
-  "Hydration & Moisture": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
-  "Dryness & Hydration": ["hydrat", "dry", "moistur", "hyaluronic", "dehydrat", "nourish", "water", "supple", "ceramide", "lotion"],
-  "Pore & Oil Care": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
-  "Pore Refining": ["pore", "tighten", "sebum", "bha", "clarif", "clean", "facial wash", "cleanser", "zinc"],
-  "Calming & Soothing Care": ["calm", "sooth", "cica", "centella", "sensitive", "gentle", "comfort", "kind to skin"],
-  "Sun Protection": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
-  "Sun Protection (SPF)": ["sun", "spf", "uv", "sunscreen", "sunblock", "protect", "rice"],
-  "Oil Control": ["oil", "matte", "shine", "sebum", "greas", "balance", "lightweight", "gel", "non-oily", "soap-free"],
-  "Moisture Barrier & Nourishing Care": ["ceramide", "protect", "snail", "mucin", "pro-vitamin", "nourish", "comfort"],
+export interface QuizInput {
+  skinType: string;
+  concerns: string[];
+  categories?: string[];
+  specifications?: string[];
+  budgetRange?: string;
+}
+
+export interface QuizRoutineResult {
+  routineTitle: string;
+  routineSubtitle: string;
+  skinType: string;
+  concernsSummary: string;
+  totalSteps: number;
+  products: MatchedProduct[];
+}
+
+const STEP_DEFINITIONS: Record<
+  string,
+  { labelBn: string; labelEn: string; descBn: string; descEn: string; keywords: string[] }
+> = {
+  cleanser: {
+    labelBn: "ধাপ ১: জেন্টল ক্লিনজার",
+    labelEn: "Step 1: Gentle Cleanser",
+    descBn: "ত্বক পরিষ্কার করে অতিরিক্ত তেল, ধুলোবালি ও মেকআপ দূর করে ত্বককে সতেজ রাখে।",
+    descEn: "Gently washes away impurities and excess sebum without stripping essential skin barrier moisture.",
+    keywords: ["cleanser", "wash", "foam", "face wash", "gel cleanser", "micellar", "cleansing"],
+  },
+  toner: {
+    labelBn: "ধাপ ২: হাইড্রেটিং টোনার / মিস্ট",
+    labelEn: "Step 2: Hydrating Toner & Mist",
+    descBn: "ত্বকের পিএইচ ব্যালান্স ঠিক রাখে এবং পরবর্তী সিরাম শোষণে সাহায্য করে।",
+    descEn: "Preps and balances skin pH while delivering deep initial hydration for better serum absorption.",
+    keywords: ["toner", "mist", "facial water", "skin refiner", "balancing water", "essence toner"],
+  },
+  serum: {
+    labelBn: "ধাপ ৩: নারিশিং বিউটি সিরাম ও এসেন্স",
+    labelEn: "Step 3: Nourishing Beauty Serum & Essence",
+    descBn: "উজ্জ্বলতা ও কোমলতার জন্য প্রয়োজনীয় সক্রিয় পুষ্টি উপাদান ত্বকে পৌঁছে দেয়।",
+    descEn: "Potent botanical and nutrient-rich actives delivering deep nourishment for a smooth, radiant glow.",
+    keywords: ["serum", "ampoule", "essence", "booster", "concentrate", "elixir", "treatment"],
+  },
+  moisturizer: {
+    labelBn: "ধাপ ৪: ময়েশ্চারাইজার ও ব্যারিয়ার ক্রিম",
+    labelEn: "Step 4: Barrier Moisturizer",
+    descBn: "ত্বকে আর্দ্রতা ধরে রেখে স্কিন ব্যারিয়ারকে শক্তিশালী ও সুরক্ষিত রাখে।",
+    descEn: "Locks in hydration and strengthens the natural protective lipid barrier for long-lasting comfort.",
+    keywords: ["cream", "moisturizer", "moisturising", "gel cream", "water gel", "lotion", "emulsion", "barrier cream", "cica cream"],
+  },
+  sunscreen: {
+    labelBn: "ধাপ ৫: সানস্ক্রিন (ইউভি প্রটেকশন)",
+    labelEn: "Step 5: Sunscreen (SPF Protection)",
+    descBn: "রোদের ক্ষতিকর ইউভি রশ্মি থেকে ত্বককে সুরক্ষিত রাখে ও ডার্ক স্পট প্রতিরোধ করে।",
+    descEn: "Essential daily broad-spectrum SPF to shield skin against UVA/UVB rays and keep skin youthful.",
+    keywords: ["sun", "spf", "sunscreen", "sunblock", "uv", "sun relief", "water fit", "sun cream"],
+  },
+  eye_care: {
+    labelBn: "ধাপ ৬: আই কেয়ার (চোখের নিচের যত্ন)",
+    labelEn: "Step 6: Revitalizing Eye Care",
+    descBn: "চোখের নিচের ক্লান্তি ভাব দূর করে রিফ্রেশড লুক দিতে সাহায্য করে।",
+    descEn: "Nourishes the delicate eye contour to reduce the appearance of tiredness and puffiness.",
+    keywords: ["eye", "under eye", "eye cream", "eye serum", "eye patch"],
+  },
+  lip_care: {
+    labelBn: "ধাপ ৭: হাইড্রেটিং লিপ কেয়ার",
+    labelEn: "Step 7: Hydrating Lip Care",
+    descBn: "ঠোঁটের শুষ্কতা দূর করে কোমল ও ময়েশ্চারাইজড রাখে।",
+    descEn: "Restores soft, supple texture and deeply nourishes dry lips.",
+    keywords: ["lip", "lip balm", "lip mask", "lip glow", "lip butter", "lip care"],
+  },
+  exfoliator: {
+    labelBn: "ধাপ ৮: জেন্টল স্কিন রিফ্রেশার (সপ্তাহে ১-২ বার)",
+    labelEn: "Step 8: Gentle Skin Refresher (1-2x Weekly)",
+    descBn: "ত্বকের খসখসে ভাব দূর করে লোমকূপ পরিষ্কার ও টেক্সচার মসৃণ করে।",
+    descEn: "Unclogs surface build-up and refreshes skin for a refined, luminous glow.",
+    keywords: ["peeling", "scrub", "exfoliat", "bha", "aha", "glycolic", "salicylic 2%", "peel"],
+  },
+};
+
+const CONCERN_KEYWORDS: Record<string, string[]> = {
+  acne: ["salicylic", "niacinamide", "tea tree", "zinc", "spot", "clarif", "blemish", "acne", "centella", "cica", "heartleaf"],
+  brightening: ["vitamin c", "niacinamide", "arbutin", "alpha arbutin", "brighten", "glow", "pigment", "dark spot", "glutathione", "radian", "dull", "even tone", "rice", "galactomyces", "tranexamic"],
+  pigmentation: ["vitamin c", "niacinamide", "arbutin", "alpha arbutin", "dark spot", "pigment", "melasma", "discoloration", "tranexamic"],
+  hydration: ["hyaluronic", "hydrat", "water", "moistur", "ceramide", "dry", "panthenol", "glycerin", "snail", "supple", "nourish"],
+  pores: ["pore", "tighten", "sebum", "bha", "salicylic", "clay", "oil control", "matte", "blackhead"],
+  aging: ["retinol", "collagen", "peptide", "firm", "elastic", "wrinkle", "anti-aging", "smooth", "revitalift", "bakuchiol"],
+  soothing: ["cica", "centella", "calm", "sooth", "sensitive", "redness", "aloe", "panthenol", "kind to skin", "heartleaf", "comfort"],
+  barrier: ["ceramide", "barrier", "panthenol", "snail mucin", "pro-vitamin", "lipid", "repair", "comfort"],
+};
+
+const CONCERN_FRIENDLY_LABELS: Record<string, string> = {
+  acne: "Clarifying & Clear Look",
+  brightening: "Radiant Glass Glow",
+  pigmentation: "Even Skin Tone",
+  hydration: "Deep Moisture Boost",
+  pores: "Smooth Pore Refining",
+  aging: "Youthful Elasticity",
+  soothing: "Calming Skin Comfort",
+  barrier: "Moisture Barrier Support",
 };
 
 const SKIN_TYPE_KEYWORDS: Record<string, string[]> = {
-  Oily: ["oily", "sebum", "matte", "oil control", "shine", "gel", "non-oily", "lightweight", "soap-free"],
-  Dry: ["dry", "hydrat", "moistur", "nourish", "cream", "lotion", "hyaluronic", "rich"],
-  Combination: ["combination", "balance", "hydrat", "lightweight", "gel", "all skin"],
-  Sensitive: ["sensitive", "gentle", "sooth", "calm", "cica", "kind to skin", "hypoallergenic", "soap-free", "fragrance-free"],
-  Normal: ["normal", "daily", "all skin", "gentle", "everyday"],
-  "All Skin Types": ["all skin", "gentle", "daily", "suitable for all", "kind to skin"],
+  oily: ["oily", "sebum", "matte", "oil control", "shine", "gel", "non-oily", "lightweight", "soap-free", "water-based"],
+  dry: ["dry", "hydrat", "moistur", "nourish", "cream", "lotion", "hyaluronic", "rich", "ceramide", "intensive"],
+  combo: ["combination", "balance", "hydrat", "lightweight", "gel", "all skin", "daily"],
+  sensitive: ["sensitive", "gentle", "sooth", "calm", "cica", "kind to skin", "hypoallergenic", "soap-free", "fragrance-free", "mild"],
+  normal: ["normal", "daily", "all skin", "gentle", "everyday", "healthy"],
 };
 
-function matchesConcern(product: any, concern: string): boolean {
-  const text = `${product.name} ${product.description || ""} ${product.short_description || ""} ${product.benefits || ""} ${product.ingredients_specifications || ""}`.toLowerCase();
-  const kws = SKIN_CONCERN_KEYWORDS[concern] || [concern.toLowerCase()];
-  return kws.some((k) => text.includes(k.toLowerCase()));
+const K_BEAUTY_BRANDS = [
+  "cosrx",
+  "beauty of joseon",
+  "anua",
+  "skin1004",
+  "round lab",
+  "laneige",
+  "some by mi",
+  "haruharu",
+  "mixsoon",
+  "axis-y",
+  "torriden",
+  "i'm from",
+  "dr. jart",
+  "innisfree",
+  "etude",
+  "purito",
+  "isntree",
+  "pyunkang yul",
+  "tiam",
+];
+
+const UK_EUROPE_BRANDS = [
+  "cerave",
+  "the ordinary",
+  "simple",
+  "neutrogena",
+  "inkey list",
+  "la roche-posay",
+  "cetaphil",
+  "garnier",
+  "bioderma",
+  "l'oreal",
+  "aveeno",
+];
+
+function scoreProduct(
+  product: any,
+  stepKey: string,
+  skinType: string,
+  concerns: string[],
+  specifications: string[],
+  budgetRange?: string
+): { score: number; reasons: string[] } {
+  let score = 0;
+  const reasons: string[] = [];
+  const text = `${product.name} ${product.description || ""} ${product.short_description || ""} ${product.benefits || ""} ${product.ingredients_specifications || ""} ${(product.brands as any)?.name || ""}`.toLowerCase();
+  const brandLower = ((product.brands as any)?.name || "").toLowerCase();
+  const countryLower = (product.country || "").toLowerCase();
+
+  // 1. Category step keyword match (+30 pts)
+  const stepDef = STEP_DEFINITIONS[stepKey];
+  if (stepDef) {
+    const matchesStep = stepDef.keywords.some((k) => text.includes(k.toLowerCase()));
+    if (matchesStep) {
+      score += 30;
+    }
+  }
+
+  // 2. Skin Type match (+20 pts)
+  const skinKeywords = SKIN_TYPE_KEYWORDS[skinType] || [];
+  const matchedSkinKw = skinKeywords.find((k) => text.includes(k.toLowerCase()));
+  if (matchedSkinKw) {
+    score += 20;
+    reasons.push(`Tailored for ${skinType} skin`);
+  }
+
+  // 3. Concerns match (+15 pts per concern)
+  concerns.forEach((concernKey) => {
+    const kws = CONCERN_KEYWORDS[concernKey] || [];
+    const matchedKw = kws.find((k) => text.includes(k.toLowerCase()));
+    if (matchedKw) {
+      score += 15;
+      reasons.push(CONCERN_FRIENDLY_LABELS[concernKey] || `Targeted ${concernKey} care`);
+    }
+  });
+
+  // 4. Specifications match (+15 pts each)
+  specifications.forEach((spec) => {
+    if (spec === "k_beauty") {
+      if (countryLower.includes("korea") || K_BEAUTY_BRANDS.some((b) => brandLower.includes(b))) {
+        score += 18;
+        reasons.push("Authentic K-Beauty");
+      }
+    } else if (spec === "uk_eu") {
+      if (countryLower.includes("uk") || countryLower.includes("united kingdom") || countryLower.includes("france") || countryLower.includes("germany") || UK_EUROPE_BRANDS.some((b) => brandLower.includes(b))) {
+        score += 18;
+        reasons.push("UK / EU Formulation");
+      }
+    } else if (spec === "fragrance_free") {
+      if (text.includes("fragrance-free") || text.includes("unscented") || text.includes("sensitive") || text.includes("kind to skin")) {
+        score += 15;
+        reasons.push("Fragrance-Free / Mild");
+      }
+    } else if (spec === "vegan_cruelty_free") {
+      if (text.includes("vegan") || text.includes("cruelty-free") || text.includes("clean")) {
+        score += 15;
+        reasons.push("Cruelty-Free / Clean");
+      }
+    }
+  });
+
+  // 5. Budget preference
+  const price = product.sale_price || product.regular_price || 0;
+  if (budgetRange === "budget") {
+    if (price <= 1900) score += 10;
+  } else if (budgetRange === "mid") {
+    if (price >= 1500 && price <= 3500) score += 10;
+  } else if (budgetRange === "luxury") {
+    if (price >= 2500) score += 10;
+  }
+
+  return { score, reasons };
 }
 
 export async function getMatchedQuizRoutine(
   skinType: string,
-  concern: string
-): Promise<{
-  routineTitle: string;
-  routineSubtitle: string;
-  products: MatchedProduct[];
-}> {
+  concern: string | string[],
+  categories?: string[],
+  specifications?: string[],
+  budgetRange?: string
+): Promise<QuizRoutineResult> {
+  const concernsList = Array.isArray(concern) ? concern : [concern || "hydration"];
+  const targetCategories =
+    categories && categories.length > 0
+      ? categories
+      : ["cleanser", "serum", "moisturizer", "sunscreen"];
+  const targetSpecs = specifications || [];
+
   try {
     const supabase = await createClient();
 
@@ -77,125 +278,102 @@ export async function getMatchedQuizRoutine(
       `)
       .eq("status", "active")
       .is("deleted_at", null)
-      .limit(30);
+      .limit(60);
 
     if (error || !allProducts || allProducts.length === 0) {
-      return getFallbackRoutine(skinType, concern);
+      return getFallbackRoutine(skinType, concernsList, targetCategories);
     }
 
-    // Step 1: Cleanser
-    const cleanserCandidates = allProducts.filter((p) => {
-      const text = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-      return (
-        text.includes("cleanser") ||
-        text.includes("wash") ||
-        text.includes("foam") ||
-        text.includes("gel cleanser")
-      );
-    });
+    const matchedProducts: MatchedProduct[] = [];
+    const usedProductIds = new Set<string>();
 
-    // Step 2: Serum / Essence
-    const serumCandidates = allProducts.filter((p) => {
-      const text = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-      return (
-        text.includes("serum") ||
-        text.includes("essence") ||
-        text.includes("ampoule") ||
-        text.includes("niacinamide") ||
-        text.includes("snail") ||
-        text.includes("hyaluronic")
-      );
-    });
+    for (const stepKey of targetCategories) {
+      const stepDef = STEP_DEFINITIONS[stepKey];
+      if (!stepDef) continue;
 
-    // Step 3: Moisturizer / Sunscreen
-    const protectCandidates = allProducts.filter((p) => {
-      const text = `${p.name} ${p.short_description || ""} ${p.description || ""}`.toLowerCase();
-      return (
-        text.includes("cream") ||
-        text.includes("moisturi") ||
-        text.includes("gel cream") ||
-        text.includes("sun") ||
-        text.includes("spf") ||
-        text.includes("lotion")
-      );
-    });
+      // Filter products matching this category step
+      const stepCandidates = allProducts
+        .map((p) => {
+          const { score, reasons } = scoreProduct(
+            p,
+            stepKey,
+            skinType,
+            concernsList,
+            targetSpecs,
+            budgetRange
+          );
+          return { product: p, score, reasons };
+        })
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score);
 
-    const chosenCleanser =
-      cleanserCandidates.find((p) =>
-        matchesConcern(p, concern)
-      ) ||
-      cleanserCandidates[0] ||
-      allProducts[0];
-    const chosenSerum =
-      serumCandidates.find(
-        (p) => p.id !== chosenCleanser.id && matchesConcern(p, concern)
-      ) ||
-      serumCandidates.find((p) => p.id !== chosenCleanser.id) ||
-      allProducts.find((p) => p.id !== chosenCleanser.id) ||
-      allProducts[0];
-    const chosenProtect =
-      protectCandidates.find(
-        (p) => p.id !== chosenCleanser.id && p.id !== chosenSerum.id
-      ) ||
-      allProducts.find(
-        (p) => p.id !== chosenCleanser.id && p.id !== chosenSerum.id
-      );
+      // Pick top unused candidate
+      const bestCandidate =
+        stepCandidates.find((c) => !usedProductIds.has(c.product.id)) ||
+        stepCandidates[0] ||
+        null;
 
-    const matchedList: MatchedProduct[] = [];
+      if (bestCandidate) {
+        usedProductIds.add(bestCandidate.product.id);
 
-    if (chosenCleanser) {
-      matchedList.push({
-        id: chosenCleanser.id,
-        name: chosenCleanser.name,
-        slug: chosenCleanser.slug,
-        regular_price: chosenCleanser.regular_price,
-        sale_price: chosenCleanser.sale_price,
-        image_url: chosenCleanser.og_image_url || null,
-        brand_name: (chosenCleanser.brands as any)?.name || null,
-        step_label: "Step 1: Gentle Cleanser",
-        step_description: "Gentle everyday cleanser that washes away dirt and excess oil while leaving skin soft and refreshed.",
-        country: chosenCleanser.country || "Korea / UK",
-      });
+        // Find alternatives for this step
+        const alternatives: MatchedProduct[] = stepCandidates
+          .filter((c) => c.product.id !== bestCandidate.product.id)
+          .slice(0, 2)
+          .map((c) => ({
+            id: c.product.id,
+            name: c.product.name,
+            slug: c.product.slug,
+            regular_price: c.product.regular_price,
+            sale_price: c.product.sale_price,
+            image_url: c.product.og_image_url || null,
+            brand_name: (c.product.brands as any)?.name || null,
+            step_key: stepKey,
+            step_label: stepDef.labelEn,
+            step_description: stepDef.descEn,
+            country: c.product.country || "Korea / UK",
+            match_score: c.score,
+            match_reasons: c.reasons,
+          }));
+
+        matchedProducts.push({
+          id: bestCandidate.product.id,
+          name: bestCandidate.product.name,
+          slug: bestCandidate.product.slug,
+          regular_price: bestCandidate.product.regular_price,
+          sale_price: bestCandidate.product.sale_price,
+          image_url: bestCandidate.product.og_image_url || null,
+          brand_name: (bestCandidate.product.brands as any)?.name || null,
+          step_key: stepKey,
+          step_label: stepDef.labelEn,
+          step_description: stepDef.descEn,
+          country: bestCandidate.product.country || "Korea / UK",
+          match_score: bestCandidate.score,
+          match_reasons: bestCandidate.reasons,
+          alternatives,
+        });
+      }
     }
 
-    if (chosenSerum) {
-      matchedList.push({
-        id: chosenSerum.id,
-        name: chosenSerum.name,
-        slug: chosenSerum.slug,
-        regular_price: chosenSerum.regular_price,
-        sale_price: chosenSerum.sale_price,
-        image_url: chosenSerum.og_image_url || null,
-        brand_name: (chosenSerum.brands as any)?.name || null,
-        step_label: "Step 2: Essence & Serum",
-        step_description: `Lightweight formula that provides daily hydration and helps create a smooth, even-looking complexion.`,
-        country: chosenSerum.country || "Korea / UK",
-      });
+    if (matchedProducts.length === 0) {
+      return getFallbackRoutine(skinType, concernsList, targetCategories);
     }
 
-    if (chosenProtect) {
-      matchedList.push({
-        id: chosenProtect.id,
-        name: chosenProtect.name,
-        slug: chosenProtect.slug,
-        regular_price: chosenProtect.regular_price,
-        sale_price: chosenProtect.sale_price,
-        image_url: chosenProtect.og_image_url || null,
-        brand_name: (chosenProtect.brands as any)?.name || null,
-        step_label: "Step 3: Moisturizer & Protection",
-        step_description: "Lightweight, non-greasy moisturizer that locks in hydration for a soft, comfortable finish all day.",
-        country: chosenProtect.country || "Korea / UK",
-      });
-    }
+    const concernsText = concernsList
+      .map((c) => capitalize(c.replace(/_/g, " ")))
+      .join(" & ");
 
     return {
-      routineTitle: `${capitalize(skinType)} Daily Beauty Routine`,
-      routineSubtitle: `Simple, effective steps chosen to keep your skin feeling fresh, soft, and balanced throughout the day.`,
-      products: matchedList,
+      routineTitle: `${capitalize(skinType)} Skin — ${concernsText || "Daily"} Care Routine`,
+      routineSubtitle: `Personalized ${matchedProducts.length}-step regimen customized for your skin profile, preferences, and daily goals.`,
+      skinType: capitalize(skinType),
+      concernsSummary: concernsText,
+      totalSteps: matchedProducts.length,
+      products: matchedProducts,
     };
   } catch (err) {
     console.error("[getMatchedQuizRoutine Error]:", err);
-    return getFallbackRoutine(skinType, concern);
+    return getFallbackRoutine(skinType, concernsList, targetCategories);
   }
 }
 
@@ -204,35 +382,89 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function getFallbackRoutine(skinType: string, concern: string) {
+function getFallbackRoutine(
+  skinType: string,
+  concerns: string[],
+  categories: string[]
+): QuizRoutineResult {
+  const fallbackPool: Record<string, MatchedProduct> = {
+    cleanser: {
+      id: "prod-cerave-cleanser",
+      name: "CeraVe Hydrating Facial Cleanser 236ml",
+      slug: "cerave-hydrating-facial-cleanser-236ml",
+      regular_price: 2100,
+      sale_price: 1850,
+      image_url: "/product_placeholder.svg",
+      brand_name: "CeraVe",
+      step_key: "cleanser",
+      step_label: "Step 1: Gentle Cleanser",
+      step_description: "Gently cleanses and hydrates skin with 3 essential ceramides without stripping the moisture barrier.",
+      country: "United Kingdom",
+    },
+    toner: {
+      id: "prod-anua-toner",
+      name: "Anua Heartleaf 77% Soothing Toner 250ml",
+      slug: "anua-heartleaf-77-soothing-toner-250ml",
+      regular_price: 1950,
+      sale_price: 1750,
+      image_url: "/product_placeholder.svg",
+      brand_name: "Anua",
+      step_key: "toner",
+      step_label: "Step 2: Hydrating Toner",
+      step_description: "Deeply calms irritated skin, regulates oil-water balance, and prepares skin for deeper hydration.",
+      country: "South Korea",
+    },
+    serum: {
+      id: "prod-snail-96",
+      name: "COSRX Advanced Snail 96 Mucin Power Essence 100ml",
+      slug: "cosrx-advanced-snail-96-mucin-power-essence-100ml",
+      regular_price: 1650,
+      sale_price: 1450,
+      image_url: "/product_placeholder.svg",
+      brand_name: "COSRX",
+      step_key: "serum",
+      step_label: "Step 3: Core Essence & Serum",
+      step_description: "Enriched with 96% snail secretion filtrate to repair skin texture and deliver radiant elasticity.",
+      country: "South Korea",
+    },
+    moisturizer: {
+      id: "prod-boj-red-bean",
+      name: "Beauty of Joseon Red Bean Water Gel 100ml",
+      slug: "beauty-of-joseon-red-bean-water-gel-100ml",
+      regular_price: 1850,
+      sale_price: 1600,
+      image_url: "/product_placeholder.svg",
+      brand_name: "Beauty of Joseon",
+      step_key: "moisturizer",
+      step_label: "Step 4: Barrier Moisturizer",
+      step_description: "Lightweight, refreshing water gel moisturizer that hydrates without any sticky or greasy feeling.",
+      country: "South Korea",
+    },
+    sunscreen: {
+      id: "prod-boj-sunscreen",
+      name: "Beauty of Joseon Relief Sun : Rice + Probiotics SPF50+ 50ml",
+      slug: "beauty-of-joseon-relief-sun-rice-probiotics-spf50-50ml",
+      regular_price: 1650,
+      sale_price: 1450,
+      image_url: "/product_placeholder.svg",
+      brand_name: "Beauty of Joseon",
+      step_key: "sunscreen",
+      step_label: "Step 5: Sunscreen (SPF50+ PA++++)",
+      step_description: "Organic chemical sunscreen that applies gently on skin with zero white cast and skin-calming ingredients.",
+      country: "South Korea",
+    },
+  };
+
+  const selectedList = categories
+    .map((catKey) => fallbackPool[catKey])
+    .filter(Boolean);
+
   return {
-    routineTitle: `Personalized Daily Skincare Routine`,
-    routineSubtitle: `A simple, gentle routine to keep skin soft, hydrated, and looking naturally fresh.`,
-    products: [
-      {
-        id: "prod-cerave-cleanser",
-        name: "CeraVe Hydrating Facial Cleanser 236ml",
-        slug: "cerave-hydrating-facial-cleanser-236ml",
-        regular_price: 2100,
-        sale_price: 1850,
-        image_url: "/product_placeholder.svg",
-        brand_name: "CeraVe",
-        step_label: "Step 1: Gentle Cleanser",
-        step_description: "Gently cleanses and hydrates skin with essential ceramides for a fresh, comfortable feel.",
-        country: "United Kingdom",
-      },
-      {
-        id: "prod-snail-96",
-        name: "COSRX Advanced Snail 96 Mucin Power Essence",
-        slug: "cosrx-advanced-snail-96-mucin-power-essence",
-        regular_price: 1500,
-        sale_price: 1365,
-        image_url: "/product_placeholder.svg",
-        brand_name: "COSRX",
-        step_label: "Step 2: Core Essence",
-        step_description: "Lightweight essence with snail mucin that delivers deep hydration for a smooth, natural-looking glow.",
-        country: "South Korea",
-      },
-    ],
+    routineTitle: `${capitalize(skinType)} Daily Personalized Routine`,
+    routineSubtitle: `Tailored skincare steps matching your skin profile and preferences.`,
+    skinType: capitalize(skinType),
+    concernsSummary: concerns.join(", "),
+    totalSteps: selectedList.length,
+    products: selectedList,
   };
 }

@@ -521,7 +521,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
               </>
             )}
             <Link
-              href={config.routineFinderHref || "/products?category=skin-care"}
+              href={config.routineFinderHref || "/quiz"}
               className="flex items-center gap-1 text-pink-300 hover:text-white transition-colors text-xs font-bold"
             >
               <Sparkles className="h-3 w-3 text-pink-400" />
@@ -529,7 +529,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             </Link>
             <span className="hidden md:inline text-zinc-700">|</span>
             <Link
-              href={config.trackOrderHref || "/account/orders"}
+              href={config.trackOrderHref || "/track-order"}
               className="hidden md:flex items-center gap-1 hover:text-white transition-colors"
             >
               <Truck className="h-3 w-3" />
