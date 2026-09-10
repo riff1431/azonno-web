@@ -390,7 +390,44 @@ export async function getCMSPages(): Promise<CMSPageItem[]> {
       .order("created_at", { ascending: false });
 
     if (!error && data && data.length > 0) {
-      return data as CMSPageItem[];
+      // Merge with DEFAULT_CMS_PAGES to ensure default policies have full rich content if DB has dummy placeholder
+      const merged = data.map((item: any) => {
+        const defaultMatch = DEFAULT_CMS_PAGES.find(
+          (d) => d.slug === item.slug || d.id === item.id
+        );
+        if (
+          defaultMatch &&
+          (!item.content ||
+            item.content.length < 350 ||
+            item.content.includes("ecomXbangladesh") ||
+            item.content.includes("Your privacy is of the utmost"))
+        ) {
+          // Asynchronously update Supabase in background
+          try {
+            const adminClient = createAdminClient();
+            adminClient
+              .from("pages")
+              .update({
+                title: defaultMatch.title,
+                content: defaultMatch.content,
+                seo_title: defaultMatch.seo_title,
+                seo_description: defaultMatch.seo_description,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", item.id);
+          } catch (e) {}
+          return { ...item, ...defaultMatch };
+        }
+        return item as CMSPageItem;
+      });
+
+      // Also ensure all default pages exist in the list
+      for (const def of DEFAULT_CMS_PAGES) {
+        if (!merged.some((m: any) => m.slug === def.slug)) {
+          merged.push(def);
+        }
+      }
+      return merged as CMSPageItem[];
     }
   } catch (e) {}
 
@@ -417,6 +454,8 @@ export async function getCMSPageBySlug(slug: string): Promise<CMSPageItem | null
     }
   }
 
+  const defaultMatch = DEFAULT_CMS_PAGES.find((p) => candidates.includes(p.slug.toLowerCase().trim()));
+
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -427,11 +466,40 @@ export async function getCMSPageBySlug(slug: string): Promise<CMSPageItem | null
       .limit(1);
 
     if (!error && data && data.length > 0) {
-      return data[0] as CMSPageItem;
+      const page = data[0] as CMSPageItem;
+      // If DB has short placeholder dummy text, override and sync with real comprehensive content
+      if (
+        defaultMatch &&
+        (!page.content ||
+          page.content.length < 350 ||
+          page.content.includes("ecomXbangladesh") ||
+          page.content.includes("Your privacy is of the utmost"))
+      ) {
+        try {
+          const adminClient = createAdminClient();
+          adminClient
+            .from("pages")
+            .update({
+              title: defaultMatch.title,
+              content: defaultMatch.content,
+              seo_title: defaultMatch.seo_title,
+              seo_description: defaultMatch.seo_description,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", page.id);
+        } catch (e) {}
+        return {
+          ...page,
+          title: defaultMatch.title,
+          content: defaultMatch.content,
+          seo_title: defaultMatch.seo_title,
+          seo_description: defaultMatch.seo_description,
+        };
+      }
+      return page;
     }
   } catch (e) {}
 
-  const defaultMatch = DEFAULT_CMS_PAGES.find((p) => candidates.includes(p.slug.toLowerCase().trim()));
   if (defaultMatch) {
     return defaultMatch;
   }
