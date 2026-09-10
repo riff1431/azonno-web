@@ -234,7 +234,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} lang-bn`}>
+    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} lang-bn`} suppressHydrationWarning>
       <head>
         {/* Dynamic Favicon & Mobile App Icons */}
         {seoSettings?.favicon_url ? (
@@ -284,7 +284,7 @@ export default async function RootLayout({
           />
         )}
       </head>
-      <body className="min-h-screen bg-white antialiased">
+      <body className="min-h-screen bg-white antialiased" suppressHydrationWarning>
         {/* Custom Body Top Scripts (Immediately after <body>) */}
         {customScripts.is_enabled && customScripts.body_top_scripts && (
           <div
