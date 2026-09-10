@@ -434,7 +434,11 @@ export default function InvoicePrintClient({
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
     doc.setTextColor(233, 30, 99);
-    doc.text("TAX INVOICE", 195, 20, { align: "right" });
+    const pdfInvoiceTitle =
+      invoiceSettings?.invoice_title && invoiceSettings.invoice_title !== "TAX INVOICE"
+        ? invoiceSettings.invoice_title
+        : "INVOICE";
+    doc.text(pdfInvoiceTitle, 195, 20, { align: "right" });
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.setTextColor(70, 70, 70);
@@ -652,7 +656,10 @@ export default function InvoicePrintClient({
   // Translations dictionary for full Bangla / English
   const t = {
     en: {
-      invoiceTitle: invoiceSettings?.invoice_title || "TAX INVOICE",
+      invoiceTitle:
+        invoiceSettings?.invoice_title && invoiceSettings.invoice_title !== "TAX INVOICE"
+          ? invoiceSettings.invoice_title
+          : "INVOICE",
       invoiceTo: "INVOICE TO:",
       date: "Date:",
       invoiceNo: "Invoice No:",
@@ -687,7 +694,7 @@ export default function InvoicePrintClient({
       doNotShip: "FRAGILE • PLEASE INSPECT PARCEL BEFORE ACCEPTING",
       scanToTrack: "Scan to track parcel",
       orderDate: "ORDER DATE:",
-      tabA4: "A4 Tax Invoice",
+      tabA4: "A4 Invoice",
       tabThermal: "4×6 Thermal Label",
       downloadPdf: "Download PDF",
       printA4Btn: "Print A4 Invoice",
@@ -695,7 +702,12 @@ export default function InvoicePrintClient({
       closeWindow: "Close Window",
     },
     bn: {
-      invoiceTitle: invoiceSettings?.invoice_title ? invoiceSettings.invoice_title : "ট্যাক্স ইনভয়েস",
+      invoiceTitle:
+        invoiceSettings?.invoice_title &&
+        invoiceSettings.invoice_title !== "TAX INVOICE" &&
+        invoiceSettings.invoice_title !== "ট্যাক্স ইনভয়েস"
+          ? invoiceSettings.invoice_title
+          : "ইনভয়েস",
       invoiceTo: "প্রাপক / কাস্টমার:",
       date: "তারিখ:",
       invoiceNo: "ইনভয়েস নং:",
@@ -730,7 +742,7 @@ export default function InvoicePrintClient({
       doNotShip: "সাবধানে হ্যান্ডেল করুন • ডেলিভারির সময় চেক করুন",
       scanToTrack: "পার্সেল ট্র্যাক করতে স্ক্যান করুন",
       orderDate: "অর্ডার তারিখ:",
-      tabA4: "A4 ট্যাক্স ইনভয়েস",
+      tabA4: "A4 ইনভয়েস",
       tabThermal: "৪×৬ থার্মাল লেবেল",
       downloadPdf: "পিডিএফ ডাউনলোড",
       printA4Btn: "ইনভয়েস প্রিন্ট",

@@ -7,7 +7,7 @@ import { getCMSPages } from "@/features/pages/actions";
 export const revalidate = 3600; // Cache and regenerate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
   const supabase = createAdminClient();
 
   // 1. High-Value Indexable Static Routes

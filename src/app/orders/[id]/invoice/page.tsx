@@ -6,7 +6,7 @@ import InvoicePrintClient from "@/app/admin/orders/[id]/invoice/invoice-print-cl
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tax Invoice & Thermal Label",
+  title: "Invoice & Thermal Label",
   robots: { index: false, follow: false },
 };
 

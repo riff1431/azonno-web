@@ -17,7 +17,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
 
   const { data: product } = await supabase
     .from("products")
@@ -127,7 +127,7 @@ export default async function ProductDetailPage({
       ? productReviews.reduce((sum: number, r: any) => sum + (Number(r.rating) || 5), 0) / realReviewsCount
       : 0;
 
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
   const productUrl = `${baseUrl}/products/${product.slug}`;
   const images = (product.product_media || [])
     .map((pm: any) => pm.media?.secure_url)

@@ -35,6 +35,9 @@ export interface CheckoutAndFraudSettings {
   is_bkash_enabled?: boolean;
   is_nagad_enabled?: boolean;
   is_sslcommerz_enabled?: boolean;
+  is_stripe_enabled?: boolean;
+  is_paypal_enabled?: boolean;
+  is_bank_transfer_enabled?: boolean;
 }
 
 const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
@@ -62,6 +65,9 @@ const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
   is_bkash_enabled: true,
   is_nagad_enabled: false,
   is_sslcommerz_enabled: true,
+  is_stripe_enabled: false,
+  is_paypal_enabled: false,
+  is_bank_transfer_enabled: false,
 };
 
 /**
@@ -69,12 +75,15 @@ const DEFAULT_SETTINGS: CheckoutAndFraudSettings = {
  */
 export async function getCheckoutAndFraudSettings(): Promise<CheckoutAndFraudSettings> {
   try {
-    const [data, isCod, isBkash, isNagad, isSsl] = await Promise.all([
+    const [data, isCod, isBkash, isNagad, isSsl, isStripe, isPaypal, isBank] = await Promise.all([
       getSettingsByGroup("checkout_fraud"),
       isModuleEnabled("cod").catch(() => true),
       isModuleEnabled("bkash").catch(() => true),
       isModuleEnabled("nagad").catch(() => false),
       isModuleEnabled("sslcommerz").catch(() => true),
+      isModuleEnabled("stripe").catch(() => false),
+      isModuleEnabled("paypal").catch(() => false),
+      isModuleEnabled("bank_transfer").catch(() => false),
     ]);
 
     return {
@@ -102,6 +111,9 @@ export async function getCheckoutAndFraudSettings(): Promise<CheckoutAndFraudSet
       is_bkash_enabled: isBkash,
       is_nagad_enabled: isNagad,
       is_sslcommerz_enabled: isSsl,
+      is_stripe_enabled: isStripe,
+      is_paypal_enabled: isPaypal,
+      is_bank_transfer_enabled: isBank,
     };
   } catch (e) {
     return DEFAULT_SETTINGS;

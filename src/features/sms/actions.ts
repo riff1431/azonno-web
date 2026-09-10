@@ -216,7 +216,7 @@ export async function sendSmsNotification(input: {
     store_name: "Blush & Budget",
     discount_code: "BLUSH5",
     coupon_code: "BLUSH5",
-    store_url: getBaseUrl() || "https://blushbudget.com",
+    store_url: getBaseUrl(),
     customer_name: "সম্মানিত গ্রাহক",
     ...input.variables,
   };

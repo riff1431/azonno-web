@@ -57,7 +57,9 @@ export async function getSeoSettings() {
 export async function saveSeoSettings(settings: Partial<SeoSettingsPayload> | Record<string, any>) {
   await updateGroupSettings("seo", settings);
   revalidatePath("/admin/settings/seo");
+  revalidatePath("/admin", "layout");
   revalidatePath("/", "layout");
+  revalidatePath("/favicon.ico");
   revalidatePath("/");
   return { success: true };
 }
@@ -131,7 +133,10 @@ export async function getInvoiceSettings(): Promise<InvoiceSettings> {
     invoice_website: settings.invoice_website || getBaseUrl() || "",
     invoice_tax_id_or_bin: settings.invoice_tax_id_or_bin || "BIN: 002349182-0101",
 
-    invoice_title: settings.invoice_title || "TAX INVOICE",
+    invoice_title:
+      settings.invoice_title && settings.invoice_title !== "TAX INVOICE"
+        ? settings.invoice_title
+        : "INVOICE",
     invoice_accent_color: settings.invoice_accent_color || "#e91e63",
     invoice_footer_notes:
       settings.invoice_footer_notes ||

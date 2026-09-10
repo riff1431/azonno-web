@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { Button } from "@/components/shared/ui/button";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { formatPrice } from "@/lib/utils";
 import { sendSmsNotification } from "@/features/sms/actions";
 import { createOrderFromAbandonedLead, getAbandonedCheckouts } from "@/features/fraud/actions";
@@ -46,6 +47,29 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     getWhatsAppTemplates()
       .then((tpls) => setWaTemplates(tpls))
       .catch((err) => console.warn("Could not load WhatsApp templates:", err));
+  }, []);
+
+  // Sync state with server prop
+  useEffect(() => {
+    setCheckouts(initialCheckouts);
+  }, [initialCheckouts]);
+
+  // Real-time live polling (every 2.5 seconds) so leads pop up live as customers type on checkout
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const data = await getAbandonedCheckouts();
+        setCheckouts((prev) => {
+          // Compare if length or latest active lead changed to avoid unnecessary re-renders
+          if (JSON.stringify(prev) !== JSON.stringify(data)) {
+            return data;
+          }
+          return prev;
+        });
+      } catch {}
+    }, 2500);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleRefresh = async () => {
@@ -134,7 +158,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
                     title="Recover via WhatsApp"
                     className="text-emerald-600 hover:text-emerald-700 font-bold"
                   >
-                    <MessageCircle className="h-4 w-4" />
+                    <WhatsAppIcon className="h-4 w-4 fill-current" />
                   </a>
                   <a
                     href={`tel:${row.customer_phone}`}
@@ -243,9 +267,9 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] h-7 px-2.5 shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] h-7 px-2.5 shadow-xs transition-colors"
             >
-              <MessageCircle className="h-3 w-3" /> WhatsApp
+              <WhatsAppIcon className="h-3.5 w-3.5 fill-white" /> WhatsApp
             </a>
 
             <Button

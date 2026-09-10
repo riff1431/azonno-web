@@ -49,6 +49,7 @@ import { trackCancelOrder, trackRefund } from "@/lib/analytics/datalayer";
 import { getAvailableNextStatuses, OrderStatus, generateWhatsAppOrderMessage } from "@/types/orders";
 import { BDCourierBadge } from "@/features/fraud/bdcourier-badge";
 import { getWhatsAppTemplates, type WhatsAppTemplate } from "@/features/communication/whatsapp-actions";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface OrderListClientProps {
@@ -1383,7 +1384,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                               title="WhatsApp Instant Messages"
                               className="p-1 rounded-md text-emerald-600 hover:bg-emerald-50"
                             >
-                              <MessageCircle className="h-3.5 w-3.5" />
+                              <WhatsAppIcon className="h-3.5 w-3.5 fill-current" />
                             </button>
 
                             {openWhatsAppId === ord.id && (
@@ -1991,7 +1992,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           title="WhatsApp Options"
                           className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
                         >
-                          <MessageCircle className="h-3.5 w-3.5" />
+                          <WhatsAppIcon className="h-3.5 w-3.5 fill-current" />
                         </button>
 
                         {openWhatsAppId === ord.id && (

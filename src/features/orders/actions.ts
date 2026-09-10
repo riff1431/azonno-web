@@ -7,12 +7,14 @@ import { getStoreFeatureSettings } from "@/features/settings/feature-settings-ac
 import { sendSmsNotification } from "@/features/sms/actions";
 import { generateOrderNumber, extractClientIp, getShortProductId, buildCourierTrackingUrl } from "@/lib/utils";
 import { isModuleEnabled } from "@/lib/settings/config-service";
+import { markLeadConverted } from "@/features/fraud/actions";
 
 export interface CreateOrderInput {
   customer: {
     name: string;
     phone: string;
     email?: string;
+    division?: string;
     district: string;
     thana: string;
     address: string;
@@ -287,38 +289,74 @@ export async function createOrder(input: CreateOrderInput) {
 
     if (!orderUserId) {
       const customerEmail = (input.customer.email?.trim() || `${verifiedPhone}@customer.blushbudget.com`).toLowerCase();
+      const standardPassword = `Blush@${verifiedPhone.slice(-6)}`;
 
       try {
-        // Check if user with phone or email already exists in profiles
+        // 1. Check if user with phone or email already exists in profiles
         const { data: existingProfile } = await supabaseAdmin
           .from("profiles")
-          .select("id, email, phone")
-          .or(`phone.eq.${verifiedPhone},email.eq.${customerEmail}`)
+          .select("id, email, phone, full_name")
+          .or(`phone.eq.${verifiedPhone},phone.eq.+88${verifiedPhone},email.eq.${customerEmail}`)
           .maybeSingle();
 
         if (existingProfile) {
           orderUserId = existingProfile.id;
-        } else {
-          // Automatically create customer user in Supabase Auth
-          const tempPassword = `Blush#${Math.random().toString(36).slice(-6)}!${verifiedPhone.slice(-4)}`;
-          const { data: createdAuthUser, error: authCreateErr } = await supabaseAdmin.auth.admin.createUser({
-            email: customerEmail,
-            password: tempPassword,
-            email_confirm: true,
+          
+          // Get actual primary email from Auth user
+          const { data: authUserData } = await supabaseAdmin.auth.admin.getUserById(existingProfile.id);
+          const primaryEmail = authUserData?.user?.email || existingProfile.email || customerEmail;
+
+          // Always synchronize standard password so client signInWithPassword succeeds immediately
+          await supabaseAdmin.auth.admin.updateUserById(existingProfile.id, {
+            password: standardPassword,
             user_metadata: {
+              ...(authUserData?.user?.user_metadata || {}),
               full_name: input.customer.name,
               phone: verifiedPhone,
-              auto_created: true,
-              has_custom_password: false,
             },
           });
 
-          if (!authCreateErr && createdAuthUser?.user) {
-            orderUserId = createdAuthUser.user.id;
+          // Update profile with newest details
+          await supabaseAdmin.from("profiles").update({
+            full_name: input.customer.name,
+            phone: verifiedPhone,
+            ...(input.customer.email?.trim() ? { email: input.customer.email.trim().toLowerCase() } : {}),
+            updated_at: new Date().toISOString(),
+          }).eq("id", orderUserId);
+
+          autoCreatedAccount = {
+            email: primaryEmail,
+            tempPassword: standardPassword,
+            isNewUser: false,
+          };
+        } else {
+          // 2. Check if user exists in auth.users by email or phone
+          const { data: listData } = await supabaseAdmin.auth.admin.listUsers();
+          const foundUser = listData?.users?.find(
+            (u: any) =>
+              u.email?.toLowerCase() === customerEmail ||
+              u.phone === verifiedPhone ||
+              u.phone === `+88${verifiedPhone}` ||
+              u.user_metadata?.phone === verifiedPhone ||
+              u.user_metadata?.phone === `+88${verifiedPhone}` ||
+              (u.email && u.email.startsWith(verifiedPhone + "@"))
+          );
+
+          if (foundUser) {
+            orderUserId = foundUser.id;
+            await supabaseAdmin.auth.admin.updateUserById(foundUser.id, {
+              password: standardPassword,
+              user_metadata: {
+                ...(foundUser.user_metadata || {}),
+                full_name: input.customer.name,
+                phone: verifiedPhone,
+              },
+            });
+
             await supabaseAdmin.from("profiles").upsert(
               {
                 id: orderUserId,
-                email: customerEmail,
+                email: foundUser.email || customerEmail,
                 full_name: input.customer.name,
                 phone: verifiedPhone,
                 role: "customer",
@@ -328,14 +366,61 @@ export async function createOrder(input: CreateOrderInput) {
             );
 
             autoCreatedAccount = {
-              email: customerEmail,
-              tempPassword: tempPassword,
-              isNewUser: true,
+              email: foundUser.email || customerEmail,
+              tempPassword: standardPassword,
+              isNewUser: false,
             };
+          } else {
+            // 3. Automatically create new customer user in Supabase Auth
+            const { data: createdAuthUser, error: authCreateErr } = await supabaseAdmin.auth.admin.createUser({
+              email: customerEmail,
+              password: standardPassword,
+              email_confirm: true,
+              user_metadata: {
+                full_name: input.customer.name,
+                phone: verifiedPhone,
+                auto_created: true,
+                has_custom_password: false,
+              },
+            });
+
+            if (!authCreateErr && createdAuthUser?.user) {
+              orderUserId = createdAuthUser.user.id;
+              await supabaseAdmin.from("profiles").upsert(
+                {
+                  id: orderUserId,
+                  email: customerEmail,
+                  full_name: input.customer.name,
+                  phone: verifiedPhone,
+                  role: "customer",
+                  updated_at: new Date().toISOString(),
+                },
+                { onConflict: "id" }
+              );
+
+              autoCreatedAccount = {
+                email: customerEmail,
+                tempPassword: standardPassword,
+                isNewUser: true,
+              };
+            }
           }
         }
       } catch (authErr) {
-        console.warn("Auto account creation warning (proceeding with guest order):", authErr);
+        console.warn("Auto account creation warning (proceeding with order):", authErr);
+      }
+    }
+
+    // Retroactively link all previous unlinked guest orders placed with this phone number to the customer account
+    if (orderUserId && verifiedPhone) {
+      try {
+        await supabaseAdmin
+          .from("orders")
+          .update({ user_id: orderUserId, is_guest: false })
+          .or(`guest_phone.eq.${verifiedPhone},guest_phone.eq.+88${verifiedPhone}`)
+          .is("user_id", null);
+      } catch (linkErr) {
+        console.warn("Retroactive order linking warning:", linkErr);
       }
     }
 
@@ -432,6 +517,50 @@ export async function createOrder(input: CreateOrderInput) {
       created_by: user?.id || null,
     });
 
+    // 9.1 Auto-save customer address to addresses table & sync profile for 1-click future checkouts
+    if (orderUserId) {
+      try {
+        await supabaseAdmin.from("profiles").update({
+          phone: verifiedPhone,
+          full_name: input.customer.name,
+          updated_at: new Date().toISOString(),
+        }).eq("id", orderUserId);
+
+        const { data: existingAddresses } = await supabaseAdmin
+          .from("addresses")
+          .select("id")
+          .eq("user_id", orderUserId)
+          .limit(1);
+
+        if (!existingAddresses || existingAddresses.length === 0) {
+          await supabaseAdmin.from("addresses").insert({
+            user_id: orderUserId,
+            name: input.customer.name,
+            phone: verifiedPhone,
+            division: input.customer.division || "Dhaka",
+            district: input.customer.district || "Dhaka City",
+            thana: input.customer.thana || "Gulshan",
+            area: input.customer.thana || "Gulshan",
+            address_line: input.customer.address,
+            is_default: true,
+          });
+        } else {
+          await supabaseAdmin.from("addresses").update({
+            name: input.customer.name,
+            phone: verifiedPhone,
+            division: input.customer.division || "Dhaka",
+            district: input.customer.district || "Dhaka City",
+            thana: input.customer.thana || "Gulshan",
+            area: input.customer.thana || "Gulshan",
+            address_line: input.customer.address,
+            updated_at: new Date().toISOString(),
+          }).eq("id", existingAddresses[0].id);
+        }
+      } catch (addrErr) {
+        console.warn("Auto-saving address warning:", addrErr);
+      }
+    }
+
     // 10. Update Coupon Usage if applicable
     if (appliedCoupon) {
       await supabaseAdmin.from("coupon_usage").insert({
@@ -462,6 +591,10 @@ export async function createOrder(input: CreateOrderInput) {
           tracking_url: `/account/track?order=${order.order_number}`,
         },
       }).catch((e) => console.error("SMS notification trigger failed:", e));
+    }
+
+    if (input.customer.phone) {
+      markLeadConverted(input.customer.phone).catch(() => null);
     }
 
     return {

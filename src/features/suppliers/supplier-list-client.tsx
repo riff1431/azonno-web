@@ -6,6 +6,7 @@ import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
 import { DataTable, type Column } from "@/components/admin/data-table";
+import { FinanceSubNav } from "@/components/admin/finance/finance-sub-nav";
 import { saveSupplier, deleteSupplier, type SupplierItem } from "./actions";
 import { useAdminLang } from "@/lib/admin-lang-context";
 
@@ -196,6 +197,8 @@ export function SupplierListClient({ initialSuppliers }: SupplierListClientProps
 
   return (
     <div className="space-y-6 max-w-6xl">
+      <FinanceSubNav />
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
           <h1 className="text-2xl font-bold text-text">{t("supplier_management")}</h1>

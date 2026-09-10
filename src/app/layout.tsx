@@ -36,8 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = headerList?.get("x-forwarded-host") || headerList?.get("host") || "";
   const proto = headerList?.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
   const requestUrl = host ? `${proto}://${host}` : undefined;
-
-  const siteUrl = seo?.canonical_url || store?.store_url || requestUrl || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://blushbudget.com";
+  const siteUrl = seo?.canonical_url || store?.store_url || requestUrl || getBaseUrl();
   const storeName = store?.store_name || "Blush & Budget";
   const title = seo?.meta_title || `${storeName} | 100% Authentic Cosmetics & Skincare in Bangladesh`;
   const description =
@@ -73,9 +72,12 @@ export async function generateMetadata(): Promise<Metadata> {
       ? { google: customScripts.google_site_verification }
       : undefined,
     icons: {
-      icon: seo?.favicon_url ? [{ url: seo.favicon_url }] : [{ url: "/favicon.ico" }],
-      apple: seo?.apple_touch_icon_url ? [{ url: seo.apple_touch_icon_url }] : undefined,
-      shortcut: seo?.favicon_url ? [{ url: seo.favicon_url }] : undefined,
+      icon: [
+        { url: seo?.favicon_url || "/favicon.ico", sizes: "any" },
+        ...(seo?.android_icon_url ? [{ url: seo.android_icon_url, sizes: "192x192", type: "image/png" }] : []),
+      ],
+      apple: seo?.apple_touch_icon_url ? [{ url: seo.apple_touch_icon_url, sizes: "180x180" }] : undefined,
+      shortcut: [seo?.favicon_url || "/favicon.ico"],
     },
     keywords: seo?.meta_keywords
       ? seo.meta_keywords.split(",").map((k: string) => k.trim()).filter(Boolean)
@@ -136,7 +138,7 @@ export default async function RootLayout({
   let storeName = "Blush & Budget";
   let storeDesc = "Premier retail e-commerce shop for 100% authentic cosmetics, skincare, and makeup products in Bangladesh.";
   let storeCurrency = "BDT";
-  let dynamicSiteUrl = "https://blushbudget.com";
+  let dynamicSiteUrl = getBaseUrl();
   let storeEmail = "support@blushbudget.com";
   let storePhone = "+880 1700-000000";
 
@@ -152,8 +154,11 @@ export default async function RootLayout({
     custom_head_tags: "",
   };
 
+  let seoSettings: any = null;
+
   try {
-    const [metaSettings, ttSettings, storeSettings, fetchedCustomScripts, headerList] = await Promise.all([
+    const [fetchedSeo, metaSettings, ttSettings, storeSettings, fetchedCustomScripts, headerList] = await Promise.all([
+      getSeoSettings().catch(() => null),
       getMarketingAnalyticsSettings().catch(() => null),
       getTikTokSettings().catch(() => null),
       getStoreSettings().catch(() => null),
@@ -161,6 +166,7 @@ export default async function RootLayout({
       headers().catch(() => null),
     ]);
 
+    if (fetchedSeo) seoSettings = fetchedSeo;
     if (fetchedCustomScripts) customScripts = fetchedCustomScripts;
 
     const host = headerList?.get("x-forwarded-host") || headerList?.get("host") || "";
@@ -173,7 +179,7 @@ export default async function RootLayout({
     if (storeSettings?.store_phone) storePhone = storeSettings.store_phone;
     if (storeSettings?.description) storeDesc = storeSettings.description;
 
-    dynamicSiteUrl = storeSettings?.store_url || reqUrl || getBaseUrl() || "https://blushbudget.com";
+    dynamicSiteUrl = storeSettings?.store_url || reqUrl || getBaseUrl();
 
     initialConfig = {
       meta_pixel_id: metaSettings?.meta_pixel_id || initialConfig.meta_pixel_id,
@@ -189,7 +195,7 @@ export default async function RootLayout({
     };
   } catch {
     // Non-blocking fallback to defaults
-    dynamicSiteUrl = getBaseUrl() || "https://blushbudget.com";
+    dynamicSiteUrl = getBaseUrl();
   }
 
   const websiteSchema = {
@@ -230,6 +236,22 @@ export default async function RootLayout({
   return (
     <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} lang-bn`}>
       <head>
+        {/* Dynamic Favicon & Mobile App Icons */}
+        {seoSettings?.favicon_url ? (
+          <>
+            <link rel="icon" href={seoSettings.favicon_url} sizes="any" />
+            <link rel="shortcut icon" href={seoSettings.favicon_url} />
+          </>
+        ) : (
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+        )}
+        {seoSettings?.apple_touch_icon_url && (
+          <link rel="apple-touch-icon" sizes="180x180" href={seoSettings.apple_touch_icon_url} />
+        )}
+        {seoSettings?.android_icon_url && (
+          <link rel="icon" type="image/png" sizes="192x192" href={seoSettings.android_icon_url} />
+        )}
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}

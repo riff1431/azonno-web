@@ -1,28 +1,27 @@
 "use client";
 
+import { useEffect } from "react";
 import Script from "next/script";
 import { usePathname } from "next/navigation";
+import { getResolvedCustomerIdentity } from "@/lib/analytics/customer-identity";
 
 declare global {
   interface Window {
     fbq: any;
     _fbq: any;
     __META_PIXEL_ID__?: string;
+    __META_TEST_CODE__?: string;
   }
 }
 
-// Helper to extract cookie value
 function getCookie(name: string): string | undefined {
   if (typeof document === "undefined") return undefined;
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
   return match ? decodeURIComponent(match[2]) : undefined;
 }
 
-// In-memory sliding window deduplication for Meta Pixel events
 const recentMetaEventTimestamps = new Map<string, number>();
 const META_DEDUP_WINDOW_MS = 1200;
-
-import { useEffect } from "react";
 
 export function MetaPixel({ pixelId: propPixelId }: { pixelId?: string } = {}) {
   const pathname = usePathname();
@@ -190,29 +189,34 @@ export function trackMetaEvent(
     cleanParams.value = Number(cleanParams.value) || 0;
   }
 
-  // 4. Fire Browser Meta Pixel (using official track for standard events and trackCustom for custom events)
+  // 4. Resolve rich persistent customer identity & ad identifiers for EMQ 9.0+ / 10/10
+  const resolvedIdentity = getResolvedCustomerIdentity(customerData);
+
+  // 4.1. Fire Browser Meta Pixel with Advanced Matching
   const fbq = getOrInitFbq();
   if (fbq) {
-    if (customerData) {
-      const advancedData: Record<string, any> = {};
-      if (customerData.email) advancedData.em = customerData.email.trim().toLowerCase();
-      if (customerData.phone) {
-        let digits = customerData.phone.replace(/\D/g, "");
-        if (digits.startsWith("01") && digits.length === 11) digits = "88" + digits;
-        advancedData.ph = digits;
-      }
-      if (customerData.first_name || customerData.firstName) advancedData.fn = (customerData.first_name || customerData.firstName).trim().toLowerCase();
-      if (customerData.last_name || customerData.lastName) advancedData.ln = (customerData.last_name || customerData.lastName).trim().toLowerCase();
-      if (customerData.city || customerData.district) advancedData.ct = (customerData.city || customerData.district).trim().toLowerCase();
-      if (customerData.country) advancedData.country = (customerData.country || "bd").trim().toLowerCase();
-      if (customerData.external_id || customerData.user_id || customerData.id) advancedData.external_id = String(customerData.external_id || customerData.user_id || customerData.id);
+    const advancedData: Record<string, any> = {
+      country: "bd",
+      external_id: resolvedIdentity.externalId,
+      fbp: resolvedIdentity.fbp,
+    };
 
-      if (Object.keys(advancedData).length > 0) {
-        try {
-          fbq("set", "userData", advancedData);
-        } catch {}
-      }
+    if (resolvedIdentity.fbc) advancedData.fbc = resolvedIdentity.fbc;
+    if (resolvedIdentity.email) advancedData.em = resolvedIdentity.email.trim().toLowerCase();
+    if (resolvedIdentity.phone) {
+      let digits = resolvedIdentity.phone.replace(/\D/g, "");
+      if (digits.startsWith("01") && digits.length === 11) digits = "88" + digits;
+      advancedData.ph = digits;
     }
+    if (resolvedIdentity.firstName) advancedData.fn = resolvedIdentity.firstName.trim().toLowerCase();
+    if (resolvedIdentity.lastName) advancedData.ln = resolvedIdentity.lastName.trim().toLowerCase();
+    if (resolvedIdentity.city) advancedData.ct = resolvedIdentity.city.trim().toLowerCase();
+    if (resolvedIdentity.state) advancedData.st = resolvedIdentity.state.trim().toLowerCase();
+    if (resolvedIdentity.zip) advancedData.zp = resolvedIdentity.zip.trim().toLowerCase();
+
+    try {
+      fbq("set", "userData", advancedData);
+    } catch {}
 
     const isStandardMetaEvent = [
       "AddPaymentInfo",
@@ -243,7 +247,7 @@ export function trackMetaEvent(
     }
   }
 
-  // 4.1. Record Live Browser Meta Event to Live Event Logger
+  // 4.2. Record Live Browser Meta Event to Live Event Logger
   try {
     fetch("/api/analytics/live-log", {
       method: "POST",
@@ -257,6 +261,7 @@ export function trackMetaEvent(
           ...cleanParams,
           _event_source: "browser_fbq",
           _meta_pixel_id: typeof window !== "undefined" ? window.__META_PIXEL_ID__ : undefined,
+          _external_id: resolvedIdentity.externalId,
           _test_event_code: testCode,
         },
         status: "success",
@@ -265,40 +270,22 @@ export function trackMetaEvent(
     }).catch(() => {});
   } catch {}
 
-  // 5. Fire Server-Side Meta Conversions API (CAPI) in background
+  // 5. Fire Server-Side Meta Conversions API (CAPI) with full 13 parameters
   try {
-    let fbp = getCookie("_fbp");
-    if (!fbp && typeof window !== "undefined") {
-      fbp =
-        localStorage.getItem("ecomx_fbp") ||
-        `fb.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-      document.cookie = `_fbp=${fbp};path=/;max-age=7776000;SameSite=Lax`;
-      localStorage.setItem("ecomx_fbp", fbp);
-    }
-
-    let fbc = getCookie("_fbc") || (typeof localStorage !== "undefined" ? localStorage.getItem("ecomx_fbc") || undefined : undefined);
-
-    const userData = customerData
-      ? {
-          email: customerData.email,
-          phone: customerData.phone,
-          firstName: customerData.first_name || customerData.firstName || (customerData.name ? customerData.name.split(" ")[0] : undefined),
-          lastName: customerData.last_name || customerData.lastName || (customerData.name ? customerData.name.split(" ").slice(1).join(" ") : undefined),
-          city: customerData.city || customerData.district,
-          state: customerData.state || customerData.division,
-          country: customerData.country || "BD",
-          zip: customerData.zip || customerData.postal_code,
-          externalId: customerData.external_id || customerData.user_id || customerData.id,
-          clientUserAgent: navigator.userAgent,
-          fbp,
-          fbc,
-        }
-      : {
-          country: "BD",
-          clientUserAgent: navigator.userAgent,
-          fbp,
-          fbc,
-        };
+    const userData = {
+      email: resolvedIdentity.email,
+      phone: resolvedIdentity.phone,
+      firstName: resolvedIdentity.firstName,
+      lastName: resolvedIdentity.lastName,
+      city: resolvedIdentity.city,
+      state: resolvedIdentity.state,
+      country: resolvedIdentity.country || "BD",
+      zip: resolvedIdentity.zip,
+      externalId: resolvedIdentity.externalId,
+      clientUserAgent: resolvedIdentity.clientUserAgent || (typeof navigator !== "undefined" ? navigator.userAgent : undefined),
+      fbp: resolvedIdentity.fbp,
+      fbc: resolvedIdentity.fbc,
+    };
 
     fetch("/api/analytics/capi", {
       method: "POST",

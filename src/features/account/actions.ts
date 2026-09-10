@@ -4,6 +4,43 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
+/**
+ * Automatically reconciles and links past guest orders to the logged-in user
+ */
+async function syncUserGuestOrders(adminClient: any, user: any) {
+  if (!user?.id) return;
+  try {
+    const { data: profile } = await adminClient
+      .from("profiles")
+      .select("phone, email")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const userPhone = profile?.phone || user.user_metadata?.phone;
+    if (userPhone) {
+      const cleanPhone = userPhone.replace(/\D/g, "").slice(-11);
+      if (cleanPhone.length === 11) {
+        await adminClient
+          .from("orders")
+          .update({ user_id: user.id, is_guest: false })
+          .or(`guest_phone.eq.${cleanPhone},guest_phone.eq.+88${cleanPhone}`)
+          .is("user_id", null);
+      }
+    }
+
+    const userEmail = profile?.email || user.email;
+    if (userEmail && userEmail.includes("@") && !userEmail.endsWith("@customer.blushbudget.com")) {
+      await adminClient
+        .from("orders")
+        .update({ user_id: user.id, is_guest: false })
+        .eq("guest_email", userEmail.toLowerCase())
+        .is("user_id", null);
+    }
+  } catch (err) {
+    console.warn("Guest order reconciliation warning:", err);
+  }
+}
+
 export async function getCustomerDashboardData() {
   const supabase = await createClient();
   const { data: authData } = await supabase.auth.getUser();
@@ -12,6 +49,9 @@ export async function getCustomerDashboardData() {
   if (!user) return null;
 
   const adminClient = createAdminClient();
+
+  // Auto-sync any guest orders placed with the user's phone or email
+  await syncUserGuestOrders(adminClient, user);
 
   // Fetch Orders
   const { data: orders } = await adminClient
@@ -55,6 +95,10 @@ export async function getCustomerOrders() {
   if (!user) return [];
 
   const adminClient = createAdminClient();
+
+  // Auto-sync any guest orders placed with the user's phone or email
+  await syncUserGuestOrders(adminClient, user);
+
   const { data: orders } = await adminClient
     .from("orders")
     .select(`
@@ -91,6 +135,9 @@ export async function getCustomerOrderById(orderId: string) {
   if (!user) return null;
 
   const adminClient = createAdminClient();
+
+  // Auto-sync any guest orders placed with the user's phone or email
+  await syncUserGuestOrders(adminClient, user);
 
   // Automatic Real-Time Live Courier Sync on Customer View
   const { data: initialOrder } = await adminClient
@@ -347,5 +394,75 @@ export async function resolveUserAuthEmail(identifier: string): Promise<string> 
 
   return `${cleanPhone}@customer.blushbudget.com`.toLowerCase();
 }
+
+/**
+ * Fetch authenticated customer's profile, saved addresses and past delivery info for 1-click checkout
+ */
+export async function getLoggedInCustomerCheckoutData() {
+  try {
+    const supabase = await createClient();
+    const { data: authData } = await supabase.auth.getUser();
+    const user = authData?.user;
+
+    if (!user) return null;
+
+    const adminClient = createAdminClient();
+
+    // 1. Fetch Profile
+    const { data: profile } = await adminClient
+      .from("profiles")
+      .select("full_name, phone, email")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    // 2. Fetch Addresses
+    const { data: addresses } = await adminClient
+      .from("addresses")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("is_default", { ascending: false });
+
+    // 3. Fallback to latest order's shipping address snapshot if addresses table is empty
+    let fallbackAddress: any = null;
+    if (!addresses || addresses.length === 0) {
+      const { data: latestOrder } = await adminClient
+        .from("orders")
+        .select("customer_name, customer_phone, customer_email, shipping_address_snapshot")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (latestOrder?.shipping_address_snapshot) {
+        fallbackAddress = {
+          name: latestOrder.customer_name || latestOrder.shipping_address_snapshot.name,
+          phone: latestOrder.customer_phone || latestOrder.shipping_address_snapshot.phone,
+          division: latestOrder.shipping_address_snapshot.division,
+          district: latestOrder.shipping_address_snapshot.district,
+          thana: latestOrder.shipping_address_snapshot.thana,
+          address_line: latestOrder.shipping_address_snapshot.address || latestOrder.shipping_address_snapshot.address_line,
+        };
+      }
+    }
+
+    const primaryAddress = (addresses && addresses[0]) || fallbackAddress || null;
+
+    return {
+      isLoggedIn: true,
+      user: {
+        id: user.id,
+        email: user.email || profile?.email || "",
+        name: profile?.full_name || user.user_metadata?.full_name || "",
+        phone: profile?.phone || user.phone || user.user_metadata?.phone || "",
+      },
+      primaryAddress,
+      savedAddresses: addresses || [],
+    };
+  } catch (err) {
+    console.error("Failed to load customer checkout data:", err);
+    return null;
+  }
+}
+
 
 

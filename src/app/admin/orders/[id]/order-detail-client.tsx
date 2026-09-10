@@ -35,6 +35,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { formatPrice, formatShortProductId, buildCourierTrackingUrl } from "@/lib/utils";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { Button } from "@/components/shared/ui/button";
 import { updateAdminOrderFull, triggerManualOrderCapiPurchase } from "@/features/orders/actions";
 import { bookCourierDelivery, syncLiveCourierStatus } from "@/features/logistics/actions";
@@ -1051,7 +1052,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       onClick={() => setOpenWhatsAppMenu(!openWhatsAppMenu)}
                       className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 shadow-xs transition-colors"
                     >
-                      <MessageCircle className="h-3.5 w-3.5" />
+                      <WhatsAppIcon className="h-3.5 w-3.5 fill-white" />
                       <span>WhatsApp</span>
                       <ChevronDown className="h-3 w-3 opacity-80" />
                     </button>
@@ -1139,7 +1140,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                           onClick={() => setOpenWhatsAppMenu(false)}
                           className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-gray-100 text-gray-800 text-xs font-bold border-t border-gray-100 transition-colors"
                         >
-                          <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
+                          <WhatsAppIcon className="h-3.5 w-3.5 fill-emerald-600" />
                           <div>
                             <p className="text-gray-900 font-bold">Open Direct Chat</p>
                           </div>

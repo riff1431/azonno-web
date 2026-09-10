@@ -3,11 +3,22 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSecurityHeaders } from "@/lib/security/headers";
 import { checkRateLimit } from "@/lib/security/rate-limiter";
 import { validateSafeRedirect } from "@/lib/security/sanitizer";
+import { evaluateThreatRequest } from "@/lib/security/bot-filter";
 
 export async function updateSession(request: NextRequest) {
   const securityHeaders = getSecurityHeaders();
   const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1";
   const pathname = request.nextUrl.pathname;
+  const userAgent = request.headers.get("user-agent") || "";
+
+  // 0. Threat & Vulnerability Scanner Blocker (whitelists official Google/Bing/AI crawlers)
+  const threatCheck = evaluateThreatRequest(pathname, userAgent);
+  if (threatCheck.isThreat) {
+    return new NextResponse(
+      JSON.stringify({ error: "Access Denied: Forbidden request signature." }),
+      { status: 403, headers: { "Content-Type": "application/json", ...securityHeaders } }
+    );
+  }
 
   // 1. Rate Limiting Protection for Auth & Search endpoints
   if (pathname.startsWith("/api/auth") || pathname === "/login" || pathname === "/register") {
@@ -94,7 +105,11 @@ export async function updateSession(request: NextRequest) {
 
   // Protected routes
   const isAdminRoute = pathname.startsWith("/admin");
-  const isAccountRoute = pathname.startsWith("/account") && pathname !== "/account/wishlist";
+  const isAccountRoute =
+    pathname.startsWith("/account") &&
+    pathname !== "/account/wishlist" &&
+    pathname !== "/account/track" &&
+    !pathname.startsWith("/account/track");
   const isAuthRoute =
     pathname === "/login" ||
     pathname === "/register" ||

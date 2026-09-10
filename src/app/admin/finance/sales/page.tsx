@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatPrice } from "@/lib/utils";
 import { DollarSign, TrendingUp, ShoppingBag, Tag, CreditCard } from "lucide-react";
+import { FinanceSubNav } from "@/components/admin/finance/finance-sub-nav";
 
 export const metadata = {
   title: "Sales Reports — Finance",
@@ -23,7 +24,9 @@ export default async function AdminFinanceSalesPage() {
   const codOrders = orderList.filter((o) => o.payment_method === "cod").length;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      <FinanceSubNav />
+
       {/* Header */}
       <div className="border-b border-border pb-4">
         <h1 className="text-2xl font-bold text-text">Sales & Revenue Reports</h1>

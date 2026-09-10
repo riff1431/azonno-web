@@ -13,7 +13,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
 
   const { data: category } = await supabase
     .from("categories")
@@ -58,7 +58,7 @@ export default async function CategoryDetailPage({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
 
   // Fetch Category with slug normalization fallback
   let { data: category } = await supabase

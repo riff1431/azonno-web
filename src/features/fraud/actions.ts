@@ -255,18 +255,21 @@ export async function saveIncompleteLead(input: {
   name?: string;
   phone?: string;
   email?: string;
+  division?: string;
   district?: string;
   thana?: string;
   address?: string;
   cartItems: Array<{
     id?: string;
+    product_id?: string;
     name: string;
     quantity: number;
     price: number;
     image?: string;
+    image_url?: string;
     variant?: string;
   }>;
-  cartTotal: number;
+  cartTotal?: number;
   subtotal?: number;
   shippingFee?: number;
   discount?: number;
@@ -274,37 +277,44 @@ export async function saveIncompleteLead(input: {
   const cleanPhone = (input.phone || "").trim().replace(/[^0-9]/g, "");
   const cleanEmail = (input.email || "").trim().toLowerCase();
   const cleanName = (input.name || "").trim();
+  const cleanAddress = (input.address || "").trim();
 
-  // Require at least a valid contact identifier (phone with >= 6 digits, or email, or name)
-  if (!cleanPhone && !cleanEmail && !cleanName) {
-    return { success: false, error: "No contact info" };
+  // Accept if user has typed at least 2 chars in name, 3 digits in phone, 3 chars in email, or 3 chars in address
+  if (cleanPhone.length < 3 && cleanEmail.length < 3 && cleanName.length < 2 && cleanAddress.length < 3) {
+    return { success: false, error: "Insufficient contact info" };
   }
+
+  const currentLeads = await getStoredLeads();
+  memoryAbandonedCheckouts = [...currentLeads];
 
   const identifier = cleanPhone || cleanEmail || `lead_${cleanName.toLowerCase().replace(/\s+/g, "_")}`;
 
   const existingIdx = memoryAbandonedCheckouts.findIndex(
     (l) =>
-      (cleanPhone && l.customer_phone === cleanPhone) ||
-      (cleanEmail && l.customer_email === cleanEmail) ||
+      (cleanPhone && cleanPhone.length >= 6 && l.customer_phone === cleanPhone) ||
+      (cleanEmail && cleanEmail.includes("@") && l.customer_email === cleanEmail) ||
+      (cleanName && cleanName.length >= 3 && l.customer_name?.toLowerCase() === cleanName.toLowerCase()) ||
       (l.id === identifier)
   );
 
+  const total = Number(input.cartTotal ?? input.subtotal ?? 0);
+
   const lead: AbandonedLead = {
     id: existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].id : `ab-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-    customer_name: cleanName || "Guest Customer",
-    customer_phone: cleanPhone || "Not Provided",
-    customer_email: cleanEmail || undefined,
-    district: input.district || "Dhaka City",
-    address: [input.address, input.thana, input.district].filter(Boolean).join(", "),
-    cart_items: input.cartItems.map((it) => ({
-      id: it.id,
+    customer_name: cleanName || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_name : "Guest Customer"),
+    customer_phone: cleanPhone || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_phone : "Not Provided"),
+    customer_email: cleanEmail || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_email : undefined),
+    district: input.district || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].district : "Dhaka City"),
+    address: [cleanAddress, input.thana, input.district, input.division].filter(Boolean).join(", ") || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].address : ""),
+    cart_items: (input.cartItems || []).map((it) => ({
+      id: it.id || it.product_id,
       name: it.name,
       quantity: it.quantity || 1,
       price: it.price || 0,
-      image: it.image,
+      image: it.image || it.image_url,
       variant: it.variant,
     })),
-    cart_total: input.cartTotal,
+    cart_total: total,
     recovery_status: existingIdx >= 0 && memoryAbandonedCheckouts[existingIdx].recovery_status === "converted"
       ? "converted"
       : "abandoned",
@@ -317,19 +327,24 @@ export async function saveIncompleteLead(input: {
     memoryAbandonedCheckouts.unshift(lead);
   }
 
-  // Keep latest 200 leads in memory
+  // Keep latest 200 leads in memory & storage
   if (memoryAbandonedCheckouts.length > 200) {
     memoryAbandonedCheckouts = memoryAbandonedCheckouts.slice(0, 200);
   }
+
+  await saveStoredLeads(memoryAbandonedCheckouts);
+  revalidatePath("/admin/orders/incomplete");
 
   return { success: true, leadId: lead.id };
 }
 
 export async function markLeadConverted(phone: string) {
   const cleanPhone = phone.trim().replace(/[^0-9]/g, "");
-  memoryAbandonedCheckouts = memoryAbandonedCheckouts.map((l) =>
+  const leads = await getStoredLeads();
+  memoryAbandonedCheckouts = leads.map((l) =>
     l.customer_phone === cleanPhone ? { ...l, recovery_status: "converted" } : l
   );
+  await saveStoredLeads(memoryAbandonedCheckouts);
   revalidatePath("/admin/orders/incomplete");
   return { success: true };
 }

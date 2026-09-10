@@ -1,4 +1,5 @@
 import React from "react";
+import { getBaseUrl } from "@/lib/utils";
 
 export function JsonLd({ data }: { data: Record<string, any> }) {
   return (
@@ -236,7 +237,7 @@ export function FaqJsonLd({ items }: { items: FaqItem[] }) {
 
 export function OrganizationJsonLd({
   name = "Blush & Budget",
-  url = "https://blushbudget.com",
+  url = getBaseUrl(),
   logo,
   contactPhone = "+880 1700-000000",
   contactEmail = "support@blushbudget.com",
@@ -271,7 +272,7 @@ export function OrganizationJsonLd({
 }
 
 export function WebSiteJsonLd({
-  url = "https://blushbudget.com",
+  url = getBaseUrl(),
   name = "Blush & Budget",
 }: {
   url?: string;

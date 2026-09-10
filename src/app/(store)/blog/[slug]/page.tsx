@@ -26,7 +26,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
   if (!post) return { title: "Article Not Found" };
 
   const title = post.seo_title || `${post.title} | Blush & Budget Journal`;

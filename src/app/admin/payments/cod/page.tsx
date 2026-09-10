@@ -1,4 +1,4 @@
-import { getModuleSettings, saveModuleSettings } from "@/lib/settings/config-service";
+import { getPaymentGatewayConfig, savePaymentGatewayConfig } from "@/features/payments/actions";
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Banknote, Save, ShieldAlert, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
@@ -9,25 +9,28 @@ export const metadata = {
 };
 
 export default async function AdminCodPage() {
-  const settings = await getModuleSettings("cod", "all", false);
+  const { isEnabled, status, settings } = await getPaymentGatewayConfig("cod");
 
   async function handleSave(formData: FormData) {
     "use server";
+    const enabled = formData.get("is_enabled") === "on";
     const minAmount = Number(formData.get("min_amount") || 0);
     const maxAmount = Number(formData.get("max_amount") || 20000);
     const codCharge = Number(formData.get("cod_charge") || 0);
     const allowGuest = formData.get("allow_guest") === "on";
     const blockFraudScore = Number(formData.get("block_fraud_score") || 70);
 
-    await saveModuleSettings("cod", {
+    await savePaymentGatewayConfig("cod", {
       min_amount: { value: minAmount, valueType: "number" },
       max_amount: { value: maxAmount, valueType: "number" },
       cod_charge: { value: codCharge, valueType: "number" },
       allow_guest: { value: allowGuest, valueType: "boolean" },
       block_fraud_score: { value: blockFraudScore, valueType: "number" },
-    });
+    }, enabled);
 
     revalidatePath("/admin/payments/cod");
+    revalidatePath("/admin/payments");
+    revalidatePath("/checkout");
   }
 
   return (
@@ -36,11 +39,28 @@ export default async function AdminCodPage() {
         title="Cash on Delivery (COD) Rules & Safeguards"
         description="Configure order limits, courier handling charges, guest buyer permissions, and automated fraud prevention thresholds for cash payments."
         iconName="Banknote"
-        status="active"
+        status={isEnabled ? "active" : "inactive"}
         backHref="/admin/payments"
       />
 
       <form action={handleSave} className="space-y-6 text-xs">
+        <div className="rounded-2xl border border-border bg-white p-4 shadow-card flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-sm text-text">Enable Cash on Delivery (COD)</h3>
+            <p className="text-text-muted text-[11px] mt-0.5">
+              Allow storefront customers to select Cash on Delivery and pay when products are delivered.
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              name="is_enabled"
+              defaultChecked={isEnabled}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-surface-tertiary peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+          </label>
+        </div>
         <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-4">
           <h2 className="text-sm font-bold text-text border-b border-border pb-2 flex items-center gap-2">
             <Banknote className="h-4 w-4 text-primary-600" />

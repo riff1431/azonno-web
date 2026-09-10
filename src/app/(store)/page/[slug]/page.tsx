@@ -8,7 +8,7 @@ import { getBaseUrl } from "@/lib/utils";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const page = await getCMSPageBySlug(slug);
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
   if (!page) return { title: "Page Not Found" };
 
   const title = page.seo_title || `${page.title} — Blush & Budget`;
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function CmsPublicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const page = await getCMSPageBySlug(slug);
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
 
   if (!page) {
     notFound();

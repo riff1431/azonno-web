@@ -13,7 +13,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
 
   const { data: brand } = await supabase
     .from("brands")
@@ -58,7 +58,7 @@ export default async function BrandDetailPage({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
 
   // Fetch Brand with slug fallback
   let { data: brand } = await supabase

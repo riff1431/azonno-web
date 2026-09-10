@@ -5,6 +5,7 @@ import { Activity, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Database, Sh
 import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
 import { runSystemHealthCheck, type ServiceHealthItem } from "@/features/system/health-actions";
+import { ClearDataSection } from "@/components/admin/system/clear-data-section";
 import { useAdminLang } from "@/lib/admin-lang-context";
 
 interface HealthClientProps {
@@ -133,6 +134,9 @@ export function HealthClient({ initialChecks }: HealthClientProps) {
         <span>Last diagnostic scan: {lastRun}</span>
         <span>Probe Engine v1.0.0</span>
       </div>
+
+      {/* Selective Data Wiper / Clear Data Tool */}
+      <ClearDataSection />
     </div>
   );
 }

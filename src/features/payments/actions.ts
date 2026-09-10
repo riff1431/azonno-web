@@ -288,13 +288,12 @@ export async function getActiveStorePaymentMethods(): Promise<string[]> {
       .eq("category", "payments")
       .eq("is_enabled", true);
 
-    const keys = (data || []).map((d) => d.key);
-    if (!keys.includes("cod")) {
-      keys.unshift("cod");
-    }
-    return keys;
+    const validPaymentKeys = ["cod", "bkash", "nagad", "sslcommerz", "stripe", "paypal", "bank_transfer"];
+    return (data || [])
+      .map((d) => d.key)
+      .filter((k) => validPaymentKeys.includes(k));
   } catch {
-    return ["cod"];
+    return ["cod", "bkash", "sslcommerz"];
   }
 }
 

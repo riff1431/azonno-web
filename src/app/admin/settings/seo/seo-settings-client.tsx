@@ -28,6 +28,7 @@ import { ModuleHeader } from "@/components/admin/module-settings/module-header";
 import { Button } from "@/components/shared/ui/button";
 import { saveSeoSettings, type SeoSettingsPayload } from "@/features/settings/actions";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
+import { getBaseUrl } from "@/lib/utils";
 import { useAdminLang } from "@/lib/admin-lang-context";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +51,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
     site_author: initialSettings.site_author || "Blush & Budget",
     canonical_url:
       initialSettings.canonical_url ||
-      (typeof window !== "undefined" && window.location?.origin ? window.location.origin : "https://blushbudget.com"),
+      (typeof window !== "undefined" && window.location?.origin ? window.location.origin : getBaseUrl()),
     favicon_url: initialSettings.favicon_url || "/favicon.ico",
     apple_touch_icon_url: initialSettings.apple_touch_icon_url || "",
     android_icon_url: initialSettings.android_icon_url || "",
@@ -65,7 +66,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
     enable_breadcrumbs_schema: initialSettings.enable_breadcrumbs_schema !== false,
     custom_robots_txt:
       initialSettings.custom_robots_txt ||
-      "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nDisallow: /checkout/\nDisallow: /account/\n\nSitemap: https://blushbudget.com/sitemap.xml",
+      `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nDisallow: /checkout/\nDisallow: /account/\n\nSitemap: ${getBaseUrl() || (typeof window !== "undefined" ? window.location.origin : "")}/sitemap.xml`,
   });
 
   const [saving, setSaving] = useState(false);
@@ -591,7 +592,13 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                 )}
                 <div className="p-3 bg-gray-50 space-y-1 border-t border-gray-100">
                   <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
-                    {formData.canonical_url ? new URL(formData.canonical_url).hostname : "blushbudget.com"}
+                    {(() => {
+                      try {
+                        return formData.canonical_url ? new URL(formData.canonical_url).hostname : (typeof window !== "undefined" ? window.location.hostname : "yourdomain.com");
+                      } catch {
+                        return typeof window !== "undefined" ? window.location.hostname : "yourdomain.com";
+                      }
+                    })()}
                   </p>
                   <p className="text-xs font-bold text-gray-900 truncate">
                     {formData.meta_title}

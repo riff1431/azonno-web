@@ -66,7 +66,7 @@ export function getInitials(name: string): string {
  * Dynamically resolves the live website URL
  * Prioritizes window.location.origin on client, then environment configurations, Vercel/tunnel headers.
  */
-export function getBaseUrl(): string {
+export function getBaseUrl(fallback: string = ""): string {
   if (typeof window !== "undefined" && window.location?.origin) {
     return window.location.origin;
   }
@@ -76,13 +76,24 @@ export function getBaseUrl(): string {
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
   }
+  if (process.env.SITE_URL) {
+    return process.env.SITE_URL.replace(/\/$/, "");
+  }
+  if (process.env.APP_URL) {
+    return process.env.APP_URL.replace(/\/$/, "");
+  }
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+    const url = process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/\/$/, "");
+    return url.startsWith("http") ? url : `https://${url}`;
   }
   if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+    const url = process.env.VERCEL_URL.replace(/\/$/, "");
+    return url.startsWith("http") ? url : `https://${url}`;
   }
-  return "";
+  if (process.env.NODE_ENV === "development") {
+    return `http://localhost:${process.env.PORT || 3000}`;
+  }
+  return fallback;
 }
 
 /**

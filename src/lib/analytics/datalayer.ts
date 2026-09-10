@@ -72,31 +72,26 @@ export interface MetaContentObject {
   item_variant?: string;
 }
 
+import { getResolvedCustomerIdentity } from "@/lib/analytics/customer-identity";
+
 export const DEFAULT_CURRENCY = "BDT";
 
 /**
  * Normalizes customer parameters into Google User-Provided Data structure.
  */
 export function normalizeCustomerData(customer?: CustomerData | Record<string, any>): Record<string, any> | undefined {
-  if (!customer) return undefined;
+  const resolved = getResolvedCustomerIdentity(customer);
 
-  let firstName = customer.first_name || "";
-  let lastName = customer.last_name || "";
-
-  if (!firstName && customer.name) {
-    const parts = customer.name.trim().split(/\s+/);
-    firstName = parts[0] || "";
-    lastName = parts.slice(1).join(" ") || "";
-  }
-
-  const email = customer.email ? customer.email.trim().toLowerCase() : undefined;
-  const phone = customer.phone ? customer.phone.replace(/[^0-9+]/g, "") : undefined;
-  const city = customer.city || customer.district || undefined;
-  const state = customer.state || customer.division || undefined;
-  const zip = customer.zip || customer.postal_code || undefined;
-  const country = customer.country || "BD";
-  const externalId = customer.external_id || customer.id || customer.user_id || undefined;
-  const userAgent = customer.client_user_agent || (typeof navigator !== "undefined" ? navigator.userAgent : undefined);
+  const email = resolved.email || undefined;
+  const phone = resolved.phone ? resolved.phone.replace(/[^0-9+]/g, "") : undefined;
+  const firstName = resolved.firstName || undefined;
+  const lastName = resolved.lastName || undefined;
+  const city = resolved.city || undefined;
+  const state = resolved.state || undefined;
+  const zip = resolved.zip || undefined;
+  const country = resolved.country || "BD";
+  const externalId = resolved.externalId || undefined;
+  const userAgent = resolved.clientUserAgent || (typeof navigator !== "undefined" ? navigator.userAgent : undefined);
 
   const address: Record<string, any> = {};
   if (firstName) address.first_name = firstName;
@@ -111,7 +106,7 @@ export function normalizeCustomerData(customer?: CustomerData | Record<string, a
   if (phone) userData.phone_number = phone;
   if (externalId) userData.external_id = externalId;
   if (userAgent) userData.client_user_agent = userAgent;
-  if (customer.client_ip_address) userData.client_ip_address = customer.client_ip_address;
+  if (customer?.client_ip_address) userData.client_ip_address = customer.client_ip_address;
   if (Object.keys(address).length > 0) userData.address = address;
 
   // Include flat customer identifiers for quick custom GTM variable access

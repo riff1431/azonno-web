@@ -295,6 +295,11 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
             {t("orders", "downloadInvoice")}
           </Button>
         </Link>
+        <Link href="/account">
+          <Button variant="outline" size="lg" className="px-6 font-bold text-xs border-pink-200 bg-pink-50 hover:bg-pink-100 text-[#e91e63]">
+            {language === "bn" ? "আমার অ্যাকাউন্ট ও অর্ডারসমূহ" : "My Account & Orders"}
+          </Button>
+        </Link>
         <Link href="/products">
           <Button size="lg" className="px-8 shadow-md bg-[#e91e63] hover:bg-pink-600 text-white font-bold">
             {t("cartPage", "continueShopping")}

@@ -193,8 +193,13 @@ export async function sendMetaCapiEvent(input: {
       userDataPayload.country = [hashMetaParameter("bd")];
     }
 
-    if (externalId) {
-      const hashedExt = hashMetaParameter(externalId);
+    const effectiveExternalId =
+      externalId ||
+      (fbp ? `ext_${fbp.replace(/[^a-zA-Z0-9]/g, "").slice(-14)}` : undefined) ||
+      `ext_${input.eventId.slice(0, 16)}`;
+
+    if (effectiveExternalId) {
+      const hashedExt = hashMetaParameter(effectiveExternalId);
       if (hashedExt) userDataPayload.external_id = [hashedExt];
     }
 
@@ -225,8 +230,10 @@ export async function sendMetaCapiEvent(input: {
       userDataPayload.fbc = fbc;
     }
   } else {
-    // If no userData provided at all, provide basic fbp & BD country for anonymous events
+    // If no userData provided at all, provide persistent external_id, fbp & BD country for anonymous events
+    const fallbackExt = `ext_${input.eventId.slice(0, 16)}`;
     userDataPayload.country = [hashMetaParameter("bd")];
+    userDataPayload.external_id = [hashMetaParameter(fallbackExt)];
     userDataPayload.fbp = `fb.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
     if (process.env.NODE_ENV === "development") {
       userDataPayload.client_ip_address = "103.108.140.25";

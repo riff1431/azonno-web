@@ -49,7 +49,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
         invoice_website: typeof window !== "undefined" && window.location?.origin ? window.location.origin : "",
         invoice_tax_id_or_bin: "BIN: 002349182-0101",
 
-        invoice_title: "TAX INVOICE",
+        invoice_title: "INVOICE",
         invoice_accent_color: "#e91e63",
         invoice_footer_notes:
           "Thank you for choosing us! All products are 100% genuine and imported directly from verified authorized distributors. For any warranty claims or return assistance, please keep this invoice handy.",
@@ -302,12 +302,12 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
               </div>
             )}
 
-            {/* 2. A4 TAX INVOICE TAB */}
+            {/* 2. A4 INVOICE TAB */}
             {activeTab === "invoice" && (
               <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-4">
                 <h3 className="text-xs font-bold text-text uppercase tracking-wider border-b border-border pb-2 flex items-center gap-2">
                   <FileText className="h-4 w-4 text-primary-600" />
-                  A4 Tax Invoice Layout & Content
+                  A4 Invoice Layout & Content
                 </h3>
 
                 <div className="space-y-3.5 text-xs">
@@ -541,7 +541,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                       }}
                       className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none"
                     >
-                      <option value="invoice">Corporate A4 Tax Invoice</option>
+                      <option value="invoice">Corporate A4 Invoice</option>
                       <option value="thermal">4×6 Inch POS Thermal Shipping Label</option>
                     </select>
                   </div>
@@ -638,7 +638,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                       className="font-black text-xs block uppercase"
                       style={{ color: formData.invoice_accent_color || "#e91e63" }}
                     >
-                      {formData.invoice_title || "TAX INVOICE"}
+                      {formData.invoice_title || "INVOICE"}
                     </span>
                     <span className="font-mono text-[8px] font-bold text-gray-500">#ORD-2026-8941</span>
                   </div>

@@ -22,7 +22,7 @@ export async function generateMetadata({
   }>;
 }) {
   const { category, type, brand, tag, skin_concern, search } = await searchParams;
-  const baseUrl = getBaseUrl() || "https://blushbudget.com";
+  const baseUrl = getBaseUrl();
 
   let title = "Authentic Skincare & Beauty Catalogue — Blush & Budget";
   let description = "Explore 100% genuine skincare, cosmetics, sunscreens, and K-Beauty bestsellers imported from authorized distributors in Bangladesh.";

@@ -165,33 +165,6 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
     };
   }
 
-  // 2. Sequential ascending/descending dummies (e.g. 01712345678, 01812345678, 01987654321)
-  const knownDummies = [
-    "01234567890",
-    "01712345678",
-    "01812345678",
-    "01912345678",
-    "01612345678",
-    "01512345678",
-    "01312345678",
-    "01412345678",
-    "01987654321",
-    "01798765432",
-    "01898765432",
-  ];
-  if (knownDummies.includes(clean)) {
-    return {
-      isValid: false,
-      status: "invalid",
-      cleanPhone: clean,
-      operatorName,
-      errorMessage:
-        language === "bn"
-          ? "পরীক্ষামূলক ডামি নম্বর অনুমোদিত নয়! সঠিক নম্বর প্রদান করুন।"
-          : "Dummy/sequential test numbers are not allowed. Please enter a real phone number.",
-    };
-  }
-
   // Passed all checks: 100% Genuine Bangladeshi Mobile Number!
   return {
     isValid: true,

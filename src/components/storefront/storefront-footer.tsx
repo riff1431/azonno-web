@@ -20,6 +20,7 @@ import {
   type HomepageFullConfig,
   DEFAULT_HOMEPAGE_CONFIG,
 } from "@/features/marketing/homepage-types";
+import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
 import { getHomepageConfig } from "@/features/marketing/homepage-actions";
 import { subscribeNewsletter } from "@/features/marketing/newsletter-actions";
 import { trackSubscribe, trackContact } from "@/lib/analytics/datalayer";
@@ -514,7 +515,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                     className="flex items-center gap-3 text-emerald-400 hover:text-emerald-300 transition-colors group"
                   >
                     <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-[#25d366] text-white shadow-sm shadow-emerald-500/30 group-hover:scale-105 transition-transform">
-                      <MessageCircle className="h-5 w-5 stroke-2 text-white" />
+                      <WhatsAppIcon className="h-5 w-5 fill-white" />
                     </div>
                     <span className="font-bold">WhatsApp: {supportWhatsapp}</span>
                   </a>

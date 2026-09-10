@@ -6,6 +6,7 @@ import { Receipt, Plus, Trash2, X, AlertCircle, Tag, Calendar, Layers } from "lu
 import { Button } from "@/components/shared/ui/button";
 import { Input } from "@/components/shared/ui/input";
 import { Label } from "@/components/shared/ui/label";
+import { FinanceSubNav } from "@/components/admin/finance/finance-sub-nav";
 import { addExpense, deleteExpense, type ExpenseItem } from "@/features/finance/actions";
 import { useAdminLang } from "@/lib/admin-lang-context";
 
@@ -110,7 +111,9 @@ export function CostsClient({ initialExpenses }: CostsClientProps) {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-6 max-w-5xl">
+      <FinanceSubNav />
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
           <h1 className="text-2xl font-bold text-text">{t("costs_title")}</h1>

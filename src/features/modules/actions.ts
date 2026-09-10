@@ -77,9 +77,12 @@ export async function toggleModuleStatus(
     });
   } catch {}
 
-  invalidateSettingsCache(`module_enabled:${key}`);
+  invalidateSettingsCache();
+  revalidatePath("/checkout");
   revalidatePath("/admin/settings/modules");
   revalidatePath("/admin/settings/features");
+  revalidatePath("/admin/payments");
+  revalidatePath(`/admin/payments/${key}`);
   revalidatePath("/admin");
 
   return { success: true };
