@@ -34,9 +34,8 @@ import {
   togglePageStatus,
   deleteCMSPage,
   syncAllOfficialTemplates,
-  DEFAULT_CMS_PAGES,
-  type CMSPageItem,
 } from "@/features/pages/actions";
+import { type CMSPageItem, DEFAULT_CMS_PAGES } from "@/features/pages/types";
 import { RichArticleRenderer } from "@/components/blog/rich-article-renderer";
 import Link from "next/link";
 import { useAdminLang } from "@/lib/admin-lang-context";
