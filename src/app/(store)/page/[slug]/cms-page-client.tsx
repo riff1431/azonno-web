@@ -9,8 +9,6 @@ import {
   RotateCcw,
   Sparkles,
   MessageCircle,
-  PhoneCall,
-  ChevronRight,
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/shared/ui/button";
@@ -82,8 +80,6 @@ export function CmsPageClient({
 }: CmsPageClientProps) {
   const { language } = useLanguage();
   const currentSlug = (slug || "").toLowerCase().trim();
-  const phone = "+880 1700-000000";
-  const whatsappUrl = "https://wa.me/8801700000000";
 
   return (
     <div className="min-h-[75vh] bg-[#f8f9fb] py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8">
@@ -212,43 +208,6 @@ export function CmsPageClient({
         <div className="rounded-3xl border border-zinc-200/90 bg-white p-6 sm:p-10 shadow-card">
           {children}
         </div>
-
-        {/* Bottom Support & Contact Card */}
-        <div className="rounded-3xl border border-pink-200/80 bg-linear-to-br from-pink-50/80 via-white to-purple-50/60 p-6 sm:p-8 shadow-card flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2 text-center md:text-left">
-            <span className="inline-block rounded-full bg-pink-100 text-pink-700 font-extrabold text-[11px] px-2.5 py-0.5 uppercase tracking-wide">
-              {language === "bn" ? "সাহায্য প্রয়োজন?" : "Need Help?"}
-            </span>
-            <h3 className="text-lg sm:text-xl font-black text-zinc-900">
-              {language === "bn" ? "অর্ডার বা পলিসি নিয়ে যেকোনো প্রশ্ন আছে?" : "Have questions regarding orders or policies?"}
-            </h3>
-            <p className="text-xs sm:text-sm text-zinc-600 max-w-xl">
-              {language === "bn"
-                ? "আমাদের কাস্টমার কেয়ার টিম প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত সক্রিয়ভাবে সহায়তা করে থাকে।"
-                : "Our dedicated support team is available daily from 10 AM to 10 PM to assist you."}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm px-5 py-3 shadow-md shadow-[#25D366]/25 transition-all hover:scale-105 active:scale-95"
-            >
-              <MessageCircle className="h-4 w-4 fill-white" />
-              <span>{language === "bn" ? "হোয়াটসঅ্যাপে মেসেজ দিন" : "Chat on WhatsApp"}</span>
-            </a>
-            <a
-              href={`tel:${phone}`}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-zinc-900 hover:bg-black text-white font-bold text-xs sm:text-sm px-5 py-3 shadow-md transition-all hover:scale-105 active:scale-95"
-            >
-              <PhoneCall className="h-4 w-4" />
-              <span>{phone}</span>
-            </a>
-          </div>
-        </div>
-
       </div>
     </div>
   );
