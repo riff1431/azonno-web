@@ -36,6 +36,10 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+  requestHeaders.set("x-url", request.url);
+
   // Gracefully handle missing Supabase config (dev without Supabase)
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -47,13 +51,15 @@ export async function updateSession(request: NextRequest) {
     supabaseUrl.includes("your-project.supabase.co") ||
     supabaseAnonKey === "dummy_anon_key"
   ) {
-    const res = NextResponse.next({ request });
+    const res = NextResponse.next({ request: { headers: requestHeaders } });
     Object.entries(securityHeaders).forEach(([k, v]) => res.headers.set(k, v));
     return res;
   }
 
   let supabaseResponse = NextResponse.next({
-    request,
+    request: {
+      headers: requestHeaders,
+    },
   });
 
   const supabase = createServerClient(
@@ -69,7 +75,9 @@ export async function updateSession(request: NextRequest) {
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
-            request,
+            request: {
+              headers: requestHeaders,
+            },
           });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)

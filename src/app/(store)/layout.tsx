@@ -29,10 +29,19 @@ export default async function StorefrontLayout({
   // Check Maintenance Mode
   if (systemSettings?.maintenance_mode) {
     const headerList = await headers();
+    const pathname = headerList.get("x-pathname") || "";
     const clientIp =
       headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       headerList.get("x-real-ip") ||
       "";
+
+    // Allow essential auth routes so admins and staff can sign in dynamically
+    const isAuthRoute =
+      pathname === "/login" ||
+      pathname.startsWith("/login") ||
+      pathname === "/forgot-password" ||
+      pathname.startsWith("/forgot-password") ||
+      pathname.startsWith("/auth");
 
     // Dynamically parse whitelisted bypass IPs from database settings
     const bypassIps = (systemSettings.bypass_ips || "")
@@ -71,8 +80,8 @@ export default async function StorefrontLayout({
     const isExplicitAdminPreview =
       isAdminUser && (referer.includes("admin_preview=1") || xUrl.includes("admin_preview=1"));
 
-    // If not on whitelisted external IP and not in explicit admin preview, render the maintenance screen!
-    if (!isIpWhitelisted && !isExplicitAdminPreview) {
+    // If not admin, not whitelisted IP, and not an auth route (e.g. login), render the maintenance screen!
+    if (!isAdminUser && !isIpWhitelisted && !isExplicitAdminPreview && !isAuthRoute) {
       return (
         <StorefrontMaintenanceScreen
           message={systemSettings.maintenance_message}

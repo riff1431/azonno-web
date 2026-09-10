@@ -136,7 +136,7 @@ export function StorefrontMaintenanceScreen({
           </a>
 
           <Link
-            href="/login"
+            href="/login?redirect=/admin"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-50 transition-colors"
           >
             <Lock className="h-3.5 w-3.5 text-gray-400" />
