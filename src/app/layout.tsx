@@ -275,75 +275,12 @@ export default async function RootLayout({
           <meta name="msvalidate.01" content={customScripts.bing_site_verification} />
         )}
 
-        {/* Custom Header Scripts & Styles (<head>) */}
+        {/* Custom Header Scripts (Injected safely) */}
         {customScripts.is_enabled && customScripts.header_scripts && (
-          <div
-            id="custom-header-scripts-container"
-            style={{ display: "contents" }}
-            dangerouslySetInnerHTML={{ __html: customScripts.header_scripts }}
-          />
-        )}
-
-        {/* Meta Pixel Base Code in Head with Test Code Support */}
-        {initialConfig.meta_pixel_id && (
           <script
-            id="meta-pixel-base"
-            dangerouslySetInnerHTML={{
-              __html: `
-                !function(f,b,e,v,n,t,s)
-                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
-                
-                // Parse URL test_event_code if present
-                var urlParams = new URLSearchParams(window.location.search);
-                var urlTestCode = urlParams.get('test_event_code') || urlParams.get('meta_test_event_code');
-                var activeTestCode = urlTestCode || '${initialConfig.meta_test_event_code || ""}';
-                
-                if (activeTestCode) {
-                  window.__META_TEST_CODE__ = activeTestCode;
-                  try {
-                    sessionStorage.setItem('meta_test_event_code', activeTestCode);
-                    document.cookie = 'meta_test_event_code=' + activeTestCode + ';path=/;max-age=86400;SameSite=Lax';
-                  } catch(e){}
-                }
-                
-                fbq('init', '${initialConfig.meta_pixel_id}');
-                window.__META_PIXEL_ID__ = '${initialConfig.meta_pixel_id}';
-              `,
-            }}
-          />
-        )}
-        {/* TikTok Pixel Base Code in Head with Test Code Support */}
-        {initialConfig.tiktok_pixel_id && (
-          <script
-            id="tiktok-pixel-base"
-            dangerouslySetInnerHTML={{
-              __html: `
-                !function (w, d, t) {
-                  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=r+"?sdkid="+e+"&lib="+t;a.id="tiktok-pixel-events-script";var c=document.getElementsByTagName("script")[0];if(c&&c.parentNode){c.parentNode.insertBefore(a,c)}else if(d.head){d.head.appendChild(a)}};
-                  
-                  var urlParams = new URLSearchParams(window.location.search);
-                  var urlTtTest = urlParams.get('test_event_code') || urlParams.get('tiktok_test_event_code') || urlParams.get('tt_test_code');
-                  var activeTtTest = urlTtTest || '${initialConfig.tiktok_test_event_code || ""}';
-                  if (activeTtTest) {
-                    window.__TIKTOK_TEST_CODE__ = activeTtTest;
-                    try {
-                      sessionStorage.setItem('tiktok_test_event_code', activeTtTest);
-                      document.cookie = 'tiktok_test_event_code=' + activeTtTest + ';path=/;max-age=86400;SameSite=Lax';
-                    } catch(e){}
-                  }
-                  
-                  ttq.load('${initialConfig.tiktok_pixel_id}');
-                  ttq.page();
-                  window.__TIKTOK_PIXEL_ID__ = '${initialConfig.tiktok_pixel_id}';
-                }(window, document, 'ttq');
-              `,
-            }}
+            id="custom-header-scripts"
+            type="text/javascript"
+            dangerouslySetInnerHTML={{ __html: customScripts.header_scripts.replace(/<\/?script[^>]*>/gi, '') }}
           />
         )}
       </head>
