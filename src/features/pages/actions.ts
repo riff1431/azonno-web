@@ -552,6 +552,53 @@ export async function saveCMSPage(pageData: Partial<CMSPageItem>) {
   return { success: true };
 }
 
+export async function syncAllOfficialTemplates(): Promise<{ success: boolean; message: string; pages: CMSPageItem[] }> {
+  try {
+    const supabase = createAdminClient();
+    for (const def of DEFAULT_CMS_PAGES) {
+      const payload = {
+        title: def.title,
+        slug: def.slug,
+        content: def.content,
+        seo_title: def.seo_title,
+        seo_description: def.seo_description,
+        status: "published",
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data: existing } = await supabase.from("pages").select("id").eq("slug", def.slug).limit(1);
+      if (existing && existing.length > 0) {
+        await supabase.from("pages").update(payload).eq("id", existing[0].id);
+      } else {
+        await supabase.from("pages").insert([payload]);
+      }
+    }
+
+    await setFallbackStore(PAGES_STORE_KEY, DEFAULT_CMS_PAGES);
+    revalidatePath("/admin/pages");
+    revalidatePath("/page/[slug]", "page");
+    return { success: true, message: "অফিসিয়াল পলিসি টেমপ্লেট ডাটাবেজে সফলভাবে সিঙ্ক হয়েছে!", pages: DEFAULT_CMS_PAGES };
+  } catch (err: any) {
+    return { success: false, message: err?.message || "সিঙ্ক করতে ব্যর্থ হয়েছে", pages: DEFAULT_CMS_PAGES };
+  }
+}
+
+export async function deleteCMSPage(id: string) {
+  try {
+    const supabase = createAdminClient();
+    if (!id.startsWith("page-")) {
+      await supabase.from("pages").delete().eq("id", id);
+    }
+  } catch (e) {}
+
+  const pages = await getCMSPages();
+  const updated = pages.filter((p) => p.id !== id);
+  await setFallbackStore(PAGES_STORE_KEY, updated);
+
+  revalidatePath("/admin/pages");
+  return { success: true };
+}
+
 export async function togglePageStatus(id: string, currentStatus: "draft" | "published") {
   const supabase = createAdminClient();
   const nextStatus = currentStatus === "published" ? "draft" : "published";
@@ -573,3 +620,6 @@ export async function togglePageStatus(id: string, currentStatus: "draft" | "pub
   revalidatePath("/admin/pages");
   return { success: true, status: nextStatus };
 }
+
+export { DEFAULT_CMS_PAGES };
+
