@@ -145,7 +145,6 @@ export default function CheckoutPage() {
   const [otpCode, setOtpCode] = useState("");
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
-  const [debugOtpCode, setDebugOtpCode] = useState<string | null>(null);
 
   // Calculate Shipping Zone & Dynamic Charge
   const currentZone = getShippingZoneByDistrict(formData.district);
@@ -615,7 +614,11 @@ export default function CheckoutPage() {
     // If High-Value COD Order Requires OTP Verification
     if (fraudResult.requiresOtp) {
       const otpRes = await generateCheckoutOtp(formData.phone);
-      setDebugOtpCode(otpRes.debugOtp || null);
+      if (!otpRes.success) {
+        setErrorMsg(otpRes.message || (language === "bn" ? "ওটিপি পাঠাতে সমস্যা হয়েছে। অনুগ্রহ করে নম্বরটি সঠিক কিনা পরীক্ষা করুন।" : "Failed to send OTP."));
+        setLoading(false);
+        return;
+      }
       setShowOtpModal(true);
       setLoading(false);
       return;
@@ -1745,12 +1748,6 @@ export default function CheckoutPage() {
                 )}
               </p>
             </div>
-
-            {debugOtpCode && (
-              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-center text-xs font-mono font-bold text-amber-900">
-                [Testing OTP Code]: {debugOtpCode}
-              </div>
-            )}
 
             {otpError && (
               <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-800 text-center">

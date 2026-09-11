@@ -210,7 +210,10 @@ export async function sendSmsNotification(input: {
   }
 
   const templates = await getSmsTemplates();
-  const template = templates.find((t) => t.event_type === input.eventType) || templates[0];
+  const targetTypes = (input.eventType === "order_placed" || input.eventType === "order_created")
+    ? ["order_placed", "order_created"]
+    : [input.eventType];
+  const template = templates.find((t) => targetTypes.includes(t.event_type)) || templates[0];
 
   const mergedVars: Record<string, string> = {
     store_name: "Blush & Budget",

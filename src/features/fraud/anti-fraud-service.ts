@@ -190,9 +190,13 @@ const otpStore = new Map<string, { code: string; expiresAt: number }>();
 /**
  * Generate and send SMS OTP via SMS Gateway for order phone verification
  */
-export async function generateCheckoutOtp(phone: string): Promise<{ success: boolean; message: string; debugOtp?: string }> {
+export async function generateCheckoutOtp(phone: string): Promise<{ success: boolean; message: string }> {
   const cleanPhone = phone.replace(/\D/g, "");
   const normalizedPhone = cleanPhone.slice(-11);
+
+  if (normalizedPhone.length !== 11 || !normalizedPhone.startsWith("01")) {
+    return { success: false, message: "একটি সঠিক ১১ ডিজিটের বাংলাদেশী মোবাইল নম্বর দিন।" };
+  }
 
   // Generate 4-digit OTP
   const code = Math.floor(1000 + Math.random() * 9000).toString();
@@ -200,12 +204,10 @@ export async function generateCheckoutOtp(phone: string): Promise<{ success: boo
 
   otpStore.set(normalizedPhone, { code, expiresAt });
 
-  console.log(`[Anti-Fraud SMS Gateway] Generated OTP ${code} for phone ${normalizedPhone}`);
-
-  // Send real SMS through configured SMS Gateway (BulkSMSBD / Greenweb / MimSMS)
+  // Send real SMS through configured SMS Gateway (MiMSMS / BulkSMSBD / Greenweb)
   try {
     const { sendSmsNotification } = await import("@/features/sms/actions");
-    await sendSmsNotification({
+    const smsRes = await sendSmsNotification({
       recipientPhone: normalizedPhone,
       eventType: "order_otp",
       variables: {
@@ -214,14 +216,25 @@ export async function generateCheckoutOtp(phone: string): Promise<{ success: boo
         store_name: "Blush & Budget",
       },
     });
-  } catch (err) {
+
+    if (!smsRes.success && !smsRes.skipped) {
+      console.error("[Anti-Fraud SMS Gateway] Failed to dispatch OTP:", smsRes.error);
+      return {
+        success: false,
+        message: "ভেরিফিকেশন কোড পাঠানো সম্ভব হয়নি। অনুগ্রহ করে আপনার মোবাইল নম্বরটি পরীক্ষা করে কিছুক্ষণ পর পুনরায় চেষ্টা করুন।",
+      };
+    }
+  } catch (err: any) {
     console.warn("SMS gateway send warning:", err);
+    return {
+      success: false,
+      message: "সাময়িক সমস্যার কারণে ভেরিফিকেশন কোড পাঠানো যায়নি। অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।",
+    };
   }
 
   return {
     success: true,
-    message: `A 4-digit verification code has been sent to ${normalizedPhone}.`,
-    debugOtp: code, // Provides instant preview in development
+    message: `আপনার মোবাইল নম্বরে ৪ সংখ্যার ভেরিফিকেশন কোড পাঠানো হয়েছে।`,
   };
 }
 
@@ -234,16 +247,16 @@ export async function verifyCheckoutOtp(phone: string, inputCode: string): Promi
 
   const entry = otpStore.get(normalizedPhone);
   if (!entry) {
-    return { valid: false, error: "OTP expired or not requested. Please request a new code." };
+    return { valid: false, error: "ভেরিফিকেশন কোডের মেয়াদ শেষ হয়ে গেছে। অনুগ্রহ করে নতুন কোড নিন।" };
   }
 
   if (Date.now() > entry.expiresAt) {
     otpStore.delete(normalizedPhone);
-    return { valid: false, error: "OTP code has expired. Please request a new code." };
+    return { valid: false, error: "ভেরিফিকেশন কোডের সময়সীমা শেষ হয়ে গেছে। অনুগ্রহ করে আবার নতুন কোড নিন।" };
   }
 
   if (entry.code !== inputCode.trim()) {
-    return { valid: false, error: "Incorrect 4-digit verification code. Please try again." };
+    return { valid: false, error: "ভুল ভেরিফিকেশন কোড। অনুগ্রহ করে সঠিক ৪-সংখ্যার কোডটি লিখুন।" };
   }
 
   // OTP verified successfully, clear entry
