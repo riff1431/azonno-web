@@ -852,6 +852,63 @@ export async function updateOrderStatus(
     created_by: authData?.user?.id || null,
   });
 
+  // Automated Transactional SMS Trigger on Order Status Changes (Admin Matrix Controlled)
+  let snapshot: any = data.shipping_address_snapshot;
+  if (typeof snapshot === "string") {
+    try {
+      snapshot = JSON.parse(snapshot);
+    } catch {}
+  }
+
+  const phone = data.guest_phone || snapshot?.phone || data.customer_phone || data.phone;
+  const customerName = data.guest_name || snapshot?.name || data.customer_name || "সম্মানিত গ্রাহক";
+
+  if (phone) {
+    if (newStatus === "shipped") {
+      sendSmsNotification({
+        recipientPhone: phone,
+        eventType: "order_shipped",
+        variables: {
+          customer_name: customerName,
+          order_number: data.order_number,
+          courier_name: data.courier_name || "SteadFast Courier",
+          tracking_id: data.consignment_id || data.tracking_code || data.order_number,
+          tracking_url: data.tracking_url || `/account/track?order=${data.order_number}`,
+        },
+      }).catch((e) => console.error("Shipped SMS trigger failed:", e));
+    } else if (newStatus === "delivered" || newStatus === "completed") {
+      sendSmsNotification({
+        recipientPhone: phone,
+        eventType: "order_delivered",
+        variables: {
+          customer_name: customerName,
+          order_number: data.order_number,
+          store_name: "Blush & Budget",
+        },
+      }).catch((e) => console.error("Delivered SMS trigger failed:", e));
+    } else if (newStatus === "cancelled") {
+      sendSmsNotification({
+        recipientPhone: phone,
+        eventType: "order_cancelled",
+        variables: {
+          customer_name: customerName,
+          order_number: data.order_number,
+          store_name: "Blush & Budget",
+        },
+      }).catch((e) => console.error("Cancelled SMS trigger failed:", e));
+    } else if (newStatus === "refunded") {
+      sendSmsNotification({
+        recipientPhone: phone,
+        eventType: "refund_approved",
+        variables: {
+          customer_name: customerName,
+          order_number: data.order_number,
+          store_name: "Blush & Budget",
+        },
+      }).catch((e) => console.error("Refunded SMS trigger failed:", e));
+    }
+  }
+
   // 3. Automated EMQ 9.0+ Meta & TikTok Conversions API (CAPI) Purchase Trigger
   await triggerStatusGatedPurchaseCapi(orderId, newStatus, data, authData?.user?.id || null, supabaseAdmin);
 
@@ -1372,6 +1429,20 @@ export async function cancelCustomerOrder(orderId: string, reason?: string) {
       created_by: user.id,
     });
 
+    // Automated Transactional SMS for order cancellation
+    const phone = order.guest_phone || order.shipping_address_snapshot?.phone;
+    if (phone) {
+      sendSmsNotification({
+        recipientPhone: phone,
+        eventType: "order_cancelled",
+        variables: {
+          customer_name: order.guest_name || order.shipping_address_snapshot?.name || "সম্মানিত গ্রাহক",
+          order_number: order.order_number,
+          store_name: "Blush & Budget",
+        },
+      }).catch((e) => console.error("Cancel customer SMS trigger failed:", e));
+    }
+
     // Revalidate paths
     revalidatePath("/account/orders");
     revalidatePath(`/account/orders/${orderId}`);
@@ -1384,3 +1455,26 @@ export async function cancelCustomerOrder(orderId: string, reason?: string) {
     return { error: err?.message || "An unexpected error occurred while cancelling your order." };
   }
 }
+
+/**
+ * Send Advance Delivery Charge Request SMS
+ */
+export async function sendAdvanceDeliveryRequestSms(input: {
+  phone: string;
+  customerName: string;
+  orderNumber: string;
+  advanceAmount: number | string;
+}) {
+  const res = await sendSmsNotification({
+    recipientPhone: input.phone,
+    eventType: "advance_requested",
+    variables: {
+      customer_name: input.customerName || "সম্মানিত গ্রাহক",
+      order_number: input.orderNumber,
+      advance_amount: String(input.advanceAmount),
+    },
+  });
+
+  return res;
+}
+

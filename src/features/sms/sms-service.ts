@@ -47,12 +47,23 @@ export function formatBdSmsPhone(rawPhone: string, format: "bd_local" | "bd_coun
   let digits = rawPhone.replace(/\D/g, "");
 
   // Strip international prefix if already present
-  if (digits.startsWith("880")) {
+  if (digits.startsWith("880") && digits.length >= 13) {
     digits = digits.slice(2);
+  } else if (digits.startsWith("88") && digits.length === 12) {
+    digits = "0" + digits.slice(2);
   }
-  // Ensure starts with 0
+
+  // Ensure starts with 0 for 10-digit numbers like 1712345678
   if (digits.length === 10 && digits.startsWith("1")) {
     digits = "0" + digits;
+  }
+
+  // If longer than 11 digits, extract last 11 digits if they start with 01
+  if (digits.length > 11) {
+    const last11 = digits.slice(-11);
+    if (last11.startsWith("01")) {
+      digits = last11;
+    }
   }
 
   if (format === "bd_local") {

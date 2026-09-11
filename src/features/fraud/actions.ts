@@ -492,9 +492,10 @@ export async function toggleBlacklistStatus(phoneOrId: string, isBlacklisted: bo
 }
 
 export async function sendAbandonedRecoverySms(id: string) {
-  const item = memoryAbandonedCheckouts.find((c) => c.id === id);
+  const currentLeads = await getStoredLeads();
+  const item = currentLeads.find((c) => c.id === id) || memoryAbandonedCheckouts.find((c) => c.id === id);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "";
-  if (item) {
+  if (item && item.customer_phone) {
     await sendSmsNotification({
       recipientPhone: item.customer_phone,
       eventType: "abandoned_cart",
@@ -505,7 +506,11 @@ export async function sendAbandonedRecoverySms(id: string) {
         discount_code: "BLUSH5",
       },
     });
+    
     item.recovery_status = "sms_sent";
+    const updated = currentLeads.map((l) => (l.id === id ? { ...l, recovery_status: "sms_sent" as const } : l));
+    await saveStoredLeads(updated);
+    revalidatePath("/admin/orders/incomplete");
   }
   return { success: true };
 }
