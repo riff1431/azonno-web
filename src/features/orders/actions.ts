@@ -477,6 +477,7 @@ export async function createOrder(input: CreateOrderInput) {
           name: input.customer.name,
           phone: verifiedPhone,
           email: input.customer.email || null,
+          division: input.customer.division || "Dhaka",
           district: input.customer.district,
           thana: input.customer.thana,
           address: input.customer.address,
