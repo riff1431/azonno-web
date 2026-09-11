@@ -188,7 +188,7 @@ export async function sendSmsNotification(input: {
   const { shouldSendNotification, getSmsProviderConfig } = await import("@/features/communication/actions");
   
   // Check if provider is enabled
-  const providerConfig = await getSmsProviderConfig();
+  const providerConfig = await getSmsProviderConfig(true);
   if (!providerConfig.is_active && input.eventType !== "test_sms") {
     return {
       success: false,

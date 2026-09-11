@@ -6,8 +6,8 @@ import { sendSmsNotification } from "@/features/sms/actions";
 import { revalidatePath } from "next/cache";
 
 // SMS Gateway Provider Settings
-export async function getSmsProviderConfig() {
-  const settings = await getModuleSettings("sms", "all", false);
+export async function getSmsProviderConfig(includeSecrets: boolean = true) {
+  const settings = await getModuleSettings("sms", "all", includeSecrets);
 
   return {
     provider_name: settings.provider_name || "BulkSMSBD",

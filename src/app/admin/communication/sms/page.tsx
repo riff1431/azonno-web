@@ -6,6 +6,6 @@ export const metadata = {
 };
 
 export default async function AdminSmsProvidersPage() {
-  const settings = await getSmsProviderConfig();
+  const settings = await getSmsProviderConfig(false);
   return <SmsClient initialSettings={settings} />;
 }
