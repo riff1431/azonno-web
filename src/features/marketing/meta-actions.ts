@@ -296,14 +296,23 @@ export async function sendMetaCapiEvent(input: {
         ? mappedContents.reduce((sum: number, it: any) => sum + it.quantity, 0)
         : undefined;
 
+    const mappedContentId =
+      input.customData.content_id !== undefined
+        ? String(input.customData.content_id)
+        : mappedContentIds && mappedContentIds.length > 0
+        ? String(mappedContentIds[0])
+        : undefined;
+
     const rawCustomData: Record<string, any> = {
       currency: input.customData.currency || (hasEcommerceItems ? "BDT" : undefined),
       value: input.customData.value !== undefined ? Number(input.customData.value) : undefined,
       content_type: input.customData.content_type || (hasEcommerceItems ? "product" : undefined),
       contents: mappedContents,
+      content_id: mappedContentId,
       content_ids: mappedContentIds,
       content_name: input.customData.content_name || undefined,
       content_category: input.customData.content_category || undefined,
+      item_list_name: input.customData.item_list_name || undefined,
       num_items: calculatedNumItems,
       order_id: input.customData.order_id || input.customData.transaction_id || undefined,
       payment_type: input.customData.payment_type || undefined,
@@ -313,6 +322,7 @@ export async function sendMetaCapiEvent(input: {
       coupon: input.customData.coupon || undefined,
       discount: input.customData.discount !== undefined ? Number(input.customData.discount) : undefined,
       search_string: input.customData.search_string || input.customData.search_term || undefined,
+      reason: input.customData.reason || undefined,
       status: input.customData.status || undefined,
     };
 
@@ -495,7 +505,8 @@ export async function dispatchAdvancedPurchaseCapi(order: any, triggerStatus: st
           value: totalValue,
           content_type: "product",
           contents: items,
-          content_ids: items.map((i: any) => i.id),
+          content_id: items[0]?.id ? String(items[0].id) : undefined,
+          content_ids: items.map((i: any) => String(i.id)),
           num_items: items.reduce((acc: number, cur: any) => acc + cur.quantity, 0),
           order_id: order.order_number || order.id,
           payment_type: order.payment_method || "Cash on Delivery",

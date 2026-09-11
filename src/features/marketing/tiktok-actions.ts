@@ -181,11 +181,19 @@ export async function sendTikTokCapiEvent(input: {
     if (input.properties?.content_id || input.properties?.content_ids?.[0]) {
       propertiesPayload.content_id = input.properties?.content_id || input.properties?.content_ids?.[0];
     }
+    if (Array.isArray(input.properties?.content_ids) && input.properties.content_ids.length > 0) {
+      propertiesPayload.content_ids = input.properties.content_ids.map(String);
+    } else if (propertiesPayload.content_id) {
+      propertiesPayload.content_ids = [String(propertiesPayload.content_id)];
+    }
     if (input.properties?.content_name) {
       propertiesPayload.content_name = input.properties.content_name;
     }
     if (input.properties?.content_category) {
       propertiesPayload.content_category = input.properties.content_category;
+    }
+    if (input.properties?.item_list_name) {
+      propertiesPayload.item_list_name = input.properties.item_list_name;
     }
     if (input.properties?.quantity !== undefined) {
       propertiesPayload.quantity = Number(input.properties.quantity);
@@ -208,6 +216,9 @@ export async function sendTikTokCapiEvent(input: {
     }
     if (input.properties?.discount !== undefined) {
       propertiesPayload.discount = Number(input.properties.discount);
+    }
+    if (input.properties?.reason) {
+      propertiesPayload.reason = input.properties.reason;
     }
     if (input.properties?.status) {
       propertiesPayload.status = input.properties.status;
