@@ -47,7 +47,6 @@ import {
   trackBeginCheckout,
   trackAddShippingInfo,
   trackAddPaymentInfo,
-  trackLead,
 } from "@/lib/analytics/datalayer";
 import { savePersistentCustomerIdentity } from "@/lib/analytics/customer-identity";
 import { useLanguage } from "@/context/language-context";
@@ -385,7 +384,6 @@ export default function CheckoutPage() {
         })),
         subtotal: finalTotal,
       });
-      trackLead("checkout_form_fill", finalTotal);
     }, 250);
 
     return () => clearTimeout(timer);
