@@ -297,7 +297,7 @@ export function trackMetaEvent(
         eventId,
         eventSourceUrl: window.location.href,
         userData,
-        customData: params,
+        customData: cleanParams,
         testEventCode: testCode,
       }),
       keepalive: true,

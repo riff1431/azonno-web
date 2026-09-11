@@ -1654,6 +1654,10 @@ export function trackSubmitApplication(
   trackMetaEvent("SubmitApplication", {
     content_name: applicationName,
   });
+
+  trackTikTokEvent("SubmitForm", {
+    content_name: applicationName,
+  }, customer);
 }
 
 // ============================================================================
@@ -1676,6 +1680,10 @@ export function trackSchedule(
   trackMetaEvent("Schedule", {
     content_name: scheduleType,
   });
+
+  trackTikTokEvent("Schedule", {
+    content_name: scheduleType,
+  }, customer);
 }
 
 // ============================================================================
@@ -1698,6 +1706,10 @@ export function trackStartTrial(
   trackMetaEvent("StartTrial", {
     content_name: trialName,
   });
+
+  trackTikTokEvent("StartTrial", {
+    content_name: trialName,
+  }, customer);
 }
 
 // ============================================================================

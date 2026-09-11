@@ -208,6 +208,31 @@ export function trackTikTokEvent(
       undefined;
   }
 
+  // Helper to sanitize and normalize payload for TikTok Pixel
+  const cleanParams: Record<string, any> = {};
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null && v !== "") {
+      if (Array.isArray(v)) {
+        const cleanedArr = v
+          .map((item) => (typeof item === "object" && item !== null ? Object.fromEntries(Object.entries(item).filter(([_, val]) => val !== undefined && val !== null && val !== "")) : item))
+          .filter((item) => item !== undefined && item !== null);
+        if (cleanedArr.length > 0) cleanParams[k] = cleanedArr;
+      } else if (typeof v === "object") {
+        const subCleaned = Object.fromEntries(Object.entries(v).filter(([_, val]) => val !== undefined && val !== null && val !== ""));
+        if (Object.keys(subCleaned).length > 0) cleanParams[k] = subCleaned;
+      } else {
+        cleanParams[k] = v;
+      }
+    }
+  }
+
+  if (cleanParams.currency) {
+    cleanParams.currency = String(cleanParams.currency).trim().toUpperCase();
+  }
+  if (cleanParams.value !== undefined) {
+    cleanParams.value = Number(cleanParams.value) || 0;
+  }
+
   // 4. Resolve rich persistent customer identity & ad identifiers for EMQ 9.0+ / 10/10
   const resolvedIdentity = getResolvedCustomerIdentity(customerData);
 
@@ -241,7 +266,7 @@ export function trackTikTokEvent(
         ttq.page();
       }
     } else {
-      ttq.track(mappedEvent, params, { event_id: eventId });
+      ttq.track(mappedEvent, cleanParams, { event_id: eventId });
     }
   }
 
@@ -256,7 +281,7 @@ export function trackTikTokEvent(
         eventId,
         sourceUrl: typeof window !== "undefined" ? window.location.href : undefined,
         payload: {
-          ...params,
+          ...cleanParams,
           _event_source: "browser_ttq",
           _tiktok_pixel_id: typeof window !== "undefined" ? window.__TIKTOK_PIXEL_ID__ : undefined,
           _external_id: resolvedIdentity.externalId,
@@ -289,7 +314,7 @@ export function trackTikTokEvent(
         eventId,
         eventSourceUrl: window.location.href,
         userData,
-        properties: params,
+        properties: cleanParams,
         testEventCode: testCode,
       }),
       keepalive: true,
