@@ -49,6 +49,21 @@ export async function POST(req: NextRequest) {
       req.headers.get("user-agent") ||
       undefined;
 
+    // Capture external_id from payload or cookies
+    let externalId =
+      userData.externalId ||
+      userData.external_id ||
+      req.cookies.get("_ext_id")?.value;
+    let newlyGeneratedExtId = false;
+
+    if (!externalId || externalId === "undefined" || externalId === "null") {
+      externalId = `ext_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      newlyGeneratedExtId = true;
+    }
+
+    const phone = userData.phone || userData.phone_number || req.cookies.get("_cust_phone")?.value || undefined;
+    const email = userData.email || req.cookies.get("_cust_email")?.value || undefined;
+
     // Capture TikTok cookies (_ttp, ttclid)
     let ttp = userData.ttp || req.cookies.get("_ttp")?.value;
     let newlyGeneratedTtp = false;
@@ -62,6 +77,9 @@ export async function POST(req: NextRequest) {
 
     const enrichedUserData = {
       ...userData,
+      externalId,
+      phone,
+      email,
       clientIpAddress,
       clientUserAgent,
       ttp,
@@ -90,6 +108,14 @@ export async function POST(req: NextRequest) {
 
     if (newlyGeneratedTtp) {
       response.cookies.set("_ttp", ttp, {
+        path: "/",
+        maxAge: 7776000,
+        sameSite: "lax",
+      });
+    }
+
+    if (newlyGeneratedExtId) {
+      response.cookies.set("_ext_id", externalId, {
         path: "/",
         maxAge: 7776000,
         sameSite: "lax",

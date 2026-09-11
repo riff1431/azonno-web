@@ -19,6 +19,8 @@ function getCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[2]) : undefined;
 }
 
+import { getResolvedCustomerIdentity } from "@/lib/analytics/customer-identity";
+
 // In-memory sliding window deduplication for TikTok Pixel events
 const recentTikTokEventTimestamps = new Map<string, number>();
 const TIKTOK_DEDUP_WINDOW_MS = 1200;
@@ -206,29 +208,33 @@ export function trackTikTokEvent(
       undefined;
   }
 
-  // 4. Fire Browser TikTok Pixel (guaranteed queue buffer via getOrInitTtq)
+  // 4. Resolve rich persistent customer identity & ad identifiers for EMQ 9.0+ / 10/10
+  const resolvedIdentity = getResolvedCustomerIdentity(customerData);
+
+  // 4.1. Fire Browser TikTok Pixel (guaranteed queue buffer via getOrInitTtq)
   const ttq = getOrInitTtq();
   if (ttq) {
-    if (customerData) {
-      let rawPhone = customerData.phone || customerData.phone_number;
-      let formattedPhone: string | undefined;
-      if (rawPhone) {
-        let digits = String(rawPhone).replace(/\D/g, "");
-        if (digits.startsWith("01") && digits.length === 11) {
-          formattedPhone = "+880" + digits.slice(1);
-        } else if (digits.startsWith("8801") && digits.length === 13) {
-          formattedPhone = "+" + digits;
-        } else if (digits.length > 6) {
-          formattedPhone = digits.startsWith("+") ? digits : "+" + digits;
-        }
+    let formattedPhone: string | undefined;
+    if (resolvedIdentity.phone) {
+      let digits = String(resolvedIdentity.phone).replace(/\D/g, "");
+      if (digits.startsWith("01") && digits.length === 11) {
+        formattedPhone = "+880" + digits.slice(1);
+      } else if (digits.startsWith("8801") && digits.length === 13) {
+        formattedPhone = "+" + digits;
+      } else if (digits.length > 6) {
+        formattedPhone = digits.startsWith("+") ? digits : "+" + digits;
       }
-
-      ttq.identify({
-        email: customerData.email ? customerData.email.trim().toLowerCase() : undefined,
-        phone_number: formattedPhone || undefined,
-        external_id: customerData.external_id || customerData.user_id || customerData.id || undefined,
-      });
     }
+
+    const identifyPayload: Record<string, any> = {
+      external_id: resolvedIdentity.externalId,
+    };
+    if (resolvedIdentity.email) identifyPayload.email = resolvedIdentity.email.trim().toLowerCase();
+    if (formattedPhone) identifyPayload.phone_number = formattedPhone;
+
+    try {
+      ttq.identify(identifyPayload);
+    } catch {}
 
     if (mappedEvent === "PageView") {
       if (typeof ttq.page === "function") {
@@ -239,7 +245,7 @@ export function trackTikTokEvent(
     }
   }
 
-  // 4.1. Record Live Browser TikTok Event to Live Event Logger
+  // 4.2. Record Live Browser TikTok Event to Live Event Logger
   try {
     fetch("/api/analytics/live-log", {
       method: "POST",
@@ -253,6 +259,7 @@ export function trackTikTokEvent(
           ...params,
           _event_source: "browser_ttq",
           _tiktok_pixel_id: typeof window !== "undefined" ? window.__TIKTOK_PIXEL_ID__ : undefined,
+          _external_id: resolvedIdentity.externalId,
           _test_event_code: testCode,
         },
         status: "success",
@@ -263,31 +270,14 @@ export function trackTikTokEvent(
 
   // 5. Fire Server-Side TikTok Events API (CAPI) in background
   try {
-    let ttp = getCookie("_ttp");
-    if (!ttp && typeof window !== "undefined") {
-      ttp =
-        localStorage.getItem("ecomx_ttp") ||
-        `ttp.1.${Date.now()}.${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-      document.cookie = `_ttp=${ttp};path=/;max-age=7776000;SameSite=Lax`;
-      localStorage.setItem("ecomx_ttp", ttp);
-    }
-
-    const ttclid = getCookie("ttclid") || (typeof localStorage !== "undefined" ? localStorage.getItem("ecomx_ttclid") || undefined : undefined);
-
-    const userData = customerData
-      ? {
-          email: customerData.email,
-          phone: customerData.phone,
-          externalId: customerData.external_id || customerData.user_id || customerData.id,
-          clientUserAgent: navigator.userAgent,
-          ttp,
-          ttclid,
-        }
-      : {
-          clientUserAgent: navigator.userAgent,
-          ttp,
-          ttclid,
-        };
+    const userData = {
+      email: resolvedIdentity.email,
+      phone: resolvedIdentity.phone,
+      externalId: resolvedIdentity.externalId,
+      clientUserAgent: resolvedIdentity.clientUserAgent || (typeof navigator !== "undefined" ? navigator.userAgent : undefined),
+      ttp: resolvedIdentity.ttp,
+      ttclid: resolvedIdentity.ttclid,
+    };
 
     fetch("/api/analytics/tiktok", {
       method: "POST",
