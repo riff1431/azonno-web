@@ -464,16 +464,16 @@ export function generateWhatsAppOrderMessage(
   const codDue = order.amount_to_collect !== undefined ? order.amount_to_collect : (order.cart_total || order.total || 0);
   const tracking = order.consignment_id || order.tracking_code || order.tracking_id || "";
   const courier = order.courier_name || (tracking.startsWith("PTH") || tracking.startsWith("DE") ? "Pathao Courier" : "SteadFast Courier");
-  const baseLiveUrl = getBaseUrl() || "https://blushandbudget.com";
+  const baseLiveUrl = getBaseUrl();
   let trackUrl = buildCourierTrackingUrl(courier, tracking, order.tracking_url);
   if (!trackUrl || trackUrl.startsWith("/")) {
-    trackUrl = `${baseLiveUrl}/account/track?order=${orderNum}`;
+    trackUrl = baseLiveUrl ? `${baseLiveUrl}/account/track?order=${orderNum}` : `/account/track?order=${orderNum}`;
   }
   const advanceFee = customAdvanceAmount || 120;
   const remainingDue = Math.max(0, codDue - advanceFee);
   const fallbackCheckoutUrl = order.checkout_url
-    ? (order.checkout_url.startsWith("http") ? order.checkout_url : `${baseLiveUrl}${order.checkout_url.startsWith("/") ? order.checkout_url : `/${order.checkout_url}`}`)
-    : `${baseLiveUrl}/checkout`;
+    ? (order.checkout_url.startsWith("http") ? order.checkout_url : (baseLiveUrl ? `${baseLiveUrl}${order.checkout_url.startsWith("/") ? order.checkout_url : `/${order.checkout_url}`}` : order.checkout_url))
+    : (baseLiveUrl ? `${baseLiveUrl}/checkout` : "/checkout");
 
   // Check if admin defined a custom active template for this type
   const matchedCustom = customTemplates?.find(

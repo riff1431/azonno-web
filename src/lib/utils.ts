@@ -132,7 +132,7 @@ export async function getLiveBaseUrl(fallback: string = ""): Promise<string> {
   const envBase = getBaseUrl(fallback);
   if (envBase) return envBase.replace(/\/$/, "");
 
-  return "https://blushandbudget.com";
+  return fallback;
 }
 
 /**
