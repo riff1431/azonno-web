@@ -62,6 +62,7 @@ export default function CheckoutPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(urlError || null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("cod");
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isRecoveredCart, setIsRecoveredCart] = useState(false);
 
   // Coupon Code State & Handler
   const [couponCode, setCouponCode] = useState("");
@@ -233,6 +234,36 @@ export default function CheckoutPage() {
         setIsEditingAddress(true);
       }
     });
+
+    // Check 1-Click Cart Recovery prefill
+    try {
+      const isRecoveredParam = searchParams?.get("recovered") === "1";
+      const hasRecoveredToast = typeof window !== "undefined" && localStorage.getItem("ecomx_recovered_toast") === "true";
+      if (isRecoveredParam || hasRecoveredToast) {
+        setIsRecoveredCart(true);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("ecomx_recovered_toast");
+        }
+      }
+
+      if (typeof window !== "undefined") {
+        const prefillRaw = localStorage.getItem("ecomx_checkout_prefill");
+        if (prefillRaw) {
+          const prefill = JSON.parse(prefillRaw);
+          setFormData((prev) => ({
+            ...prev,
+            name: prefill.name || prev.name,
+            phone: prefill.phone || prev.phone,
+            email: prefill.email || prev.email,
+            division: prefill.division || prev.division,
+            district: prefill.district || prev.district,
+            thana: prefill.thana || prev.thana,
+            address: prefill.address || prev.address,
+          }));
+          localStorage.removeItem("ecomx_checkout_prefill");
+        }
+      }
+    } catch {}
   }, []);
 
   const hasTrackedBeginCheckout = useRef(false);
@@ -678,6 +709,37 @@ export default function CheckoutPage() {
           <ShieldCheck className="h-4 w-4" /> {t("checkout", "secureNotice")}
         </div>
       </div>
+
+      {/* 1-Click Cart Recovery Banner */}
+      {isRecoveredCart && (
+        <div className="rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 to-pink-50 p-4 shadow-sm animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 shrink-0 mt-0.5 shadow-inner">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <div className="space-y-0.5">
+                <h3 className="text-sm font-bold text-gray-900 font-bengali">
+                  {language === "bn" ? "কার্ট এবং তথ্য সফলভাবে লোড হয়েছে! 🌸" : "Cart & Details Restored! 🌸"}
+                </h3>
+                <p className="text-xs text-gray-600 font-bengali">
+                  {language === "bn"
+                    ? "আপনার পূর্বের সংরক্ষিত প্রোডাক্ট ও তথ্য প্রস্তুত রয়েছে। অনুগ্রহ করে নিচে ডেলিভারি ঠিকানা চেক করে অর্ডারটি সম্পন্ন করুন।"
+                    : "Your previously selected products and contact info have been restored. Please review delivery details below to complete your order."}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsRecoveredCart(false)}
+              className="text-gray-400 hover:text-gray-600 p-1"
+              aria-label="Close notification"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Free Delivery Progress Meter (Controlled by Admin Settings) */}
       {settings.enable_free_shipping_meter && settings.free_shipping_threshold > 0 && (

@@ -40,6 +40,7 @@ interface CartContextType {
   updateQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
+  restoreCart: (items: CartItem[], couponCode?: string) => void;
   applyCoupon: (code: string) => Promise<{ success: boolean; message: string }>;
   removeCoupon: () => void;
 }
@@ -120,6 +121,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = React.useCallback(() => {
     setItems((prev) => (prev.length === 0 ? prev : []));
     setCoupon((prev) => (prev === null ? prev : null));
+  }, []);
+
+  const restoreCart = React.useCallback((newItems: CartItem[], couponCode?: string) => {
+    if (Array.isArray(newItems) && newItems.length > 0) {
+      setItems(newItems);
+      try {
+        localStorage.setItem("ecomx_cart", JSON.stringify(newItems));
+      } catch (err) {
+        console.warn("Failed to persist restored cart", err);
+      }
+    }
   }, []);
 
   // Subtotal calculation
@@ -207,6 +219,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity,
         removeItem,
         clearCart,
+        restoreCart,
         applyCoupon,
         removeCoupon,
       }}

@@ -36,15 +36,25 @@ export interface AbandonedLead {
   customer_name: string;
   customer_phone: string;
   customer_email?: string;
+  division?: string;
   district?: string;
+  thana?: string;
   address?: string;
+  raw_address?: string;
   cart_items: Array<{
     id?: string;
+    product_id?: string;
+    variant_id?: string | null;
     name: string;
+    slug?: string;
     quantity: number;
     price: number;
+    regular_price?: number;
     image?: string;
+    image_url?: string | null;
     variant?: string;
+    variant_label?: string | null;
+    brand_name?: string | null;
   }>;
   cart_total: number;
   recovery_status: "abandoned" | "sms_sent" | "whatsapp_sent" | "converted";
@@ -304,15 +314,25 @@ export async function saveIncompleteLead(input: {
     customer_name: cleanName || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_name : "Guest Customer"),
     customer_phone: cleanPhone || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_phone : "Not Provided"),
     customer_email: cleanEmail || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_email : undefined),
+    division: input.division || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].division : "Dhaka"),
     district: input.district || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].district : "Dhaka City"),
+    thana: input.thana || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].thana : ""),
     address: [cleanAddress, input.thana, input.district, input.division].filter(Boolean).join(", ") || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].address : ""),
+    raw_address: cleanAddress || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].raw_address : ""),
     cart_items: (input.cartItems || []).map((it) => ({
       id: it.id || it.product_id,
+      product_id: it.product_id || it.id,
+      variant_id: (it as any).variant_id || null,
       name: it.name,
+      slug: (it as any).slug || it.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       quantity: it.quantity || 1,
       price: it.price || 0,
+      regular_price: (it as any).regular_price || it.price || 0,
       image: it.image || it.image_url,
-      variant: it.variant,
+      image_url: it.image_url || it.image,
+      variant: it.variant || (it as any).variant_label,
+      variant_label: (it as any).variant_label || it.variant,
+      brand_name: (it as any).brand_name || null,
     })),
     cart_total: total,
     recovery_status: existingIdx >= 0 && memoryAbandonedCheckouts[existingIdx].recovery_status === "converted"
@@ -491,19 +511,39 @@ export async function toggleBlacklistStatus(phoneOrId: string, isBlacklisted: bo
   return { success: true };
 }
 
+export async function getAbandonedLeadById(id: string): Promise<AbandonedLead | null> {
+  const cleanId = (id || "").trim();
+  if (!cleanId) return null;
+  const currentLeads = await getStoredLeads();
+  const digits = cleanId.replace(/\D/g, "");
+  const found =
+    currentLeads.find(
+      (l) =>
+        l.id === cleanId ||
+        (digits.length >= 6 && (l.customer_phone === digits || l.customer_phone?.replace(/\D/g, "") === digits))
+    ) ||
+    memoryAbandonedCheckouts.find(
+      (l) =>
+        l.id === cleanId ||
+        (digits.length >= 6 && (l.customer_phone === digits || l.customer_phone?.replace(/\D/g, "") === digits))
+    );
+  return found || null;
+}
+
 export async function sendAbandonedRecoverySms(id: string) {
   const currentLeads = await getStoredLeads();
   const item = currentLeads.find((c) => c.id === id) || memoryAbandonedCheckouts.find((c) => c.id === id);
   const { getLiveBaseUrl } = await import("@/lib/utils");
   const appUrl = await getLiveBaseUrl();
   if (item && item.customer_phone) {
+    const recoveryUrl = `${appUrl}/r/${item.id}`;
     await sendSmsNotification({
       recipientPhone: item.customer_phone,
       eventType: "abandoned_cart",
       variables: {
         customer_name: item.customer_name || "সম্মানিত গ্রাহক",
         store_name: "Blush & Budget",
-        checkout_url: `${appUrl}/checkout`,
+        checkout_url: recoveryUrl,
         discount_code: "BLUSH5",
       },
     });

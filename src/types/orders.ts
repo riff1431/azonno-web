@@ -537,7 +537,8 @@ export function generateWhatsAppAbandonedMessage(
   customTemplates?: Array<{ template_type: string; template: string; advance_amount?: number; is_active?: boolean }>
 ): string {
   const base = originUrl || getBaseUrl();
-  const checkoutUrl = `${base.replace(/\/$/, "")}/checkout`;
+  const cleanBase = base.replace(/\/$/, "");
+  const checkoutUrl = lead?.id ? `${cleanBase}/r/${lead.id}` : `${cleanBase}/checkout`;
   return generateWhatsAppOrderMessage(
     {
       ...lead,

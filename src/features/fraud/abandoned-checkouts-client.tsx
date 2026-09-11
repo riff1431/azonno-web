@@ -118,7 +118,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
         variables: {
           customer_name: item.customer_name || "সম্মানিত গ্রাহক",
           store_name: "Blush & Budget",
-          checkout_url: `${origin}/checkout`,
+          checkout_url: `${origin}/r/${item.id}`,
           discount_code: "BLUSH5",
         },
       });
