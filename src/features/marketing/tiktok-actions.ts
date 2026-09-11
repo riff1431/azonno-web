@@ -197,6 +197,21 @@ export async function sendTikTokCapiEvent(input: {
     if (input.properties?.order_id || input.properties?.transaction_id) {
       propertiesPayload.order_id = input.properties?.order_id || input.properties?.transaction_id;
     }
+    if (input.properties?.payment_type) {
+      propertiesPayload.payment_type = input.properties.payment_type;
+    }
+    if (input.properties?.shipping_tier) {
+      propertiesPayload.shipping_tier = input.properties.shipping_tier;
+    }
+    if (input.properties?.coupon) {
+      propertiesPayload.coupon = input.properties.coupon;
+    }
+    if (input.properties?.discount !== undefined) {
+      propertiesPayload.discount = Number(input.properties.discount);
+    }
+    if (input.properties?.status) {
+      propertiesPayload.status = input.properties.status;
+    }
     if (input.properties?.search_string || input.properties?.query) {
       propertiesPayload.query = input.properties.search_string || input.properties.query;
     }

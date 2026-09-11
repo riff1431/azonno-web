@@ -372,6 +372,7 @@ export function trackViewContent(
       contents,
       value,
       currency,
+      num_items: quantity,
     },
     customer,
     eventId
@@ -395,6 +396,7 @@ export function trackViewContent(
       ],
       value,
       currency,
+      quantity,
     },
     customer,
     eventId
@@ -455,6 +457,7 @@ export function trackViewCategory(
   const contentIds = items.map((i) => i.item_id);
   const contents = formatMetaContents(formattedItems);
   const totalValue = items.reduce((sum, it) => sum + (Number(it.price) || 0) * (it.quantity || 1), 0);
+  const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const userData = normalizeCustomerData(customer);
 
   pushToDataLayer({
@@ -479,10 +482,35 @@ export function trackViewCategory(
   trackMetaEvent(
     "ViewCategory",
     {
+      content_name: categoryName,
       content_category: categoryName,
+      content_type: "product_group",
       content_ids: contentIds,
       contents,
+      value: totalValue,
       currency,
+      num_items: totalQuantity,
+    },
+    customer
+  );
+
+  trackTikTokEvent(
+    "ViewContent",
+    {
+      content_name: categoryName,
+      content_category: categoryName,
+      content_type: "product_group",
+      content_id: contentIds[0],
+      content_ids: contentIds,
+      contents: formattedItems.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
+      value: totalValue,
+      currency,
+      quantity: totalQuantity,
     },
     customer
   );
@@ -510,6 +538,7 @@ export function trackViewItemList(
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(formattedItems);
   const totalValue = items.reduce((sum, it) => sum + (Number(it.price) || 0) * (it.quantity || 1), 0);
+  const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const userData = normalizeCustomerData(customer);
 
   pushToDataLayer({
@@ -533,10 +562,34 @@ export function trackViewItemList(
   trackMetaEvent(
     "ViewItemList",
     {
+      content_name: itemListName,
       item_list_name: itemListName,
+      content_type: "product_group",
       content_ids: contentIds,
       contents,
+      value: totalValue,
       currency,
+      num_items: totalQuantity,
+    },
+    customer
+  );
+
+  trackTikTokEvent(
+    "ViewContent",
+    {
+      content_name: itemListName,
+      content_type: "product_group",
+      content_id: contentIds[0],
+      content_ids: contentIds,
+      contents: formattedItems.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
+      value: totalValue,
+      currency,
+      quantity: totalQuantity,
     },
     customer
   );
@@ -587,9 +640,37 @@ export function trackSelectItem(
     "SelectItem",
     {
       content_id: item.item_id,
+      content_ids: [item.item_id],
       content_name: item.item_name,
+      content_category: item.item_category,
+      content_type: "product",
       contents,
+      value,
       currency,
+      num_items: quantity,
+    },
+    customer
+  );
+
+  trackTikTokEvent(
+    "ViewContent",
+    {
+      content_id: item.item_id,
+      content_ids: [item.item_id],
+      content_name: item.item_name,
+      content_category: item.item_category,
+      content_type: "product",
+      contents: [
+        {
+          content_id: item.item_id,
+          content_name: item.item_name,
+          price: itemPrice,
+          quantity,
+        },
+      ],
+      value,
+      currency,
+      quantity,
     },
     customer
   );
@@ -618,6 +699,7 @@ export function trackAddToWishlist(
   if (!items || items.length === 0) return;
 
   const totalValue = value !== undefined ? value : items.reduce((sum, it) => sum + (Number(it.price) || 0) * (it.quantity || 1), 0);
+  const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const firstItem = items[0];
@@ -644,12 +726,15 @@ export function trackAddToWishlist(
   trackMetaEvent(
     "AddToWishlist",
     {
+      content_id: firstItem?.item_id,
+      content_ids: contentIds,
       content_name: firstItem?.item_name,
       content_category: firstItem?.item_category,
-      content_ids: contentIds,
+      content_type: "product",
       contents,
       value: totalValue,
       currency,
+      num_items: totalQuantity,
     },
     customer
   );
@@ -658,9 +743,19 @@ export function trackAddToWishlist(
     "AddToWishlist",
     {
       content_id: firstItem?.item_id,
+      content_ids: contentIds,
       content_name: firstItem?.item_name,
+      content_category: firstItem?.item_category,
+      content_type: "product",
+      contents: items.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
       value: totalValue,
       currency,
+      quantity: totalQuantity,
     },
     customer
   );
@@ -709,9 +804,10 @@ export function trackAddToCart(
     "AddToCart",
     {
       content_id: firstItem?.item_id,
+      content_ids: contentIds,
       content_name: firstItem?.item_name,
       content_category: firstItem?.item_category,
-      content_ids: contentIds,
+      content_type: "product",
       contents,
       value: totalValue,
       currency,
@@ -781,7 +877,9 @@ export function trackViewCart(
   trackMetaEvent(
     "ViewCart",
     {
+      content_id: contentIds[0],
       content_ids: contentIds,
+      content_type: "product",
       contents,
       value: totalValue,
       currency,
@@ -796,6 +894,7 @@ export function trackViewCart(
     {
       content_id: contentIds[0],
       content_ids: contentIds,
+      content_type: "product",
       contents: items.map((it) => ({
         content_id: it.item_id,
         content_name: it.item_name,
@@ -823,6 +922,7 @@ export function trackRemoveFromCart(
   if (!items || items.length === 0) return;
 
   const totalValue = value !== undefined ? value : items.reduce((sum, it) => sum + (Number(it.price) || 0) * (it.quantity || 1), 0);
+  const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const firstItem = items[0];
@@ -849,11 +949,37 @@ export function trackRemoveFromCart(
   trackMetaEvent(
     "RemoveFromCart",
     {
-      content_name: firstItem?.item_name,
+      content_id: firstItem?.item_id,
       content_ids: contentIds,
+      content_name: firstItem?.item_name,
+      content_category: firstItem?.item_category,
+      content_type: "product",
       contents,
       value: totalValue,
       currency,
+      num_items: totalQuantity,
+    },
+    customer,
+    eventId
+  );
+
+  trackTikTokEvent(
+    "RemoveFromCart",
+    {
+      content_id: firstItem?.item_id,
+      content_ids: contentIds,
+      content_name: firstItem?.item_name,
+      content_category: firstItem?.item_category,
+      content_type: "product",
+      contents: items.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
+      value: totalValue,
+      currency,
+      quantity: totalQuantity,
     },
     customer,
     eventId
@@ -929,11 +1055,15 @@ export function trackInitiateCheckout(
   trackMetaEvent(
     "InitiateCheckout",
     {
+      content_id: contentIds[0],
       content_ids: contentIds,
+      content_type: "product",
       contents,
       value: totalValue,
       currency: curr,
       num_items: totalQuantity,
+      coupon,
+      discount,
     },
     customer,
     eventId
@@ -944,6 +1074,7 @@ export function trackInitiateCheckout(
     {
       content_id: contentIds[0],
       content_ids: contentIds,
+      content_type: "product",
       contents: items.map((it) => ({
         content_id: it.item_id,
         content_name: it.item_name,
@@ -953,6 +1084,7 @@ export function trackInitiateCheckout(
       value: totalValue,
       currency: curr,
       quantity: totalQuantity,
+      coupon,
     },
     customer,
     eventId
@@ -1010,6 +1142,7 @@ export function trackAddShippingInfo(
   if (items.length === 0) return;
 
   const totalValue = value !== undefined ? value : items.reduce((sum, it) => sum + (Number(it.price) || 0) * (it.quantity || 1), 0);
+  const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const userData = normalizeCustomerData(customer);
@@ -1025,6 +1158,7 @@ export function trackAddShippingInfo(
     shipping_tier: shippingTier,
     coupon,
     discount,
+    num_items: totalQuantity,
     user_data: userData,
     ecommerce: {
       currency: curr,
@@ -1038,10 +1172,37 @@ export function trackAddShippingInfo(
   trackMetaEvent(
     "AddShippingInfo",
     {
+      content_id: contentIds[0],
       content_ids: contentIds,
+      content_type: "product",
       contents,
       value: totalValue,
       currency: curr,
+      num_items: totalQuantity,
+      shipping_tier: shippingTier,
+      shipping,
+      coupon,
+      discount,
+    },
+    customer,
+    eventId
+  );
+
+  trackTikTokEvent(
+    "AddShippingInfo",
+    {
+      content_id: contentIds[0],
+      content_ids: contentIds,
+      content_type: "product",
+      contents: items.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
+      value: totalValue,
+      currency: curr,
+      quantity: totalQuantity,
       shipping_tier: shippingTier,
     },
     customer,
@@ -1095,6 +1256,7 @@ export function trackAddPaymentInfo(
   if (items.length === 0) return;
 
   const totalValue = value !== undefined ? value : items.reduce((sum, it) => sum + (Number(it.price) || 0) * (it.quantity || 1), 0);
+  const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const contentIds = items.map((it) => it.item_id);
   const contents = formatMetaContents(items);
   const userData = normalizeCustomerData(customer);
@@ -1109,6 +1271,7 @@ export function trackAddPaymentInfo(
     payment_type: paymentType,
     coupon,
     discount,
+    num_items: totalQuantity,
     user_data: userData,
     ecommerce: {
       currency: curr,
@@ -1122,11 +1285,16 @@ export function trackAddPaymentInfo(
   trackMetaEvent(
     "AddPaymentInfo",
     {
+      content_id: contentIds[0],
       content_ids: contentIds,
+      content_type: "product",
       contents,
       value: totalValue,
       currency: curr,
+      num_items: totalQuantity,
       payment_type: paymentType,
+      coupon,
+      discount,
     },
     customer,
     eventId
@@ -1135,8 +1303,19 @@ export function trackAddPaymentInfo(
   trackTikTokEvent(
     "AddPaymentInfo",
     {
+      content_id: contentIds[0],
+      content_ids: contentIds,
+      content_type: "product",
+      contents: items.map((it) => ({
+        content_id: it.item_id,
+        content_name: it.item_name,
+        price: Number(it.price) || 0,
+        quantity: it.quantity || 1,
+      })),
       value: totalValue,
       currency: curr,
+      quantity: totalQuantity,
+      payment_type: paymentType,
     },
     customer,
     eventId
@@ -1204,13 +1383,20 @@ export function trackPurchase(params: PurchaseEventParams): void {
     trackMetaEvent(
       "Purchase",
       {
-        content_type: "product",
+        content_id: contentIds[0],
         content_ids: contentIds,
+        content_type: "product",
         contents,
         currency: curr,
         value: totalVal,
         num_items: totalQuantity,
         order_id: txId,
+        transaction_id: txId,
+        payment_type: params.payment_type || "Cash on Delivery",
+        shipping: params.shipping,
+        tax: params.tax,
+        coupon: params.coupon,
+        discount: params.discount,
       },
       params.customer,
       eventId
@@ -1221,9 +1407,9 @@ export function trackPurchase(params: PurchaseEventParams): void {
     trackTikTokEvent(
       "CompletePayment",
       {
-        content_type: "product",
         content_id: contentIds[0],
         content_ids: contentIds,
+        content_type: "product",
         contents: params.items.map((it) => ({
           content_id: it.item_id,
           content_name: it.item_name,
@@ -1234,6 +1420,8 @@ export function trackPurchase(params: PurchaseEventParams): void {
         value: params.value,
         quantity: totalQuantity,
         order_id: txId,
+        payment_type: params.payment_type || "Cash on Delivery",
+        coupon: params.coupon,
       },
       params.customer,
       eventId
@@ -1260,6 +1448,8 @@ export function trackRefund(params: RefundEventParams): void {
   const curr = params.currency || DEFAULT_CURRENCY;
   const items = params.items || [];
   const contents = items.length > 0 ? formatMetaContents(items) : undefined;
+  const contentIds = items.map((i) => i.item_id);
+  const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const userData = normalizeCustomerData(params.customer);
 
   pushToDataLayer({
@@ -1282,7 +1472,17 @@ export function trackRefund(params: RefundEventParams): void {
     order_id: txId,
     value: params.value,
     currency: curr,
+    content_type: items.length > 0 ? "product" : undefined,
+    content_ids: contentIds.length > 0 ? contentIds : undefined,
+    contents,
+    num_items: items.length > 0 ? totalQuantity : undefined,
   });
+
+  trackTikTokEvent("Refund", {
+    order_id: txId,
+    value: params.value,
+    currency: curr,
+  }, params.customer);
 }
 
 // ============================================================================

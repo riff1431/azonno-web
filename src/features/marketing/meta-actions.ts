@@ -252,7 +252,7 @@ export async function sendMetaCapiEvent(input: {
   if (input.customData && Object.keys(input.customData).length > 0) {
     const mappedContents = Array.isArray(input.customData.contents)
       ? input.customData.contents.map((it: any) => ({
-          id: String(it.id || it.item_id),
+          id: String(it.id || it.item_id || it.content_id),
           quantity: Number(it.quantity) || 1,
           item_price: Number(it.item_price || it.price) || 0,
         }))
@@ -266,23 +266,66 @@ export async function sendMetaCapiEvent(input: {
       ? mappedContents.map((it) => it.id)
       : undefined;
 
-    serverEvent.custom_data = {
-      currency: input.customData.currency || "BDT",
+    const isEcommerceEvent = [
+      "Purchase",
+      "AddToCart",
+      "InitiateCheckout",
+      "AddPaymentInfo",
+      "AddShippingInfo",
+      "ViewContent",
+      "AddToWishlist",
+      "ViewCart",
+      "RemoveFromCart",
+      "ViewCategory",
+      "ViewItemList",
+      "SelectItem",
+    ].includes(input.eventName);
+
+    const hasEcommerceItems = Boolean(
+      input.customData.content_type ||
+      mappedContents ||
+      mappedContentIds ||
+      input.customData.value !== undefined ||
+      isEcommerceEvent
+    );
+
+    const calculatedNumItems =
+      input.customData.num_items !== undefined
+        ? Number(input.customData.num_items)
+        : mappedContents
+        ? mappedContents.reduce((sum: number, it: any) => sum + it.quantity, 0)
+        : undefined;
+
+    const rawCustomData: Record<string, any> = {
+      currency: input.customData.currency || (hasEcommerceItems ? "BDT" : undefined),
       value: input.customData.value !== undefined ? Number(input.customData.value) : undefined,
-      content_type: input.customData.content_type || "product",
+      content_type: input.customData.content_type || (hasEcommerceItems ? "product" : undefined),
       contents: mappedContents,
       content_ids: mappedContentIds,
       content_name: input.customData.content_name || undefined,
-      num_items:
-        input.customData.num_items !== undefined
-          ? Number(input.customData.num_items)
-          : mappedContents
-          ? mappedContents.reduce((sum: number, it: any) => sum + it.quantity, 0)
-          : undefined,
+      content_category: input.customData.content_category || undefined,
+      num_items: calculatedNumItems,
       order_id: input.customData.order_id || input.customData.transaction_id || undefined,
+      payment_type: input.customData.payment_type || undefined,
+      shipping_tier: input.customData.shipping_tier || undefined,
+      shipping: input.customData.shipping !== undefined ? Number(input.customData.shipping) : undefined,
+      tax: input.customData.tax !== undefined ? Number(input.customData.tax) : undefined,
+      coupon: input.customData.coupon || undefined,
+      discount: input.customData.discount !== undefined ? Number(input.customData.discount) : undefined,
       search_string: input.customData.search_string || input.customData.search_term || undefined,
       status: input.customData.status || undefined,
     };
+
+    const cleanCustomData: Record<string, any> = {};
+    for (const [k, v] of Object.entries(rawCustomData)) {
+      if (v !== undefined && v !== null && v !== "") {
+        cleanCustomData[k] = v;
+      }
+    }
+
+    if (Object.keys(cleanCustomData).length > 0) {
+      serverEvent.custom_data = cleanCustomData;
+    }
   }
 
   const rawTestCode =
@@ -455,6 +498,11 @@ export async function dispatchAdvancedPurchaseCapi(order: any, triggerStatus: st
           content_ids: items.map((i: any) => i.id),
           num_items: items.reduce((acc: number, cur: any) => acc + cur.quantity, 0),
           order_id: order.order_number || order.id,
+          payment_type: order.payment_method || "Cash on Delivery",
+          shipping: Number(order.shipping_cost || order.shipping_fee || 0),
+          tax: Number(order.tax || 0),
+          discount: Number(order.discount_amount || order.discount || 0),
+          coupon: order.coupon_code || undefined,
           status: triggerStatus,
         },
       });
@@ -491,7 +539,10 @@ export async function dispatchAdvancedPurchaseCapi(order: any, triggerStatus: st
             quantity: i.quantity,
           })),
           num_items: items.reduce((acc: number, cur: any) => acc + cur.quantity, 0),
+          quantity: items.reduce((acc: number, cur: any) => acc + cur.quantity, 0),
           order_id: order.order_number || order.id,
+          payment_type: order.payment_method || "Cash on Delivery",
+          coupon: order.coupon_code || undefined,
         },
       });
       results.tiktok = ttRes;
