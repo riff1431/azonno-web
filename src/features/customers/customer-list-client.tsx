@@ -24,6 +24,7 @@ import {
   Users,
   CreditCard,
   ExternalLink,
+  Globe,
 } from "lucide-react";
 import Link from "next/link";
 import { DataTable, type Column } from "@/components/admin/data-table";
@@ -262,6 +263,12 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
           {row.phone && (
             <div>
               <BDCourierBadge phone={row.phone} />
+            </div>
+          )}
+          {row.last_ip_address && (
+            <div className="flex items-center gap-1 font-mono text-[10px] text-zinc-500 mt-0.5">
+              <Globe className="h-3 w-3 text-zinc-400 shrink-0" />
+              <span>IP: {row.last_ip_address}</span>
             </div>
           )}
         </div>

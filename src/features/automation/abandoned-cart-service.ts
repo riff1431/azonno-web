@@ -29,11 +29,21 @@ export async function captureAbandonedCart(payload: AbandonedCartPayload) {
   const settings = await getCheckoutAndFraudSettings().catch(() => ({ enable_abandoned_cart_capture: true }));
   if (settings.enable_abandoned_cart_capture === false) return { skipped: true };
 
-  // 1. Instantly save to incomplete leads dashboard
+  // 1. Extract real client IP
+  let clientIp: string | undefined;
+  try {
+    const { headers } = await import("next/headers");
+    const headerStore = await headers();
+    const { extractClientIp } = await import("@/lib/utils");
+    clientIp = extractClientIp(headerStore);
+  } catch {}
+
+  // 2. Instantly save to incomplete leads dashboard
   await saveIncompleteLead({
     name: payload.customer_name,
     phone: payload.phone,
     email: payload.email,
+    ip_address: clientIp,
     division: payload.division,
     district: payload.district,
     thana: payload.thana,

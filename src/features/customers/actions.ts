@@ -17,6 +17,7 @@ export interface AdminCustomer {
   created_at: string;
   order_count: number;
   total_spent: number;
+  last_ip_address?: string | null;
 }
 
 interface FraudProfile {
@@ -78,7 +79,8 @@ export async function getAdminCustomers(): Promise<AdminCustomer[]> {
       orders (
         id,
         total,
-        status
+        status,
+        shipping_address_snapshot
       )
     `)
     .order("created_at", { ascending: false });
@@ -104,6 +106,8 @@ export async function getAdminCustomers(): Promise<AdminCustomer[]> {
   return (profiles || []).map((p: any) => {
     const orders = p.orders || [];
     const totalSpent = orders.reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
+    const lastOrderWithIp = orders.find((o: any) => o.shipping_address_snapshot?.ip_address);
+    const lastIp = lastOrderWithIp?.shipping_address_snapshot?.ip_address || null;
 
     const cleanEmail = (p.email || "").trim().toLowerCase();
     const cleanPhone = (p.phone || "").replace(/\D/g, "");
@@ -134,6 +138,7 @@ export async function getAdminCustomers(): Promise<AdminCustomer[]> {
       created_at: p.created_at,
       order_count: orders.length,
       total_spent: totalSpent,
+      last_ip_address: lastIp,
     };
   });
 }

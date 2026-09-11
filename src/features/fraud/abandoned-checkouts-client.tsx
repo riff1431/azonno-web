@@ -17,6 +17,7 @@ import {
   RefreshCw,
   Zap,
   X,
+  Globe,
 } from "lucide-react";
 import { DataTable, type Column } from "@/components/admin/data-table";
 import { Button } from "@/components/shared/ui/button";
@@ -172,6 +173,12 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
             </div>
             {row.customer_email && (
               <span className="text-[10px] text-gray-400 block">{row.customer_email}</span>
+            )}
+            {row.ip_address && (
+              <div className="flex items-center gap-1 font-mono text-[10px] text-zinc-500">
+                <Globe className="h-3 w-3 text-zinc-400 shrink-0" />
+                <span>IP: {row.ip_address}</span>
+              </div>
             )}
           </div>
         );

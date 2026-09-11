@@ -33,6 +33,7 @@ import {
   Pause,
   RefreshCw,
   ChevronDown,
+  Globe,
 } from "lucide-react";
 import { formatPrice, formatShortProductId, buildCourierTrackingUrl } from "@/lib/utils";
 import { WhatsAppIcon } from "@/components/shared/whatsapp-icon";
@@ -1032,6 +1033,18 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <div>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Email</span>
                     <p className="text-gray-600 font-mono">{addressForm.email}</p>
+                  </div>
+                )}
+
+                {order.shipping_address_snapshot?.ip_address && (
+                  <div>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Customer IP</span>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <Globe className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                      <span className="text-gray-900 font-mono font-bold text-xs bg-gray-100 px-2 py-0.5 rounded-md border border-gray-200">
+                        {order.shipping_address_snapshot.ip_address}
+                      </span>
+                    </div>
                   </div>
                 )}
 

@@ -38,6 +38,7 @@ import {
   MapPin,
   CornerDownLeft,
   RefreshCw,
+  Globe,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatPrice, buildCourierTrackingUrl } from "@/lib/utils";
@@ -1468,6 +1469,12 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                             <Ban className="h-3.5 w-3.5" />
                           </button>
                         </div>
+                        {ord.shipping_address_snapshot?.ip_address && (
+                          <div className="flex items-center gap-1 font-mono text-[10px] text-zinc-500 mt-1">
+                            <Globe className="h-3 w-3 text-zinc-400 shrink-0" />
+                            <span>IP: {ord.shipping_address_snapshot.ip_address}</span>
+                          </div>
+                        )}
                       </td>
 
                       {/* Destination & Ordered Items */}

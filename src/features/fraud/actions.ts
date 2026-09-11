@@ -36,6 +36,7 @@ export interface AbandonedLead {
   customer_name: string;
   customer_phone: string;
   customer_email?: string;
+  ip_address?: string;
   division?: string;
   district?: string;
   thana?: string;
@@ -265,6 +266,7 @@ export async function saveIncompleteLead(input: {
   name?: string;
   phone?: string;
   email?: string;
+  ip_address?: string;
   division?: string;
   district?: string;
   thana?: string;
@@ -314,6 +316,7 @@ export async function saveIncompleteLead(input: {
     customer_name: cleanName || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_name : "Guest Customer"),
     customer_phone: cleanPhone || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_phone : "Not Provided"),
     customer_email: cleanEmail || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].customer_email : undefined),
+    ip_address: input.ip_address || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].ip_address : undefined),
     division: input.division || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].division : "Dhaka"),
     district: input.district || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].district : "Dhaka City"),
     thana: input.thana || (existingIdx >= 0 ? memoryAbandonedCheckouts[existingIdx].thana : ""),
