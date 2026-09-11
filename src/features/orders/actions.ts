@@ -576,11 +576,8 @@ export async function createOrder(input: CreateOrderInput) {
         .eq("id", appliedCoupon.id);
     }
 
-    // 11. Automated Transactional SMS Trigger (Admin Controlled)
-    // Only send confirmation SMS immediately for COD orders!
-    // Online payments (bKash/Nagad/SSLCommerz) send confirmation SMS once payment is actually verified and paid!
-    const featureSettings = await getStoreFeatureSettings();
-    if (selectedMethod === "cod" && featureSettings.enable_order_placed_sms !== false && input.customer.phone) {
+    // 11. Automated Transactional SMS Trigger (Controlled via Notification Matrix)
+    if (input.customer.phone) {
       sendSmsNotification({
         recipientPhone: input.customer.phone,
         eventType: "order_created",
@@ -1153,8 +1150,15 @@ export async function updateAdminOrderFull(orderId: string, payload: {
     });
 
     // Automated Transactional SMS Trigger on Order Status Changes (Admin Matrix Controlled)
-    const phone = data.guest_phone || data.shipping_address_snapshot?.phone;
-    const customerName = data.guest_name || data.shipping_address_snapshot?.name || "সম্মানিত গ্রাহক";
+    let snapshot: any = data.shipping_address_snapshot;
+    if (typeof snapshot === "string") {
+      try {
+        snapshot = JSON.parse(snapshot);
+      } catch {}
+    }
+
+    const phone = data.guest_phone || snapshot?.phone || data.customer_phone || data.phone;
+    const customerName = data.guest_name || snapshot?.name || data.customer_name || "সম্মানিত গ্রাহক";
 
     if (phone) {
       if (payload.status === "shipped") {
