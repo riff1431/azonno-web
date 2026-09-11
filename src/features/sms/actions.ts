@@ -215,14 +215,35 @@ export async function sendSmsNotification(input: {
     : [input.eventType];
   const template = templates.find((t) => targetTypes.includes(t.event_type)) || templates[0];
 
+  const { getLiveBaseUrl } = await import("@/lib/utils");
+  const liveBaseUrl = await getLiveBaseUrl();
+
   const mergedVars: Record<string, string> = {
     store_name: "Blush & Budget",
     discount_code: "BLUSH5",
     coupon_code: "BLUSH5",
-    store_url: getBaseUrl(),
+    store_url: liveBaseUrl,
     customer_name: "সম্মানিত গ্রাহক",
     ...input.variables,
   };
+
+  // Convert ANY relative path or incomplete URL variable to a complete live absolute URL
+  for (const [key, val] of Object.entries(mergedVars)) {
+    if (typeof val === "string") {
+      const trimmed = val.trim();
+      if (
+        key.endsWith("_url") ||
+        key === "tracking_url" ||
+        key === "checkout_url" ||
+        key === "store_url" ||
+        trimmed.startsWith("/")
+      ) {
+        if (trimmed.startsWith("/")) {
+          mergedVars[key] = `${liveBaseUrl}${trimmed}`;
+        }
+      }
+    }
+  }
 
   let message = template.template;
   if (input.eventType === "test_sms" && input.variables.custom_message) {

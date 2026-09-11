@@ -125,7 +125,8 @@ export async function bookCourierDelivery(input: {
 
   // Trigger automated SMS notification
   try {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "";
+    const { getLiveBaseUrl, ensureAbsoluteUrl } = await import("@/lib/utils");
+    const appUrl = await getLiveBaseUrl();
     await sendSmsNotification({
       recipientPhone: input.recipientPhone,
       eventType: "order_shipped",
@@ -134,7 +135,7 @@ export async function bookCourierDelivery(input: {
         order_number: input.orderNumber,
         courier_name: result.courier_name,
         tracking_id: result.tracking_code,
-        tracking_url: result.tracking_url || `${appUrl}/account/track`,
+        tracking_url: result.tracking_url ? await ensureAbsoluteUrl(result.tracking_url) : `${appUrl}/account/track?order=${input.orderNumber}`,
       },
     });
   } catch (smsErr) {

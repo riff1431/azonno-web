@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { getStoreFeatureSettings } from "@/features/settings/feature-settings-actions";
 import { sendSmsNotification } from "@/features/sms/actions";
-import { generateOrderNumber, extractClientIp, getShortProductId, buildCourierTrackingUrl } from "@/lib/utils";
+import { generateOrderNumber, extractClientIp, getShortProductId, buildCourierTrackingUrl, getLiveBaseUrl, ensureAbsoluteUrl } from "@/lib/utils";
 import { isModuleEnabled } from "@/lib/settings/config-service";
 import { markLeadConverted } from "@/features/fraud/actions";
 
@@ -578,6 +578,7 @@ export async function createOrder(input: CreateOrderInput) {
 
     // 11. Automated Transactional SMS Trigger (Controlled via Notification Matrix)
     if (input.customer.phone) {
+      const liveBase = await getLiveBaseUrl();
       sendSmsNotification({
         recipientPhone: input.customer.phone,
         eventType: "order_created",
@@ -585,7 +586,7 @@ export async function createOrder(input: CreateOrderInput) {
           customer_name: input.customer.name,
           order_number: order.order_number,
           total: total.toString(),
-          tracking_url: `/account/track?order=${order.order_number}`,
+          tracking_url: `${liveBase}/account/track?order=${order.order_number}`,
         },
       }).catch((e) => console.error("SMS notification trigger failed:", e));
     }
@@ -864,6 +865,7 @@ export async function updateOrderStatus(
   const customerName = data.guest_name || snapshot?.name || data.customer_name || "সম্মানিত গ্রাহক";
 
   if (phone) {
+    const liveBase = await getLiveBaseUrl();
     if (newStatus === "shipped") {
       sendSmsNotification({
         recipientPhone: phone,
@@ -873,7 +875,7 @@ export async function updateOrderStatus(
           order_number: data.order_number,
           courier_name: data.courier_name || "SteadFast Courier",
           tracking_id: data.consignment_id || data.tracking_code || data.order_number,
-          tracking_url: data.tracking_url || `/account/track?order=${data.order_number}`,
+          tracking_url: data.tracking_url ? await ensureAbsoluteUrl(data.tracking_url) : `${liveBase}/account/track?order=${data.order_number}`,
         },
       }).catch((e) => console.error("Shipped SMS trigger failed:", e));
     } else if (newStatus === "delivered" || newStatus === "completed") {
@@ -1218,6 +1220,7 @@ export async function updateAdminOrderFull(orderId: string, payload: {
     const customerName = data.guest_name || snapshot?.name || data.customer_name || "সম্মানিত গ্রাহক";
 
     if (phone) {
+      const liveBase = await getLiveBaseUrl();
       if (payload.status === "shipped") {
         sendSmsNotification({
           recipientPhone: phone,
@@ -1227,7 +1230,7 @@ export async function updateAdminOrderFull(orderId: string, payload: {
             order_number: data.order_number,
             courier_name: data.courier_name || "SteadFast Courier",
             tracking_id: data.consignment_id || data.tracking_code || data.order_number,
-            tracking_url: data.tracking_url || `/account/track?order=${data.order_number}`,
+            tracking_url: data.tracking_url ? await ensureAbsoluteUrl(data.tracking_url) : `${liveBase}/account/track?order=${data.order_number}`,
           },
         }).catch((e) => console.error("Shipped SMS trigger failed:", e));
       } else if (payload.status === "delivered" || payload.status === "completed") {

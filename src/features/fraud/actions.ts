@@ -494,7 +494,8 @@ export async function toggleBlacklistStatus(phoneOrId: string, isBlacklisted: bo
 export async function sendAbandonedRecoverySms(id: string) {
   const currentLeads = await getStoredLeads();
   const item = currentLeads.find((c) => c.id === id) || memoryAbandonedCheckouts.find((c) => c.id === id);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "";
+  const { getLiveBaseUrl } = await import("@/lib/utils");
+  const appUrl = await getLiveBaseUrl();
   if (item && item.customer_phone) {
     await sendSmsNotification({
       recipientPhone: item.customer_phone,

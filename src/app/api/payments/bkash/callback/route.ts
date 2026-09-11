@@ -189,7 +189,7 @@ export async function GET(req: NextRequest) {
                 customer_name: order.guest_name || order.shipping_address_snapshot?.name || "Customer",
                 order_number: order.order_number,
                 total: String(order.total),
-                tracking_url: `/account/track?order=${order.order_number}`,
+                tracking_url: `${baseUrl}/account/track?order=${order.order_number}`,
               },
             });
           }

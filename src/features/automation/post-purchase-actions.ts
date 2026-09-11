@@ -39,7 +39,8 @@ export async function savePostPurchaseConfig(config: Partial<PostPurchaseConfig>
  * Trigger Post-Purchase Skincare Review Request Message
  */
 export async function triggerReviewRequest(orderId: string, phone: string, customerName: string) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "";
+  const { getLiveBaseUrl } = await import("@/lib/utils");
+  const appUrl = await getLiveBaseUrl();
   await sendSmsNotification({
     recipientPhone: phone,
     eventType: "review_request",
@@ -57,7 +58,8 @@ export async function triggerReviewRequest(orderId: string, phone: string, custo
  * Trigger Skincare Replenishment / Restock Alert Message
  */
 export async function triggerReplenishmentAlert(phone: string, customerName: string, productName: string) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "";
+  const { getLiveBaseUrl } = await import("@/lib/utils");
+  const appUrl = await getLiveBaseUrl();
   await sendSmsNotification({
     recipientPhone: phone,
     eventType: "promotional",

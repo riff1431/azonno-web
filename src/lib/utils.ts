@@ -97,6 +97,59 @@ export function getBaseUrl(fallback: string = ""): string {
 }
 
 /**
+ * Asynchronously resolves the live website URL dynamically.
+ * Reads incoming HTTP headers (x-forwarded-host / host / x-forwarded-proto) in Server Actions / Routes,
+ * window.location on client, and environment configurations with graceful fallbacks.
+ */
+export async function getLiveBaseUrl(fallback: string = ""): Promise<string> {
+  // 1. Check active server request headers if executing inside a Next.js Server Action or SSR context
+  try {
+    const { headers } = await import("next/headers");
+    const headerStore = await headers();
+    const host =
+      headerStore.get("x-forwarded-host") ||
+      headerStore.get("host") ||
+      "";
+    const proto =
+      headerStore.get("x-forwarded-proto") ||
+      (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
+
+    if (host && !host.includes("localhost") && !host.includes("127.0.0.1")) {
+      return `${proto}://${host}`.replace(/\/$/, "");
+    } else if (host) {
+      return `${proto}://${host}`.replace(/\/$/, "");
+    }
+  } catch {
+    // Non-fatal if called outside request context
+  }
+
+  // 2. Client browser window
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin.replace(/\/$/, "");
+  }
+
+  // 3. Environment Variables
+  const envBase = getBaseUrl(fallback);
+  if (envBase) return envBase.replace(/\/$/, "");
+
+  return "https://blushandbudget.com";
+}
+
+/**
+ * Ensures any relative path (e.g. "/account/track?order=123") is converted to a complete, absolute live URL.
+ */
+export async function ensureAbsoluteUrl(urlOrPath: string): Promise<string> {
+  if (!urlOrPath) return await getLiveBaseUrl();
+  const trimmed = urlOrPath.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  const baseUrl = await getLiveBaseUrl();
+  const cleanPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+  return `${baseUrl}${cleanPath}`;
+}
+
+/**
  * Dynamically extracts the base URL from an incoming Next.js Request or NextRequest.
  */
 export function getRequestBaseUrl(request: Request | { headers: Headers }): string {
