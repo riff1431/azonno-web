@@ -39,11 +39,11 @@ export function BDCourierHistoryCard({
   const [blocking, setBlocking] = useState(false);
   const [blockSuccessMsg, setBlockSuccessMsg] = useState<string | null>(null);
 
-  const loadReport = async () => {
+  const loadReport = async (forceLive: boolean = false) => {
     if (!phone) return;
     setLoading(true);
     try {
-      const res = await fetchBDCourierReport(phone);
+      const res = await fetchBDCourierReport(phone, { forceLive });
       setReport(res);
     } catch (err) {
       console.error("Error loading BDCourier report:", err);
@@ -165,10 +165,10 @@ export function BDCourierHistoryCard({
         <div className="flex items-center gap-1.5">
           <button
             type="button"
-            onClick={loadReport}
+            onClick={() => loadReport(true)}
             disabled={loading}
             className="p-1.5 rounded-xl bg-white hover:bg-gray-100 text-gray-600 border border-gray-200 shadow-2xs transition-colors"
-            title="Refresh BDCourier live data"
+            title="Force re-check live data from BDCourier API"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-primary-600" : ""}`} />
           </button>

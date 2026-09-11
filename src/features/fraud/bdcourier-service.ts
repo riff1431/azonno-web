@@ -13,11 +13,58 @@ import {
 export type { BDCourierConfig, BDCourierReport, BDCourierCourierStat };
 
 const BDCOURIER_SETTINGS_KEY = "bdcourier_settings";
+const BDCOURIER_REPORTS_STORE_KEY = "bdcourier_cached_reports";
 const BDCOURIER_API_URL = "https://api.bdcourier.com/courier-check";
 
-// In-memory cache store (15 minutes TTL) to prevent redundant API queries
-const reportCache = new Map<string, { report: BDCourierReport; expiresAt: number }>();
-const CACHE_TTL_MS = 15 * 60 * 1000;
+// In-process fast lookup map synchronized with DB to prevent redundant API queries
+const persistentReportsMemoryMap = new Map<string, BDCourierReport>();
+let hasLoadedPersistentStore = false;
+
+async function getStoredBDCourierReports(): Promise<Record<string, BDCourierReport>> {
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("store_settings")
+      .select("value")
+      .eq("key", BDCOURIER_REPORTS_STORE_KEY)
+      .maybeSingle();
+
+    if (data && data.value && typeof data.value === "object") {
+      const records = data.value as Record<string, BDCourierReport>;
+      for (const [p, rep] of Object.entries(records)) {
+        persistentReportsMemoryMap.set(p, rep);
+      }
+      hasLoadedPersistentStore = true;
+      return records;
+    }
+  } catch (err) {
+    console.warn("Could not read bdcourier_cached_reports from store_settings:", err);
+  }
+  return {};
+}
+
+async function saveStoredBDCourierReport(phone: string, report: BDCourierReport) {
+  try {
+    persistentReportsMemoryMap.set(phone, report);
+    const supabase = createAdminClient();
+    const current = await getStoredBDCourierReports();
+    current[phone] = {
+      ...report,
+      source: "cached",
+    };
+
+    await supabase.from("store_settings").upsert(
+      {
+        key: BDCOURIER_REPORTS_STORE_KEY,
+        value: current as any,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "key" }
+    );
+  } catch (err) {
+    console.warn("Could not save bdcourier report to store_settings:", err);
+  }
+}
 
 const DEFAULT_BDCOURIER_CONFIG: BDCourierConfig = {
   apiKey: "",
@@ -188,11 +235,17 @@ export async function verifyBDCourierApiKey(apiKey: string): Promise<{
 /**
  * 4. Fetch Multi-Courier Delivery History & Order Ratio for a Customer Phone Number
  */
-export async function getBDCourierCustomerReport(phone: string): Promise<BDCourierReport> {
-  return fetchBDCourierReport(phone);
+export async function getBDCourierCustomerReport(
+  phone: string,
+  options?: { forceLive?: boolean }
+): Promise<BDCourierReport> {
+  return fetchBDCourierReport(phone, options);
 }
 
-export async function fetchBDCourierReport(phone: string): Promise<BDCourierReport> {
+export async function fetchBDCourierReport(
+  phone: string,
+  options?: { forceLive?: boolean }
+): Promise<BDCourierReport> {
   const normalizedPhone = cleanBdPhoneNumber(phone);
 
   if (!normalizedPhone || normalizedPhone.length < 11 || !normalizedPhone.startsWith("01")) {
@@ -216,18 +269,27 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
     };
   }
 
-  // 1. Check in-memory cache
-  const cached = reportCache.get(normalizedPhone);
-  if (cached && Date.now() < cached.expiresAt) {
-    return {
-      ...cached.report,
-      source: "cached",
-    };
+  // 1. Check persistent memory map & DB store if NOT forcing a live check
+  if (!options?.forceLive) {
+    if (persistentReportsMemoryMap.has(normalizedPhone)) {
+      return {
+        ...persistentReportsMemoryMap.get(normalizedPhone)!,
+        source: "cached",
+      };
+    }
+
+    const stored = await getStoredBDCourierReports();
+    if (stored[normalizedPhone]) {
+      return {
+        ...stored[normalizedPhone],
+        source: "cached",
+      };
+    }
   }
 
   const settings = await getBDCourierSettings();
 
-  // 2. Query Live BDCourier API
+  // 2. Query Live BDCourier API (1st time check or Admin manual refresh)
   if (settings.enabled && settings.apiKey) {
     try {
       const endpoints = [
@@ -253,11 +315,7 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
             const data = await res.json();
             const report = parseBDCourierApiResponse(normalizedPhone, data);
             if (report) {
-              // Store in memory cache
-              reportCache.set(normalizedPhone, {
-                report,
-                expiresAt: Date.now() + CACHE_TTL_MS,
-              });
+              await saveStoredBDCourierReport(normalizedPhone, report);
               return report;
             }
           }
@@ -345,40 +403,55 @@ export async function fetchBDCourierReport(phone: string): Promise<BDCourierRepo
         message: `${storeRatio}% delivery rate based on ${totCount} store orders.`,
       };
 
-      reportCache.set(normalizedPhone, {
-        report,
-        expiresAt: Date.now() + CACHE_TTL_MS,
-      });
-
+      await saveStoredBDCourierReport(normalizedPhone, report);
       return report;
     }
   } catch (storeErr) {
     // Non-fatal
   }
 
-  // 4. Default for truly new buyers (0 parcels across couriers and store)
-  return {
+  // 4. Default for new buyers (0 parcels recorded)
+  const defaultReport: BDCourierReport = {
     success: false,
     phone: normalizedPhone,
     total_parcel: 0,
     success_parcel: 0,
     cancelled_parcel: 0,
-    success_ratio: 0,
+    success_ratio: 100,
     risk_level: "safe",
     color: "zinc",
-    badge_text: "New Buyer",
+    badge_text: "নতুন ক্রেতা (0)",
     risk_verdict: settings.apiKey
       ? "No delivery records found on BDCourier or store history for this phone number."
       : "BDCourier API Key not configured. Please add your API key in Fraud Settings for nationwide multi-courier checking.",
     courier_details: createEmptyCourierDetails(),
     reports_count: 0,
     reports: [],
-    source: settings.apiKey ? "live_api" : "cached",
+    source: "cached",
     checked_at: new Date().toISOString(),
     message: settings.apiKey
       ? "No courier history found."
       : "API Key missing. Please configure BDCourier in settings.",
   };
+
+  await saveStoredBDCourierReport(normalizedPhone, defaultReport);
+  return defaultReport;
+}
+
+export async function getBulkStoredBDCourierReports(
+  phones: string[]
+): Promise<Record<string, BDCourierReport>> {
+  const result: Record<string, BDCourierReport> = {};
+  if (!Array.isArray(phones) || phones.length === 0) return result;
+
+  const stored = await getStoredBDCourierReports();
+  for (const rawPhone of phones) {
+    const clean = cleanBdPhoneNumber(rawPhone);
+    if (clean && stored[clean]) {
+      result[clean] = stored[clean];
+    }
+  }
+  return result;
 }
 
 /**

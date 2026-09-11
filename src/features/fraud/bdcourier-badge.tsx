@@ -158,6 +158,21 @@ export function BDCourierBadge({
     }
   };
 
+  const handleManualRefresh = async () => {
+    const cleanPhone = (phone || "").trim().replace(/[^0-9]/g, "");
+    if (!cleanPhone) return;
+    setLoading(true);
+    try {
+      const res = await fetchBDCourierReport(cleanPhone, { forceLive: true });
+      clientBadgeCache.set(cleanPhone, res);
+      setReport(res);
+    } catch (e) {
+      console.error("Manual refresh error:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!phone) return null;
 
   const safeVerdict =
@@ -296,13 +311,25 @@ export function BDCourierBadge({
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="p-1.5 rounded-xl text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleManualRefresh}
+                  disabled={loading}
+                  className="px-2.5 py-1 rounded-xl text-gray-700 hover:text-[#e91e63] hover:bg-pink-50 transition-colors flex items-center gap-1 text-[11px] font-bold border border-gray-200"
+                  title="Force re-check live data from BDCourier API"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[#e91e63]" : ""}`} />
+                  <span>{isBn ? "পুনরায় চেক করুন" : "Re-Check"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="p-1.5 rounded-xl text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
             {blockSuccessMsg && (
