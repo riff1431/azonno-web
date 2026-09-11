@@ -42,11 +42,11 @@ function normalizeTikTokPhone(rawPhone?: string | null): string | undefined {
 export async function getTikTokSettings(): Promise<TikTokSettings> {
   const settings = await getSettingsByGroup("marketing_tiktok");
   return {
-    tiktok_pixel_id: settings.tiktok_pixel_id || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "",
-    tiktok_access_token: settings.tiktok_access_token || process.env.TIKTOK_CAPI_ACCESS_TOKEN || "",
-    tiktok_test_event_code: settings.tiktok_test_event_code || process.env.TIKTOK_TEST_EVENT_CODE || "",
-    tiktok_capi_enabled: settings.tiktok_capi_enabled !== false,
-    tiktok_advanced_matching_enabled: settings.tiktok_advanced_matching_enabled !== false,
+    tiktok_pixel_id: settings.tiktok_pixel_id !== undefined ? settings.tiktok_pixel_id : (process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || ""),
+    tiktok_access_token: settings.tiktok_access_token !== undefined ? settings.tiktok_access_token : (process.env.TIKTOK_CAPI_ACCESS_TOKEN || ""),
+    tiktok_test_event_code: settings.tiktok_test_event_code !== undefined ? settings.tiktok_test_event_code : (process.env.TIKTOK_TEST_EVENT_CODE || ""),
+    tiktok_capi_enabled: settings.tiktok_capi_enabled !== undefined ? Boolean(settings.tiktok_capi_enabled) : true,
+    tiktok_advanced_matching_enabled: settings.tiktok_advanced_matching_enabled !== undefined ? Boolean(settings.tiktok_advanced_matching_enabled) : true,
   };
 }
 
@@ -55,9 +55,9 @@ export async function getTikTokSettings(): Promise<TikTokSettings> {
  */
 export async function saveTikTokSettings(settings: Partial<TikTokSettings>) {
   await updateGroupSettings("marketing_tiktok", {
-    tiktok_pixel_id: settings.tiktok_pixel_id || "",
-    tiktok_access_token: settings.tiktok_access_token || "",
-    tiktok_test_event_code: settings.tiktok_test_event_code || "",
+    tiktok_pixel_id: settings.tiktok_pixel_id ?? "",
+    tiktok_access_token: settings.tiktok_access_token ?? "",
+    tiktok_test_event_code: settings.tiktok_test_event_code ?? "",
     tiktok_capi_enabled: settings.tiktok_capi_enabled ?? true,
     tiktok_advanced_matching_enabled: settings.tiktok_advanced_matching_enabled ?? true,
   });
@@ -91,8 +91,8 @@ export async function sendTikTokCapiEvent(input: {
 }) {
   const config = await getTikTokSettings();
 
-  const pixelCode = (input.pixelId && input.pixelId.trim()) || config.tiktok_pixel_id || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
-  const accessToken = (input.accessToken && input.accessToken.trim()) || config.tiktok_access_token || process.env.TIKTOK_CAPI_ACCESS_TOKEN;
+  const pixelCode = (input.pixelId && input.pixelId.trim()) || config.tiktok_pixel_id;
+  const accessToken = (input.accessToken && input.accessToken.trim()) || config.tiktok_access_token;
 
   if (!pixelCode || !accessToken) {
     return {

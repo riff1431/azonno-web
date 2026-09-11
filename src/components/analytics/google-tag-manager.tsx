@@ -13,8 +13,8 @@ export function GoogleTagManager({
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
-  const gtmId = propGtmId || process.env.NEXT_PUBLIC_GTM_ID || "";
-  const ga4Id = propGa4Id || process.env.NEXT_PUBLIC_GA4_ID || process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "";
+  const gtmId = (propGtmId !== undefined ? propGtmId : (process.env.NEXT_PUBLIC_GTM_ID || "")).trim();
+  const ga4Id = (propGa4Id !== undefined ? propGa4Id : (process.env.NEXT_PUBLIC_GA4_ID || process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID || "")).trim();
 
   return (
     <>

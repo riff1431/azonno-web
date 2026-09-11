@@ -22,7 +22,6 @@ import { Button } from "@/components/shared/ui/button";
 import {
   trackViewCart,
   trackRemoveFromCart as trackGA4RemoveFromCart,
-  trackBeginCheckout,
 } from "@/lib/analytics/datalayer";
 
 const FREE_SHIPPING_THRESHOLD = 2500;
@@ -87,18 +86,6 @@ export function CartDrawer() {
   };
 
   const handleProceedToCheckout = () => {
-    trackBeginCheckout(
-      items.map((it) => ({
-        item_id: getShortProductId(it),
-        item_name: it.name,
-        item_brand: it.brand_name || undefined,
-        item_variant: it.variant_label || undefined,
-        price: it.price,
-        quantity: it.quantity,
-      })),
-      total,
-      coupon?.code
-    );
     closeCart();
   };
 

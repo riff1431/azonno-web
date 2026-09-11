@@ -182,16 +182,16 @@ export default async function RootLayout({
     dynamicSiteUrl = storeSettings?.store_url || reqUrl || getBaseUrl();
 
     initialConfig = {
-      meta_pixel_id: metaSettings?.meta_pixel_id || initialConfig.meta_pixel_id,
+      meta_pixel_id: metaSettings?.meta_pixel_id !== undefined ? metaSettings.meta_pixel_id : initialConfig.meta_pixel_id,
       meta_capi_enabled: metaSettings?.meta_capi_enabled ?? true,
       meta_advanced_matching_enabled: metaSettings?.meta_advanced_matching_enabled ?? true,
-      meta_test_event_code: metaSettings?.meta_test_event_code || initialConfig.meta_test_event_code,
-      tiktok_pixel_id: ttSettings?.tiktok_pixel_id || initialConfig.tiktok_pixel_id,
+      meta_test_event_code: metaSettings?.meta_test_event_code !== undefined ? metaSettings.meta_test_event_code : initialConfig.meta_test_event_code,
+      tiktok_pixel_id: ttSettings?.tiktok_pixel_id !== undefined ? ttSettings.tiktok_pixel_id : initialConfig.tiktok_pixel_id,
       tiktok_capi_enabled: ttSettings?.tiktok_capi_enabled ?? true,
       tiktok_advanced_matching_enabled: ttSettings?.tiktok_advanced_matching_enabled ?? true,
-      tiktok_test_event_code: ttSettings?.tiktok_test_event_code || initialConfig.tiktok_test_event_code,
-      gtm_container_id: metaSettings?.gtm_container_id || initialConfig.gtm_container_id,
-      ga4_measurement_id: metaSettings?.ga4_measurement_id || initialConfig.ga4_measurement_id,
+      tiktok_test_event_code: ttSettings?.tiktok_test_event_code !== undefined ? ttSettings.tiktok_test_event_code : initialConfig.tiktok_test_event_code,
+      gtm_container_id: metaSettings?.gtm_container_id !== undefined ? metaSettings.gtm_container_id : initialConfig.gtm_container_id,
+      ga4_measurement_id: metaSettings?.ga4_measurement_id !== undefined ? metaSettings.ga4_measurement_id : initialConfig.ga4_measurement_id,
     };
   } catch {
     // Non-blocking fallback to defaults

@@ -27,7 +27,7 @@ export function MetaPixel({ pixelId: propPixelId }: { pixelId?: string } = {}) {
   const pathname = usePathname();
   if (pathname?.startsWith("/admin")) return null;
 
-  const pixelId = propPixelId?.trim() || process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() || "";
+  const pixelId = (propPixelId !== undefined ? propPixelId : (process.env.NEXT_PUBLIC_META_PIXEL_ID || "")).trim();
   if (!pixelId) return null;
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function MetaPixel({ pixelId: propPixelId }: { pixelId?: string } = {}) {
       strategy="afterInteractive"
       dangerouslySetInnerHTML={{
         __html: `
-          if (typeof window !== 'undefined' && !window.__META_PIXEL_ID__) {
+          if (typeof window !== 'undefined' && (!window.__META_PIXEL_ID__ || window.__META_PIXEL_ID__ !== '${pixelId}')) {
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};

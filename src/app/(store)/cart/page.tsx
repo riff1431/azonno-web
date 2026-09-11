@@ -22,7 +22,6 @@ import { Button } from "@/components/shared/ui/button";
 import {
   trackViewCart,
   trackRemoveFromCart as trackGA4RemoveFromCart,
-  trackBeginCheckout,
 } from "@/lib/analytics/datalayer";
 import { useLanguage } from "@/context/language-context";
 
@@ -83,21 +82,6 @@ export default function CartPage() {
       item.price * item.quantity
     );
     removeItem(item.id);
-  };
-
-  const handleProceedToCheckout = () => {
-    trackBeginCheckout(
-      items.map((it) => ({
-        item_id: getShortProductId(it),
-        item_name: it.name,
-        item_brand: it.brand_name || undefined,
-        item_variant: it.variant_label || undefined,
-        price: it.price,
-        quantity: it.quantity,
-      })),
-      total,
-      coupon?.code
-    );
   };
 
   const handleApplyCoupon = async (e: React.FormEvent) => {
@@ -345,7 +329,7 @@ export default function CartPage() {
               </div>
 
               {/* Proceed to Checkout CTA */}
-              <Link href="/checkout" onClick={handleProceedToCheckout} className="block">
+              <Link href="/checkout" className="block">
                 <Button className="w-full h-12 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-extrabold text-sm shadow-md transition-all active:scale-95">
                   <span>{t("cartPage", "proceedToCheckout")}</span>
                   <ArrowRight className="h-4 w-4 ml-2" />

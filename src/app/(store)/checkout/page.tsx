@@ -487,42 +487,6 @@ export default function CheckoutPage() {
     setErrorMsg(null);
 
     try {
-      trackAddPaymentInfo({
-        items: items.map((it) => ({
-          item_id: getShortProductId(it),
-          item_name: it.name,
-          item_brand: it.brand_name || undefined,
-          item_variant: it.variant_label || undefined,
-          price: it.price,
-          quantity: it.quantity,
-        })),
-        value: finalTotal,
-        payment_type:
-          selectedPaymentMethod === "cod"
-            ? "Cash on Delivery"
-            : selectedPaymentMethod === "bkash"
-            ? "bKash MFS"
-            : selectedPaymentMethod === "nagad"
-            ? "Nagad MFS"
-            : selectedPaymentMethod === "sslcommerz"
-            ? "SSLCommerz Gateway"
-            : selectedPaymentMethod === "stripe"
-            ? "Stripe Cards"
-            : selectedPaymentMethod === "paypal"
-            ? "PayPal Express"
-            : "Bank Transfer",
-        coupon: coupon?.code,
-        discount,
-        customer: {
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          city: formData.district,
-          state: formData.division,
-          country: "BD",
-        },
-      });
-
       const res = await createOrder({
         customer: {
           name: formData.name.trim(),

@@ -36,30 +36,28 @@ export function StorefrontAnalytics({
     fetch("/api/analytics/config")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data && (data.meta_pixel_id || data.tiktok_pixel_id || data.gtm_container_id || data.ga4_measurement_id)) {
-          setConfig((prev) => ({
-            ...prev,
-            ...data,
-          }));
+        if (data) {
+          setConfig(data);
 
           if (data.tiktok_pixel_id) {
             initTikTokPixel(data.tiktok_pixel_id);
           }
 
-          if (data.meta_test_event_code && typeof window !== "undefined") {
-            (window as any).__META_TEST_CODE__ = data.meta_test_event_code;
-            try {
-              sessionStorage.setItem("meta_test_event_code", data.meta_test_event_code);
-              document.cookie = `meta_test_event_code=${data.meta_test_event_code};path=/;max-age=86400;SameSite=Lax`;
-            } catch (e) {}
-          }
-
-          if (data.tiktok_test_event_code && typeof window !== "undefined") {
-            (window as any).__TIKTOK_TEST_CODE__ = data.tiktok_test_event_code;
-            try {
-              sessionStorage.setItem("tiktok_test_event_code", data.tiktok_test_event_code);
-              document.cookie = `tiktok_test_event_code=${data.tiktok_test_event_code};path=/;max-age=86400;SameSite=Lax`;
-            } catch (e) {}
+          if (typeof window !== "undefined") {
+            if (data.meta_test_event_code) {
+              (window as any).__META_TEST_CODE__ = data.meta_test_event_code;
+              try {
+                sessionStorage.setItem("meta_test_event_code", data.meta_test_event_code);
+                document.cookie = `meta_test_event_code=${data.meta_test_event_code};path=/;max-age=86400;SameSite=Lax`;
+              } catch (e) {}
+            }
+            if (data.tiktok_test_event_code) {
+              (window as any).__TIKTOK_TEST_CODE__ = data.tiktok_test_event_code;
+              try {
+                sessionStorage.setItem("tiktok_test_event_code", data.tiktok_test_event_code);
+                document.cookie = `tiktok_test_event_code=${data.tiktok_test_event_code};path=/;max-age=86400;SameSite=Lax`;
+              } catch (e) {}
+            }
           }
         }
       })

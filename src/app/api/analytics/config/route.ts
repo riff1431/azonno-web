@@ -27,10 +27,10 @@ export async function GET() {
       isModuleEnabled("ga4").catch(() => true),
     ]);
 
-    const rawMetaPixel = meta?.meta_pixel_id || process.env.NEXT_PUBLIC_META_PIXEL_ID || "";
-    const rawTikTokPixel = tiktok?.tiktok_pixel_id || process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "";
-    const rawGtm = meta?.gtm_container_id || process.env.NEXT_PUBLIC_GTM_ID || "";
-    const rawGa4 = meta?.ga4_measurement_id || process.env.NEXT_PUBLIC_GA4_ID || "";
+    const rawMetaPixel = meta?.meta_pixel_id !== undefined ? meta.meta_pixel_id : (process.env.NEXT_PUBLIC_META_PIXEL_ID || "");
+    const rawTikTokPixel = tiktok?.tiktok_pixel_id !== undefined ? tiktok.tiktok_pixel_id : (process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID || "");
+    const rawGtm = meta?.gtm_container_id !== undefined ? meta.gtm_container_id : (process.env.NEXT_PUBLIC_GTM_ID || "");
+    const rawGa4 = meta?.ga4_measurement_id !== undefined ? meta.ga4_measurement_id : (process.env.NEXT_PUBLIC_GA4_ID || "");
 
     return NextResponse.json(
       {

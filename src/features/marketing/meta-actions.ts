@@ -61,13 +61,13 @@ function normalizeMetaCity(rawCity?: string | null): string | undefined {
 export async function getMarketingAnalyticsSettings(): Promise<MarketingAnalyticsSettings> {
   const settings = await getSettingsByGroup("marketing");
   return {
-    meta_pixel_id: settings.meta_pixel_id || process.env.NEXT_PUBLIC_META_PIXEL_ID || "",
-    meta_capi_token: settings.meta_capi_token || process.env.META_CAPI_ACCESS_TOKEN || "",
-    meta_test_event_code: settings.meta_test_event_code || process.env.META_CAPI_TEST_EVENT_CODE || "",
-    meta_capi_enabled: settings.meta_capi_enabled !== false,
-    meta_advanced_matching_enabled: settings.meta_advanced_matching_enabled !== false,
-    gtm_container_id: settings.gtm_container_id || process.env.NEXT_PUBLIC_GTM_ID || "",
-    ga4_measurement_id: settings.ga4_measurement_id || process.env.NEXT_PUBLIC_GA4_ID || "",
+    meta_pixel_id: settings.meta_pixel_id !== undefined ? settings.meta_pixel_id : (process.env.NEXT_PUBLIC_META_PIXEL_ID || ""),
+    meta_capi_token: settings.meta_capi_token !== undefined ? settings.meta_capi_token : (process.env.META_CAPI_ACCESS_TOKEN || ""),
+    meta_test_event_code: settings.meta_test_event_code !== undefined ? settings.meta_test_event_code : (process.env.META_CAPI_TEST_EVENT_CODE || ""),
+    meta_capi_enabled: settings.meta_capi_enabled !== undefined ? Boolean(settings.meta_capi_enabled) : true,
+    meta_advanced_matching_enabled: settings.meta_advanced_matching_enabled !== undefined ? Boolean(settings.meta_advanced_matching_enabled) : true,
+    gtm_container_id: settings.gtm_container_id !== undefined ? settings.gtm_container_id : (process.env.NEXT_PUBLIC_GTM_ID || ""),
+    ga4_measurement_id: settings.ga4_measurement_id !== undefined ? settings.ga4_measurement_id : (process.env.NEXT_PUBLIC_GA4_ID || ""),
     catalog_feed_url: settings.catalog_feed_url || "/api/feed/meta",
     purchase_tracking_mode: (settings.purchase_tracking_mode as any) || "status_gated",
     purchase_trigger_status: (settings.purchase_trigger_status as any) || "completed",
@@ -134,8 +134,8 @@ export async function sendMetaCapiEvent(input: {
 }) {
   const config = await getMarketingAnalyticsSettings();
 
-  const pixelId = (input.pixelId && input.pixelId.trim()) || config.meta_pixel_id || process.env.NEXT_PUBLIC_META_PIXEL_ID;
-  const accessToken = (input.accessToken && input.accessToken.trim()) || config.meta_capi_token || process.env.META_CAPI_ACCESS_TOKEN;
+  const pixelId = (input.pixelId && input.pixelId.trim()) || config.meta_pixel_id;
+  const accessToken = (input.accessToken && input.accessToken.trim()) || config.meta_capi_token;
 
   if (!pixelId || !accessToken) {
     return {

@@ -998,6 +998,9 @@ export interface CheckoutEventParams {
   customer?: CustomerData;
 }
 
+let lastInitiateCheckoutKey = "";
+let lastInitiateCheckoutTime = 0;
+
 export function trackInitiateCheckout(
   paramsOrItems: CheckoutEventParams | GA4Item[],
   legacyValue?: number,
@@ -1029,6 +1032,15 @@ export function trackInitiateCheckout(
   const totalValue = value !== undefined ? value : items.reduce((sum, it) => sum + (Number(it.price) || 0) * (it.quantity || 1), 0);
   const totalQuantity = items.reduce((sum, it) => sum + (Number(it.quantity) || 1), 0);
   const contentIds = items.map((it) => it.item_id);
+
+  // Sliding 3-second deduplication for same items and value
+  const itemsKey = `${contentIds.slice().sort().join(",")}_${totalValue}`;
+  const now = Date.now();
+  if (itemsKey === lastInitiateCheckoutKey && (now - lastInitiateCheckoutTime) < 3000) {
+    return;
+  }
+  lastInitiateCheckoutKey = itemsKey;
+  lastInitiateCheckoutTime = now;
   const contents = formatMetaContents(items);
   const userData = normalizeCustomerData(customer);
   const eventId = `ic_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
