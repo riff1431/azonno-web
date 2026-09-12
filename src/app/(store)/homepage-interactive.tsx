@@ -216,11 +216,11 @@ export function HomepageInteractive({
       {/* ============================================================ */}
       <section className="container-main">
         <div className="text-center mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-xl md:text-2xl font-black uppercase tracking-wide text-gray-900">
+          <h2 className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-wide text-gray-900">
             {language === "bn" ? t("home", "dealsTitle") : "DEALS YOU CANNOT MISS"}
           </h2>
           {language === "bn" && (
-            <p className="text-xs sm:text-sm md:text-base font-semibold text-gray-600 mt-1">{t("home", "dealsSubtitle")}</p>
+            <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-600 mt-1">{t("home", "dealsSubtitle")}</p>
           )}
         </div>
 
@@ -247,11 +247,11 @@ export function HomepageInteractive({
       {/* ============================================================ */}
       <section className="container-main space-y-3">
         <div className="text-center mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-xl md:text-2xl font-black uppercase tracking-wide text-gray-900">
+          <h2 className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-wide text-gray-900">
             {language === "bn" ? t("home", "topBrandsTitle") : "TOP BRANDS & OFFERS"}
           </h2>
           {language === "bn" && (
-            <p className="text-xs sm:text-sm md:text-base font-semibold text-gray-600 mt-1">{t("home", "topBrandsSubtitle")}</p>
+            <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-600 mt-1">{t("home", "topBrandsSubtitle")}</p>
           )}
         </div>
 
@@ -302,7 +302,7 @@ export function HomepageInteractive({
                 <div className="pointer-events-none absolute -left-6 -top-6 h-16 w-16 rounded-full bg-black/10 blur-lg" />
 
                 {/* Slanted Contrast Ribbon Badge */}
-                <div className="relative z-10 bg-[#0f172a] text-white text-[9px] sm:text-[10px] md:text-xs font-black px-2.5 py-0.5 rounded-md shadow-2xs -rotate-2 uppercase tracking-wider mb-1 transform transition-transform group-hover:rotate-0 group-hover:scale-105">
+                <div className="relative z-10 bg-[#0f172a] text-white text-xs sm:text-sm font-black px-2.5 py-0.5 rounded-md shadow-2xs -rotate-2 uppercase tracking-wider mb-1 transform transition-transform group-hover:rotate-0 group-hover:scale-105">
                   {offer.ribbonText}
                 </div>
 
@@ -312,7 +312,7 @@ export function HomepageInteractive({
                 </h3>
 
                 {/* Subtle Action Pill */}
-                <span className="relative z-10 mt-1 text-[9px] sm:text-[10px] font-bold text-white/80 group-hover:text-white flex items-center gap-1 transition-colors">
+                <span className="relative z-10 mt-1 text-xs sm:text-sm font-bold text-white/90 group-hover:text-white flex items-center gap-1 transition-colors">
                   <span>{language === "bn" ? "অফার দেখুন" : "Shop Deals"}</span>
                   <span className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
                 </span>
@@ -327,11 +327,11 @@ export function HomepageInteractive({
       {/* ============================================================ */}
       <section className="container-main">
         <div className="text-center mb-4 sm:mb-6">
-          <h2 className="text-base sm:text-xl md:text-2xl font-black uppercase tracking-wide text-gray-900">
+          <h2 className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-wide text-gray-900">
             {language === "bn" ? t("home", "shopByCategoryTitle") : "SHOP BEAUTY PRODUCTS BY CATEGORY"}
           </h2>
           {language === "bn" && (
-            <p className="text-xs sm:text-sm md:text-base font-semibold text-gray-600 mt-1">{t("home", "shopByCategorySubtitle")}</p>
+            <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-600 mt-1">{t("home", "shopByCategorySubtitle")}</p>
           )}
         </div>
 
@@ -405,16 +405,16 @@ export function HomepageInteractive({
       <section className="container-main space-y-4">
         <div className="flex items-center justify-between border-b border-gray-200 pb-2">
           <div>
-            <h2 className="text-base sm:text-xl md:text-2xl font-black uppercase tracking-wide text-gray-900">
+            <h2 className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-wide text-gray-900">
               {language === "bn" ? t("home", "trendingTitle") : trendingTitle}
             </h2>
-            <p className="text-xs sm:text-sm font-semibold text-gray-600 mt-0.5">
+            <p className="text-sm sm:text-base font-semibold text-gray-600 mt-0.5">
               {language === "bn" ? t("home", "trendingSubtitle") : trendingSubtitle}
             </p>
           </div>
           <Link
             href="/products"
-            className="text-xs sm:text-sm md:text-base font-bold text-[#e91e63] hover:underline flex items-center gap-1 group"
+            className="text-sm sm:text-base font-bold text-[#e91e63] hover:underline flex items-center gap-1 group"
           >
             <span>{language === "bn" ? t("home", "trendingViewAll") : trendingViewAllText}</span>
           </Link>
@@ -445,12 +445,16 @@ export function HomepageInteractive({
             return (
               <div
                 key={tp.id || idx}
-                className="flex items-center gap-2.5 rounded-2xl border border-gray-200 bg-white p-3 sm:p-4 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-gray-300"
+                className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-3.5 sm:p-4.5 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-gray-300"
               >
                 {renderTrustIcon(tp.iconName, tp.imageUrl)}
-                <div>
-                  <h4 className="text-xs sm:text-sm md:text-base font-black text-gray-900">{title}</h4>
-                  <p className="text-[11px] sm:text-xs md:text-sm text-gray-500">{subtitle}</p>
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 truncate">
+                    {title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-500 truncate">
+                    {subtitle}
+                  </p>
                 </div>
               </div>
             );

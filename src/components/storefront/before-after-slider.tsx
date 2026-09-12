@@ -152,24 +152,24 @@ export function BeforeAfterSlider({
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-gray-200 pb-2">
         <div>
-          <div className="flex items-center gap-1.5 text-[#e91e63] text-xs font-black uppercase tracking-wide mb-0.5">
-            <Sparkles className="h-3.5 w-3.5" />
+          <div className="flex items-center gap-1.5 text-[#e91e63] text-sm font-extrabold uppercase tracking-wide mb-0.5">
+            <Sparkles className="h-4 w-4" />
             <span>{isBn ? "দৈনন্দিন স্কিনকেয়ার ফিনিশ" : "Daily Skincare Finish"}</span>
           </div>
-          <h2 className="text-base sm:text-lg md:text-xl font-black uppercase tracking-wide text-gray-900">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-black uppercase tracking-wide text-gray-900">
             {displayTitle}
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500">{displaySubtitle}</p>
+          <p className="text-sm sm:text-base text-gray-600 font-medium">{displaySubtitle}</p>
         </div>
 
-        <span className="hidden sm:inline-flex items-center gap-1 text-xs font-bold text-gray-400">
-          <ArrowLeftRight className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-500">
+          <ArrowLeftRight className="h-4 w-4" />
           <span>{isBn ? "টেক্সচার দেখতে স্লাইডারটি টানুন" : "Drag slider to see finish"}</span>
         </span>
       </div>
 
       {/* Main Interactive Split Card */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center rounded-3xl border border-gray-200/90 bg-white p-4 sm:p-6 shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center rounded-3xl border border-gray-200/90 bg-white p-4 sm:p-6 lg:p-7 shadow-sm">
         {/* Left 7 Cols: Interactive Comparison Container */}
         <div className="lg:col-span-7">
           <div
@@ -201,7 +201,7 @@ export function BeforeAfterSlider({
 
             {/* After Top-Right Pill Badge */}
             <div className="absolute right-3 top-3 z-10 pointer-events-none">
-              <span className="rounded-full bg-emerald-600/95 backdrop-blur-xs px-3 py-1 text-[10px] sm:text-xs font-black uppercase text-white shadow-md">
+              <span className="rounded-full bg-emerald-600/95 backdrop-blur-xs px-3.5 py-1.5 text-xs sm:text-sm font-black uppercase text-white shadow-md">
                 {displayAfterLabel}
               </span>
             </div>
@@ -229,7 +229,7 @@ export function BeforeAfterSlider({
                 opacity: sliderPos < 15 ? sliderPos / 15 : 1,
               }}
             >
-              <span className="rounded-full bg-gray-900/90 backdrop-blur-xs px-3 py-1 text-[10px] sm:text-xs font-black uppercase text-white shadow-md">
+              <span className="rounded-full bg-gray-900/90 backdrop-blur-xs px-3.5 py-1.5 text-xs sm:text-sm font-black uppercase text-white shadow-md">
                 {displayBeforeLabel}
               </span>
             </div>
@@ -252,37 +252,37 @@ export function BeforeAfterSlider({
 
         {/* Right 5 Cols: Skincare Routine Explanation & Verified Callout */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             {displayEyebrow && (
-              <span className="text-xs font-black uppercase tracking-wide text-[#e91e63]">
+              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#e91e63] block">
                 {displayEyebrow}
               </span>
             )}
-            <h3 className="text-lg sm:text-xl font-extrabold text-gray-900 leading-snug">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 leading-snug sm:leading-tight">
               {displayHeading}
             </h3>
-            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed font-normal">
               {displayDescription}
             </p>
           </div>
 
           {/* 3 Metric Points */}
-          <div className="space-y-2 pt-1 border-t border-gray-100">
+          <div className="space-y-2.5 pt-2 border-t border-gray-100">
             {displayMetric1 && (
-              <div className="flex items-start gap-2 text-xs sm:text-sm font-semibold text-gray-800">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 text-sm sm:text-base font-semibold text-gray-800 leading-snug">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                 <span>{displayMetric1}</span>
               </div>
             )}
             {displayMetric2 && (
-              <div className="flex items-start gap-2 text-xs sm:text-sm font-semibold text-gray-800">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 text-sm sm:text-base font-semibold text-gray-800 leading-snug">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                 <span>{displayMetric2}</span>
               </div>
             )}
             {displayMetric3 && (
-              <div className="flex items-start gap-2 text-xs sm:text-sm font-semibold text-gray-800">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 text-sm sm:text-base font-semibold text-gray-800 leading-snug">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
                 <span>{displayMetric3}</span>
               </div>
             )}
@@ -292,7 +292,7 @@ export function BeforeAfterSlider({
           <div className="pt-2">
             <Link
               href={buttonHref}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#e91e63] px-6 py-3 text-xs sm:text-sm font-black uppercase text-white shadow-md transition-all duration-200 hover:bg-sg-pink-hover hover:shadow-lg active:scale-98"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#e91e63] px-6 py-3.5 text-sm sm:text-base font-black uppercase text-white shadow-md transition-all duration-200 hover:bg-sg-pink-hover hover:shadow-lg active:scale-98"
             >
               <span>{displayButtonText}</span>
               <ChevronRight className="h-4 w-4 stroke-3" />

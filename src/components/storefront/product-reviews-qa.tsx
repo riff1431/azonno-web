@@ -302,14 +302,14 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                     placeholder={isBn ? "এই পণ্যটি ব্যবহার করে আপনার কেমন লেগেছে তা শেয়ার করুন..." : "Share how this product felt and worked for you..."}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-900 focus:border-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border border-gray-200 bg-white p-3.5 text-sm sm:text-base text-gray-900 focus:border-[#e91e63] focus:outline-none"
                   />
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
                   {reviewMsg && (
                     <div
-                      className={`text-xs font-bold rounded-xl px-3 py-1.5 flex items-center gap-1.5 ${
+                      className={`text-sm font-bold rounded-xl px-3 py-1.5 flex items-center gap-1.5 ${
                         reviewMsg.isError
                           ? "bg-red-50 text-red-700 border border-red-200"
                           : "bg-emerald-50 text-emerald-800 border border-emerald-200"
@@ -322,9 +322,9 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                   <Button
                     type="submit"
                     disabled={submittingReview}
-                    className="ml-auto bg-[#e91e63] hover:bg-pink-700 text-white font-black text-xs rounded-xl px-5 py-2 shadow-sm transition-all active:scale-95"
+                    className="ml-auto bg-[#e91e63] hover:bg-pink-700 text-white font-black text-sm rounded-xl px-6 py-2.5 shadow-sm transition-all active:scale-95 cursor-pointer"
                   >
-                    {submittingReview ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Send className="h-3.5 w-3.5 mr-1.5" />}
+                    {submittingReview ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Send className="h-4 w-4 mr-1.5" />}
                     {isBn ? "রিভিউ জমা দিন" : "Submit Review"}
                   </Button>
                 </div>
@@ -335,50 +335,50 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           {/* Reviews List */}
           <div className="space-y-4">
             {reviews.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center text-text-muted text-xs">
+              <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center text-text-muted text-sm sm:text-base">
                 {isBn ? "এখনো কোনো রিভিউ দেওয়া হয়নি। আপনার অভিজ্ঞতা প্রথম শেয়ার করুন!" : "No reviews yet. Be the first to share your experience!"}
               </div>
             ) : (
               reviews.map((r) => (
-                <div key={r.id} className="rounded-2xl border border-border bg-white p-5 shadow-xs space-y-2 text-xs">
+                <div key={r.id} className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-xs space-y-2.5 text-sm sm:text-base">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1 text-amber-400">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`h-3.5 w-3.5 ${
+                          className={`h-4 w-4 ${
                             i < r.rating ? "fill-current" : "stroke-current fill-none text-zinc-300"
                           }`}
                         />
                       ))}
                     </div>
-                    <span className="text-[11px] sm:text-xs text-text-muted">
+                    <span className="text-xs sm:text-sm text-text-muted">
                       {new Date(r.created_at).toLocaleDateString("en-GB")}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-gray-900">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold text-gray-900 text-base">
                       {(Array.isArray(r.profiles) ? r.profiles[0]?.full_name : r.profiles?.full_name) ||
                         (Array.isArray(r.profiles) ? r.profiles[0]?.email : r.profiles?.email) ||
                         (isBn ? "ভেরিফায়েড ক্রেতা" : "Verified Customer")}
                     </span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-2 py-0.2 text-[10px] sm:text-xs font-bold border border-emerald-200">
-                      <ShieldCheck className="h-3 w-3" />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-xs font-bold border border-emerald-200">
+                      <ShieldCheck className="h-3.5 w-3.5" />
                       {isBn ? "যাচাইকৃত ক্রয়" : "Verified Purchase"}
                     </span>
                   </div>
 
-                  {r.title && <h4 className="font-bold text-text text-sm sm:text-base">{r.title}</h4>}
-                  <p className="text-text-secondary leading-relaxed">{r.comment}</p>
+                  {r.title && <h4 className="font-bold text-text text-base sm:text-lg">{r.title}</h4>}
+                  <p className="text-gray-700 leading-relaxed font-normal">{r.comment}</p>
 
                   {/* Admin Reply */}
                   {r.admin_reply && (
-                    <div className="mt-3 rounded-xl bg-primary-50/70 border border-primary-100 p-3 space-y-1">
-                      <span className="font-bold text-xs text-primary-900 block">
+                    <div className="mt-3 rounded-xl bg-primary-50/70 border border-primary-100 p-3.5 sm:p-4 space-y-1">
+                      <span className="font-bold text-sm text-primary-900 block">
                         {isBn ? "ব্লাশ অ্যান্ড বাজেট টিমের উত্তর:" : "Response from Blush & Budget Team:"}
                       </span>
-                      <p className="text-xs text-primary-800 leading-relaxed">{r.admin_reply}</p>
+                      <p className="text-sm sm:text-base text-primary-800 leading-relaxed">{r.admin_reply}</p>
                     </div>
                   )}
                 </div>
@@ -391,22 +391,22 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
       {activeSubTab === "qa" && (
         <div className="space-y-6">
           {/* Ask Question Form */}
-          <div className="rounded-2xl border border-border bg-surface-secondary/40 p-5 space-y-3 text-xs">
-            <h3 className="text-sm sm:text-base font-bold text-text flex items-center gap-1.5">
-              <HelpCircle className="h-4 w-4 text-primary-600" />
+          <div className="rounded-2xl border border-border bg-surface-secondary/40 p-5 sm:p-6 space-y-3.5 text-sm sm:text-base">
+            <h3 className="text-base sm:text-lg font-bold text-text flex items-center gap-2">
+              <HelpCircle className="h-5 w-5 text-primary-600" />
               {isBn ? "ব্যবহার বা উপাদান সম্পর্কে কোনো প্রশ্ন আছে?" : "Have questions about how to use this or its ingredients?"}
             </h3>
 
             {!currentUser ? (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-white border border-gray-200">
-                <span className="text-xs text-gray-600 font-medium">
+                <span className="text-sm text-gray-700 font-medium">
                   {isBn ? "প্রশ্ন করার জন্য অনুগ্রহ করে আপনার অ্যাকাউন্টে লগইন করুন।" : "Please sign in to your account to ask questions."}
                 </span>
                 <Link
                   href={`/login?redirect=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname : "")}`}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-gray-900 hover:bg-black text-white px-4 py-2 text-xs font-bold shrink-0 shadow-xs active:scale-95"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-gray-900 hover:bg-black text-white px-4 py-2 text-sm font-bold shrink-0 shadow-xs active:scale-95"
                 >
-                  <LogIn className="h-3.5 w-3.5" />
+                  <LogIn className="h-4 w-4" />
                   <span>{isBn ? "লগইন করুন" : "Sign In"}</span>
                 </Link>
               </div>
@@ -418,10 +418,10 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                   placeholder={isBn ? "যেমন: এটি কি প্রতিদিন ব্যবহার করা যাবে?" : "e.g. Can this be used daily?"}
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
-                  className="flex-1 rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none"
+                  className="flex-1 rounded-xl border border-border bg-white px-4 py-2.5 text-sm sm:text-base text-text focus:outline-none"
                 />
-                <Button type="submit" size="sm" disabled={submittingQuestion} className="text-xs font-semibold">
-                  {submittingQuestion ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Send className="h-3.5 w-3.5 mr-1" />}
+                <Button type="submit" size="sm" disabled={submittingQuestion} className="text-sm font-semibold px-4 py-2.5">
+                  {submittingQuestion ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
                   {isBn ? "প্রশ্ন করুন" : "Ask"}
                 </Button>
               </form>
@@ -429,7 +429,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
 
             {questionMsg && (
               <span
-                className={`text-xs font-semibold block ${
+                className={`text-sm font-semibold block ${
                   questionMsg.isError ? "text-red-600" : "text-emerald-600"
                 }`}
               >

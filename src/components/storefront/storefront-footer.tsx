@@ -226,10 +226,10 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                       {getPillarIcon(tp.iconName, tp.imageUrl)}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs sm:text-sm lg:text-base font-black text-white truncate group-hover:text-pink-300 transition-colors">
+                      <p className="text-sm sm:text-base lg:text-lg font-black text-white truncate group-hover:text-pink-300 transition-colors">
                         {tp.title}
                       </p>
-                      <p className="text-[10px] sm:text-xs text-zinc-300 mt-0.5 line-clamp-1 sm:line-clamp-2">
+                      <p className="text-xs sm:text-sm text-zinc-300 mt-0.5 line-clamp-1 sm:line-clamp-2">
                         {tp.subtitle}
                       </p>
                     </div>
@@ -262,17 +262,17 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
               )}
             </Link>
 
-            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-md">
+            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-md font-normal">
               {aboutText}
             </p>
 
             {/* Newsletter Subscription Box */}
             {showNewsletter && (
-              <div className="space-y-2 pt-2 max-w-md">
-                <span className="text-xs sm:text-sm font-bold text-white block">
+              <div className="space-y-2.5 pt-2 max-w-md">
+                <span className="text-base sm:text-lg font-bold text-white block">
                   {newsletterTitle}
                 </span>
-                <p className="text-[11px] sm:text-xs text-zinc-400">
+                <p className="text-xs sm:text-sm text-zinc-300 font-normal">
                   {newsletterSubtitle}
                 </p>
 
@@ -284,19 +284,19 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                     onChange={(e) => setNewsletterEmail(e.target.value)}
                     placeholder={t("footer", "emailPlaceholder")}
                     disabled={subscribing}
-                    className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900/90 px-4 py-2.5 text-xs sm:text-sm text-white placeholder:text-zinc-500 focus:outline-hidden focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] transition-all"
+                    className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900/90 px-4 py-3 text-sm sm:text-base text-white placeholder:text-zinc-400 focus:outline-hidden focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] transition-all"
                   />
                   <button
                     type="submit"
                     disabled={subscribing}
-                    className="rounded-xl bg-[#e91e63] px-5 py-2.5 text-xs sm:text-sm font-black text-white hover:bg-sg-pink-hover active:scale-95 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                    className="rounded-xl bg-[#e91e63] px-5 py-3 text-sm sm:text-base font-black text-white hover:bg-sg-pink-hover active:scale-95 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
                   >
                     {subscribing ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <>
                         <span>{t("footer", "subscribe")}</span>
-                        <Send className="h-3.5 w-3.5" />
+                        <Send className="h-4 w-4" />
                       </>
                     )}
                   </button>
@@ -305,7 +305,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                 {subscribeStatus && (
                   <div
                     className={cn(
-                      "text-xs px-3 py-2 rounded-xl border animate-in fade-in-0 duration-200 mt-2",
+                      "text-xs sm:text-sm px-3 py-2 rounded-xl border animate-in fade-in-0 duration-200 mt-2",
                       subscribeStatus.success
                         ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-300"
                         : "bg-red-950/60 border-red-500/40 text-red-300"
@@ -320,7 +320,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
             {/* Social Media Links */}
             {showSocialLinks && fc.socialLinks && (
               <div className="pt-2">
-                <span className="text-xs uppercase font-extrabold tracking-wider text-zinc-400 block mb-2.5">
+                <span className="text-sm font-bold uppercase tracking-wider text-zinc-300 block mb-2.5">
                   {language === "bn" ? "আমাদের সাথে যুক্ত থাকুন" : "Follow Us"}
                 </span>
                 <div className="flex flex-wrap items-center gap-2.5">
@@ -419,12 +419,12 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
           {/* Column 2: Categories (Tablet: col-span-1, Laptop/PC: col-span-2) */}
           <div className="sm:col-span-1 lg:col-span-2">
             <div className="mb-4">
-              <h3 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
+              <h3 className="text-sm sm:text-base lg:text-lg font-black uppercase tracking-wider text-white">
                 {t("header", "categories")}
               </h3>
               <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
             </div>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-zinc-300 font-medium">
+            <ul className="space-y-3 text-sm sm:text-base text-zinc-300 font-medium">
               {categoryLinks.map((cat, idx) => (
                 <li key={cat.href || idx}>
                   <Link
@@ -444,12 +444,12 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
           {/* Column 3: Customer Care & Policies (Tablet: col-span-1, Laptop/PC: col-span-3) */}
           <div className="sm:col-span-1 lg:col-span-3">
             <div className="mb-4">
-              <h3 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
+              <h3 className="text-sm sm:text-base lg:text-lg font-black uppercase tracking-wider text-white">
                 {t("footer", "customerCare")}
               </h3>
               <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
             </div>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-zinc-300 font-medium">
+            <ul className="space-y-3 text-sm sm:text-base text-zinc-300 font-medium">
               {customerCareLinks.map((link, idx) => (
                 <li key={link.href || idx}>
                   <Link
@@ -461,7 +461,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                   >
                     <span>{language === "bn" && link.labelBn ? link.labelBn : link.label}</span>
                     {link.isHighlight && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-pink-500/15 text-pink-400 border border-pink-500/30">
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-pink-500/15 text-pink-400 border border-pink-500/30">
                         {link.href === "/quiz" ? (language === "bn" ? "কুইজ" : "Quiz") : (language === "bn" ? "জরুরি" : "Hot")}
                       </span>
                     )}
@@ -475,12 +475,12 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
           <div className="sm:col-span-2 lg:col-span-3 space-y-6">
             <div>
               <div className="mb-4">
-                <h3 className="text-xs sm:text-sm lg:text-base font-black uppercase tracking-wider text-white">
+                <h3 className="text-sm sm:text-base lg:text-lg font-black uppercase tracking-wider text-white">
                   {language === "bn" ? "যোগাযোগ করুন" : "Contact Us"}
                 </h3>
                 <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
               </div>
-              <div className="space-y-3.5 text-xs sm:text-sm text-zinc-300 font-medium">
+              <div className="space-y-3.5 text-sm sm:text-base text-zinc-300 font-medium">
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-pink-500 to-rose-600 text-white shadow-sm shadow-pink-500/30 mt-0.5">
                     <MapPin className="h-4 w-4 stroke-2" />

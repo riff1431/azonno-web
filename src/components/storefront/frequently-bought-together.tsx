@@ -166,14 +166,14 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
 
       {/* Header with Heading & Offer Badge */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-pink-100 pb-4">
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-[#e91e63] animate-pulse" />
-            <h2 className="text-base sm:text-lg font-black text-gray-900 tracking-tight">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-black text-gray-900 tracking-tight">
               {isBn ? "একসাথে কিনতে পছন্দ করেন" : (config.title || "Frequently Bought Together")}
             </h2>
           </div>
-          <p className="text-xs text-gray-500 font-medium">
+          <p className="text-sm sm:text-base text-gray-600 font-medium">
             {isBn
               ? "কার্যকর ফলাফল ও বিশেষ ছাড়ে আসল পণ্যের আকর্ষণীয় কম্বো প্যাক।"
               : "Pair with complementary authentic formulas for enhanced results & combo savings."}
@@ -181,14 +181,14 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
         </div>
 
         {/* Dynamic Highlight Badge */}
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#e91e63] px-3.5 py-1 text-xs font-black text-white shadow-xs">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-[#e91e63] px-4 py-1.5 text-xs sm:text-sm font-black text-white shadow-xs">
           {config.offerType === "free_shipping" ? (
             <>
-              <Truck className="h-3.5 w-3.5" /> {isBn ? "সারা দেশে ফ্রি ডেলিভারি" : "FREE Nationwide Shipping"}
+              <Truck className="h-4 w-4" /> {isBn ? "সারা দেশে ফ্রি ডেলিভারি" : "FREE Nationwide Shipping"}
             </>
           ) : (
             <>
-              <Tag className="h-3.5 w-3.5" />{" "}
+              <Tag className="h-4 w-4" />{" "}
               {isBn
                 ? `কম্বো অফার: সাশ্রয় ${toBn(config.offerValue)}%`
                 : (config.badgeText || `Combo Offer: Save ${config.offerValue}%`)}
@@ -241,7 +241,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
                     </div>
 
                     {isMain && (
-                      <span className="absolute bottom-1 right-1 bg-black/80 text-white text-[8px] font-black px-1.5 py-0.2 rounded-md uppercase">
+                      <span className="absolute bottom-1 right-1 bg-black/85 text-white text-[10px] sm:text-xs font-black px-1.5 py-0.5 rounded-md uppercase">
                         {isBn ? "মূল পণ্য" : "Main"}
                       </span>
                     )}
@@ -259,7 +259,7 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
           </div>
 
           {/* Interactive Checkbox Items List with Prices */}
-          <div className="space-y-2 pt-2 border-t border-pink-100/60">
+          <div className="space-y-2.5 pt-2 border-t border-pink-100/60">
             {allProducts.map((prod) => {
               const isSelected = selectedIds.includes(prod.id);
               const isMain = prod.id === mainProduct.id;
@@ -269,26 +269,26 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
                 <label
                   key={prod.id}
                   className={cn(
-                    "flex items-start gap-2.5 p-2 rounded-xl transition-colors cursor-pointer text-xs select-none",
-                    isSelected ? "bg-white/80 border border-pink-100/80" : "opacity-50 hover:opacity-80"
+                    "flex items-start gap-3 p-2.5 rounded-xl transition-colors cursor-pointer text-sm sm:text-base select-none",
+                    isSelected ? "bg-white/90 border border-pink-100 shadow-2xs" : "opacity-55 hover:opacity-85"
                   )}
                 >
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => toggleSelect(prod.id)}
-                    className="mt-0.5 h-4 w-4 rounded text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] cursor-pointer"
+                    className="mt-1 h-4.5 w-4.5 rounded text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] cursor-pointer shrink-0"
                   />
                   <div className="flex-1 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-gray-900 font-bold leading-tight">
+                    <span className="text-gray-900 font-bold leading-snug">
                       {isMain && (
-                        <strong className="text-[#e91e63] font-black uppercase text-[10px] mr-1">
+                        <strong className="text-[#e91e63] font-black uppercase text-xs sm:text-sm mr-1.5">
                           {isBn ? "[মূল পণ্য]:" : "[This Item]:"}
                         </strong>
                       )}
                       {prod.name}
                     </span>
-                    <span className="font-mono font-black text-gray-900 shrink-0">
+                    <span className="font-mono font-black text-gray-900 text-sm sm:text-base shrink-0">
                       {formatPriceBn(itemPrice)}
                     </span>
                   </div>
@@ -299,21 +299,21 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
         </div>
 
         {/* Right 4 Cols: Bundle Pricing Summary & Action CTA */}
-        <div className="lg:col-span-4 bg-white rounded-2xl border border-pink-200 p-5 shadow-sm space-y-4 text-center sm:text-left">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wide block">
+        <div className="lg:col-span-4 bg-white rounded-2xl border border-pink-200 p-5 sm:p-6 shadow-sm space-y-4 text-center sm:text-left">
+          <div className="space-y-1.5">
+            <span className="text-xs sm:text-sm font-bold text-gray-500 uppercase tracking-wide block">
               {isBn
                 ? `বান্ডেল মোট (${toBn(selectedProducts.length)}টি পণ্য):`
                 : `Bundle Total (${selectedProducts.length} items):`}
             </span>
 
-            <div className="flex items-baseline justify-center sm:justify-start gap-2">
-              <span className="text-2xl font-black text-[#e91e63]">
+            <div className="flex items-baseline justify-center sm:justify-start gap-2.5">
+              <span className="text-2xl sm:text-3xl font-black text-[#e91e63]">
                 {formatPriceBn(finalComboPrice)}
               </span>
 
               {isComboActive && currentDiscount > 0 && config.offerType !== "free_shipping" && (
-                <span className="text-xs font-bold text-gray-400 line-through">
+                <span className="text-sm font-bold text-gray-400 line-through">
                   {formatPriceBn(currentRegularTotal)}
                 </span>
               )}
@@ -323,44 +323,44 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
             {isComboActive && (
               <div className="pt-1">
                 {config.offerType === "free_shipping" ? (
-                  <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
-                    <Truck className="h-3 w-3" />{" "}
+                  <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs sm:text-sm font-bold text-emerald-700 border border-emerald-200">
+                    <Truck className="h-3.5 w-3.5" />{" "}
                     {isBn ? "সারা দেশে ফ্রি ডেলিভারি যুক্ত হয়েছে" : "FREE Nationwide Shipping Applied"}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
-                    {isBn
-                      ? `কম্বো ডিলে ${formatPriceBn(currentDiscount)} সাশ্রয়!`
-                      : `Save ${formatPriceBn(currentDiscount)} with Combo Deal!`}
-                  </span>
+                  currentDiscount > 0 && (
+                    <span className="inline-flex items-center gap-1 rounded-lg bg-pink-50 px-2.5 py-1 text-xs sm:text-sm font-bold text-[#e91e63] border border-pink-200">
+                      <Sparkles className="h-3.5 w-3.5" />{" "}
+                      {isBn
+                        ? `বান্ডেলে সাশ্রয়: ${formatPriceBn(currentDiscount)}!`
+                        : `Combo Savings: ${formatPriceBn(currentDiscount)}!`}
+                    </span>
+                  )
                 )}
               </div>
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-2 pt-1">
+          {/* Action CTAs */}
+          <div className="space-y-2.5 pt-2">
             <Button
               onClick={handleAddBundleToCart}
               disabled={selectedProducts.length === 0}
-              className={cn(
-                "ripple-container w-full h-11 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all active:scale-95 uppercase tracking-wide",
-                addedSuccess
-                  ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                  : "bg-[#e91e63] hover:bg-sg-pink-hover text-white"
-              )}
+              className="w-full bg-[#e91e63] hover:bg-sg-pink-hover text-white font-black text-sm sm:text-base py-3.5 rounded-2xl shadow-md transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
             >
               {addedSuccess ? (
                 <>
-                  <Check className="h-4 w-4 mr-1.5 animate-in zoom-in-50" />{" "}
-                  {isBn ? "কম্বো কার্টে যোগ হয়েছে!" : "Bundle Added to Bag!"}
+                  <Check className="h-5 w-5 stroke-3 animate-in zoom-in" />
+                  <span>{isBn ? "ব্যাগ-এ যোগ করা হয়েছে!" : "Added to Bag!"}</span>
                 </>
               ) : (
                 <>
-                  <ShoppingBag className="h-4 w-4 mr-1.5" />{" "}
-                  {isBn
-                    ? `${toBn(selectedProducts.length)}টি আইটেম কার্টে যোগ করুন`
-                    : `Add ${selectedProducts.length} Items to Bag`}
+                  <ShoppingBag className="h-5 w-5" />
+                  <span>
+                    {isBn
+                      ? `${toBn(selectedProducts.length)}টি আইটেম কার্ট যোগ করুন`
+                      : `Add ${selectedProducts.length} Items to Bag`}
+                  </span>
                 </>
               )}
             </Button>
@@ -369,10 +369,10 @@ export function FrequentlyBoughtTogether({ bundleData }: FrequentlyBoughtTogethe
               onClick={handleBuyBundleNow}
               disabled={selectedProducts.length === 0}
               variant="outline"
-              className="w-full h-10 rounded-xl font-bold text-xs sm:text-[13px] border-pink-200 text-gray-800 hover:bg-pink-50 hover:text-black"
+              className="w-full border-2 border-[#e91e63] text-[#e91e63] hover:bg-pink-50 font-black text-sm sm:text-base py-3.5 rounded-2xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer bg-white"
             >
-              <Zap className="h-3.5 w-3.5 mr-1 text-[#e91e63] fill-[#e91e63]" />
-              {isBn ? "কম্বো কিনুন (ক্যাশ অন ডেলিভারি)" : "Buy Combo (Cash on Delivery)"}
+              <Zap className="h-5 w-5 fill-[#e91e63]" />
+              <span>{isBn ? "কম্বো কিনুন (ক্যাশ অন ডেলিভারি)" : "Buy Bundle (Cash on Delivery)"}</span>
             </Button>
           </div>
         </div>

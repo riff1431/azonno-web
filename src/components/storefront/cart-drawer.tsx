@@ -228,39 +228,39 @@ export function CartDrawer() {
                       <div className="flex flex-1 flex-col justify-between min-w-0">
                         <div>
                           {item.brand_name && (
-                            <span className="text-[10px] font-bold uppercase text-[#e91e63] tracking-wider">
+                            <span className="text-xs font-bold uppercase text-[#e91e63] tracking-wider">
                               {item.brand_name}
                             </span>
                           )}
-                          <p className="line-clamp-1 text-xs font-bold text-gray-900">{item.name}</p>
-                          <p className="text-xs font-black text-gray-900 mt-0.5">
+                          <p className="line-clamp-1 text-sm font-bold text-gray-900">{item.name}</p>
+                          <p className="text-sm font-black text-gray-900 mt-0.5">
                             {formatPriceBn(item.price)}
                           </p>
                         </div>
 
                         {/* Stepper & Remove */}
                         <div className="flex items-center justify-between pt-1.5">
-                          <div className="flex items-center h-7 rounded-lg border border-gray-200 bg-gray-50">
+                          <div className="flex items-center h-8 rounded-lg border border-gray-200 bg-gray-50">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="px-2 text-gray-700 hover:bg-white rounded-l-lg transition-colors"
+                              className="px-2.5 text-gray-700 hover:bg-white rounded-l-lg transition-colors cursor-pointer"
                             >
-                              <Minus className="h-3 w-3" />
+                              <Minus className="h-3.5 w-3.5" />
                             </button>
-                            <span className="w-6 text-center text-xs font-bold text-gray-900">
+                            <span className="w-7 text-center text-sm font-bold text-gray-900">
                               {toBn(item.quantity)}
                             </span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="px-2 text-gray-700 hover:bg-white rounded-r-lg transition-colors"
+                              className="px-2.5 text-gray-700 hover:bg-white rounded-r-lg transition-colors cursor-pointer"
                             >
-                              <Plus className="h-3 w-3" />
+                              <Plus className="h-3.5 w-3.5" />
                             </button>
                           </div>
 
                           <button
                             onClick={() => handleRemoveItem(item)}
-                            className="text-gray-400 hover:text-red-600 p-1 rounded-lg transition-colors"
+                            className="text-gray-400 hover:text-red-600 p-1.5 rounded-lg transition-colors cursor-pointer"
                             title="Remove item"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -274,7 +274,7 @@ export function CartDrawer() {
 
               {/* Checkout Footer */}
               {items.length > 0 && (
-                <div className="border-t border-gray-200 bg-gray-50/70 p-4 space-y-3.5">
+                <div className="border-t border-gray-200 bg-gray-50/70 p-4 sm:p-5 space-y-4">
                   {/* Coupon */}
                   <form onSubmit={handleApplyCoupon} className="flex gap-2">
                     <input
@@ -282,21 +282,21 @@ export function CartDrawer() {
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       placeholder={language === "bn" ? "কুপন কোড" : "Coupon Code"}
-                      className="flex-1 rounded-xl border px-3 py-1.5 text-xs uppercase font-mono focus:outline-none"
+                      className="flex-1 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm uppercase font-mono focus:outline-none"
                     />
-                    <Button type="submit" size="sm" disabled={isApplying} className="rounded-xl text-xs font-bold bg-black text-white hover:bg-[#e91e63]">
+                    <Button type="submit" size="sm" disabled={isApplying} className="rounded-xl text-sm font-bold bg-black text-white hover:bg-[#e91e63] px-4 py-2 cursor-pointer">
                       {language === "bn" ? "প্রয়োগ" : "Apply"}
                     </Button>
                   </form>
 
                   {couponMsg && (
-                    <p className={cn("text-xs font-semibold", couponMsg.isError ? "text-red-600" : "text-emerald-600")}>
+                    <p className={cn("text-xs sm:text-sm font-semibold", couponMsg.isError ? "text-red-600" : "text-emerald-600")}>
                       {couponMsg.text}
                     </p>
                   )}
 
                   {/* Pricing Breakdown */}
-                  <div className="space-y-1.5 text-xs text-gray-700">
+                  <div className="space-y-2 text-sm text-gray-700">
                     <div className="flex justify-between">
                       <span>{language === "bn" ? "সাবটোটাল" : "Subtotal"}</span>
                       <span className="font-bold text-gray-900">{formatPriceBn(subtotal)}</span>
@@ -307,14 +307,14 @@ export function CartDrawer() {
                         <span>-{formatPriceBn(discount)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between border-t border-gray-200 pt-2 text-sm font-black text-gray-900">
+                    <div className="flex justify-between border-t border-gray-200 pt-2.5 text-base font-black text-gray-900">
                       <span>{language === "bn" ? "সর্বমোট" : "Total"}</span>
-                      <span className="text-base text-[#e91e63]">{formatPriceBn(total)}</span>
+                      <span className="text-lg text-[#e91e63]">{formatPriceBn(total)}</span>
                     </div>
                   </div>
 
                   <Link href="/checkout" onClick={handleProceedToCheckout} className="block">
-                    <Button className="w-full h-11 rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold text-sm shadow-md transition-all active:scale-95">
+                    <Button className="w-full h-12 rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold text-sm sm:text-base shadow-md transition-all active:scale-95 cursor-pointer">
                       <span>{language === "bn" ? "অর্ডার কনফার্ম করুন" : "PROCEED TO CHECKOUT"}</span>
                       <ArrowRight className="h-4 w-4 ml-1.5" />
                     </Button>

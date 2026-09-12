@@ -277,7 +277,7 @@ export function ProductCard({
       <div className="flex flex-1 flex-col p-3 sm:p-4 space-y-2">
         {/* Brand & Sourcing Origin Row */}
         {(product.brand_name || product.origin_country || product.country) && (
-          <div className="flex items-center justify-between gap-1 text-xs font-bold text-gray-500">
+          <div className="flex items-center justify-between gap-1 text-xs sm:text-sm font-bold text-gray-500">
             {product.brand_name ? (
               <span className="truncate text-[#e91e63] uppercase tracking-wider font-extrabold hover:underline">
                 {product.brand_name}
@@ -285,7 +285,7 @@ export function ProductCard({
             ) : <span />}
             {(product.origin_country || product.country) && (
               <span
-                className="inline-flex items-center gap-1 text-gray-600 shrink-0 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200/70 font-semibold text-xs"
+                className="inline-flex items-center gap-1 text-gray-600 shrink-0 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200/70 font-semibold text-xs sm:text-sm"
                 title={`Made in / Sourced from: ${product.origin_country || product.country}`}
               >
                 <span>{getCountryFlagEmoji(product.origin_country || product.country)}</span>
@@ -298,7 +298,7 @@ export function ProductCard({
         {/* Product Title */}
         <Link
           href={`/products/${product.slug}`}
-          className="line-clamp-2 text-sm sm:text-[15px] font-bold text-gray-900 leading-snug hover:text-[#e91e63] transition-colors min-h-[2.75rem]"
+          className="line-clamp-2 text-sm sm:text-base font-bold text-gray-900 leading-snug hover:text-[#e91e63] transition-colors min-h-[2.85rem]"
           title={product.name}
         >
           {product.name}
@@ -316,7 +316,7 @@ export function ProductCard({
                 <Star className="h-3.5 w-3.5 fill-current" />
                 <Star className="h-3.5 w-3.5 fill-current text-amber-200" />
               </div>
-              <span className="text-xs sm:text-[13px] text-gray-600 font-bold">
+              <span className="text-xs sm:text-sm text-gray-600 font-bold">
                 ({toBn(product.rating ? product.rating.toFixed(1) : "4.3")})
               </span>
             </div>
@@ -324,7 +324,7 @@ export function ProductCard({
 
           {/* Size / Volume Pill Badge */}
           {cardSettings?.showSizeBadge !== false && detectedSize && (
-            <span className="rounded-md bg-pink-50 border border-pink-100 px-2 py-0.5 text-xs font-bold text-[#e91e63] whitespace-nowrap">
+            <span className="rounded-md bg-pink-50 border border-pink-100 px-2 py-0.5 text-xs sm:text-sm font-bold text-[#e91e63] whitespace-nowrap">
               {detectedSize}
             </span>
           )}
@@ -332,7 +332,7 @@ export function ProductCard({
 
         {/* Pricing Row */}
         <div className="flex items-baseline gap-2 pt-0.5">
-          <span className="text-base sm:text-lg font-black text-[#e91e63]">
+          <span className="text-base sm:text-lg lg:text-xl font-black text-[#e91e63]">
             {formatPriceBn(product.sale_price ?? product.regular_price)}
           </span>
           {product.sale_price && product.sale_price < product.regular_price && (
@@ -352,7 +352,7 @@ export function ProductCard({
               disabled={product.is_in_stock === false}
               aria-label={`Add ${product.name} to cart`}
               className={cn(
-                "ripple-container w-full rounded-xl py-2.5 px-2 text-xs sm:text-[13.5px] font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
+                "ripple-container w-full rounded-xl py-2.5 px-2 text-xs sm:text-sm font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
                 justAdded
                   ? "bg-emerald-600! text-white shadow-sm"
                   : product.is_in_stock === false
@@ -363,32 +363,30 @@ export function ProductCard({
               {justAdded ? (
                 <>
                   <Check className="h-3.5 w-3.5 stroke-3 animate-in zoom-in-50" />
-                  <span>{language === "bn" ? "যোগ হয়েছে!" : "ADDED!"}</span>
+                  <span>{language === "bn" ? "যোগ হয়েছে" : "ADDED"}</span>
                 </>
-              ) : product.is_in_stock === false ? (
-                <span>{language === "bn" ? "স্টক শেষ" : "OUT OF STOCK"}</span>
               ) : (
                 <>
                   <ShoppingBag className="h-3.5 w-3.5" />
-                  <span>{language === "bn" ? "কার্টে যোগ করুন" : (cardSettings?.addToCartText || "ADD TO CART")}</span>
+                  <span>{language === "bn" ? "কার্টে যোগ" : "ADD TO CART"}</span>
                 </>
               )}
             </button>
 
-            {/* 2. ORDER NOW Button (Hover shifts to Radiant Pink) */}
+            {/* 2. ORDER NOW Button (Direct to One-Click Checkout with Item) */}
             <button
               type="button"
               onClick={handleOrderNow}
               disabled={product.is_in_stock === false}
               aria-label={`Order ${product.name} now`}
               className={cn(
-                "ripple-container w-full rounded-xl py-2.5 px-2 text-xs sm:text-[13.5px] font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
+                "ripple-container w-full rounded-xl py-2.5 px-2 text-xs sm:text-sm font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
                 product.is_in_stock === false
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "btn-order-now-action"
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                  : "bg-[#e91e63] text-white hover:bg-sg-pink-hover shadow-xs"
               )}
             >
-              <span>{language === "bn" ? "অর্ডার করুন" : (cardSettings?.orderNowText || "ORDER NOW")}</span>
+              <span>{language === "bn" ? "অর্ডার করুন" : "ORDER NOW"}</span>
             </button>
           </div>
         </div>

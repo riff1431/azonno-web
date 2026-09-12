@@ -970,14 +970,16 @@ export function ProductDetailClient({
             icon: FileText,
             badge: null,
             content: (
-              <div className="space-y-4 max-w-3xl">
+              <div className="space-y-4 max-w-4xl">
                 {product.description ? (
                   <div
-                    className="prose prose-sm prose-pink max-w-full font-medium leading-relaxed [&_img]:rounded-2xl [&_img]:border [&_img]:border-gray-100 [&_img]:my-3 [&_a]:text-[#e91e63] [&_a]:underline"
+                    className="prose prose-base sm:prose-lg prose-pink max-w-full text-base sm:text-[17px] font-normal text-gray-800 leading-relaxed sm:leading-8 [&_img]:rounded-2xl [&_img]:border [&_img]:border-gray-100 [&_img]:my-4 [&_a]:text-[#e91e63] [&_a]:underline"
                     dangerouslySetInnerHTML={{ __html: product.description }}
                   />
                 ) : (
-                  <p>{product.short_description || "Certified authentic beauty product directly imported from brand manufacturers."}</p>
+                  <p className="text-base sm:text-[17px] text-gray-700 leading-relaxed">
+                    {product.short_description || "Certified authentic beauty product directly imported from brand manufacturers."}
+                  </p>
                 )}
               </div>
             ),
@@ -988,27 +990,27 @@ export function ProductDetailClient({
             icon: Sparkles,
             badge: null,
             content: (
-              <div className="space-y-3 max-w-3xl">
+              <div className="space-y-4 max-w-4xl">
                 {product.benefits ? (
                   <div
-                    className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed [&_img]:rounded-xl"
+                    className="prose prose-base sm:prose-lg prose-pink max-w-full text-base sm:text-[17px] font-normal text-gray-800 leading-relaxed sm:leading-8 [&_img]:rounded-xl"
                     dangerouslySetInnerHTML={{ __html: product.benefits }}
                   />
                 ) : (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+                  <div className="space-y-3 text-base sm:text-[17px] text-gray-800 leading-relaxed">
+                    <div className="flex items-start gap-2.5">
+                      <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
                       <span>Leaves skin feeling soft, comfortable, and well-hydrated.</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+                    <div className="flex items-start gap-2.5">
+                      <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
                       <span>Formulated without harsh parabens, synthetic dyes, or drying sulfates.</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+                    <div className="flex items-start gap-2.5">
+                      <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
                       <span>Gentle and suitable for everyday skincare routines.</span>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             ),
@@ -1019,25 +1021,25 @@ export function ProductDetailClient({
             icon: BookOpen,
             badge: null,
             content: (
-              <div className="space-y-3 max-w-3xl">
+              <div className="space-y-4 max-w-4xl">
                 {product.usage ? (
                   <div
-                    className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed [&_img]:rounded-xl"
+                    className="prose prose-base sm:prose-lg prose-pink max-w-full text-base sm:text-[17px] font-normal text-gray-800 leading-relaxed sm:leading-8 [&_img]:rounded-xl"
                     dangerouslySetInnerHTML={{ __html: product.usage }}
                   />
                 ) : (
-                  <>
-                    <p className="font-bold text-text">Recommended Beauty Routine Step:</p>
-                    <p className="text-[#e91e63] font-bold pb-2">
+                  <div className="space-y-3 text-base sm:text-[17px] text-gray-800 leading-relaxed">
+                    <p className="font-bold text-gray-900 text-lg">Recommended Beauty Routine Step:</p>
+                    <p className="text-[#e91e63] font-bold text-base pb-2">
                       {product.routine_step ? `Step: ${product.routine_step}` : "Daily Skincare Routine"}
                     </p>
-                    <ol className="list-decimal list-inside space-y-1.5 pl-1">
+                    <ol className="list-decimal list-inside space-y-2.5 pl-1 text-gray-700">
                       <li>Cleanse skin thoroughly with warm water.</li>
                       <li>Dispense appropriate amount onto fingertips or palms.</li>
                       <li>Gently massage over face and neck in circular upward motions.</li>
                       <li>Follow with sunscreen during daytime.</li>
                     </ol>
-                  </>
+                  </div>
                 )}
               </div>
             ),
@@ -1048,17 +1050,17 @@ export function ProductDetailClient({
             icon: FlaskConical,
             badge: keyActives.length > 0 ? `${keyActives.length} Actives` : null,
             content: (
-              <div className="space-y-3 max-w-3xl">
+              <div className="space-y-4 max-w-4xl text-base sm:text-[17px]">
                 {keyActives.length > 0 && (
-                  <div className="space-y-1.5 pb-2">
-                    <span className="font-bold text-gray-900 block">Key Ingredients:</span>
-                    <div className="flex flex-wrap gap-1.5">
+                  <div className="space-y-2 pb-2">
+                    <span className="font-bold text-gray-900 text-base sm:text-lg block">Key Ingredients:</span>
+                    <div className="flex flex-wrap gap-2">
                       {keyActives.map((ka: string) => (
                         <span
                           key={ka}
-                          className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800"
+                          className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 text-xs sm:text-sm font-bold text-emerald-800"
                         >
-                          <Zap className="h-2.5 w-2.5 shrink-0" />
+                          <Zap className="h-3.5 w-3.5 shrink-0" />
                           <span>{ka}</span>
                         </span>
                       ))}
@@ -1068,13 +1070,13 @@ export function ProductDetailClient({
 
                 {product.ingredients_specifications ? (
                   <div
-                    className="prose prose-sm prose-pink max-w-full font-medium text-gray-800 leading-relaxed"
+                    className="prose prose-base sm:prose-lg prose-pink max-w-full text-base sm:text-[17px] font-normal text-gray-800 leading-relaxed sm:leading-8"
                     dangerouslySetInnerHTML={{ __html: product.ingredients_specifications }}
                   />
                 ) : (
                   <>
-                    <p className="font-bold text-text">Full Ingredient List (INCI):</p>
-                    <p className="font-mono text-xs text-text-muted bg-surface-secondary p-4 rounded-2xl border border-border">
+                    <p className="font-bold text-gray-900 text-base sm:text-lg">Full Ingredient List (INCI):</p>
+                    <p className="font-mono text-xs sm:text-sm text-gray-600 bg-surface-secondary p-4 rounded-2xl border border-border leading-relaxed">
                       Aqua/Water/Eau, Glycerin, Niacinamide, Hyaluronic Acid, Centella Asiatica Extract, Tocopheryl Acetate (Vitamin E), Panthenol (Pro-Vitamin B5), Phenoxyethanol, Ethylhexylglycerin.
                     </p>
                   </>
@@ -1088,14 +1090,14 @@ export function ProductDetailClient({
             icon: ShieldCheck,
             badge: language === "bn" ? "১০০% খাঁটি" : "100% Genuine",
             content: (
-              <div className="space-y-4 max-w-3xl">
-                <div className="flex items-center gap-3 p-4 rounded-2xl bg-pink-50/60 border border-pink-200">
-                  <ShieldCheck className="h-8 w-8 text-[#e91e63] shrink-0" />
+              <div className="space-y-4 max-w-4xl">
+                <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-pink-50/60 border border-pink-200">
+                  <ShieldCheck className="h-9 w-9 text-[#e91e63] shrink-0" />
                   <div>
-                    <h4 className="font-black text-gray-900 text-sm">
+                    <h4 className="font-black text-gray-900 text-base sm:text-lg">
                       {language === "bn" ? "১০০% গ্যারান্টিযুক্ত ব্র্যান্ড অথেন্টিসিটি" : "100% Guaranteed Brand Authenticity"}
                     </h4>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed mt-0.5">
                       {language === "bn"
                         ? `সরাসরি ${ORIGIN_MAP[originCountry]?.bn || originCountry}-এর অথরাইজড প্রস্তুতকারক থেকে আমদানিকৃত। কোনো রেপ্লিকা বা মেয়াদোত্তীর্ণ পণ্যের সুযোগ নেই।`
                         : `Imported directly from authorized manufacturers in ${ORIGIN_MAP[originCountry]?.en || originCountry}. Zero replicas or expired stock guaranteed.`}
@@ -1103,12 +1105,12 @@ export function ProductDetailClient({
                   </div>
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2 text-xs">
-                  <div className="p-3.5 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
+                <div className="grid gap-3 sm:grid-cols-2 text-sm sm:text-base">
+                  <div className="p-4 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
                     <span className="font-bold text-gray-900 block">{language === "bn" ? "ব্যাচ কোড:" : "Batch Code:"}</span>
-                    <span className="font-mono text-gray-700">{product.batch_number || "LOT2024BD01"}</span>
+                    <span className="font-mono text-gray-700 font-semibold">{product.batch_number || "LOT2024BD01"}</span>
                   </div>
-                  <div className="p-3.5 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
+                  <div className="p-4 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
                     <span className="font-bold text-gray-900 block">{language === "bn" ? "মেয়াদ:" : "Freshness Shelf-Life:"}</span>
                     <span className="text-emerald-700 font-bold">
                       {product.expiry_date ? `Exp: ${product.expiry_date}` : (language === "bn" ? "খোলার পর ২৪ মাস ব্যবহারযোগ্য" : "24 Months After Opening (PAO)")}
@@ -1124,8 +1126,8 @@ export function ProductDetailClient({
             icon: Truck,
             badge: null,
             content: (
-              <div className="space-y-3 max-w-3xl">
-                <p className="font-bold text-text">
+              <div className="space-y-3.5 max-w-4xl text-base sm:text-[17px] text-gray-800 leading-relaxed">
+                <p className="font-bold text-gray-900 text-base sm:text-lg">
                   {language === "bn" ? "সারা দেশে ডেলিভারি ও রিটার্ন পলিসি:" : "Nationwide Shipping & Returns Policy:"}
                 </p>
                 <p>
@@ -1164,7 +1166,7 @@ export function ProductDetailClient({
                 onClick={() => toggleAccordion(item.id)}
                 aria-expanded={isOpen}
                 className={cn(
-                  "w-full flex items-center justify-between gap-3 px-5 sm:px-7 py-4 text-left transition-all duration-200 group select-none",
+                  "w-full flex items-center justify-between gap-3 px-5 sm:px-7 py-4.5 text-left transition-all duration-200 group select-none",
                   isOpen
                     ? "bg-pink-50/20 text-[#e91e63]"
                     : "bg-white hover:bg-gray-50/70 text-gray-900"
@@ -1179,18 +1181,18 @@ export function ProductDetailClient({
                         : "bg-gray-100 text-gray-600 group-hover:bg-pink-100/60 group-hover:text-[#e91e63]"
                     )}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4.5 w-4.5" />
                   </div>
                   <span
                     className={cn(
-                      "text-xs sm:text-sm font-extrabold tracking-tight truncate",
+                      "text-sm sm:text-base font-extrabold tracking-tight truncate",
                       isOpen ? "text-[#e91e63]" : "text-gray-900 group-hover:text-[#e91e63]"
                     )}
                   >
                     {item.label}
                   </span>
                   {item.badge && (
-                    <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-100/70 text-[#e91e63] border border-pink-200">
+                    <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-pink-100/70 text-[#e91e63] border border-pink-200">
                       {item.badge}
                     </span>
                   )}
@@ -1211,7 +1213,7 @@ export function ProductDetailClient({
               </button>
 
               {isOpen && (
-                <div className="px-5 sm:px-8 pt-3 pb-6 sm:pb-8 text-xs sm:text-sm text-text-secondary leading-relaxed border-t border-pink-100/40 bg-white animate-in fade-in-50 duration-200">
+                <div className="px-5 sm:px-8 pt-4 pb-6 sm:pb-8 text-base text-text-secondary leading-relaxed border-t border-pink-100/40 bg-white animate-in fade-in-50 duration-200">
                   {item.content}
                 </div>
               )}

@@ -815,7 +815,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
         <div className="container-main">
           <div className="flex items-center justify-between py-2 overflow-x-auto no-scrollbar">
             {/* Left: Interactive Category Links with Mega Menu Triggers */}
-            <div className="flex items-center gap-6 xl:gap-8 text-sm font-bold text-gray-700">
+            <div className="flex items-center gap-6 xl:gap-8 text-sm sm:text-base font-bold text-gray-700">
               {navCategories.map((cat) => {
                 const isHovered = activeMegaCategory?.id === cat.id;
                 return (
@@ -827,7 +827,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                     <Link
                       href={cat.href || `/products?category=${cat.slug}`}
                       className={cn(
-                        "hover:text-sg-pink transition-colors whitespace-nowrap flex items-center gap-1.5 text-sm sm:text-[14.5px] font-bold",
+                        "hover:text-sg-pink transition-colors whitespace-nowrap flex items-center gap-1.5 text-sm sm:text-base font-bold",
                         isHovered ? "text-sg-pink" : ""
                       )}
                     >
@@ -835,7 +835,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       {cat.subcategories?.length > 0 && (
                         <ChevronDown
                           className={cn(
-                            "h-3.5 w-3.5 transition-transform duration-200",
+                            "h-4 w-4 transition-transform duration-200",
                             isHovered ? "rotate-180 text-sg-pink" : "text-gray-400"
                           )}
                         />
@@ -853,7 +853,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                   key={pill.id}
                   href={pill.href}
                   className={cn(
-                    "rounded-full text-white font-black text-[10px] sm:text-[11px] uppercase px-3 py-1 shadow-2xs tracking-wider transition-transform hover:scale-105",
+                    "rounded-full text-white font-black text-xs sm:text-sm uppercase px-3.5 py-1 shadow-2xs tracking-wider transition-transform hover:scale-105",
                     pill.bgClass || "bg-sg-pink"
                   )}
                 >
@@ -880,13 +880,13 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                 {/* Column 1 & 2: Subcategories List (6 cols) */}
                 <div className="col-span-6 space-y-3">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <h3 className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-2">
+                    <h3 className="text-sm font-black uppercase tracking-wider text-gray-900 flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-sg-pink" />
                       {activeMegaCategory.name} Essentials
                     </h3>
                     <Link
                       href={activeMegaCategory.href || `/products?category=${activeMegaCategory.slug}`}
-                      className="text-xs font-bold text-sg-pink hover:underline flex items-center gap-0.5"
+                      className="text-xs sm:text-sm font-bold text-sg-pink hover:underline flex items-center gap-0.5"
                     >
                       View All {activeMegaCategory.name} &rarr;
                     </Link>
@@ -897,10 +897,10 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       <Link
                         key={idx}
                         href={sub.href}
-                        className="group flex items-center justify-between rounded-xl p-2.5 text-xs font-semibold text-gray-700 hover:bg-pink-50 hover:text-sg-pink transition-colors"
+                        className="group flex items-center justify-between rounded-xl p-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-pink-50 hover:text-sg-pink transition-colors"
                       >
                         <span className="truncate">{sub.name}</span>
-                        <ChevronRight className="h-3.5 w-3.5 text-gray-400 group-hover:text-sg-pink group-hover:translate-x-0.5 transition-all shrink-0" />
+                        <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-sg-pink group-hover:translate-x-0.5 transition-all shrink-0" />
                       </Link>
                     ))}
                   </div>
@@ -908,7 +908,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
 
                 {/* Column 3: Featured Brands (3 cols) */}
                 <div className="col-span-3 space-y-3 border-l border-gray-100 pl-6">
-                  <h3 className="text-xs font-black uppercase tracking-wider text-gray-900">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-gray-900">
                     Popular Brands
                   </h3>
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -917,7 +917,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                         <Link
                           key={idx}
                           href={`/products?search=${encodeURIComponent(brand)}`}
-                          className="rounded-full bg-gray-50 border border-gray-200 px-3 py-1 text-xs font-bold text-gray-700 hover:border-sg-pink hover:bg-pink-50 hover:text-sg-pink transition-colors"
+                          className="rounded-full bg-gray-50 border border-gray-200 px-3.5 py-1 text-xs sm:text-sm font-bold text-gray-700 hover:border-sg-pink hover:bg-pink-50 hover:text-sg-pink transition-colors"
                         >
                           {brand}
                         </Link>

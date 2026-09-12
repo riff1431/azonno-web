@@ -173,7 +173,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
               )}
             >
               <div
-                className="prose prose-sm sm:prose-base max-w-none text-zinc-700 leading-relaxed"
+                className="prose prose-base sm:prose-lg max-w-none text-base sm:text-[17px] text-zinc-700 leading-relaxed sm:leading-8"
                 dangerouslySetInnerHTML={{ __html: seoDescription }}
               />
 
@@ -207,7 +207,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                 )}
               </button>
 
-              <p className="text-[11px] sm:text-xs text-zinc-500 text-center sm:text-right">
+              <p className="text-xs sm:text-sm text-zinc-500 text-center sm:text-right font-medium">
                 {language === "bn"
                   ? "১০০% সার্টিফাইড আন্তর্জাতিক কসমেটিকস ও স্কিনকেয়ার"
                   : "100% Certified Direct Imports & Verified Batch Codes"}
@@ -216,27 +216,27 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
 
             {/* Trust Highlights Grid */}
             <div className="mt-5 pt-5 border-t border-pink-100/90 grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs sm:text-sm font-semibold text-zinc-800">
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-white/70 border border-pink-50">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span className="leading-tight text-[11px] sm:text-xs font-bold">
+              <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
+                <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
+                <span className="leading-tight text-xs sm:text-sm font-bold">
                   {language === "bn" ? "আসল ব্যাচ কোড গ্যারান্টি" : "Verified Batch Codes"}
                 </span>
               </div>
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-white/70 border border-pink-50">
-                <Truck className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span className="leading-tight text-[11px] sm:text-xs font-bold">
+              <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
+                <Truck className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
+                <span className="leading-tight text-xs sm:text-sm font-bold">
                   {language === "bn" ? "২৪-৪৮ ঘণ্টায় ডেলিভারি" : "Express 24-48h Delivery"}
                 </span>
               </div>
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-white/70 border border-pink-50">
-                <Eye className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span className="leading-tight text-[11px] sm:text-xs font-bold">
+              <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
+                <Eye className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
+                <span className="leading-tight text-xs sm:text-sm font-bold">
                   {language === "bn" ? "পার্সেল চেক করার সুবিধা" : "Doorstep Parcel Check"}
                 </span>
               </div>
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-white/70 border border-pink-50">
-                <RotateCcw className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span className="leading-tight text-[11px] sm:text-xs font-bold">
+              <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
+                <RotateCcw className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
+                <span className="leading-tight text-xs sm:text-sm font-bold">
                   {language === "bn" ? "৭ দিনের ফ্রি রিপ্লেসমেন্ট" : "7-Day Free Replacement"}
                 </span>
               </div>
@@ -244,7 +244,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
           </article>
         )}
 
-        {/* Category Filter Tabs for FAQs (Mobile Swipeable Pill Carousel & Desktop Wrapped Grid) */}
+        {/* Category Filter Tabs for FAQs */}
         {categories.length > 1 && (
           <div className="relative mb-6">
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 px-0.5 -mx-1 sm:mx-0 sm:flex-wrap">
@@ -252,7 +252,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                 type="button"
                 onClick={() => setSelectedCategory("all")}
                 className={cn(
-                  "shrink-0 whitespace-nowrap rounded-full sm:rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer select-none",
+                  "shrink-0 whitespace-nowrap rounded-full sm:rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer select-none",
                   selectedCategory === "all"
                     ? "bg-[#e91e63] text-white shadow-xs ring-2 ring-pink-500/20 scale-[1.02]"
                     : "bg-white text-zinc-700 border border-zinc-200 hover:border-pink-300 hover:text-[#e91e63]"
@@ -281,7 +281,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                     type="button"
                     onClick={() => setSelectedCategory(cat)}
                     className={cn(
-                      "shrink-0 whitespace-nowrap rounded-full sm:rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer select-none",
+                      "shrink-0 whitespace-nowrap rounded-full sm:rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer select-none",
                       selectedCategory === cat
                         ? "bg-[#e91e63] text-white shadow-xs ring-2 ring-pink-500/20 scale-[1.02]"
                         : "bg-white text-zinc-700 border border-zinc-200 hover:border-pink-300 hover:text-[#e91e63]"
@@ -296,7 +296,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
         )}
 
         {/* FAQ Accordion List */}
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {filteredFaqs.map((faq, idx) => {
             const isOpen = openFaqId === faq.id;
             const q = language === "bn" && faq.questionBn ? faq.questionBn : faq.question;
@@ -319,10 +319,10 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                   aria-expanded={isOpen}
                   aria-controls={`faq-answer-${faq.id}`}
                 >
-                  <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+                  <div className="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
                     <span
                       className={cn(
-                        "flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-xl text-xs font-bold transition-colors mt-0.5 sm:mt-0",
+                        "flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-xs sm:text-sm font-bold transition-colors mt-0.5 sm:mt-0",
                         isOpen
                           ? "bg-pink-600 text-white shadow-xs"
                           : "bg-zinc-100 text-zinc-600"
@@ -333,11 +333,11 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
 
                     <div className="min-w-0 flex-1 pr-1">
                       {faq.category && (
-                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-pink-600 block mb-0.5">
+                        <span className="text-xs font-bold uppercase tracking-wider text-pink-600 block mb-0.5">
                           {faq.category}
                         </span>
                       )}
-                      <span className="text-xs sm:text-sm md:text-base font-bold text-zinc-900 leading-snug wrap-break-word block">
+                      <span className="text-sm sm:text-base md:text-lg font-bold text-zinc-900 leading-snug wrap-break-word block">
                         {q}
                       </span>
                     </div>
@@ -345,20 +345,20 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
 
                   <div
                     className={cn(
-                      "flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-200 ml-1",
+                      "flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full transition-transform duration-200 ml-1",
                       isOpen ? "rotate-180 bg-pink-100 text-pink-700" : "bg-zinc-100 text-zinc-500"
                     )}
                   >
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4.5 w-4.5" />
                   </div>
                 </button>
 
                 {isOpen && (
                   <div
                     id={`faq-answer-${faq.id}`}
-                    className="px-4 pb-4 pt-1 sm:px-6 sm:pb-6 text-xs sm:text-sm text-zinc-600 leading-relaxed border-t border-pink-50 animate-in fade-in-50 duration-150"
+                    className="px-4 pb-5 pt-2 sm:px-6 sm:pb-6 text-sm sm:text-base text-zinc-700 leading-relaxed border-t border-pink-50 animate-in fade-in-50 duration-150"
                   >
-                    <p className="whitespace-pre-line leading-relaxed wrap-break-word">{a}</p>
+                    <p className="whitespace-pre-line leading-relaxed sm:leading-7 wrap-break-word font-normal">{a}</p>
                   </div>
                 )}
               </div>
@@ -370,16 +370,16 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
         {config?.showWhatsappCard !== false && (
           <div className="mt-6 sm:mt-8 rounded-2xl sm:rounded-3xl bg-zinc-900 text-white p-5 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-xl">
             <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 text-left">
-              <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-pink-600 text-white shadow-xs mt-0.5 sm:mt-0">
-                <PhoneCall className="h-5 w-5 sm:h-6 sm:w-6" />
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-pink-600 text-white shadow-xs mt-0.5 sm:mt-0">
+                <PhoneCall className="h-6 w-6" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm sm:text-base font-black leading-snug">
+                <p className="text-base sm:text-lg font-black leading-snug">
                   {language === "bn"
                     ? config?.whatsappTitleBn || config?.whatsappTitle || "সঠিক প্রোডাক্ট নির্বাচনে সাহায্য প্রয়োজন?"
                     : config?.whatsappTitle || "Need help choosing the right beauty products?"}
                 </p>
-                <p className="text-xs sm:text-sm text-zinc-400 mt-1 leading-relaxed">
+                <p className="text-sm text-zinc-400 mt-1 leading-relaxed">
                   {language === "bn"
                     ? config?.whatsappSubtitleBn ||
                       config?.whatsappSubtitle ||
@@ -412,7 +412,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                   href={waHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto shrink-0 justify-center rounded-xl bg-[#e91e63] px-6 py-3 text-xs sm:text-sm font-black text-white hover:bg-pink-700 transition-colors shadow-md flex items-center gap-2 text-center cursor-pointer"
+                  className="w-full sm:w-auto shrink-0 justify-center rounded-xl bg-[#e91e63] px-6 py-3.5 text-sm sm:text-base font-black text-white hover:bg-pink-700 transition-colors shadow-md flex items-center gap-2 text-center cursor-pointer"
                 >
                   <span>{btnLabel}</span>
                   <ArrowRight className="h-4 w-4" />
