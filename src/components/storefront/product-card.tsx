@@ -274,10 +274,10 @@ export function ProductCard({
       />
 
       {/* 2. Product Information Body */}
-      <div className="flex flex-1 flex-col p-3 sm:p-4 space-y-2">
+      <div className="flex flex-1 flex-col p-2.5 sm:p-4 space-y-1.5 sm:space-y-2">
         {/* Brand & Sourcing Origin Row */}
         {(product.brand_name || product.origin_country || product.country) && (
-          <div className="flex items-center justify-between gap-1 text-xs sm:text-sm font-bold text-gray-500">
+          <div className="flex items-center justify-between gap-1 text-[11px] sm:text-xs md:text-sm font-bold text-gray-500">
             {product.brand_name ? (
               <span className="truncate text-[#e91e63] uppercase tracking-wider font-extrabold hover:underline">
                 {product.brand_name}
@@ -285,11 +285,11 @@ export function ProductCard({
             ) : <span />}
             {(product.origin_country || product.country) && (
               <span
-                className="inline-flex items-center gap-1 text-gray-600 shrink-0 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200/70 font-semibold text-xs sm:text-sm"
+                className="inline-flex items-center gap-1 text-gray-600 shrink-0 bg-gray-50 px-1.5 sm:px-2 py-0.5 rounded-md border border-gray-200/70 font-semibold text-[10px] sm:text-xs"
                 title={`Made in / Sourced from: ${product.origin_country || product.country}`}
               >
                 <span>{getCountryFlagEmoji(product.origin_country || product.country)}</span>
-                <span className="truncate max-w-[95px]">{product.origin_country || product.country}</span>
+                <span className="truncate max-w-[80px] sm:max-w-[95px]">{product.origin_country || product.country}</span>
               </span>
             )}
           </div>
@@ -298,7 +298,7 @@ export function ProductCard({
         {/* Product Title */}
         <Link
           href={`/products/${product.slug}`}
-          className="line-clamp-2 text-sm sm:text-base font-bold text-gray-900 leading-snug hover:text-[#e91e63] transition-colors min-h-[2.85rem]"
+          className="line-clamp-2 overflow-hidden text-xs sm:text-sm md:text-base font-bold text-gray-900 leading-tight sm:leading-snug hover:text-[#e91e63] transition-colors min-h-[2.2rem] sm:min-h-[2.85rem]"
           title={product.name}
         >
           {product.name}
@@ -310,13 +310,13 @@ export function ProductCard({
           {cardSettings?.showRating !== false ? (
             <div className="flex items-center gap-1">
               <div className="flex items-center text-amber-400">
-                <Star className="h-3.5 w-3.5 fill-current" />
-                <Star className="h-3.5 w-3.5 fill-current" />
-                <Star className="h-3.5 w-3.5 fill-current" />
-                <Star className="h-3.5 w-3.5 fill-current" />
-                <Star className="h-3.5 w-3.5 fill-current text-amber-200" />
+                <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current" />
+                <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current" />
+                <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current" />
+                <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current" />
+                <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current text-amber-200" />
               </div>
-              <span className="text-xs sm:text-sm text-gray-600 font-bold">
+              <span className="text-[11px] sm:text-xs md:text-sm text-gray-600 font-bold">
                 ({toBn(product.rating ? product.rating.toFixed(1) : "4.3")})
               </span>
             </div>
@@ -324,19 +324,19 @@ export function ProductCard({
 
           {/* Size / Volume Pill Badge */}
           {cardSettings?.showSizeBadge !== false && detectedSize && (
-            <span className="rounded-md bg-pink-50 border border-pink-100 px-2 py-0.5 text-xs sm:text-sm font-bold text-[#e91e63] whitespace-nowrap">
+            <span className="rounded-md bg-pink-50 border border-pink-100 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs md:text-sm font-bold text-[#e91e63] whitespace-nowrap">
               {detectedSize}
             </span>
           )}
         </div>
 
         {/* Pricing Row */}
-        <div className="flex items-baseline gap-2 pt-0.5">
-          <span className="text-base sm:text-lg lg:text-xl font-black text-[#e91e63]">
+        <div className="flex items-baseline gap-1.5 sm:gap-2 pt-0.5">
+          <span className="text-sm sm:text-lg lg:text-xl font-black text-[#e91e63]">
             {formatPriceBn(product.sale_price ?? product.regular_price)}
           </span>
           {product.sale_price && product.sale_price < product.regular_price && (
-            <span className="text-xs sm:text-sm text-gray-400 line-through font-medium">
+            <span className="text-[11px] sm:text-xs md:text-sm text-gray-400 line-through font-medium">
               {formatPriceBn(product.regular_price)}
             </span>
           )}
