@@ -147,7 +147,7 @@ export default function AccountWishlistPage() {
                   )}
                   <Link
                     href={`/products/${item.slug}`}
-                    className="mt-0.5 line-clamp-2 overflow-hidden text-xs sm:text-sm font-bold text-gray-900 hover:text-[#e91e63] transition-colors leading-snug min-h-8.5"
+                    className="mt-0.5 block text-[11.5px] sm:text-[13px] md:text-sm font-semibold text-gray-900 hover:text-[#e91e63] transition-colors leading-snug"
                   >
                     {item.name}
                   </Link>
