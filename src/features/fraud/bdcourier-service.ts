@@ -143,7 +143,7 @@ export async function saveBDCourierSettings(settings: Partial<BDCourierConfig>) 
     );
 
     // Clear memory cache when settings change
-    reportCache.clear();
+    persistentReportsMemoryMap.clear();
 
     revalidatePath("/admin/orders/fraud");
     revalidatePath("/admin/orders");
