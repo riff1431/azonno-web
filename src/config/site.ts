@@ -1,9 +1,9 @@
 // Site-wide configuration constants
 
 export const siteConfig = {
-  name: process.env.NEXT_PUBLIC_APP_NAME || "Blush & Budget",
+  name: process.env.NEXT_PUBLIC_APP_NAME || "Azonno Ecommerce Website",
   url: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "",
-  description: "Authentic Skincare & Beauty Imports in Bangladesh",
+  description: "Azonno Ecommerce Website in Bangladesh",
   defaultCurrency: "BDT",
   defaultLocale: "en-BD",
   defaultTimezone: "Asia/Dhaka",
