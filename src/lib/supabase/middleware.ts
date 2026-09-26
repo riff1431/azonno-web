@@ -128,12 +128,16 @@ export async function updateSession(request: NextRequest) {
   // Fetch role if user exists
   let userRole: string | null = null;
   if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-    userRole = profile?.role || user.app_metadata?.role || user.user_metadata?.role || "customer";
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      userRole = profile?.role || user.app_metadata?.role || user.user_metadata?.role || "customer";
+    } catch {
+      userRole = user.app_metadata?.role || user.user_metadata?.role || "customer";
+    }
   }
 
   const isAdmin = userRole === "admin" || userRole === "moderator";

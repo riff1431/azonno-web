@@ -62,14 +62,24 @@ export default function LoginForm() {
 
       // Check role to route intelligently
       let destination = redirectTo;
-      if (redirectTo === "/account" && authData.user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", authData.user.id)
-          .single();
+      if (authData.user) {
+        let role = authData.user.app_metadata?.role || authData.user.user_metadata?.role;
 
-        if (profile?.role === "admin" || profile?.role === "moderator") {
+        if (!role) {
+          try {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("role")
+              .eq("id", authData.user.id)
+              .maybeSingle();
+            role = profile?.role;
+          } catch {
+            // Non-blocking fallback
+          }
+        }
+
+        const isAdminUser = role === "admin" || role === "moderator";
+        if (isAdminUser || redirectTo === "/admin") {
           destination = "/admin";
         }
       }
