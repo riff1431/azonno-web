@@ -12,13 +12,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user has admin/moderator role
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
+    let userRole = user.app_metadata?.role || user.user_metadata?.role;
+    if (!userRole) {
+      try {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .maybeSingle();
+        userRole = profile?.role;
+      } catch {
+        // Non-blocking fallback
+      }
+    }
 
-    if (!profile || (profile.role !== "admin" && profile.role !== "moderator")) {
+    if (userRole !== "admin" && userRole !== "moderator") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

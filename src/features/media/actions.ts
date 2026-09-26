@@ -14,13 +14,21 @@ export async function uploadMediaDirectly(formData: FormData) {
   }
 
   // Strict Admin & Moderator Role Verification (Block customer uploads)
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  let userRole = user.app_metadata?.role || user.user_metadata?.role;
+  if (!userRole) {
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      userRole = profile?.role;
+    } catch {
+      // Non-blocking fallback
+    }
+  }
 
-  if (!profile || (profile.role !== "admin" && profile.role !== "moderator")) {
+  if (userRole !== "admin" && userRole !== "moderator") {
     return { error: "Access Denied: Only store administrators are authorized to upload media to this website." };
   }
 
