@@ -64,15 +64,15 @@ export interface BDCourierProviderInfo {
 }
 
 export const BDCOURIER_PROVIDERS: BDCourierProviderInfo[] = [
-  { key: "steadfast", name: "SteadFast", bnName: "স্টেডফাস্ট", logo: "https://api.bdcourier.com/c-logo/steadfast-logo.png" },
-  { key: "pathao", name: "Pathao", bnName: "পাঠাও", logo: "https://api.bdcourier.com/c-logo/pathao-logo.png" },
-  { key: "redx", name: "RedX", bnName: "রেডএক্স", logo: "https://api.bdcourier.com/c-logo/redx-logo.png" },
-  { key: "paperfly", name: "PaperFly", bnName: "পেপারফ্লাই", logo: "https://api.bdcourier.com/c-logo/paperfly-logo.png" },
-  { key: "carrybee", name: "CarryBee", bnName: "ক্যারিবি", logo: "https://api.bdcourier.com/c-logo/carrybee-logo.webp" },
-  { key: "parceldex", name: "ParcelDex", bnName: "পার্সেলডেক্স", logo: "https://api.bdcourier.com/c-logo/parceldex-logo.png" },
-  { key: "courrierfast", name: "CourierFast", bnName: "কুরিয়ারফাস্ট", logo: "https://api.bdcourier.com/c-logo/courierfast-logo.png" },
-  { key: "ecourier", name: "eCourier", bnName: "ই-কুরিয়ার", logo: "https://api.bdcourier.com/c-logo/ecourier-logo.png" },
-  { key: "deliverytiger", name: "Delivery Tiger", bnName: "ডেলিভারি টাইগার", logo: "https://api.bdcourier.com/c-logo/deliverytiger-logo.png" },
-  { key: "sundarban", name: "Sundarban Courier", bnName: "সুন্দরবন কুরিয়ার", logo: "https://api.bdcourier.com/c-logo/sundarban-logo.png" },
-  { key: "saparibahan", name: "SA Paribahan", bnName: "এস এ পরিবহন", logo: "https://api.bdcourier.com/c-logo/saparibahan-logo.png" },
+  { key: "steadfast", name: "SteadFast", bnName: "Steadfast", logo: "https://api.bdcourier.com/c-logo/steadfast-logo.png" },
+  { key: "pathao", name: "Pathao", bnName: "Pathao", logo: "https://api.bdcourier.com/c-logo/pathao-logo.png" },
+  { key: "redx", name: "RedX", bnName: "RedX", logo: "https://api.bdcourier.com/c-logo/redx-logo.png" },
+  { key: "paperfly", name: "PaperFly", bnName: "Paperfly", logo: "https://api.bdcourier.com/c-logo/paperfly-logo.png" },
+  { key: "carrybee", name: "CarryBee", bnName: "Carrybee", logo: "https://api.bdcourier.com/c-logo/carrybee-logo.webp" },
+  { key: "parceldex", name: "ParcelDex", bnName: "ParcelDex", logo: "https://api.bdcourier.com/c-logo/parceldex-logo.png" },
+  { key: "courrierfast", name: "CourierFast", bnName: "CourierFast", logo: "https://api.bdcourier.com/c-logo/courierfast-logo.png" },
+  { key: "ecourier", name: "eCourier", bnName: "-", logo: "https://api.bdcourier.com/c-logo/ecourier-logo.png" },
+  { key: "deliverytiger", name: "Delivery Tiger", bnName: "Delivery :00", logo: "https://api.bdcourier.com/c-logo/deliverytiger-logo.png" },
+  { key: "sundarban", name: "Sundarban Courier", bnName: "Sundarban ", logo: "https://api.bdcourier.com/c-logo/sundarban-logo.png" },
+  { key: "saparibahan", name: "SA Paribahan", bnName: "  ", logo: "https://api.bdcourier.com/c-logo/saparibahan-logo.png" },
 ];

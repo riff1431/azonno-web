@@ -38,14 +38,14 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
 
   const heading =
     language === "bn"
-      ? config?.headingBn || config?.heading || "বাংলাদেশে আসল কসমেটিকস ও স্কিনকেয়ারের বিশ্বস্ত গন্তব্য"
+      ? config?.headingBn || config?.heading || "EnglishPremium Men's & Women's Clothing in Bangladesh Trusted Destination"
       : config?.heading || "Authentic Cosmetics Shop in Bangladesh: Your Beauty Destination";
 
   const subtitle =
     language === "bn"
       ? config?.subtitleBn ||
         config?.subtitle ||
-        "১০০% খাঁটি আন্তর্জাতিক স্কিনকেয়ার ও মেকআপ কালেকশন — সারা দেশে ক্যাশ অন ডেলিভারি ও ফ্রি বিউটি পরামর্শ।"
+        "100% items Premium Casual Wear  Apparel  —   Cash  Delivery   items ।"
       : config?.subtitle ||
         "Explore 100% genuine skincare, makeup & haircare with nationwide Cash on Delivery, doorstep inspection, and expert beauty guidance.";
 
@@ -106,9 +106,9 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
       <div className="container-main max-w-5xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 rounded-full bg-pink-100/80 px-3.5 py-1 text-xs font-bold text-pink-700 mb-3 border border-pink-200/70 shadow-2xs">
-            <Sparkles className="h-3.5 w-3.5 text-pink-600 shrink-0" />
-            <span>{language === "bn" ? "অফিসিয়াল বিউটি গাইড ও প্রশ্নোত্তর" : "Official Beauty Guide & FAQs"}</span>
+          <div className="inline-flex items-center gap-2 rounded-full bg-teal-100/70/80 px-3.5 py-1 text-xs font-bold text-[#164E63] mb-3 border border-teal-200/70 shadow-2xs">
+            <Sparkles className="h-3.5 w-3.5 text-[#1D6474] shrink-0" />
+            <span>{language === "bn" ? " items   Q&A" : "Official Beauty Guide & FAQs"}</span>
           </div>
 
           <h2
@@ -126,45 +126,45 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
           <div className="mt-5 flex flex-wrap items-center justify-center gap-2 pt-1">
             <Link
               href="/products?category=skin-care"
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-pink-300 hover:text-pink-600 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-teal-300 hover:text-[#1D6474] transition-colors"
             >
               <span>🧴</span>
-              <span>{language === "bn" ? "স্কিনকেয়ার" : "Skin Care"}</span>
+              <span>{language === "bn" ? "Casual Wear" : "Skin Care"}</span>
             </Link>
             <Link
               href="/products?category=makeup"
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-pink-300 hover:text-pink-600 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-teal-300 hover:text-[#1D6474] transition-colors"
             >
               <span>💄</span>
-              <span>{language === "bn" ? "মেকআপ" : "Makeup"}</span>
+              <span>{language === "bn" ? "Apparel" : "Makeup"}</span>
             </Link>
             <Link
               href="/products?category=hair-care"
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-pink-300 hover:text-pink-600 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-teal-300 hover:text-[#1D6474] transition-colors"
             >
               <span>🌿</span>
-              <span>{language === "bn" ? "হেয়ার কেয়ার" : "Hair Care"}</span>
+              <span>{language === "bn" ? " " : "Hair Care"}</span>
             </Link>
             <Link
               href="/brands"
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-pink-300 hover:text-pink-600 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-700 border border-zinc-200 shadow-2xs hover:border-teal-300 hover:text-[#1D6474] transition-colors"
             >
               <span>✨</span>
-              <span>{language === "bn" ? "টপ ব্র্যান্ডস" : "Top Brands"}</span>
+              <span>{language === "bn" ? " Brand" : "Top Brands"}</span>
             </Link>
             <Link
               href="/products?discount=true"
-              className="inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-3.5 py-1.5 text-xs font-bold text-pink-700 border border-pink-200 shadow-2xs hover:bg-pink-100 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-teal-50/60 px-3.5 py-1.5 text-xs font-bold text-[#164E63] border border-teal-200 shadow-2xs hover:bg-teal-100/70 transition-colors"
             >
               <span>🏷️</span>
-              <span>{language === "bn" ? "স্পেশাল অফার" : "Special Offers"}</span>
+              <span>{language === "bn" ? " " : "Special Offers"}</span>
             </Link>
           </div>
         </div>
 
         {/* Humanized SEO Editorial Guide (Similar to Beauty Booth / Ogerio) */}
         {seoDescription && (
-          <article className="rounded-2xl sm:rounded-3xl border border-pink-100/90 bg-linear-to-br from-pink-50/50 via-white to-pink-50/30 p-5 sm:p-7 md:p-8 shadow-xs mb-10 text-zinc-700">
+          <article className="rounded-2xl sm:rounded-3xl border border-teal-100/90 bg-linear-to-br from-pink-50/50 via-white to-pink-50/30 p-5 sm:p-7 md:p-8 shadow-xs mb-10 text-zinc-700">
             {/* Editorial Content with Expandable Container for Clean Mobile UX & 100% SEO Crawlability */}
             <div
               className={cn(
@@ -184,20 +184,20 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
             </div>
 
             {/* Read More / Read Less Toggle */}
-            <div className="mt-4 pt-3 border-t border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="mt-4 pt-3 border-t border-teal-100 flex flex-col sm:flex-row items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setIsGuideExpanded(!isGuideExpanded)}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#e91e63] hover:text-pink-700 bg-white px-4 py-2 rounded-xl border border-pink-200 shadow-2xs hover:shadow-xs transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#1D6474] hover:text-[#164E63] bg-white px-4 py-2 rounded-xl border border-teal-200 shadow-2xs hover:shadow-xs transition-all cursor-pointer"
                 aria-expanded={isGuideExpanded}
               >
                 <span>
                   {isGuideExpanded
                     ? language === "bn"
-                      ? "সংক্ষেপ করুন"
+                      ? " "
                       : "Show Less"
                     : language === "bn"
-                      ? "সম্পূর্ণ বিউটি গাইড পড়ুন"
+                      ? "Complete items  "
                       : "Read Full Beauty Guide"}
                 </span>
                 {isGuideExpanded ? (
@@ -209,35 +209,35 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
 
               <p className="text-xs sm:text-sm text-zinc-500 text-center sm:text-right font-medium">
                 {language === "bn"
-                  ? "১০০% সার্টিফাইড আন্তর্জাতিক কসমেটিকস ও স্কিনকেয়ার"
+                  ? "100% items Premium items  "
                   : "100% Certified Direct Imports & Verified Batch Codes"}
               </p>
             </div>
 
             {/* Trust Highlights Grid */}
-            <div className="mt-5 pt-5 border-t border-pink-100/90 grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs sm:text-sm font-semibold text-zinc-800">
+            <div className="mt-5 pt-5 border-t border-teal-100/90 grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs sm:text-sm font-semibold text-zinc-800">
               <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
                 <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
                 <span className="leading-tight text-xs sm:text-sm font-bold">
-                  {language === "bn" ? "আসল ব্যাচ কোড গ্যারান্টি" : "Verified Batch Codes"}
+                  {language === "bn" ? "Authentic  Code items" : "Verified Batch Codes"}
                 </span>
               </div>
               <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
                 <Truck className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
                 <span className="leading-tight text-xs sm:text-sm font-bold">
-                  {language === "bn" ? "২৪-৪৮ ঘণ্টায় ডেলিভারি" : "Express 24-48h Delivery"}
+                  {language === "bn" ? "24-48 Hours Delivery" : "Express 24-48h Delivery"}
                 </span>
               </div>
               <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
                 <Eye className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
                 <span className="leading-tight text-xs sm:text-sm font-bold">
-                  {language === "bn" ? "পার্সেল চেক করার সুবিধা" : "Doorstep Parcel Check"}
+                  {language === "bn" ? "   " : "Doorstep Parcel Check"}
                 </span>
               </div>
               <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/80 border border-pink-50">
                 <RotateCcw className="h-4.5 w-4.5 text-emerald-600 shrink-0" />
                 <span className="leading-tight text-xs sm:text-sm font-bold">
-                  {language === "bn" ? "৭ দিনের ফ্রি রিপ্লেসমেন্ট" : "7-Day Free Replacement"}
+                  {language === "bn" ? "7 Enter  " : "7-Day Free Replacement"}
                 </span>
               </div>
             </div>
@@ -254,24 +254,24 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                 className={cn(
                   "shrink-0 whitespace-nowrap rounded-full sm:rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer select-none",
                   selectedCategory === "all"
-                    ? "bg-[#e91e63] text-white shadow-xs ring-2 ring-pink-500/20 scale-[1.02]"
-                    : "bg-white text-zinc-700 border border-zinc-200 hover:border-pink-300 hover:text-[#e91e63]"
+                    ? "bg-[#1D6474] text-white shadow-xs ring-2 ring-[#1D6474]/20 scale-[1.02]"
+                    : "bg-white text-zinc-700 border border-zinc-200 hover:border-teal-300 hover:text-[#1D6474]"
                 )}
               >
-                {language === "bn" ? "সব প্রশ্ন" : "All Questions"} ({faqs.length})
+                {language === "bn" ? " Question" : "All Questions"} ({faqs.length})
               </button>
               {categories.map((cat) => {
                 const getCategoryLabel = (name: string) => {
                   if (language !== "bn") return name;
                   const lower = name.toLowerCase();
-                  if (lower.includes("sourcing") || lower.includes("authenticity")) return "আসল পণ্য ও সোর্সিং";
-                  if (lower.includes("doorstep") || lower.includes("inspection")) return "পার্সেল যাচাই";
-                  if (lower.includes("delivery") || lower.includes("courier") || lower.includes("shipping")) return "ডেলিভারি ও কুরিয়ার";
-                  if (lower.includes("return") || lower.includes("exchange") || lower.includes("refund")) return "রিটার্ন ও রিপ্লেসমেন্ট";
-                  if (lower.includes("safety") || lower.includes("toxic")) return "প্রোডাক্ট নিরাপত্তা";
-                  if (lower.includes("payment") || lower.includes("pricing")) return "পেমেন্ট ও মূল্য";
-                  if (lower.includes("routine")) return "স্কিনকেয়ার রুটিন";
-                  if (lower.includes("advisory") || lower.includes("consult")) return "বিউটি পরামর্শ";
+                  if (lower.includes("sourcing") || lower.includes("authenticity")) return "Authentic Products  ";
+                  if (lower.includes("doorstep") || lower.includes("inspection")) return " Verification";
+                  if (lower.includes("delivery") || lower.includes("courier") || lower.includes("shipping")) return "Delivery  Courier";
+                  if (lower.includes("return") || lower.includes("exchange") || lower.includes("refund")) return "Return  ";
+                  if (lower.includes("safety") || lower.includes("toxic")) return "Products Security";
+                  if (lower.includes("payment") || lower.includes("pricing")) return "Payment  Price";
+                  if (lower.includes("routine")) return "Casual Wear items";
+                  if (lower.includes("advisory") || lower.includes("consult")) return "items ";
                   return name;
                 };
 
@@ -283,8 +283,8 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                     className={cn(
                       "shrink-0 whitespace-nowrap rounded-full sm:rounded-xl px-4 py-2.5 text-xs sm:text-sm font-bold transition-all cursor-pointer select-none",
                       selectedCategory === cat
-                        ? "bg-[#e91e63] text-white shadow-xs ring-2 ring-pink-500/20 scale-[1.02]"
-                        : "bg-white text-zinc-700 border border-zinc-200 hover:border-pink-300 hover:text-[#e91e63]"
+                        ? "bg-[#1D6474] text-white shadow-xs ring-2 ring-[#1D6474]/20 scale-[1.02]"
+                        : "bg-white text-zinc-700 border border-zinc-200 hover:border-teal-300 hover:text-[#1D6474]"
                     )}
                   >
                     {getCategoryLabel(cat)}
@@ -308,7 +308,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                 className={cn(
                   "rounded-2xl border transition-all duration-200 overflow-hidden",
                   isOpen
-                    ? "border-pink-300 bg-white shadow-md ring-2 ring-pink-500/10"
+                    ? "border-teal-300 bg-white shadow-md ring-2 ring-[#1D6474]/10"
                     : "border-zinc-200/80 bg-white/90 hover:bg-white hover:border-zinc-300"
                 )}
               >
@@ -324,7 +324,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                       className={cn(
                         "flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl text-xs sm:text-sm font-bold transition-colors mt-0.5 sm:mt-0",
                         isOpen
-                          ? "bg-pink-600 text-white shadow-xs"
+                          ? "bg-[#164E63] text-white shadow-xs"
                           : "bg-zinc-100 text-zinc-600"
                       )}
                     >
@@ -333,7 +333,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
 
                     <div className="min-w-0 flex-1 pr-1">
                       {faq.category && (
-                        <span className="text-xs font-bold uppercase tracking-wider text-pink-600 block mb-0.5">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#1D6474] block mb-0.5">
                           {faq.category}
                         </span>
                       )}
@@ -346,7 +346,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                   <div
                     className={cn(
                       "flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full transition-transform duration-200 ml-1",
-                      isOpen ? "rotate-180 bg-pink-100 text-pink-700" : "bg-zinc-100 text-zinc-500"
+                      isOpen ? "rotate-180 bg-teal-100/70 text-[#164E63]" : "bg-zinc-100 text-zinc-500"
                     )}
                   >
                     <ChevronDown className="h-4.5 w-4.5" />
@@ -370,20 +370,20 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
         {config?.showWhatsappCard !== false && (
           <div className="mt-6 sm:mt-8 rounded-2xl sm:rounded-3xl bg-zinc-900 text-white p-5 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-xl">
             <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 text-left">
-              <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-pink-600 text-white shadow-xs mt-0.5 sm:mt-0">
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-[#164E63] text-white shadow-xs mt-0.5 sm:mt-0">
                 <PhoneCall className="h-6 w-6" />
               </div>
               <div className="min-w-0">
                 <p className="text-base sm:text-lg font-black leading-snug">
                   {language === "bn"
-                    ? config?.whatsappTitleBn || config?.whatsappTitle || "সঠিক প্রোডাক্ট নির্বাচনে সাহায্য প্রয়োজন?"
+                    ? config?.whatsappTitleBn || config?.whatsappTitle || "Need help finding the right fit or size??"
                     : config?.whatsappTitle || "Need help choosing the right beauty products?"}
                 </p>
                 <p className="text-sm text-zinc-400 mt-1 leading-relaxed">
                   {language === "bn"
                     ? config?.whatsappSubtitleBn ||
                       config?.whatsappSubtitle ||
-                      "আমাদের বিউটি এক্সপার্টরা প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত হোয়াটসঅ্যাপে সক্রিয় আছেন।"
+                      "Our customer support team is available every day 10:00 from PM 10:00 till  Active ।"
                     : config?.whatsappSubtitle ||
                       "Chat directly with our certified beauty advisors on WhatsApp daily 10 AM to 10 PM."}
                 </p>
@@ -404,7 +404,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
               }
               const btnLabel =
                 language === "bn"
-                  ? config?.whatsappButtonTextBn || config?.whatsappButtonText || "হোয়াটসঅ্যাপে ফ্রি পরামর্শ নিন"
+                  ? config?.whatsappButtonTextBn || config?.whatsappButtonText || "   "
                   : config?.whatsappButtonText || "Chat on WhatsApp";
 
               return (
@@ -412,7 +412,7 @@ export function HomepageSeoFaq({ config }: HomepageSeoFaqProps) {
                   href={waHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto shrink-0 justify-center rounded-xl bg-[#e91e63] px-6 py-3.5 text-sm sm:text-base font-black text-white hover:bg-pink-700 transition-colors shadow-md flex items-center gap-2 text-center cursor-pointer"
+                  className="w-full sm:w-auto shrink-0 justify-center rounded-xl bg-[#1D6474] px-6 py-3.5 text-sm sm:text-base font-black text-white hover:bg-[#164E63] transition-colors shadow-md flex items-center gap-2 text-center cursor-pointer"
                 >
                   <span>{btnLabel}</span>
                   <ArrowRight className="h-4 w-4" />

@@ -183,40 +183,22 @@ function AdminSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse, logoImag
         {/* Header / Logo */}
         <div className="flex h-14 sm:h-16 items-center justify-between border-b border-white/10 px-3.5">
           <Link href="/admin" className="flex items-center gap-2 min-w-0 overflow-hidden">
-            {logoImageUrl ? (
-              /* Website logo image — shown full width when expanded, shrunk when collapsed */
-              isCollapsed && !isOpen ? (
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 overflow-hidden">
-                  <img
-                    src={logoImageUrl}
-                    alt={brandName || "Logo"}
-                    className="h-8 w-8 object-contain"
-                  />
-                </div>
-              ) : (
+            {isCollapsed && !isOpen ? (
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 overflow-hidden p-1">
                 <img
-                  src={logoImageUrl}
-                  alt={brandName || "Logo"}
-                  className="h-9 max-h-9 w-auto max-w-38 object-contain shrink-0"
+                  src="/images/azonno-logo-mark.png"
+                  alt="Azonno"
+                  className="h-7 w-7 object-contain"
                 />
-              )
+              </div>
             ) : (
-              /* Fallback: pink eX box + text */
-              <>
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-[#e91e63] to-pink-600 text-sm font-black text-white shadow-md shadow-pink-500/20">
-                  eX
-                </div>
-                {(!isCollapsed || isOpen) && (
-                  <div className="min-w-0 flex flex-col">
-                    <span className="text-base font-black tracking-tight text-white leading-none">
-                      {brandName || "ecomX"}
-                    </span>
-                    <span className="text-[10px] text-pink-400 font-bold uppercase tracking-wider mt-0.5">
-                      Admin
-                    </span>
-                  </div>
-                )}
-              </>
+              <div className="flex items-center gap-2">
+                <img
+                  src="/images/azonno-logo-dark.png"
+                  alt="Azonno"
+                  className="h-9 max-h-9 w-auto max-w-44 object-contain shrink-0 brightness-110"
+                />
+              </div>
             )}
           </Link>
 
@@ -272,7 +254,7 @@ function AdminSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse, logoImag
                         isCollapsed && "justify-center px-0 py-2.5"
                       )}
                     >
-                      <Icon className={cn("h-4 w-4 shrink-0", isCurrentGroupActive ? "text-pink-400" : "text-admin-sidebar-text")} />
+                      <Icon className={cn("h-4 w-4 shrink-0", isCurrentGroupActive ? "text-teal-400" : "text-admin-sidebar-text")} />
                       {(!isCollapsed || isOpen) && (
                         <>
                           <span className="flex-1 text-left truncate">{translateNav(item.title)}</span>
@@ -291,7 +273,7 @@ function AdminSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse, logoImag
                     {isCollapsed && !isOpen && (
                       <div className="absolute left-full top-0 ml-2 hidden group-hover:block z-50 min-w-52 rounded-2xl bg-[#171b26] p-2.5 shadow-2xl border border-white/10">
                         <div className="px-3 py-1.5 text-xs font-black text-white border-b border-white/10 mb-1 flex items-center gap-2">
-                          <Icon className="h-3.5 w-3.5 text-pink-400" />
+                          <Icon className="h-3.5 w-3.5 text-teal-400" />
                           {translateNav(item.title)}
                         </div>
                         <ul className="space-y-0.5">
@@ -302,7 +284,7 @@ function AdminSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse, logoImag
                                 className={cn(
                                   "block rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
                                   isActive(child.href)
-                                    ? "bg-[#e91e63] text-white font-bold"
+                                    ? "bg-[#1D6474] text-white font-bold"
                                     : "text-zinc-300 hover:bg-white/10 hover:text-white"
                                 )}
                               >
@@ -316,7 +298,7 @@ function AdminSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse, logoImag
 
                     {/* Expanded Mode Submenu */}
                     {expanded && (!isCollapsed || isOpen) && (
-                      <ul className="ml-3 mt-1 space-y-0.5 border-l-2 border-pink-500/30 pl-2.5 transition-all">
+                      <ul className="ml-3 mt-1 space-y-0.5 border-l-2 border-teal-500/40 pl-2.5 transition-all">
                         {item.children.map((child) => {
                           const childActive = isActive(child.href);
                           return (
@@ -327,7 +309,7 @@ function AdminSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse, logoImag
                                 className={cn(
                                   "block rounded-lg px-2.5 py-1.5 text-[11px] font-semibold transition-all truncate",
                                   childActive
-                                    ? "bg-[#e91e63] text-white font-bold shadow-xs"
+                                    ? "bg-[#1D6474] text-white font-bold shadow-xs"
                                     : "text-zinc-300 hover:bg-white/10 hover:text-white"
                                 )}
                               >
@@ -353,7 +335,7 @@ function AdminSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse, logoImag
                     className={cn(
                       "flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-bold transition-all",
                       itemActive
-                        ? "bg-[#e91e63] text-white font-black shadow-md shadow-pink-600/20"
+                        ? "bg-[#1D6474] text-white font-black shadow-md shadow-teal-950/30"
                         : "hover:bg-white/10 text-admin-sidebar-text hover:text-white",
                       isCollapsed && "justify-center px-0 py-2.5"
                     )}
@@ -404,11 +386,11 @@ function LangToggleButton() {
   return (
     <button
       onClick={() => setLang(lang === "en" ? "bn" : "en")}
-      title={lang === "en" ? "বাংলায় দেখুন" : "Switch to English"}
+      title={lang === "en" ? "English" : "Switch to English"}
       className="flex items-center gap-1 sm:gap-1.5 rounded-lg border border-border px-2 sm:px-2.5 py-1.5 text-xs font-bold text-text-secondary hover:bg-surface-secondary hover:text-text transition-colors select-none"
     >
       <Languages className="h-3.5 w-3.5 shrink-0" />
-      <span>{lang === "en" ? "বাংলা" : "EN"}</span>
+      <span>{lang === "en" ? "English" : "EN"}</span>
     </button>
   );
 }

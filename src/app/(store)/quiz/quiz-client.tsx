@@ -203,14 +203,14 @@ export function SkincareQuizClient() {
           <div className="text-center mb-8 sm:mb-10 space-y-2.5 animate-in fade-in">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-100/70 border border-rose-200 text-rose-800 text-xs font-bold tracking-wide shadow-xs">
               <Sparkles className="h-3.5 w-3.5 text-rose-600 animate-pulse" />
-              {language === "bn" ? "পার্সোনালাইজড স্কিনকেয়ার রুটিন ম্যাচিং" : "Personalized Skincare Routine Matcher"}
+              {language === "bn" ? " Casual Wear items " : "Personalized Skincare Routine Matcher"}
             </div>
             <h1 className="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight">
-              {language === "bn" ? "আপনার পছন্দের স্কিনকেয়ার ও বিউটি রুটিন খুঁজুন" : "Build Your Tailored Beauty Routine"}
+              {language === "bn" ? "your desired Casual Wear  items items Search" : "Build Your Tailored Beauty Routine"}
             </h1>
             <p className="text-sm sm:text-base text-gray-600 max-w-xl mx-auto font-medium">
               {language === "bn"
-                ? "আপনার ত্বকের ধরন, কাঙ্ক্ষিত বিউটি লক্ষ্য এবং পছন্দের ফর্মুলেশন বেছে নিয়ে পান সেরা রুটিন সাজেশন।"
+                ? "your Cotton ,  items  and desired   with   items ।"
                 : "Select your skin type, beauty goals, and preferred formulas to unlock customized product recommendations."}
             </p>
 
@@ -218,7 +218,7 @@ export function SkincareQuizClient() {
             <div className="max-w-md mx-auto pt-4 space-y-1.5">
               <div className="flex justify-between text-xs font-bold text-gray-500">
                 <span>
-                  {language === "bn" ? `ধাপ ${toBn(currentStep + 1)}` : `Step ${currentStep + 1}`} {language === "bn" ? "এর" : "of"} {language === "bn" ? toBn(totalQuizSteps) : totalQuizSteps}
+                  {language === "bn" ? ` ${toBn(currentStep + 1)}` : `Step ${currentStep + 1}`} {language === "bn" ? "" : "of"} {language === "bn" ? toBn(totalQuizSteps) : totalQuizSteps}
                 </span>
                 <span className="text-rose-600 font-extrabold">
                   {Math.round(((currentStep + 1) / totalQuizSteps) * 100)}%
@@ -239,14 +239,14 @@ export function SkincareQuizClient() {
           <div className="space-y-6 bg-white/90 backdrop-blur-md border border-rose-100 p-6 sm:p-9 rounded-3xl shadow-xl shadow-rose-100/30 animate-in fade-in zoom-in-95">
             <div className="space-y-1">
               <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
-                {language === "bn" ? "ধাপ ১ • স্কিন প্রোফাইল" : "Step 1 • Skin Profile"}
+                {language === "bn" ? "Step 1 •  Profile" : "Step 1 • Skin Profile"}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-                {language === "bn" ? "আপনার ত্বকের সাধারণ ধরন কোনটি?" : "What is your natural skin profile?"}
+                {language === "bn" ? "your Cotton   items?" : "What is your natural skin profile?"}
               </h2>
               <p className="text-xs sm:text-sm text-gray-500">
                 {language === "bn"
-                  ? "প্রতিদিনের স্বাভাবিক অবস্থায় আপনার ত্বক কেমন অনুভব হয়?"
+                  ? "Enter   your Cotton   ?"
                   : "How does your face naturally feel throughout the day?"}
               </p>
             </div>
@@ -255,41 +255,41 @@ export function SkincareQuizClient() {
               {[
                 {
                   id: "dry",
-                  labelBn: "শুষ্ক ত্বক (Dry Skin)",
+                  labelBn: "Linen Blend (Dry Skin)",
                   labelEn: "Dry Skin",
-                  descBn: "মুখ ধোয়ার পর কিছুটা টানটান লাগে বা অতিরিক্ত ময়েশ্চারাইজার প্রয়োজন হয়",
+                  descBn: "   :00 :00:00      ",
                   descEn: "Needs rich nourishment and moisture to stay comfortable and soft",
                   icon: Droplets,
                 },
                 {
                   id: "oily",
-                  labelBn: "তৈলাক্ত ত্বক (Oily Skin)",
+                  labelBn: "Cotton Twill (Oily Skin)",
                   labelEn: "Oily Skin",
-                  descBn: "মুখে অতিরিক্ত তেলতেলে ভাব বা টি-জোনে প্রাকৃতিক শাইন থাকে",
+                  descBn: "     items-Zone   ",
                   descEn: "Feels naturally shiny, benefiting from lightweight water-based care",
                   icon: Sparkles,
                 },
                 {
                   id: "combo",
-                  labelBn: "মিশ্র ত্বক (Combination Skin)",
+                  labelBn: " Cotton (Combination Skin)",
                   labelEn: "Combination Skin",
-                  descBn: "কপাল ও নাকে তেলতেলে, কিন্তু গাল স্বাভাবিক বা কিছুটা শুষ্ক থাকে",
+                  descBn: "   ,     :00  ",
                   descEn: "Slightly oily in T-zone while cheeks are comfortable or normal",
                   icon: Scale,
                 },
                 {
                   id: "sensitive",
-                  labelBn: "সংবেদনশীল ও মাইল্ড কেয়ার (Sensitive Skin)",
+                  labelBn: "    (Sensitive Skin)",
                   labelEn: "Delicate & Sensitive Skin",
-                  descBn: "মৃদু ও সুগন্ধিমুক্ত শান্ত ফর্মুলা সবচেয়ে বেশি আরাম দেয়",
+                  descBn: "    weave    ",
                   descEn: "Prefers ultra-gentle, mild, and fragrance-free soothing formulas",
                   icon: ShieldCheck,
                 },
                 {
                   id: "normal",
-                  labelBn: "স্বাভাবিক ত্বক (Normal Skin)",
+                  labelBn: " Cotton (Normal Skin)",
                   labelEn: "Balanced / Normal Skin",
-                  descBn: "অতিরিক্ত তেল বা শুষ্কতা নেই, খুব ব্যালান্সড ও মসৃণ",
+                  descBn: "    ,    ",
                   descEn: "Naturally balanced, smooth texture and comfortable feel",
                   icon: CheckCircle2,
                 },
@@ -339,7 +339,7 @@ export function SkincareQuizClient() {
                 onClick={() => setCurrentStep(1)}
                 className="bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl px-6 py-2.5 shadow-md shadow-rose-200 flex items-center gap-2"
               >
-                <span>{language === "bn" ? "পরবর্তী ধাপ" : "Next Step"}</span>
+                <span>{language === "bn" ? " " : "Next Step"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -351,14 +351,14 @@ export function SkincareQuizClient() {
           <div className="space-y-6 bg-white/90 backdrop-blur-md border border-rose-100 p-6 sm:p-9 rounded-3xl shadow-xl shadow-rose-100/30 animate-in fade-in zoom-in-95">
             <div className="space-y-1">
               <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
-                {language === "bn" ? "ধাপ ২ • বিউটি লক্ষ্য ও ত্বকের যত্ন" : "Step 2 • Beauty & Skincare Goals"}
+                {language === "bn" ? " 2 • items   Cotton " : "Step 2 • Beauty & Skincare Goals"}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-                {language === "bn" ? "আপনার স্কিনকেয়ার রুটিনে কোন কোন বিষয়ে গুরুত্ব দিতে চান?" : "What are your primary skincare priorities?"}
+                {language === "bn" ? "your Casual Wear items      ?" : "What are your primary skincare priorities?"}
               </h2>
               <p className="text-xs sm:text-sm text-gray-500">
                 {language === "bn"
-                  ? "যে যে বিষয়ে ফোকাস করতে চান সেগুলো নির্বাচন করুন (একাধিক নির্বাচন করা যাবে)।"
+                  ? "         (   )।"
                   : "Choose your focus areas. We'll prioritize formulas that promote fresh, radiant, and balanced skin."}
               </p>
             </div>
@@ -367,51 +367,51 @@ export function SkincareQuizClient() {
               {[
                 {
                   id: "acne",
-                  labelBn: "🌿 পরিচ্ছন্ন ত্বক ও ব্যালান্সড কেয়ার (Clarifying)",
+                  labelBn: "🌿  Cotton    (Clarifying)",
                   labelEn: "Clarifying & Fresh Complexion",
-                  descBn: "অতিরিক্ত তেল ও সিবাম নিয়ন্ত্রণ করে ত্বককে সতেজ ও পরিষ্কার রাখা",
+                  descBn: "      Cotton   Clean ",
                   descEn: "Balances excess oil to keep skin feeling clean, clear, and fresh",
                 },
                 {
                   id: "brightening",
-                  labelBn: "🌸 উজ্জ্বলতা ও গ্লাস স্কিন গ্লো (Radiant Glow)",
+                  labelBn: "🌸      (Radiant Glow)",
                   labelEn: "Radiant Glass Skin Glow",
-                  descBn: "রোদে পোড়া ভাব দূর করে উজ্জ্বল, দীপ্তিময় ও সমান স্কিন টোন",
+                  descBn: "     ,     ",
                   descEn: "Restores sun-kissed brightness and an even, radiant complexion",
                 },
                 {
                   id: "pigmentation",
-                  labelBn: "✨ ইভেন টোন ও ডার্ক স্পট কেয়ার (Even Tone)",
+                  labelBn: "✨       (Even Tone)",
                   labelEn: "Even Tone & Spot Clarifying",
-                  descBn: "ছোপ ছোপ ভাব হালকা করে স্কিন টোন সমান ও ফ্রেশ রাখা",
+                  descBn: "          ",
                   descEn: "Helps promote a smooth, uniform tone and clear appearance",
                 },
                 {
                   id: "hydration",
-                  labelBn: "💧 ডিপ হাইড্রেশন ও স্কিন ব্যারিয়ার (Hydration Boost)",
+                  labelBn: "💧      (Hydration Boost)",
                   labelEn: "Deep Hydration & Barrier Comfort",
-                  descBn: "শুষ্কতা দূর করে ত্বককে আর্দ্র, কোমল ও প্লাম্প রাখা",
+                  descBn: "   Cotton ,    ",
                   descEn: "Delivers deep moisture to keep skin soft, supple, and hydrated",
                 },
                 {
                   id: "pores",
-                  labelBn: "🕳️ স্মুথ টেক্সচার ও পোর কেয়ার (Pore Refining)",
+                  labelBn: "🕳️  Texture    (Pore Refining)",
                   labelEn: "Pore Refining & Smooth Feel",
-                  descBn: "লোমকূপ পরিষ্কার রেখে ত্বককে মসৃণ ও তেলহীন রাখা",
+                  descBn: " Clean  Cotton    ",
                   descEn: "Smooths surface texture and minimizes the look of shiny pores",
                 },
                 {
                   id: "aging",
-                  labelBn: "⏳ তারুণ্যদীপ্ত আভা ও ফার্মনেস (Youthful Elasticity)",
+                  labelBn: "⏳     (Youthful Elasticity)",
                   labelEn: "Youthful Elasticity & Firmness",
-                  descBn: "ত্বকের স্বাভাবিক নমনীয়তা ও মসৃণ টানটান ভাব বজায় রাখা",
+                  descBn: "Cotton     :00:00   ",
                   descEn: "Maintains skin firmness, natural bounce, and smooth texture",
                 },
                 {
                   id: "soothing",
-                  labelBn: "🛡️ সুদিং ও আরামদায়ক অনুভূতি (Calming Comfort)",
+                  labelBn: "🛡️     (Calming Comfort)",
                   labelEn: "Soothing & Calming Comfort",
-                  descBn: "সারাদিনের ক্লান্তি দূর করে ত্বককে কোমল ও শান্ত রাখা (Cica/Centella)",
+                  descBn: "Enter    Cotton     (Cica/Centella)",
                   descEn: "Gently soothes and comforts skin with calming botanical extracts",
                 },
               ].map((opt) => {
@@ -454,13 +454,13 @@ export function SkincareQuizClient() {
                 className="rounded-xl border-gray-300 text-gray-700 font-semibold flex items-center gap-1.5"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>{language === "bn" ? "পূর্ববর্তী" : "Back"}</span>
+                <span>{language === "bn" ? "" : "Back"}</span>
               </Button>
               <Button
                 onClick={() => setCurrentStep(2)}
                 className="bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl px-6 py-2.5 shadow-md shadow-rose-200 flex items-center gap-2"
               >
-                <span>{language === "bn" ? "পরবর্তী ধাপ" : "Next Step"}</span>
+                <span>{language === "bn" ? " " : "Next Step"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -472,14 +472,14 @@ export function SkincareQuizClient() {
           <div className="space-y-6 bg-white/90 backdrop-blur-md border border-rose-100 p-6 sm:p-9 rounded-3xl shadow-xl shadow-rose-100/30 animate-in fade-in zoom-in-95">
             <div className="space-y-1">
               <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
-                {language === "bn" ? "ধাপ ৩ • ক্যাটাগরি ও রুটিন কাস্টমাইজেশন" : "Step 3 • Custom Routine Steps"}
+                {language === "bn" ? " 3 • Category  items " : "Step 3 • Custom Routine Steps"}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-                {language === "bn" ? "কোন কোন ক্যাটাগরির প্রোডাক্ট রুটিনে চান?" : "Which product steps would you like to include?"}
+                {language === "bn" ? "  Category Products items ?" : "Which product steps would you like to include?"}
               </h2>
               <p className="text-xs sm:text-sm text-gray-500">
                 {language === "bn"
-                  ? "যে ক্যাটাগরিগুলো চান সেগুলো টিক দিন। আপনার পছন্দের ওপর ভিত্তি করেই স্টেপগুলো তৈরি হবে।"
+                  ? " Category   items Enter। your desired      ।"
                   : "Select the steps you need in your daily regimen. You can add or omit any step."}
               </p>
             </div>
@@ -488,58 +488,58 @@ export function SkincareQuizClient() {
               {[
                 {
                   id: "cleanser",
-                  labelBn: "১. ক্লিনজার / ফেস ওয়াশ (Cleanser)",
+                  labelBn: "1.  /   (Cleanser)",
                   labelEn: "1. Gentle Face Wash & Cleanser",
-                  descBn: "প্রতিদিন ত্বক পরিষ্কার রাখার জন্য",
+                  descBn: "Enter Cotton Clean  for",
                   descEn: "Daily gentle cleansing without stripping barrier",
                 },
                 {
                   id: "toner",
-                  labelBn: "২. হাইড্রেটিং টোনার / মিস্ট (Toner)",
+                  labelBn: "2. items  /  (Toner)",
                   labelEn: "2. Hydrating Toner / Mist",
-                  descBn: "পিএইচ ব্যালান্স ও হাইড্রেশন বুস্ট করার জন্য",
+                  descBn: "      for",
                   descEn: "Rebalance pH and prep skin for deep hydration",
                 },
                 {
                   id: "serum",
-                  labelBn: "৩. নারিশিং বিউটি সিরাম ও এসেন্স (Serum)",
+                  labelBn: "3.  items Oxford Shirt   (Serum)",
                   labelEn: "3. Nourishing Beauty Serum / Essence",
-                  descBn: "উজ্জ্বলতা ও পুষ্টি জোগাতে পাওয়ারফুল ফর্মুলা",
+                  descBn: "  items   weave",
                   descEn: "Potent nutrient actives for healthy radiance",
                 },
                 {
                   id: "moisturizer",
-                  labelBn: "৪. ময়েশ্চারাইজার / ক্রিম (Moisturizer)",
+                  labelBn: "4.  /  (Moisturizer)",
                   labelEn: "4. Barrier Moisturizer / Gel",
-                  descBn: "ত্বকের আর্দ্রতা লক করে ব্যারিয়ার মজবুত করতে",
+                  descBn: "Cotton      ",
                   descEn: "Lock in hydration and strengthen moisture barrier",
                 },
                 {
                   id: "sunscreen",
-                  labelBn: "৫. সানস্ক্রিন (SPF Sun Protection)",
+                  labelBn: "5. Panjabi (SPF Sun Protection)",
                   labelEn: "5. Daily Sunscreen (SPF50+ PA++++)",
-                  descBn: "রোদের ক্ষতিকর রশ্মি ও ছোপ ছোপ দাগ প্রতিরোধে",
+                  descBn: "       ",
                   descEn: "Broad-spectrum UV shield against sun damage & spots",
                 },
                 {
                   id: "eye_care",
-                  labelBn: "৬. আই কেয়ার (Eye Cream / Serum)",
+                  labelBn: "6.   (Eye Cream / Serum)",
                   labelEn: "6. Eye Cream & Delicate Eye Care",
-                  descBn: "চোখের চারপাশের ত্বক কোমল ও ফ্রেশ রাখতে",
+                  descBn: "  Cotton    ",
                   descEn: "Nourishes the delicate eye contour for refreshed eyes",
                 },
                 {
                   id: "lip_care",
-                  labelBn: "৭. লিপ কেয়ার / লিপ মাস্ক (Lip Care)",
+                  labelBn: "7.   /   (Lip Care)",
                   labelEn: "7. Lip Mask / Nourishing Balm",
-                  descBn: "ঠোঁটের শুষ্কতা দূর করে সফট ও মসৃণ রাখতে",
+                  descBn: "       ",
                   descEn: "Restores soft, supple moisture for smooth lips",
                 },
                 {
                   id: "exfoliator",
-                  labelBn: "৮. জেন্টল স্কিন রিফ্রেশার (Exfoliator)",
+                  labelBn: "8.    (Exfoliator)",
                   labelEn: "8. Gentle Skin Refresher (1-2x/week)",
-                  descBn: "মৃত চামড়া দূর করে ত্বককে মসৃণ ও উজ্জ্বল করতে",
+                  descBn: "    Cotton    ",
                   descEn: "Gently polishes away dull surface cells",
                 },
               ].map((opt) => {
@@ -582,13 +582,13 @@ export function SkincareQuizClient() {
                 className="rounded-xl border-gray-300 text-gray-700 font-semibold flex items-center gap-1.5"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>{language === "bn" ? "পূর্ববর্তী" : "Back"}</span>
+                <span>{language === "bn" ? "" : "Back"}</span>
               </Button>
               <Button
                 onClick={() => setCurrentStep(3)}
                 className="bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl px-6 py-2.5 shadow-md shadow-rose-200 flex items-center gap-2"
               >
-                <span>{language === "bn" ? "পরবর্তী ধাপ" : "Next Step"}</span>
+                <span>{language === "bn" ? " " : "Next Step"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -600,14 +600,14 @@ export function SkincareQuizClient() {
           <div className="space-y-6 bg-white/90 backdrop-blur-md border border-rose-100 p-6 sm:p-9 rounded-3xl shadow-xl shadow-rose-100/30 animate-in fade-in zoom-in-95">
             <div className="space-y-1">
               <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
-                {language === "bn" ? "ধাপ ৪ • স্পেসিফিকেশন ও ফর্মুলেশন পছন্দ" : "Step 4 • Formulation Preferences"}
+                {language === "bn" ? " 4 •    " : "Step 4 • Formulation Preferences"}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-                {language === "bn" ? "বিশেষ কোনো ফর্মুলেশন বা ব্র্যান্ড অরিজিন পছন্দ আছে?" : "Any specific formula or origin preferences?"}
+                {language === "bn" ? "    Brand   ?" : "Any specific formula or origin preferences?"}
               </h2>
               <p className="text-xs sm:text-sm text-gray-500">
                 {language === "bn"
-                  ? "পছন্দসই ফর্মুলা টাইপ নির্বাচন করুন (ঐচ্ছিক)।"
+                  ? " weave :00   ()।"
                   : "Choose your preferred origins and characteristics (Optional)."}
               </p>
             </div>
@@ -616,30 +616,30 @@ export function SkincareQuizClient() {
               {[
                 {
                   id: "k_beauty",
-                  labelBn: "🇰🇷 অথেনটিক K-Beauty (Korean Skincare)",
+                  labelBn: "🇰🇷 items K-Beauty (Korean Skincare)",
                   labelEn: "Authentic Korean Skincare (K-Beauty)",
-                  descBn: "Beauty of Joseon, COSRX, Anua, Skin1004, Laneige ইত্যাদি",
+                  descBn: "Beauty of Joseon, COSRX, Anua, Skin1004, Laneige ",
                   descEn: "Gentle layering formulas focusing on natural glow and moisture",
                 },
                 {
                   id: "uk_eu",
                   labelBn: "🇬🇧 UK & European Formulations",
                   labelEn: "UK & EU Tested Beauty Brands",
-                  descBn: "CeraVe, The Ordinary, Simple, Neutrogena, La Roche-Posay ইত্যাদি",
+                  descBn: "CeraVe, The Ordinary, Simple, Neutrogena, La Roche-Posay ",
                   descEn: "Trusted European and British beauty formulas",
                 },
                 {
                   id: "fragrance_free",
-                  labelBn: "🍃 সুগন্ধিমুক্ত ও মাইল্ড (Fragrance-Free)",
+                  labelBn: "🍃    (Fragrance-Free)",
                   labelEn: "Fragrance-Free & Mild",
-                  descBn: "কোনো আর্টিফিশিয়াল পারফিউম ছাড়া আরামদায়ক ফর্মুলা",
+                  descBn: " items  OFF  weave",
                   descEn: "0% artificial fragrance for clean, comfortable skincare",
                 },
                 {
                   id: "vegan_cruelty_free",
-                  labelBn: "🐰 ক্রুয়েলটি-ফ্রি ও ক্লিন বিউটি (Clean Beauty)",
+                  labelBn: "🐰 items-   items (Clean Beauty)",
                   labelEn: "Clean & Cruelty-Free",
-                  descBn: "পরিবেশবান্ধব ও প্রাণী-সুরক্ষিত ক্লিন ফর্মুলা",
+                  descBn: "  -  weave",
                   descEn: "Ethical, animal-friendly formulations with clean ingredients",
                 },
               ].map((opt) => {
@@ -682,13 +682,13 @@ export function SkincareQuizClient() {
                 className="rounded-xl border-gray-300 text-gray-700 font-semibold flex items-center gap-1.5"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>{language === "bn" ? "পূর্ববর্তী" : "Back"}</span>
+                <span>{language === "bn" ? "" : "Back"}</span>
               </Button>
               <Button
                 onClick={() => setCurrentStep(4)}
                 className="bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl px-6 py-2.5 shadow-md shadow-rose-200 flex items-center gap-2"
               >
-                <span>{language === "bn" ? "পরবর্তী ধাপ" : "Next Step"}</span>
+                <span>{language === "bn" ? " " : "Next Step"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
@@ -700,14 +700,14 @@ export function SkincareQuizClient() {
           <div className="space-y-6 bg-white/90 backdrop-blur-md border border-rose-100 p-6 sm:p-9 rounded-3xl shadow-xl shadow-rose-100/30 animate-in fade-in zoom-in-95">
             <div className="space-y-1">
               <span className="text-xs font-bold uppercase tracking-wider text-rose-600">
-                {language === "bn" ? "ধাপ ৫ • বাজেট ও প্রাইসিং রেঞ্জ" : "Step 5 • Budget & Pricing Preference"}
+                {language === "bn" ? " 5 •    " : "Step 5 • Budget & Pricing Preference"}
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-gray-900">
-                {language === "bn" ? "আপনার বাজেট প্রেফারেন্স কেমন?" : "What is your preferred budget range?"}
+                {language === "bn" ? "your   ?" : "What is your preferred budget range?"}
               </h2>
               <p className="text-xs sm:text-sm text-gray-500">
                 {language === "bn"
-                  ? "আমরা আপনার বাজেটের সাথে সামঞ্জস্য রেখে সবচেয়ে কার্যকর প্রসাধনী সাজেস্ট করব।"
+                  ? "We your         ।"
                   : "We'll prioritize the best performing authentic products matching your preferred budget."}
               </p>
             </div>
@@ -716,26 +716,26 @@ export function SkincareQuizClient() {
               {[
                 {
                   id: "budget",
-                  labelBn: "💚 এসেনশিয়াল ও বাজেট-ফ্রেন্ডলি",
+                  labelBn: "💚   -",
                   labelEn: "Essential & Budget Care",
-                  priceRange: "৳১,২০০ – ৳২,০০০ / পণ্য",
-                  descBn: "সাধ্যের মধ্যে সেরা কোয়ালিটি স্কিনকেয়ার",
+                  priceRange: "৳1,200 – ৳2,000 / Products",
+                  descBn: "   items Casual Wear",
                   descEn: "High-value daily essentials",
                 },
                 {
                   id: "mid",
-                  labelBn: "💎 স্ট্যান্ডার্ড ও পপুলার কেয়ার",
+                  labelBn: "💎    ",
                   labelEn: "Standard & Popular Care",
-                  priceRange: "৳১,৫০০ – ৳৩,৫০০ / পণ্য",
-                  descBn: "জনপ্রিয় কোরিয়ান ও ইউরোপিয়ান ব্র্যান্ডস",
+                  priceRange: "৳1,500 – ৳3,500 / Products",
+                  descBn: "Popular    Brand",
                   descEn: "Top-selling Korean & UK products",
                 },
                 {
                   id: "luxury",
-                  labelBn: "👑 প্রিমিয়াম ও স্পেশাল কেয়ার",
+                  labelBn: "👑    ",
                   labelEn: "Premium & Luxury Routine",
-                  priceRange: "৳২,৫০০+ / পণ্য",
-                  descBn: "উচ্চ ঘনত্বের নারিশিং উপাদান ও স্পেশাল কেয়ার",
+                  priceRange: "৳2,500+ / Products",
+                  descBn: "      ",
                   descEn: "Luxury textures and concentrated formulas",
                 },
               ].map((opt) => {
@@ -781,14 +781,14 @@ export function SkincareQuizClient() {
                 className="rounded-xl border-gray-300 text-gray-700 font-semibold flex items-center gap-1.5"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>{language === "bn" ? "পূর্ববর্তী" : "Back"}</span>
+                <span>{language === "bn" ? "" : "Back"}</span>
               </Button>
               <Button
                 onClick={handleStartAnalysis}
                 className="bg-linear-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-black rounded-xl px-7 py-3 shadow-lg shadow-rose-200 flex items-center gap-2.5 text-sm sm:text-base animate-pulse"
               >
                 <Sparkles className="h-4 w-4" />
-                <span>{language === "bn" ? "রুটিন ও প্রোডাক্ট সাজেশন তৈরি করুন" : "Match My Beauty Routine"}</span>
+                <span>{language === "bn" ? "items  Products   " : "Match My Beauty Routine"}</span>
               </Button>
             </div>
           </div>
@@ -801,11 +801,11 @@ export function SkincareQuizClient() {
               <div className="bg-white/90 backdrop-blur-md border border-rose-100 rounded-3xl p-12 text-center space-y-4 shadow-xl shadow-rose-100/30">
                 <Loader2 className="h-12 w-12 text-rose-500 animate-spin mx-auto" />
                 <h3 className="text-xl font-black text-gray-900">
-                  {language === "bn" ? "আপনার বিউটি রুটিন তৈরি হচ্ছে..." : "Curating Your Beauty Routine..."}
+                  {language === "bn" ? "your items items  ..." : "Curating Your Beauty Routine..."}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-500 max-w-md mx-auto">
                   {language === "bn"
-                    ? "আপনার ত্বকের ধরন এবং পছন্দের ক্যাটাগরি অনুযায়ী শতভাগ আসল প্রসাধনী সাজানো হচ্ছে।"
+                    ? "your Cotton  and desired Category   Authentic   ।"
                     : "Matching authentic formulas and verified products from our catalog."}
                 </p>
               </div>
@@ -817,7 +817,7 @@ export function SkincareQuizClient() {
                   <div className="relative z-10 space-y-2 max-w-2xl">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-400/30 text-rose-300 text-xs font-bold">
                       <Sparkles className="h-3.5 w-3.5" />
-                      {language === "bn" ? "কাস্টমাইজড বিউটি রুটিন" : "Personalized Beauty Regimen"}
+                      {language === "bn" ? " items items" : "Personalized Beauty Regimen"}
                     </div>
                     <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
                       {routineResult.routineTitle}
@@ -829,15 +829,15 @@ export function SkincareQuizClient() {
                     {/* Summary Chips */}
                     <div className="flex flex-wrap gap-2 pt-2 text-xs">
                       <span className="px-2.5 py-1 rounded-lg bg-white/10 text-gray-200 font-medium">
-                        <strong>{language === "bn" ? "স্কিন টাইপ:" : "Skin Type:"}</strong> {routineResult.skinType}
+                        <strong>{language === "bn" ? " :00:" : "Skin Type:"}</strong> {routineResult.skinType}
                       </span>
                       {routineResult.concernsSummary && (
                         <span className="px-2.5 py-1 rounded-lg bg-white/10 text-gray-200 font-medium">
-                          <strong>{language === "bn" ? "টার্গেট:" : "Focus:"}</strong> {routineResult.concernsSummary}
+                          <strong>{language === "bn" ? ":00:" : "Focus:"}</strong> {routineResult.concernsSummary}
                         </span>
                       )}
                       <span className="px-2.5 py-1 rounded-lg bg-rose-500/30 text-rose-200 font-bold">
-                        {language === "bn" ? `${toBn(activeProducts.length)} টি প্রোডাক্ট স্টেপ` : `${activeProducts.length} Product Steps`}
+                        {language === "bn" ? `${toBn(activeProducts.length)} items Products ` : `${activeProducts.length} Product Steps`}
                       </span>
                     </div>
                   </div>
@@ -848,7 +848,7 @@ export function SkincareQuizClient() {
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg sm:text-xl font-black text-gray-900 flex items-center gap-2">
                       <Layers className="h-5 w-5 text-rose-600" />
-                      {language === "bn" ? "প্রস্তাবিত ধাপসমূহ ও প্রোডাক্টস" : "Your Step-by-Step Regimen"}
+                      {language === "bn" ? "   Products" : "Your Step-by-Step Regimen"}
                     </h3>
                     <button
                       type="button"
@@ -856,7 +856,7 @@ export function SkincareQuizClient() {
                       className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1 cursor-pointer"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />
-                      {language === "bn" ? "কুইজ পুনরায় দিন" : "Retake Quiz"}
+                      {language === "bn" ? "  Enter" : "Retake Quiz"}
                     </button>
                   </div>
 
@@ -947,7 +947,7 @@ export function SkincareQuizClient() {
                               className="rounded-xl text-[11px] font-bold border-gray-200 text-gray-700 hover:bg-rose-50 hover:text-rose-600 flex items-center gap-1.5 h-9"
                             >
                               <Repeat className="h-3 w-3" />
-                              <span>{language === "bn" ? "বিকল্প দেখুন" : "Swap"}</span>
+                              <span>{language === "bn" ? " View" : "Swap"}</span>
                             </Button>
                           )}
 
@@ -957,13 +957,13 @@ export function SkincareQuizClient() {
                             className="rounded-xl text-[11px] font-bold bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5 h-9 shadow-xs"
                           >
                             <ShoppingBag className="h-3.5 w-3.5" />
-                            <span>{language === "bn" ? "কার্ট" : "Add"}</span>
+                            <span>{language === "bn" ? "" : "Add"}</span>
                           </Button>
 
                           <button
                             type="button"
                             onClick={() => handleRemoveStep(prod.step_key)}
-                            title={language === "bn" ? "এই ধাপটি রুটিন থেকে বাদ দিন" : "Remove step"}
+                            title={language === "bn" ? " items items from  Enter" : "Remove step"}
                             className="p-2 text-gray-400 hover:text-red-600 rounded-lg transition-colors cursor-pointer"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -980,7 +980,7 @@ export function SkincareQuizClient() {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div>
                         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">
-                          {language === "bn" ? "কাস্টমাইজড রুটিন মোট মূল্য" : "Total Routine Investment"}
+                          {language === "bn" ? " items Total Price" : "Total Routine Investment"}
                         </span>
                         <div className="flex items-baseline gap-2.5">
                           <span className="text-2xl sm:text-3xl font-black text-gray-900">
@@ -992,12 +992,12 @@ export function SkincareQuizClient() {
                             </span>
                           )}
                           <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
-                            {language === "bn" ? "১০০% অথেনটিক পণ্য" : "100% Guaranteed Authentic"}
+                            {language === "bn" ? "100% items Products" : "100% Guaranteed Authentic"}
                           </span>
                         </div>
                         <p className="text-[11px] sm:text-xs text-gray-500 pt-1">
                           {language === "bn"
-                            ? `${toBn(activeProducts.length)} টি পূর্ণাঙ্গ প্রোডাক্ট সমন্বিত সম্পূর্ণ স্কিনকেয়ার সল্যুশন`
+                            ? `${toBn(activeProducts.length)} items  Products  Complete  `
                             : `Complete daily regimen covering all ${activeProducts.length} customized steps`}
                         </p>
                       </div>
@@ -1010,13 +1010,13 @@ export function SkincareQuizClient() {
                         {routineAdded ? (
                           <>
                             <CheckCircle2 className="h-5 w-5 text-white" />
-                            <span>{language === "bn" ? "সব প্রোডাক্ট কার্টে যুক্ত হয়েছে!" : "Added to Cart!"}</span>
+                            <span>{language === "bn" ? " Products  added successfully!" : "Added to Cart!"}</span>
                           </>
                         ) : (
                           <>
                             <ShoppingBag className="h-5 w-5" />
                             <span>
-                              {language === "bn" ? "সম্পূর্ণ রুটিন একসাথে কার্টে যোগ করুন" : "Add Full Routine to Cart"}
+                              {language === "bn" ? "Complete items  Add to Cart" : "Add Full Routine to Cart"}
                             </span>
                           </>
                         )}
@@ -1037,7 +1037,7 @@ export function SkincareQuizClient() {
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <h4 className="text-base sm:text-lg font-black text-gray-900 flex items-center gap-2">
                 <Repeat className="h-4 w-4 text-rose-600" />
-                {language === "bn" ? "বিকল্প প্রোডাক্ট বেছে নিন" : "Choose Alternative Formula"}
+                {language === "bn" ? " Products  " : "Choose Alternative Formula"}
               </h4>
               <button
                 type="button"
@@ -1078,7 +1078,7 @@ export function SkincareQuizClient() {
                       onClick={() => handleSwapProduct(swapModalStep, alt)}
                       className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl h-8 px-3.5"
                     >
-                      {language === "bn" ? "সিলেক্ট করুন" : "Select"}
+                      {language === "bn" ? " " : "Select"}
                     </Button>
                   </div>
                 ))}

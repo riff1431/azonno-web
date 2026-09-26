@@ -438,7 +438,7 @@ export default function ProductListClient() {
             <div className="min-w-0">
               <Link
                 href={`/admin/products/${row.id}/edit`}
-                className="font-bold text-xs md:text-sm text-gray-900 hover:text-[#e91e63] truncate block max-w-xs transition-colors"
+                className="font-bold text-xs md:text-sm text-gray-900 hover:text-[#1D6474] truncate block max-w-xs transition-colors"
               >
                 {row.name}
               </Link>
@@ -452,7 +452,7 @@ export default function ProductListClient() {
                   </span>
                 )}
                 {row.shipping_class === "free_shipping" && (
-                  <span className="inline-flex items-center gap-1 rounded-md bg-pink-50 border border-pink-200 px-1.5 py-0.2 text-[#e91e63] font-bold text-[10px]">
+                  <span className="inline-flex items-center gap-1 rounded-md bg-teal-50/60 border border-teal-200 px-1.5 py-0.2 text-[#1D6474] font-bold text-[10px]">
                     <Truck className="h-2.5 w-2.5" /> {t("product_free_shipping", "Free Delivery")}
                   </span>
                 )}
@@ -482,7 +482,7 @@ export default function ProductListClient() {
             {catList.slice(0, 2).map((c, i) => (
               <span
                 key={i}
-                className="text-[10px] font-semibold bg-pink-50 text-[#e91e63] px-1.5 py-0.5 rounded-md border border-pink-100 truncate"
+                className="text-[10px] font-semibold bg-teal-50/60 text-[#1D6474] px-1.5 py-0.5 rounded-md border border-teal-100 truncate"
               >
                 {c.categories?.name || "Category"}
               </span>
@@ -578,7 +578,7 @@ export default function ProductListClient() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-3xl border border-gray-200/80 shadow-xs">
         <div>
           <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-            <Package className="h-6 w-6 text-[#e91e63]" />
+            <Package className="h-6 w-6 text-[#1D6474]" />
             {t("products", "Product Catalog")}
           </h1>
           <p className="text-xs md:text-sm text-gray-500 mt-0.5">
@@ -609,7 +609,7 @@ export default function ProductListClient() {
           </Button>
 
           <Link href="/admin/products/create">
-            <Button className="bg-[#e91e63] hover:bg-pink-700 text-white font-bold rounded-2xl text-xs h-9 px-4 shadow-sm hover:shadow-md transition-all gap-1.5">
+            <Button className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold rounded-2xl text-xs h-9 px-4 shadow-sm hover:shadow-md transition-all gap-1.5">
               <Plus className="h-4 w-4" /> {t("add_product", "Add Product")}
             </Button>
           </Link>
@@ -643,7 +643,7 @@ export default function ProductListClient() {
           className={cn(
             "inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all select-none",
             statusFilter === "all"
-              ? "bg-[#e91e63] text-white shadow-sm"
+              ? "bg-[#1D6474] text-white shadow-sm"
               : "bg-white text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200/80"
           )}
         >
@@ -729,12 +729,12 @@ export default function ProductListClient() {
       <div className="bg-white rounded-3xl border border-gray-200/80 p-4 shadow-xs space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-2.5">
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-[#e91e63]" />
+            <Filter className="h-4 w-4 text-[#1D6474]" />
             <span className="text-xs font-black uppercase tracking-wider text-gray-900">
               {t("filter", "Product Filters")}
             </span>
             {activeFiltersCount > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-pink-50 text-[#e91e63] border border-pink-200">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-teal-50/60 text-[#1D6474] border border-teal-200">
                 {activeFiltersCount} active
               </span>
             )}
@@ -757,13 +757,13 @@ export default function ProductListClient() {
           {/* Stock Level Filter */}
           <div>
             <label className="block text-[11px] font-bold text-gray-600 mb-1 flex items-center gap-1">
-              <Boxes className="h-3 w-3 text-[#e91e63]" />
+              <Boxes className="h-3 w-3 text-[#1D6474]" />
               <span>{t("column_stock", "Stock Status")}</span>
             </label>
             <select
               value={stockFilter}
               onChange={(e) => setStockFilter(e.target.value as any)}
-              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#e91e63] focus:bg-white focus:outline-hidden transition-all"
+              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#1D6474] focus:bg-white focus:outline-hidden transition-all"
             >
               <option value="all">{t("filter_all_stock", "All Stock Levels")}</option>
               <option value="in_stock">{t("filter_in_stock", "In Stock (>5)")}</option>
@@ -775,13 +775,13 @@ export default function ProductListClient() {
           {/* Brand Filter */}
           <div>
             <label className="block text-[11px] font-bold text-gray-600 mb-1 flex items-center gap-1">
-              <Tag className="h-3 w-3 text-[#e91e63]" />
+              <Tag className="h-3 w-3 text-[#1D6474]" />
               <span>{t("column_brand", "Brand")}</span>
             </label>
             <select
               value={brandFilter}
               onChange={(e) => setBrandFilter(e.target.value)}
-              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#e91e63] focus:bg-white focus:outline-hidden transition-all"
+              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#1D6474] focus:bg-white focus:outline-hidden transition-all"
             >
               <option value="all">{t("filter_all_brands", "All Brands")}</option>
               {brands.map((b) => (
@@ -795,13 +795,13 @@ export default function ProductListClient() {
           {/* Category Filter */}
           <div>
             <label className="block text-[11px] font-bold text-gray-600 mb-1 flex items-center gap-1">
-              <Layers className="h-3 w-3 text-[#e91e63]" />
+              <Layers className="h-3 w-3 text-[#1D6474]" />
               <span>{t("column_category", "Category")}</span>
             </label>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#e91e63] focus:bg-white focus:outline-hidden transition-all"
+              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#1D6474] focus:bg-white focus:outline-hidden transition-all"
             >
               <option value="all">{t("filter_all_categories", "All Categories")}</option>
               {categories.map((c) => (
@@ -815,13 +815,13 @@ export default function ProductListClient() {
           {/* Product Type Filter */}
           <div>
             <label className="block text-[11px] font-bold text-gray-600 mb-1 flex items-center gap-1">
-              <Package className="h-3 w-3 text-[#e91e63]" />
+              <Package className="h-3 w-3 text-[#1D6474]" />
               <span>{t("product_type", "Product Type")}</span>
             </label>
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as any)}
-              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#e91e63] focus:bg-white focus:outline-hidden transition-all"
+              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#1D6474] focus:bg-white focus:outline-hidden transition-all"
             >
               <option value="all">{t("filter_all_types", "All Types")}</option>
               <option value="simple">Simple Product</option>
@@ -832,13 +832,13 @@ export default function ProductListClient() {
           {/* Badges / Options Filter */}
           <div>
             <label className="block text-[11px] font-bold text-gray-600 mb-1 flex items-center gap-1">
-              <Sparkles className="h-3 w-3 text-[#e91e63]" />
+              <Sparkles className="h-3 w-3 text-[#1D6474]" />
               <span>{t("filter_badges", "Features & Delivery")}</span>
             </label>
             <select
               value={featureFilter}
               onChange={(e) => setFeatureFilter(e.target.value as any)}
-              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#e91e63] focus:bg-white focus:outline-hidden transition-all"
+              className="w-full text-xs font-medium rounded-xl border border-gray-200 bg-gray-50/50 px-3 py-2 text-gray-800 focus:border-[#1D6474] focus:bg-white focus:outline-hidden transition-all"
             >
               <option value="all">{t("filter_all_features", "All Features")}</option>
               <option value="free_shipping">{t("product_free_shipping", "Free Delivery")}</option>
@@ -1058,7 +1058,7 @@ export default function ProductListClient() {
           <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border border-gray-100 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <span className="p-2 bg-pink-50 text-[#e91e63] rounded-xl">
+                <span className="p-2 bg-teal-50/60 text-[#1D6474] rounded-xl">
                   <DollarSign className="h-5 w-5" />
                 </span>
                 <div>
@@ -1083,7 +1083,7 @@ export default function ProductListClient() {
                   min="0"
                   value={quickStock}
                   onChange={(e) => setQuickStock(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full px-3.5 py-2 rounded-xl border border-gray-200 font-bold focus:border-[#e91e63] outline-hidden"
+                  className="w-full px-3.5 py-2 rounded-xl border border-gray-200 font-bold focus:border-[#1D6474] outline-hidden"
                 />
               </div>
 
@@ -1095,7 +1095,7 @@ export default function ProductListClient() {
                     min="0"
                     value={quickRegularPrice}
                     onChange={(e) => setQuickRegularPrice(Math.max(0, parseFloat(e.target.value) || 0))}
-                    className="w-full px-3.5 py-2 rounded-xl border border-gray-200 font-bold focus:border-[#e91e63] outline-hidden"
+                    className="w-full px-3.5 py-2 rounded-xl border border-gray-200 font-bold focus:border-[#1D6474] outline-hidden"
                   />
                 </div>
 
@@ -1107,7 +1107,7 @@ export default function ProductListClient() {
                     placeholder="None"
                     value={quickSalePrice}
                     onChange={(e) => setQuickSalePrice(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-gray-200 font-bold focus:border-[#e91e63] outline-hidden"
+                    className="w-full px-3.5 py-2 rounded-xl border border-gray-200 font-bold focus:border-[#1D6474] outline-hidden"
                   />
                 </div>
               </div>
@@ -1126,7 +1126,7 @@ export default function ProductListClient() {
                 size="sm"
                 disabled={quickSaving}
                 onClick={handleSaveQuickEdit}
-                className="bg-[#e91e63] hover:bg-pink-700 text-white rounded-xl text-xs font-bold px-4"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white rounded-xl text-xs font-bold px-4"
               >
                 {quickSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Check className="h-3.5 w-3.5 mr-1" />}
                 Save Changes

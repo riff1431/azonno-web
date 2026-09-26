@@ -98,14 +98,14 @@ export function HomepageImageField({
       {/* Label and Recommended Size Badge */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <label className="text-[11px] font-bold text-gray-800 flex items-center gap-1">
-          <ImageIcon className="h-3 w-3 text-[#e91e63]" />
+          <ImageIcon className="h-3 w-3 text-[#1D6474]" />
           {label}
         </label>
 
         <div className="flex items-center gap-1.5">
           {recommendedSize && (
             <span
-              className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-pink-50 text-[#e91e63] border border-pink-200 shadow-2xs"
+              className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-teal-50/60 text-[#1D6474] border border-teal-200 shadow-2xs"
               title={`Recommended Resolution: ${recommendedSize} (${aspectRatioLabel})`}
             >
               <Info className="h-2.5 w-2.5" />
@@ -132,7 +132,7 @@ export function HomepageImageField({
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             placeholder={placeholder}
-            className="flex-1 rounded-xl border border-gray-300 px-3 py-1.5 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#e91e63]"
+            className="flex-1 rounded-xl border border-gray-300 px-3 py-1.5 text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#1D6474]"
           />
           {value && (
             <div className="relative group shrink-0">
@@ -177,14 +177,14 @@ export function HomepageImageField({
             className={cn(
               "flex-1 flex items-center justify-between px-3 py-1.5 rounded-xl border border-dashed transition-all cursor-pointer select-none text-xs",
               isDragging
-                ? "border-[#e91e63] bg-pink-50 text-[#e91e63]"
+                ? "border-[#1D6474] bg-teal-50/60 text-[#1D6474]"
                 : "border-gray-300 bg-gray-50/70 hover:bg-gray-100/80 text-gray-600",
               isUploading && "pointer-events-none opacity-60"
             )}
           >
             <div className="flex items-center gap-2 truncate">
               {isUploading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#e91e63] shrink-0" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#1D6474] shrink-0" />
               ) : (
                 <UploadCloud className="h-3.5 w-3.5 text-gray-500 shrink-0" />
               )}

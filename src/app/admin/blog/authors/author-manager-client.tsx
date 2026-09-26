@@ -98,13 +98,13 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
           </Link>
           <div>
             <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
-              <span className="text-[11px] font-bold text-pink-700 bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200 uppercase">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#1D6474] animate-pulse" />
+              <span className="text-[11px] font-bold text-[#164E63] bg-teal-50/60 px-2.5 py-0.5 rounded-full border border-teal-200 uppercase">
                 Google E-E-A-T Control Plane
               </span>
             </div>
             <h1 className="text-xl font-bold text-text mt-1 flex items-center gap-2">
-              <User className="h-5 w-5 text-[#e91e63]" />
+              <User className="h-5 w-5 text-[#1D6474]" />
               Blog Authors &amp; Expert Contributors
             </h1>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -115,7 +115,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
 
         <Button
           onClick={handleCreateNew}
-          className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
+          className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
         >
           <Plus className="h-3.5 w-3.5 mr-1.5" /> {t("add_author_btn")}
         </Button>
@@ -132,7 +132,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
         <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-5 animate-in fade-in-0">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <h3 className="text-sm font-bold text-text flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#e91e63]" />
+              <Sparkles className="h-4 w-4 text-[#1D6474]" />
               {editingAuthor.id ? "Edit Author Profile" : "Create Author Profile"}
             </h3>
             <Button
@@ -278,7 +278,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
                     is_verified_expert: e.target.checked,
                   })
                 }
-                className="h-4 w-4 rounded text-[#e91e63] focus:ring-[#e91e63]"
+                className="h-4 w-4 rounded text-[#1D6474] focus:ring-[#1D6474]"
               />
               <label htmlFor="is_verified" className="text-xs font-bold text-text cursor-pointer">
                 Display "Verified Beauty &amp; Skincare Expert" Badge on Storefront
@@ -298,7 +298,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className="h-3.5 w-3.5 mr-1.5" />
                 {saving ? t("saving_changes_btn") : t("save_author_btn")}
@@ -334,7 +334,7 @@ export function AuthorManagerClient({ initialAuthors }: AuthorManagerProps) {
                     <ShieldCheck className="h-3.5 w-3.5 text-blue-600 shrink-0" />
                   )}
                 </div>
-                <p className="text-[11px] font-semibold text-[#e91e63] truncate">
+                <p className="text-[11px] font-semibold text-[#1D6474] truncate">
                   {author.job_title}
                 </p>
                 <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">

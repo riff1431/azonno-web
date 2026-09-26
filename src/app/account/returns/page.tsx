@@ -124,7 +124,7 @@ export default function AccountReturnsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-100 pb-4">
         <div>
           <h1 className="text-xl font-black text-gray-900 flex items-center gap-2">
-            <RotateCcw className="h-5 w-5 text-[#e91e63]" /> Returns &amp; Exchanges
+            <RotateCcw className="h-5 w-5 text-[#1D6474]" /> Returns &amp; Exchanges
           </h1>
           <p className="text-xs text-gray-500 mt-0.5">
             Manage product returns, refund status, and replacement requests.
@@ -133,7 +133,7 @@ export default function AccountReturnsPage() {
 
         <Button
           onClick={() => setShowModal(true)}
-          className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl self-start sm:self-auto shadow-md"
+          className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl self-start sm:self-auto shadow-md"
         >
           <Plus className="h-4 w-4 mr-1.5" /> Request New Return
         </Button>
@@ -147,8 +147,8 @@ export default function AccountReturnsPage() {
       )}
 
       {/* Return Policy Notice Strip */}
-      <div className="rounded-2xl border border-pink-200 bg-pink-50/50 p-4 flex items-start gap-3 text-xs">
-        <ShieldCheck className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
+      <div className="rounded-2xl border border-teal-200 bg-teal-50/60/50 p-4 flex items-start gap-3 text-xs">
+        <ShieldCheck className="h-5 w-5 text-[#1D6474] shrink-0 mt-0.5" />
         <div className="space-y-1">
           <p className="font-bold text-gray-900">7-Day Hassle-Free Return Guarantee</p>
           <p className="text-gray-600 leading-relaxed">
@@ -160,11 +160,11 @@ export default function AccountReturnsPage() {
       {/* Returns List */}
       {loading ? (
         <div className="flex items-center justify-center p-12 text-gray-400">
-          <Loader2 className="h-6 w-6 animate-spin text-pink-600" />
+          <Loader2 className="h-6 w-6 animate-spin text-[#1D6474]" />
         </div>
       ) : returns.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-gray-200 bg-white p-12 text-center space-y-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-pink-50 text-[#e91e63] mx-auto">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50/60 text-[#1D6474] mx-auto">
             <Package className="h-6 w-6 stroke-1" />
           </div>
           <h3 className="text-sm font-black text-gray-900">No Return Requests Found</h3>
@@ -188,7 +188,7 @@ export default function AccountReturnsPage() {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-3">
                 <div>
-                  <span className="font-mono text-xs font-black text-[#e91e63]">{ret.return_number}</span>
+                  <span className="font-mono text-xs font-black text-[#1D6474]">{ret.return_number}</span>
                   {ret.order?.order_number && (
                     <>
                       <span className="text-gray-400 text-xs mx-2">•</span>
@@ -208,7 +208,7 @@ export default function AccountReturnsPage() {
                 </div>
                 <div>
                   <span className="text-gray-400 font-medium block">Estimated Refund</span>
-                  <span className="font-black text-pink-600">{formatPrice(ret.refund_amount)}</span>
+                  <span className="font-black text-[#1D6474]">{formatPrice(ret.refund_amount)}</span>
                 </div>
                 <div>
                   <span className="text-gray-400 font-medium block">Submission Date</span>
@@ -223,7 +223,7 @@ export default function AccountReturnsPage() {
               </div>
 
               {ret.admin_notes && (
-                <div className="rounded-2xl bg-pink-50/50 border border-pink-200 p-3.5 text-xs space-y-1.5">
+                <div className="rounded-2xl bg-teal-50/60/50 border border-teal-200 p-3.5 text-xs space-y-1.5">
                   <span className="font-bold text-gray-900 flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                     Customer Care &amp; Pickup Update:
@@ -245,7 +245,7 @@ export default function AccountReturnsPage() {
           >
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
-                <RotateCcw className="h-5 w-5 text-[#e91e63]" />
+                <RotateCcw className="h-5 w-5 text-[#1D6474]" />
                 <h3 className="font-black text-base text-gray-900">Request Return or Exchange</h3>
               </div>
               <button
@@ -311,7 +311,7 @@ export default function AccountReturnsPage() {
                   value={comments}
                   onChange={(e) => setComments(e.target.value)}
                   placeholder="Provide wallet phone number or extra context regarding the issue..."
-                  className="w-full rounded-xl border border-gray-200 p-3 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-pink-500/20"
+                  className="w-full rounded-xl border border-gray-200 p-3 text-xs resize-none focus:outline-none focus:ring-2 focus:ring-[#1D6474]/20"
                 />
               </div>
 
@@ -327,7 +327,7 @@ export default function AccountReturnsPage() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-black shadow-md"
+                  className="flex-1 rounded-xl bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-black shadow-md"
                 >
                   {submitting ? "Verifying..." : "Submit Return Request"}
                 </Button>

@@ -147,7 +147,7 @@ export function StorefrontMaintenanceScreen({
 
       {/* Footer info */}
       <div className="max-w-6xl mx-auto w-full p-4 sm:p-6 md:p-12 pt-6 sm:pt-8 border-t border-gray-200/60 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left text-[11px] sm:text-xs text-gray-500">
-        <p>{copyrightText || `© ${new Date().getFullYear()} ${storeName || "Blush & Budget"}. Authentic Skincare & Cosmetics Bangladesh.`}</p>
+        <p>{copyrightText || `© ${new Date().getFullYear()} ${storeName || "Azonno"}. Authentic Skincare & Cosmetics Bangladesh.`}</p>
         <p className="text-[10px] sm:text-[11px] text-gray-400">
           Need order tracking? Your courier SMS updates remain active.
         </p>

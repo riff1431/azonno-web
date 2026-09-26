@@ -46,17 +46,17 @@ export function BeforeAfterSlider({
 
   const isBn = language === "bn";
 
-  const displayEyebrow = eyebrowBadge || (isBn ? "সহজ স্কিনকেয়ার রুটিন" : "EVERYDAY ROUTINE");
-  const displayTitle = title || (isBn ? "টেক্সচার ও ফিনিশ" : "TEXTURE & FINISH");
-  const displaySubtitle = subtitle || (isBn ? "সারাদিনের সতেজ ও মোলায়েম অনুভূতির জন্য প্রস্তুত" : "Designed for a fresh, comfortable feel throughout the day");
-  const displayHeading = heading || (isBn ? "৩ ধাপের সহজ স্কিনকেয়ার রুটিন" : "Simple 3-Step Daily Routine");
-  const displayDescription = description || (isBn ? "হালকা ও আরামদায়ক পণ্য যা ত্বককে রাখে নরম, সতেজ ও ময়েশ্চারাইজড।" : "Lightweight products designed to leave skin feeling fresh, soft, and comfortable.");
-  const displayMetric1 = metric1 || (isBn ? "ত্বকে আনে সতেজ ও শান্ত অনুভূতি" : "Leaves skin feeling calm and refreshed");
-  const displayMetric2 = metric2 || (isBn ? "হালকা ও তেল চিটচিটে ভাবহীন টেক্সচার" : "Lightweight, non-greasy texture");
-  const displayMetric3 = metric3 || (isBn ? "১০০% আসল ও অরিজিনাল পণ্য" : "100% Authentic direct imports");
-  const displayButtonText = buttonText || (isBn ? "রুটিনটি দেখুন" : "EXPLORE ROUTINE");
-  const displayBeforeLabel = beforeLabel || (isBn ? "আগে • সাধারণ ত্বক" : "BEFORE • CLEANSED SKIN");
-  const displayAfterLabel = afterLabel || (isBn ? "পরে • ময়েশ্চারাইজড ফিনিশ" : "AFTER • HYDRATED FINISH");
+  const displayEyebrow = eyebrowBadge || (isBn ? " Casual Wear items" : "EVERYDAY ROUTINE");
+  const displayTitle = title || (isBn ? "Texture  " : "TEXTURE & FINISH");
+  const displaySubtitle = subtitle || (isBn ? "Enter     for " : "Designed for a fresh, comfortable feel throughout the day");
+  const displayHeading = heading || (isBn ? "3   Casual Wear items" : "Simple 3-Step Daily Routine");
+  const displayDescription = description || (isBn ? "   Products  Cotton  ,   ।" : "Lightweight products designed to leave skin feeling fresh, soft, and comfortable.");
+  const displayMetric1 = metric1 || (isBn ? "Cotton     " : "Leaves skin feeling calm and refreshed");
+  const displayMetric2 = metric2 || (isBn ? "     Texture" : "Lightweight, non-greasy texture");
+  const displayMetric3 = metric3 || (isBn ? "100% Authentic  Original Products" : "100% Authentic direct imports");
+  const displayButtonText = buttonText || (isBn ? "itemsitems View" : "EXPLORE ROUTINE");
+  const displayBeforeLabel = beforeLabel || (isBn ? " •  Cotton" : "BEFORE • CLEANSED SKIN");
+  const displayAfterLabel = afterLabel || (isBn ? " •  " : "AFTER • HYDRATED FINISH");
 
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -152,9 +152,9 @@ export function BeforeAfterSlider({
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-gray-200 pb-2">
         <div>
-          <div className="flex items-center gap-1.5 text-[#e91e63] text-sm font-extrabold uppercase tracking-wide mb-0.5">
+          <div className="flex items-center gap-1.5 text-[#1D6474] text-sm font-extrabold uppercase tracking-wide mb-0.5">
             <Sparkles className="h-4 w-4" />
-            <span>{isBn ? "দৈনন্দিন স্কিনকেয়ার ফিনিশ" : "Daily Skincare Finish"}</span>
+            <span>{isBn ? "Enter  " : "Daily Skincare Finish"}</span>
           </div>
           <h2 className="text-lg sm:text-xl md:text-2xl font-black uppercase tracking-wide text-gray-900">
             {displayTitle}
@@ -164,7 +164,7 @@ export function BeforeAfterSlider({
 
         <span className="hidden sm:inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-500">
           <ArrowLeftRight className="h-4 w-4" />
-          <span>{isBn ? "টেক্সচার দেখতে স্লাইডারটি টানুন" : "Drag slider to see finish"}</span>
+          <span>{isBn ? "Texture  items :00" : "Drag slider to see finish"}</span>
         </span>
       </div>
 
@@ -184,7 +184,7 @@ export function BeforeAfterSlider({
               setIsDragging(true);
               handleMove(e.touches[0].clientX);
             }}
-            className={`relative ${aspectClass} w-full select-none overflow-hidden rounded-2xl cursor-ew-resize shadow-md touch-none focus:outline-none focus:ring-2 focus:ring-[#e91e63] bg-zinc-100`}
+            className={`relative ${aspectClass} w-full select-none overflow-hidden rounded-2xl cursor-ew-resize shadow-md touch-none focus:outline-none focus:ring-2 focus:ring-[#1D6474] bg-zinc-100`}
             aria-label="Before and After Image Comparison Slider"
             role="slider"
             aria-valuenow={sliderPos}
@@ -194,7 +194,7 @@ export function BeforeAfterSlider({
             {/* 1. After Image (Full Background Layer) */}
             <img
               src={afterImage}
-              alt={isBn ? "হালকা ময়েশ্চারাইজড ফিনিশ" : "Hydrated Skin Finish"}
+              alt={isBn ? "  " : "Hydrated Skin Finish"}
               className={`absolute inset-0 h-full w-full ${fitClass}`}
               draggable={false}
             />
@@ -216,7 +216,7 @@ export function BeforeAfterSlider({
             >
               <img
                 src={beforeImage}
-                alt={isBn ? "রুটিনের পূর্বে" : "Before Routine"}
+                alt={isBn ? "items " : "Before Routine"}
                 className={`absolute inset-0 h-full w-full ${fitClass} filter grayscale-20 contrast-95`}
                 draggable={false}
               />
@@ -243,7 +243,7 @@ export function BeforeAfterSlider({
               <div className="absolute inset-y-0 left-[-1.5px] w-0.75 bg-white shadow-[0_0_12px_rgba(0,0,0,0.6)]" />
 
               {/* Center Floating Handle Thumb */}
-              <div className="absolute top-1/2 -left-5 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#e91e63] shadow-xl border-2 border-[#e91e63] transition-transform duration-100 hover:scale-110 active:scale-95">
+              <div className="absolute top-1/2 -left-5 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#1D6474] shadow-xl border-2 border-[#1D6474] transition-transform duration-100 hover:scale-110 active:scale-95">
                 <ArrowLeftRight className="h-4 w-4 stroke-3" />
               </div>
             </div>
@@ -254,7 +254,7 @@ export function BeforeAfterSlider({
         <div className="lg:col-span-5 space-y-4">
           <div className="space-y-1.5">
             {displayEyebrow && (
-              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#e91e63] block">
+              <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#1D6474] block">
                 {displayEyebrow}
               </span>
             )}
@@ -292,7 +292,7 @@ export function BeforeAfterSlider({
           <div className="pt-2">
             <Link
               href={buttonHref}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#e91e63] px-6 py-3.5 text-sm sm:text-base font-black uppercase text-white shadow-md transition-all duration-200 hover:bg-sg-pink-hover hover:shadow-lg active:scale-98"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#1D6474] px-6 py-3.5 text-sm sm:text-base font-black uppercase text-white shadow-md transition-all duration-200 hover:bg-[#164E63] hover:shadow-lg active:scale-98"
             >
               <span>{displayButtonText}</span>
               <ChevronRight className="h-4 w-4 stroke-3" />

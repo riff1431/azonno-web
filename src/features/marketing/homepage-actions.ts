@@ -49,7 +49,7 @@ export async function getHomepageConfig(): Promise<HomepageFullConfig> {
               ...raw.slice(0, 2),
               {
                 label: "Routine Finder (Quiz)",
-                labelBn: "রুটিন ফাইন্ডার (কুইজ)",
+                labelBn: "items  ()",
                 href: "/quiz",
                 isHighlight: true,
               },

@@ -42,27 +42,27 @@ export function MobileBottomNav() {
       isActive: pathname === "/",
     },
     {
-      label: t("mobileNav", "categories"),
-      href: "/products",
+      label: "Shop",
+      href: "/shop",
       icon: LayoutGrid,
-      isActive: pathname === "/categories" || pathname.startsWith("/products"),
+      isActive: pathname === "/shop" || pathname.startsWith("/category") || pathname.startsWith("/product/"),
     },
     {
-      label: t("mobileNav", "wishlist"),
+      label: "Wishlist",
       href: "/account/wishlist",
       icon: Heart,
-      badge: wishlistCount > 0 ? toBn(wishlistCount) : undefined,
+      badge: wishlistCount > 0 ? wishlistCount : undefined,
       isActive: pathname === "/account/wishlist",
     },
     {
-      label: t("mobileNav", "cart"),
+      label: "Bag",
       action: openCart,
       icon: ShoppingBag,
-      badge: itemCount > 0 ? toBn(itemCount) : undefined,
+      badge: itemCount > 0 ? itemCount : undefined,
       isActive: false,
     },
     {
-      label: t("mobileNav", "account"),
+      label: "Account",
       href: "/account",
       icon: User,
       isActive: pathname.startsWith("/account") && pathname !== "/account/wishlist",
@@ -72,7 +72,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile bottom navigation"
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white px-1 py-1.5 lg:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-safe"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200 bg-white px-1 py-1.5 lg:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.05)] pb-safe"
     >
       <div className="grid grid-cols-5 items-center">
         {navItems.map((item) => {
@@ -84,11 +84,11 @@ export function MobileBottomNav() {
                 <Icon
                   className={cn(
                     "h-5 w-5 transition-transform duration-150 group-active:scale-90",
-                    item.isActive ? "text-[#e91e63] stroke-[2.4]" : "text-gray-600 stroke-[1.8]"
+                    item.isActive ? "text-[#1D6474] stroke-[2.4]" : "text-slate-600 stroke-[1.8]"
                   )}
                 />
                 {item.badge !== undefined && item.badge !== "" && item.badge !== 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e91e63] px-1 text-[10px] font-black text-white shadow-xs">
+                  <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1D6474] px-1 text-[10px] font-black text-white shadow-xs">
                     {item.badge}
                   </span>
                 )}
@@ -96,7 +96,7 @@ export function MobileBottomNav() {
               <span
                 className={cn(
                   "mt-1 text-xs font-black transition-colors leading-tight",
-                  item.isActive ? "text-[#e91e63]" : "text-gray-700"
+                  item.isActive ? "text-[#1D6474]" : "text-slate-700"
                 )}
               >
                 {item.label}

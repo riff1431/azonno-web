@@ -195,6 +195,8 @@ export async function isModuleEnabled(moduleKey: string): Promise<boolean> {
   const cached = getCached<boolean>(cacheKey);
   if (cached !== null) return cached;
 
+  const defaultEnabledKeys = ["cod", "bkash", "nagad", "sslcommerz"];
+
   try {
     const supabase = createAdminClient();
     const { data } = await supabase
@@ -203,11 +205,18 @@ export async function isModuleEnabled(moduleKey: string): Promise<boolean> {
       .eq("key", moduleKey)
       .single();
 
-    const enabled = data ? !!data.is_enabled : false;
+    let enabled: boolean;
+    if (data && typeof data.is_enabled === "boolean") {
+      enabled = data.is_enabled;
+    } else {
+      enabled = defaultEnabledKeys.includes(moduleKey);
+    }
+
     setCache(cacheKey, enabled);
     return enabled;
   } catch {
-    return false;
+    const fallback = defaultEnabledKeys.includes(moduleKey);
+    return fallback;
   }
 }
 

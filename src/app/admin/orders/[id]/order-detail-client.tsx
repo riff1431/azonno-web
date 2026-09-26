@@ -424,7 +424,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     : order.status === "shipped" || order.status === "in_transit"
                     ? "bg-teal-50 text-teal-800 border-teal-300"
                     : order.status === "processing"
-                    ? "bg-pink-50 text-[#e91e63] border-pink-200"
+                    ? "bg-teal-50/60 text-[#1D6474] border-teal-200"
                     : order.status === "cancelled"
                     ? "bg-red-50 text-red-800 border-red-300"
                     : "bg-blue-50 text-blue-800 border-blue-200"
@@ -500,7 +500,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
           <Link href={`/orders/${order.id}/confirmation`} target="_blank">
             <Button variant="outline" className="text-xs font-bold rounded-xl border-gray-300 hover:bg-gray-50">
-              <ExternalLink className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
+              <ExternalLink className="h-3.5 w-3.5 mr-1 text-[#1D6474]" />
               Customer View
             </Button>
           </Link>
@@ -527,7 +527,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
       {/* 1. Quick 1-Click Status Pipeline Bar */}
       <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs font-black uppercase text-gray-700 flex items-center gap-1.5">
-          <CheckCircle2 className="h-4 w-4 text-[#e91e63]" /> Quick Status Actions:
+          <CheckCircle2 className="h-4 w-4 text-[#1D6474]" /> Quick Status Actions:
         </span>
         <div className="flex flex-wrap items-center gap-1.5">
           <button
@@ -622,7 +622,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
           {/* 1. Fulfillment Status & Notes Manager */}
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
             <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-              <Truck className="h-4 w-4 text-[#e91e63]" /> Update Fulfillment Status & Notes
+              <Truck className="h-4 w-4 text-[#1D6474]" /> Update Fulfillment Status & Notes
             </h2>
 
             <form onSubmit={handleUpdateStatus} className="space-y-4 text-xs">
@@ -632,7 +632,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs text-gray-900 font-bold capitalize focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs text-gray-900 font-bold capitalize focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   >
                     <option value="pending">Pending (Awaiting Verification)</option>
                     <option value="confirmed">Confirmed (Order Verified)</option>
@@ -659,7 +659,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     value={statusNote}
                     onChange={(e) => setStatusNote(e.target.value)}
                     placeholder="e.g. Handed over to SteadFast tracking #SF12345"
-                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -672,7 +672,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     value={internalNote}
                     onChange={(e) => setInternalNote(e.target.value)}
                     placeholder="e.g. Advance ৳120 delivery fee received via bKash TrxID 89A291. Deliver after 5 PM."
-                    className="w-full rounded-xl border border-gray-300 p-3 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 p-3 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
               </div>
@@ -682,7 +682,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   type="submit"
                   size="sm"
                   disabled={saving}
-                  className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-black rounded-xl px-6 py-2 shadow-xs"
+                  className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-black rounded-xl px-6 py-2 shadow-xs"
                 >
                   {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Save className="h-3.5 w-3.5 mr-1" />}
                   Save Status & Notes
@@ -710,7 +710,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                 <select
                   value={courierName}
                   onChange={(e) => setCourierName(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                 >
                   <option value="SteadFast Courier">SteadFast Courier (Standard)</option>
                   <option value="Pathao Express">Pathao Express</option>
@@ -729,13 +729,13 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     value={consignmentId}
                     onChange={(e) => setConsignmentId(e.target.value)}
                     placeholder="e.g. SF-9029148 or PTH12345"
-                    className="flex-1 rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs font-mono font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="flex-1 rounded-xl border border-gray-300 px-3.5 py-2.5 text-xs font-mono font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                   <Button
                     onClick={handleSaveTracking}
                     disabled={saving}
                     size="sm"
-                    className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold rounded-xl shrink-0 shadow-xs"
+                    className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shrink-0 shadow-xs"
                   >
                     Save Tracking
                   </Button>
@@ -765,7 +765,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   min="0.1"
                   value={parcelWeight}
                   onChange={(e) => setParcelWeight(Number(e.target.value))}
-                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                 />
               </div>
 
@@ -778,7 +778,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   value={itemDescription}
                   onChange={(e) => setItemDescription(e.target.value)}
                   placeholder="e.g. Simple Moisturiser (125ml) x 1"
-                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                 />
               </div>
 
@@ -791,7 +791,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   value={specialInstruction}
                   onChange={(e) => setSpecialInstruction(e.target.value)}
                   placeholder="e.g. Fragile skincare item. Please call before delivery."
-                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                 />
               </div>
             </div>
@@ -863,7 +863,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
               </div>
 
               <Link href="/admin/shipping" target="_blank">
-                <span className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-1">
+                <span className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-1">
                   Courier Settings <ExternalLink className="h-3 w-3" />
                 </span>
               </Link>
@@ -883,7 +883,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
               {items.map((item: any) => (
                 <div key={item.id} className="p-4 sm:p-5 flex items-center justify-between text-xs hover:bg-gray-50/50 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-pink-50 text-[#e91e63] border border-pink-100">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-teal-50/60 text-[#1D6474] border border-teal-100">
                       <Package className="h-6 w-6" />
                     </div>
                     <div>
@@ -913,7 +913,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                 <p className="text-gray-400 italic">No activity history recorded yet.</p>
               ) : (
                 history.map((h: any) => (
-                  <div key={h.id} className="flex items-start gap-3 border-l-2 border-[#e91e63] pl-3.5 py-1">
+                  <div key={h.id} className="flex items-start gap-3 border-l-2 border-[#1D6474] pl-3.5 py-1">
                     <div>
                       <p className="font-bold text-gray-900 capitalize">
                         {h.status}: <span className="font-normal text-gray-600">{h.note}</span>
@@ -935,11 +935,11 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4 text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[#e91e63]" /> Customer & Delivery Address
+                <MapPin className="h-4 w-4 text-[#1D6474]" /> Customer & Delivery Address
               </h2>
               <button
                 onClick={() => setIsEditingAddress(!isEditingAddress)}
-                className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-1"
               >
                 <Edit3 className="h-3 w-3" /> {isEditingAddress ? "Cancel" : "Edit"}
               </button>
@@ -954,7 +954,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     required
                     value={addressForm.name}
                     onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -965,7 +965,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     required
                     value={addressForm.phone}
                     onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -975,7 +975,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="email"
                     value={addressForm.email}
                     onChange={(e) => setAddressForm({ ...addressForm, email: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -986,7 +986,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     required
                     value={addressForm.address}
                     onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 p-3 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 p-3 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -997,7 +997,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       type="text"
                       value={addressForm.thana}
                       onChange={(e) => setAddressForm({ ...addressForm, thana: e.target.value })}
-                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                     />
                   </div>
                   <div>
@@ -1006,12 +1006,12 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                       type="text"
                       value={addressForm.district}
                       onChange={(e) => setAddressForm({ ...addressForm, district: e.target.value })}
-                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                      className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                     />
                   </div>
                 </div>
 
-                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold rounded-xl shadow-xs">
+                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shadow-xs">
                   {saving ? "Saving..." : "Save Address Changes"}
                 </Button>
               </form>
@@ -1166,7 +1166,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     href={`tel:${addressForm.phone || order.guest_phone}`}
                     className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-800 font-bold text-xs py-2 shadow-xs transition-colors"
                   >
-                    <Phone className="h-3.5 w-3.5 text-[#e91e63]" /> Call
+                    <Phone className="h-3.5 w-3.5 text-[#1D6474]" /> Call
                   </a>
                 </div>
               </div>
@@ -1187,7 +1187,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
               </h2>
               <button
                 onClick={() => setIsEditingFinancials(!isEditingFinancials)}
-                className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-1"
               >
                 <Edit3 className="h-3 w-3" /> {isEditingFinancials ? "Cancel" : "Adjust Price"}
               </button>
@@ -1201,7 +1201,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="number"
                     value={financialForm.subtotal}
                     onChange={(e) => setFinancialForm({ ...financialForm, subtotal: Number(e.target.value) })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -1211,7 +1211,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="number"
                     value={financialForm.shipping_amount}
                     onChange={(e) => setFinancialForm({ ...financialForm, shipping_amount: Number(e.target.value) })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -1221,7 +1221,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     type="number"
                     value={financialForm.discount_amount}
                     onChange={(e) => setFinancialForm({ ...financialForm, discount_amount: Number(e.target.value) })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   />
                 </div>
 
@@ -1230,7 +1230,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <select
                     value={financialForm.payment_method}
                     onChange={(e) => setFinancialForm({ ...financialForm, payment_method: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   >
                     <option value="cod">Cash on Delivery (COD)</option>
                     <option value="bkash">bKash Online / Manual</option>
@@ -1245,7 +1245,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   <select
                     value={financialForm.payment_status}
                     onChange={(e) => setFinancialForm({ ...financialForm, payment_status: e.target.value })}
-                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]/30"
+                    className="w-full rounded-xl border border-gray-300 px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]/30"
                   >
                     <option value="pending">Pending (Unpaid COD)</option>
                     <option value="partial">Partially Paid (Advance Delivery Fee)</option>
@@ -1256,10 +1256,10 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
                 <div className="pt-2 border-t border-gray-100 flex justify-between font-black text-sm text-gray-900">
                   <span>Recalculated Total:</span>
-                  <span className="text-[#e91e63] text-base font-mono">{formatPrice(calculatedTotal)}</span>
+                  <span className="text-[#1D6474] text-base font-mono">{formatPrice(calculatedTotal)}</span>
                 </div>
 
-                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold rounded-xl shadow-xs">
+                <Button type="submit" disabled={saving} size="sm" className="w-full bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shadow-xs">
                   {saving ? "Saving..." : "Save Financial Adjustments"}
                 </Button>
               </form>
@@ -1287,7 +1287,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                 {/* Dynamic Due Amount */}
                 <div className="border-t border-gray-200 pt-3 flex justify-between items-baseline text-sm font-black text-gray-900">
                   <span>{order.payment_status === "paid" ? "COD Due to Collect" : "Total COD Due"}</span>
-                  <span className={`text-xl font-black font-mono ${order.payment_status === "paid" ? "text-emerald-700" : "text-[#e91e63]"}`}>
+                  <span className={`text-xl font-black font-mono ${order.payment_status === "paid" ? "text-emerald-700" : "text-[#1D6474]"}`}>
                     {order.payment_status === "paid" ? "৳0 (PAID)" : formatPrice(order.amount_to_collect !== undefined ? order.amount_to_collect : order.total)}
                   </span>
                 </div>
@@ -1326,9 +1326,9 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
 
                   if (!trxId) return null;
                   return (
-                    <div className="flex justify-between items-center text-[11px] bg-pink-50 p-2 rounded-xl border border-pink-200">
+                    <div className="flex justify-between items-center text-[11px] bg-teal-50/60 p-2 rounded-xl border border-teal-200">
                       <span className="font-bold text-pink-900">bKash TrxID:</span>
-                      <span className="font-mono font-black text-pink-700">{trxId}</span>
+                      <span className="font-mono font-black text-[#164E63]">{trxId}</span>
                     </div>
                   );
                 })()}
@@ -1342,7 +1342,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                         : "bg-amber-50 text-amber-700 border-amber-200"
                     }`}
                   >
-                    {order.payment_status === "paid" ? "PAID (পরিশোধিত)" : order.payment_status}
+                    {order.payment_status === "paid" ? "PAID (Paid)" : order.payment_status}
                   </span>
                 </div>
               </div>
@@ -1353,9 +1353,9 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4 text-xs">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2">
-                <Target className="h-4 w-4 text-[#e91e63]" /> Meta &amp; TikTok CAPI Purchase
+                <Target className="h-4 w-4 text-[#1D6474]" /> Meta &amp; TikTok CAPI Purchase
               </h2>
-              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-pink-100 text-[#e91e63]">
+              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-teal-100/70 text-[#1D6474]">
                 EMQ 9.0+
               </span>
             </div>
@@ -1419,7 +1419,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                   </div>
 
                   <p className="text-[11px] text-gray-500 leading-relaxed">
-                    ⚡ <strong>স্বয়ংক্রিয় ট্র্যাকিং সক্রিয় (Auto-Trigger Active):</strong> অর্ডারটি <strong>Completed / Delivered</strong> অথবা <strong>Paid</strong> হওয়া মাত্র (অথবা কুরিয়ার ডেলিভারি কনফার্ম করামাত্র) সার্ভার অটোমেটিক Meta ও TikTok CAPI Purchase ফায়ার করে দিবে। নিচের বাটনটি শুধুমাত্র এডমিনদের ম্যানুয়াল টেস্ট বা এমার্জেন্সি ওভাররাইডের জন্য।
+                    ⚡ <strong>Automated Tracking Active (Auto-Trigger Active):</strong> Orderitems <strong>Completed / Delivered</strong> or <strong>Paid</strong> as soon as (or Courier Delivery  ) Server items Meta  TikTok CAPI Purchase   ।  items    Test    for।
                   </p>
 
                   <Button
@@ -1449,7 +1449,7 @@ export function OrderDetailClient({ order: initialOrder }: OrderDetailClientProp
                     }}
                     disabled={capiLoading}
                     size="sm"
-                    className="w-full bg-linear-to-r from-[#e91e63] to-pink-700 hover:from-pink-600 hover:to-pink-800 text-white text-xs font-bold rounded-xl py-2.5 shadow-xs"
+                    className="w-full bg-linear-to-r from-[#1D6474] to-pink-700 hover:from-pink-600 hover:to-pink-800 text-white text-xs font-bold rounded-xl py-2.5 shadow-xs"
                   >
                     {capiLoading ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />

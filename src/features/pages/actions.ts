@@ -270,8 +270,8 @@ export async function syncAllOfficialTemplates(): Promise<{ success: boolean; me
     await setFallbackStore(PAGES_STORE_KEY, DEFAULT_CMS_PAGES);
     revalidatePath("/admin/pages");
     revalidatePath("/page/[slug]", "page");
-    return { success: true, message: "অফিসিয়াল পলিসি টেমপ্লেট ডাটাবেজে সফলভাবে সিঙ্ক হয়েছে!", pages: DEFAULT_CMS_PAGES };
+    return { success: true, message: "Official policy templates saved successfully Synced successfully!", pages: DEFAULT_CMS_PAGES };
   } catch (err: any) {
-    return { success: false, message: err?.message || "সিঙ্ক করতে ব্যর্থ হয়েছে", pages: DEFAULT_CMS_PAGES };
+    return { success: false, message: err?.message || "Failed to sync successfully", pages: DEFAULT_CMS_PAGES };
   }
 }

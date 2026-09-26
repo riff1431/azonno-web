@@ -128,7 +128,7 @@ export function OrderCancelDialog({ orderId, orderNumber }: OrderCancelDialogPro
                         key={reason}
                         className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${
                           selectedReason === reason
-                            ? "border-pink-500 bg-pink-50/50 text-zinc-900 font-semibold shadow-xs"
+                            ? "border-[#1D6474] bg-teal-50/60/50 text-zinc-900 font-semibold shadow-xs"
                             : "border-zinc-200 hover:bg-zinc-50 text-zinc-700"
                         }`}
                       >
@@ -138,7 +138,7 @@ export function OrderCancelDialog({ orderId, orderNumber }: OrderCancelDialogPro
                           value={reason}
                           checked={selectedReason === reason}
                           onChange={(e) => setSelectedReason(e.target.value)}
-                          className="h-3.5 w-3.5 text-pink-600 border-zinc-300 focus:ring-pink-500"
+                          className="h-3.5 w-3.5 text-[#1D6474] border-zinc-300 focus:ring-[#1D6474]"
                         />
                         <span>{reason}</span>
                       </label>
@@ -152,7 +152,7 @@ export function OrderCancelDialog({ orderId, orderNumber }: OrderCancelDialogPro
                         onChange={(e) => setCustomReason(e.target.value)}
                         placeholder="Please specify why you want to cancel..."
                         rows={3}
-                        className="w-full text-xs rounded-xl border border-zinc-200 p-2.5 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-hidden"
+                        className="w-full text-xs rounded-xl border border-zinc-200 p-2.5 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden"
                       />
                     </div>
                   )}

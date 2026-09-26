@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Secure Checkout | Blush & Budget",
-  description: "Complete your order safely with Cash on Delivery or digital payment at Blush & Budget.",
+  title: "Secure Checkout | Azonno",
+  description: "Complete your order safely with Cash on Delivery or digital payment at Azonno.",
   robots: {
     index: false,
     follow: false,

@@ -920,7 +920,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white p-5 sm:p-6 rounded-3xl border border-gray-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#1D6474] animate-pulse" />
             <h1 className="text-xl sm:text-2xl font-black text-gray-900">
               {t("orders_hub_title", "Orders & 1-Click Automation Hub")}
             </h1>
@@ -940,7 +940,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
             className="text-xs font-bold rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
             title="Refresh latest orders from database"
           >
-            <RefreshCw className={`h-3.5 w-3.5 mr-1 ${isRefreshingOrders ? "animate-spin text-[#e91e63]" : "text-gray-600"}`} />
+            <RefreshCw className={`h-3.5 w-3.5 mr-1 ${isRefreshingOrders ? "animate-spin text-[#1D6474]" : "text-gray-600"}`} />
             {isRefreshingOrders ? "Refreshing..." : "Refresh"}
           </Button>
 
@@ -948,7 +948,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
           <Button
             onClick={() => setShowCreateModal(true)}
             size="sm"
-            className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl shadow-xs"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shadow-xs"
           >
             <Plus className="h-3.5 w-3.5 mr-1" />
             {t("create_order_btn", "Create Order")}
@@ -968,7 +968,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
 
           <Link href="/admin/orders/incomplete">
             <Button variant="outline" size="sm" className="text-xs font-bold rounded-xl border-gray-300">
-              <Sparkles className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
+              <Sparkles className="h-3.5 w-3.5 mr-1 text-[#1D6474]" />
               {t("incomplete_leads_btn", "Incomplete Leads")}
             </Button>
           </Link>
@@ -1015,7 +1015,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
         <div className="rounded-3xl bg-gray-900 text-white p-4 shadow-2xl space-y-3 animate-in slide-in-from-top-2 border border-gray-800">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="h-3 w-3 rounded-full bg-[#e91e63] animate-pulse" />
+              <span className="h-3 w-3 rounded-full bg-[#1D6474] animate-pulse" />
               <div>
                 <span className="text-xs font-black block">
                   {selectedIds.length} Order{selectedIds.length === 1 ? "" : "s"} Selected
@@ -1085,7 +1085,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
             <div className="pt-2 border-t border-gray-800 space-y-1.5 animate-in fade-in-0">
               <div className="flex justify-between text-[11px] font-bold text-gray-300">
                 <span className="flex items-center gap-1.5">
-                  <Loader2 className="h-3 w-3 animate-spin text-[#e91e63]" />
+                  <Loader2 className="h-3 w-3 animate-spin text-[#1D6474]" />
                   Dispatching #{batchProgress.currentOrderNumber}...
                 </span>
                 <span>
@@ -1094,7 +1094,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               </div>
               <div className="h-2 w-full rounded-full bg-gray-800 overflow-hidden">
                 <div
-                  className="h-full bg-linear-to-r from-emerald-500 to-[#e91e63] transition-all duration-300 rounded-full"
+                  className="h-full bg-linear-to-r from-emerald-500 to-[#1D6474] transition-all duration-300 rounded-full"
                   style={{ width: `${batchProgress.percentage}%` }}
                 />
               </div>
@@ -1114,7 +1114,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 onClick={() => setActiveTab(tab.value)}
                 className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all shrink-0 ${
                   activeTab === tab.value
-                    ? "bg-[#e91e63] text-white shadow-xs"
+                    ? "bg-[#1D6474] text-white shadow-xs"
                     : "bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100"
                 }`}
               >
@@ -1156,7 +1156,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                     type="checkbox"
                     checked={selectedIds.length > 0 && selectedIds.length === filteredOrders.length}
                     onChange={toggleSelectAll}
-                    className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                    className="rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                   />
                 </th>
                 <th className="px-4 py-3.5">{t("column_order")}</th>
@@ -1166,7 +1166,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 <th className="px-4 py-3.5">{t("column_status")}</th>
                 <th className="px-4 py-3.5 text-center">
                   <span className="inline-flex items-center justify-center gap-1">
-                    <Zap className="h-3.5 w-3.5 text-[#e91e63]" />
+                    <Zap className="h-3.5 w-3.5 text-[#1D6474]" />
                     <span>{t("action_send_courier")}</span>
                   </span>
                 </th>
@@ -1224,7 +1224,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           : isCanc
                           ? "bg-amber-50/20"
                           : isChecked
-                          ? "bg-pink-50/30"
+                          ? "bg-teal-50/60/30"
                           : ""
                       }`}
                     >
@@ -1234,7 +1234,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => toggleSelect(ord.id)}
-                          className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                          className="rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                         />
                       </td>
 
@@ -1243,7 +1243,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         <div className="flex items-center gap-1.5">
                           <Link
                             href={`/admin/orders/${ord.id}`}
-                            className="font-mono font-black text-[#e91e63] hover:underline"
+                            className="font-mono font-black text-[#1D6474] hover:underline"
                           >
                             {ord.order_number}
                           </Link>
@@ -1688,7 +1688,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                     disabled={isSyncing}
                                     className={`h-6 w-6 flex items-center justify-center rounded-lg border transition-colors shadow-2xs cursor-pointer ${
                                       isSyncing
-                                        ? "bg-pink-50 border-pink-300 text-[#e91e63]"
+                                        ? "bg-teal-50/60 border-teal-300 text-[#1D6474]"
                                         : isRet
                                         ? "border-rose-200 bg-white hover:bg-rose-50 text-rose-700"
                                         : isCanc
@@ -1697,7 +1697,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                     }`}
                                     title="Query live delivery status from Courier API (Updates Order Status in Real Time)"
                                   >
-                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                    <RefreshCw className={`h-3 w-3 ${isSyncing ? "animate-spin text-[#1D6474]" : ""}`} />
                                   </button>
                                 </div>
 
@@ -1722,7 +1722,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                       <button
                                         type="button"
                                         onClick={() => handleOpenCustomDispatch(ord, isPathao ? "pathao" : "steadfast")}
-                                        className="text-[9px] font-bold text-[#e91e63] hover:underline bg-pink-50 border border-pink-200 px-1 py-0.5 rounded"
+                                        className="text-[9px] font-bold text-[#1D6474] hover:underline bg-teal-50/60 border border-teal-200 px-1 py-0.5 rounded"
                                         title="Re-dispatch this parcel to courier"
                                       >
                                         Re-book ⚡
@@ -1823,7 +1823,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                           <Link href={`/admin/orders/${ord.id}`}>
                             <Button
                               size="sm"
-                              className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-[11px] font-bold rounded-lg h-7 px-2.5"
+                              className="bg-[#1D6474] hover:bg-[#164E63] text-white text-[11px] font-bold rounded-lg h-7 px-2.5"
                             >
                               Manage
                             </Button>
@@ -1887,7 +1887,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       : isCanc
                       ? "bg-amber-50/30"
                       : isChecked
-                      ? "bg-pink-50/40"
+                      ? "bg-teal-50/60/40"
                       : "bg-white"
                   }`}
                 >
@@ -1898,13 +1898,13 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => toggleSelect(ord.id)}
-                        className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63] h-4 w-4"
+                        className="rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474] h-4 w-4"
                       />
                       <div>
                         <div className="flex items-center gap-1.5">
                           <Link
                             href={`/admin/orders/${ord.id}`}
-                            className="font-mono font-black text-sm text-[#e91e63] hover:underline"
+                            className="font-mono font-black text-sm text-[#1D6474] hover:underline"
                           >
                             {ord.order_number}
                           </Link>
@@ -2152,7 +2152,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                 className="inline-flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-0.5 text-[10px] font-bold text-gray-800 hover:bg-gray-100 shadow-2xs cursor-pointer"
                                 title="Query live delivery status from Courier API"
                               >
-                                <RefreshCw className={`h-2.5 w-2.5 ${isSyncing ? "animate-spin text-[#e91e63]" : ""}`} />
+                                <RefreshCw className={`h-2.5 w-2.5 ${isSyncing ? "animate-spin text-[#1D6474]" : ""}`} />
                                 <span>Sync API</span>
                               </button>
                               {activeCid && (
@@ -2189,7 +2189,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                                 <button
                                   type="button"
                                   onClick={() => handleOpenCustomDispatch(ord, isPathao ? "pathao" : "steadfast")}
-                                  className="text-[10px] font-bold text-[#e91e63] hover:underline bg-pink-50 border border-pink-200 px-1.5 py-0.5 rounded"
+                                  className="text-[10px] font-bold text-[#1D6474] hover:underline bg-teal-50/60 border border-teal-200 px-1.5 py-0.5 rounded"
                                 >
                                   Re-book Courier ⚡
                                 </button>
@@ -2266,7 +2266,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         </Button>
                       </Link>
                       <Link href={`/admin/orders/${ord.id}`}>
-                        <Button size="sm" className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl h-7 px-3">
+                        <Button size="sm" className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl h-7 px-3">
                           Manage
                         </Button>
                       </Link>
@@ -2285,7 +2285,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
           <div className="relative w-full max-w-2xl rounded-3xl border border-border bg-white p-6 shadow-2xl space-y-5 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div>
-                <span className="font-mono font-black text-lg text-[#e91e63]">
+                <span className="font-mono font-black text-lg text-[#1D6474]">
                   {quickViewOrder.order_number}
                 </span>
                 <p className="text-xs text-text-secondary">
@@ -2327,7 +2327,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 )}
                 <div className="border-t border-border pt-1 flex justify-between font-extrabold text-sm text-text">
                   <span>Total Due:</span>
-                  <span className="text-[#e91e63]">{formatPrice(quickViewOrder.total)}</span>
+                  <span className="text-[#1D6474]">{formatPrice(quickViewOrder.total)}</span>
                 </div>
               </div>
             </div>
@@ -2336,7 +2336,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               <div className="rounded-2xl border border-gray-200 p-4 space-y-1.5 bg-gray-50/70 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-gray-700 uppercase text-[10px] flex items-center gap-1">
-                    <ShieldCheck className="h-3.5 w-3.5 text-[#e91e63]" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#1D6474]" />
                     Fraud Risk Assessment
                   </span>
                   <span
@@ -2379,7 +2379,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
               }`}>
                 <div className="flex items-center justify-between">
                   <span className="font-bold uppercase text-[10px] flex items-center gap-1.5 text-gray-800">
-                    <Truck className="h-3.5 w-3.5 text-[#e91e63]" />
+                    <Truck className="h-3.5 w-3.5 text-[#1D6474]" />
                     <span>Courier & Logistics Status</span>
                   </span>
                   {quickViewOrder.consignment_id && (
@@ -2387,7 +2387,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       href={buildCourierTrackingUrl(quickViewOrder.courier_name, quickViewOrder.consignment_id, quickViewOrder.tracking_url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#e91e63] font-mono font-bold text-xs hover:underline inline-flex items-center gap-1"
+                      className="text-[#1D6474] font-mono font-bold text-xs hover:underline inline-flex items-center gap-1"
                     >
                       <span>{quickViewOrder.consignment_id}</span>
                       <ExternalLink className="h-3 w-3" />
@@ -2433,12 +2433,12 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
             <div className="flex items-center justify-between pt-3 border-t border-border">
               <Link href={`/admin/orders/${quickViewOrder.id}/invoice`} target="_blank">
                 <Button variant="outline" size="sm" className="text-xs font-bold">
-                  <Printer className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
+                  <Printer className="h-3.5 w-3.5 mr-1 text-[#1D6474]" />
                   Print Invoice
                 </Button>
               </Link>
               <Link href={`/admin/orders/${quickViewOrder.id}`}>
-                <Button size="sm" className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold">
+                <Button size="sm" className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold">
                   Full Order Page →
                 </Button>
               </Link>
@@ -2453,7 +2453,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
           <div className="relative w-full max-w-xl rounded-3xl border border-border bg-white p-6 shadow-2xl space-y-4 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <Plus className="h-5 w-5 text-[#e91e63]" />
+                <Plus className="h-5 w-5 text-[#1D6474]" />
                 <h2 className="text-base font-black text-gray-900">Create Manual / Phone Order</h2>
               </div>
               <button
@@ -2589,7 +2589,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                   <span className="font-bold text-gray-900">৳{createForm.deliveryFee}</span>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-gray-200 font-extrabold text-sm text-[#e91e63]">
+                <div className="flex items-center justify-between pt-2 border-t border-gray-200 font-extrabold text-sm text-[#1D6474]">
                   <span>Total Amount Due:</span>
                   <span>{formatPrice(createForm.productPrice * createForm.quantity + createForm.deliveryFee)}</span>
                 </div>
@@ -2599,7 +2599,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                 <Button type="button" variant="outline" onClick={() => setShowCreateModal(false)} className="text-xs">
                   Cancel
                 </Button>
-                <Button type="submit" disabled={creatingOrder} className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold">
+                <Button type="submit" disabled={creatingOrder} className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold">
                   {creatingOrder ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <CheckCircle2 className="h-3.5 w-3.5 mr-1" />}
                   Confirm & Create Order
                 </Button>
@@ -2676,7 +2676,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                         <span className="font-mono font-bold text-gray-900 block">#{f.order_number} ({f.phone || "No phone"})</span>
                         <span className="text-[11px] text-red-700">{f.reason}</span>
                       </div>
-                      <Link href={`/admin/orders/${f.id}`} className="text-[#e91e63] font-bold text-[11px] hover:underline shrink-0">
+                      <Link href={`/admin/orders/${f.id}`} className="text-[#1D6474] font-bold text-[11px] hover:underline shrink-0">
                         Fix & Edit
                       </Link>
                     </div>
@@ -2704,7 +2704,7 @@ export function OrderListClient({ initialOrders }: OrderListClientProps) {
                       setBatchSummaryReport(null);
                       window.print();
                     }}
-                    className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-black rounded-xl shadow-xs"
+                    className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-black rounded-xl shadow-xs"
                   >
                     <Printer className="h-3.5 w-3.5 mr-1" />
                     Print All {batchSummaryReport.successful.length} Thermal Labels

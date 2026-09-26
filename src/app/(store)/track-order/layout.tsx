@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Track Order Status | Blush & Budget",
-  description: "Check the real-time live status and courier tracking for your order with Blush & Budget.",
+  title: "Track Order Status | Azonno",
+  description: "Check the real-time live status and courier tracking for your order with Azonno.",
   robots: {
     index: false,
     follow: false,

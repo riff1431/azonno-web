@@ -42,9 +42,9 @@ export function BlogListingClient({
       {/* Header Banner */}
       <div className="rounded-3xl bg-linear-to-r from-zinc-900 via-purple-950 to-zinc-900 text-white p-8 sm:p-12 shadow-xl border border-zinc-800 space-y-3">
         <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
-          <span className="text-[11px] font-bold text-pink-300 bg-pink-500/20 px-3 py-1 rounded-full border border-pink-500/30 uppercase tracking-wider">
-            {language === "bn" ? "ভেরিফাইড স্কিনকেয়ার সায়েন্স ও বিউটি গাইড" : "Verified Skincare Science & Beauty Guides"}
+          <span className="h-2.5 w-2.5 rounded-full bg-[#1D6474] animate-pulse" />
+          <span className="text-[11px] font-bold text-pink-300 bg-[#1D6474]/20 px-3 py-1 rounded-full border border-[#1D6474]/30 uppercase tracking-wider">
+            {language === "bn" ? " Casual Wear   items " : "Verified Skincare Science & Beauty Guides"}
           </span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
@@ -60,11 +60,11 @@ export function BlogListingClient({
             href="/blog"
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 ${
               !activeCategory
-                ? "bg-[#e91e63] text-white shadow-md"
+                ? "bg-[#1D6474] text-white shadow-md"
                 : "bg-white/10 text-zinc-200 hover:bg-white/20"
             }`}
           >
-            {language === "bn" ? "সকল আর্টিকেল" : "All Articles"}
+            {language === "bn" ? "All items" : "All Articles"}
           </Link>
           {categories.map((cat) => (
             <Link
@@ -72,7 +72,7 @@ export function BlogListingClient({
               href={`/blog?category=${cat.slug}`}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 ${
                 activeCategory === cat.slug
-                  ? "bg-[#e91e63] text-white shadow-md"
+                  ? "bg-[#1D6474] text-white shadow-md"
                   : "bg-white/10 text-zinc-200 hover:bg-white/20"
               }`}
             >
@@ -99,14 +99,14 @@ export function BlogListingClient({
                 </div>
               )}
               <span className="absolute top-4 left-4 bg-black/80 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                {language === "bn" ? "ফিচার্ড গাইড" : "Featured Guide"}
+                {language === "bn" ? " " : "Featured Guide"}
               </span>
             </div>
 
             <div className="lg:col-span-5 p-6 sm:p-10 flex flex-col justify-between space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center gap-3 text-xs text-text-muted">
-                  <span className="font-bold text-[#e91e63]">
+                  <span className="font-bold text-[#1D6474]">
                     {featuredPost.category?.name || "Skincare"}
                   </span>
                   <span>•</span>
@@ -117,7 +117,7 @@ export function BlogListingClient({
                 </div>
 
                 <Link href={`/blog/${featuredPost.slug}`}>
-                  <h2 className="text-xl sm:text-2xl font-black text-text group-hover:text-[#e91e63] transition-colors leading-snug">
+                  <h2 className="text-xl sm:text-2xl font-black text-text group-hover:text-[#1D6474] transition-colors leading-snug">
                     {featuredPost.title}
                   </h2>
                 </Link>
@@ -155,7 +155,7 @@ export function BlogListingClient({
 
                 <Link
                   href={`/blog/${featuredPost.slug}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e91e63] group-hover:translate-x-1 transition-transform"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D6474] group-hover:translate-x-1 transition-transform"
                 >
                   {t("blog", "readArticle")} <ArrowRight className="h-3.5 w-3.5 ml-1" />
                 </Link>
@@ -169,10 +169,10 @@ export function BlogListingClient({
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-text">
-            {language === "bn" ? "সাম্প্রতিক আর্টিকেল ও গাইড" : "Latest Articles & Guides"}
+            {language === "bn" ? " items  " : "Latest Articles & Guides"}
           </h2>
           <span className="text-xs text-text-muted">
-            {toBn(posts.length)} {language === "bn" ? "টি আর্টিকেল রয়েছে" : "articles available"}
+            {toBn(posts.length)} {language === "bn" ? "items items " : "articles available"}
           </span>
         </div>
 
@@ -212,7 +212,7 @@ export function BlogListingClient({
                   </div>
 
                   <Link href={`/blog/${post.slug}`}>
-                    <h3 className="text-base sm:text-lg font-bold text-text group-hover:text-[#e91e63] transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-base sm:text-lg font-bold text-text group-hover:text-[#1D6474] transition-colors line-clamp-2 leading-snug">
                       {post.title}
                     </h3>
                   </Link>
@@ -235,7 +235,7 @@ export function BlogListingClient({
 
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="text-xs sm:text-sm font-bold text-[#e91e63] shrink-0"
+                    className="text-xs sm:text-sm font-bold text-[#1D6474] shrink-0"
                   >
                     {t("blog", "readArticle")} &rarr;
                   </Link>
@@ -248,13 +248,13 @@ export function BlogListingClient({
 
       {posts.length === 0 && (
         <div className="rounded-3xl border border-dashed border-border bg-white p-12 sm:p-16 text-center space-y-4 shadow-card">
-          <BookOpen className="h-12 w-12 text-[#e91e63] mx-auto opacity-70" />
+          <BookOpen className="h-12 w-12 text-[#1D6474] mx-auto opacity-70" />
           <h3 className="text-base font-bold text-text">
-            {language === "bn" ? "কোনো আর্টিকেল প্রকাশিত হয়নি" : "No articles published yet"}
+            {language === "bn" ? " items  " : "No articles published yet"}
           </h3>
           <p className="text-xs text-text-secondary max-w-sm mx-auto leading-relaxed">
             {language === "bn"
-              ? "আমাদের বিউটি এডিটোরিয়াল টিম নতুন নতুন স্কিনকেয়ার গাইড তৈরি করছে। শীঘ্রই আবার চেক করুন!"
+              ? " items  items   Casual Wear   ।    !"
               : "Our beauty editorial team is crafting expert skincare guides, ingredient breakdowns, and routine advice. Check back soon!"}
           </p>
         </div>

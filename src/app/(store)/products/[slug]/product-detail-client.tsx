@@ -53,44 +53,44 @@ import { type StoreFeatureSettings } from "@/features/settings/feature-settings-
 import { useLanguage } from "@/context/language-context";
 
 const SKIN_CONCERN_MAP: Record<string, { en: string; bn: string }> = {
-  "Clear Skin & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
-  "Acne & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
-  "Brightening & Even Tone": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
-  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
-  "Smooth Lines & Firmness": { en: "Smooth Lines & Firmness", bn: "কোমল ও টানটান অনুভূতি" },
-  "Anti-Aging & Wrinkles": { en: "Smooth Lines & Firmness", bn: "কোমল ও টানটান অনুভূতি" },
-  "Hydration & Moisture": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
-  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
-  "Pore & Oil Care": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
-  "Pore Minimizing": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
-  "Redness & Soothing": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
-  "Redness & Rosacea": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
-  "Sun Protection": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (SPF)" },
-  "Dark Circles & Eye Care": { en: "Dark Circles & Eye Care", bn: "চোখের নিচের যত্ন" },
-  "Oil Control": { en: "Oil Control", bn: "তেল নিয়ন্ত্রণ ও ফ্রেশ লুক" },
-  "Barrier Care": { en: "Barrier Care", bn: "স্কিন ব্যারিয়ার কেয়ার" },
-  "Barrier Repair": { en: "Barrier Care", bn: "স্কিন ব্যারিয়ার কেয়ার" },
+  "Clear Skin & Blemishes": { en: "Clear Skin & Blemishes", bn: "Clean Cotton   " },
+  "Acne & Blemishes": { en: "Clear Skin & Blemishes", bn: "Clean Cotton   " },
+  "Brightening & Even Tone": { en: "Brightening & Even Tone", bn: "    " },
+  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "    " },
+  "Smooth Lines & Firmness": { en: "Smooth Lines & Firmness", bn: "  :00:00 " },
+  "Anti-Aging & Wrinkles": { en: "Smooth Lines & Firmness", bn: "  :00:00 " },
+  "Hydration & Moisture": { en: "Hydration & Moisture", bn: "  " },
+  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "  " },
+  "Pore & Oil Care": { en: "Pore & Oil Care", bn: "    " },
+  "Pore Minimizing": { en: "Pore & Oil Care", bn: "    " },
+  "Redness & Soothing": { en: "Redness & Soothing", bn: "    " },
+  "Redness & Rosacea": { en: "Redness & Soothing", bn: "    " },
+  "Sun Protection": { en: "Sun Protection (SPF)", bn: "  (SPF)" },
+  "Dark Circles & Eye Care": { en: "Dark Circles & Eye Care", bn: "  " },
+  "Oil Control": { en: "Oil Control", bn: "    " },
+  "Barrier Care": { en: "Barrier Care", bn: "  " },
+  "Barrier Repair": { en: "Barrier Care", bn: "  " },
 };
 
 const SKIN_TYPE_MAP: Record<string, { en: string; bn: string }> = {
-  "Oily": { en: "Oily", bn: "তৈলাক্ত ত্বক" },
-  "Dry": { en: "Dry", bn: "শুষ্ক ত্বক" },
-  "Combination": { en: "Combination", bn: "কম্বিনেশন / মিশ্র ত্বক" },
-  "Sensitive": { en: "Sensitive", bn: "সেনসিটিভ ত্বক" },
-  "Normal": { en: "Normal", bn: "স্বাভাবিক ত্বক" },
-  "All Skin Types": { en: "All Skin Types", bn: "সকল ধরণের ত্বক" },
+  "Oily": { en: "Oily", bn: "Cotton Twill" },
+  "Dry": { en: "Dry", bn: "Linen Blend" },
+  "Combination": { en: "Combination", bn: "Premium Oxford /  Cotton" },
+  "Sensitive": { en: "Sensitive", bn: "items Cotton" },
+  "Normal": { en: "Normal", bn: " Cotton" },
+  "All Skin Types": { en: "All Skin Types", bn: "All Sizes (S to XXL)" },
 };
 
 const ORIGIN_MAP: Record<string, { en: string; bn: string }> = {
-  "South Korea": { en: "South Korea (K-Beauty)", bn: "দক্ষিণ কোরিয়া (কে-বিউটি)" },
-  "Japan": { en: "Japan (J-Beauty)", bn: "জাপান (জে-বিউটি)" },
-  "United Kingdom": { en: "United Kingdom (UK)", bn: "যুক্তরাজ্য (UK)" },
-  "United States": { en: "United States (USA)", bn: "যুক্তরাষ্ট্র (USA)" },
-  "France": { en: "France", bn: "ফ্রান্স" },
-  "Germany": { en: "Germany", bn: "জার্মানি" },
-  "Thailand": { en: "Thailand", bn: "থাইল্যান্ড" },
-  "Bangladesh": { en: "Bangladesh", bn: "বাংলাদেশ" },
-  "India": { en: "India", bn: "ভারত" },
+  "South Korea": { en: "South Korea (K-Beauty)", bn: "  (-items)" },
+  "Japan": { en: "Japan (J-Beauty)", bn: " (-items)" },
+  "United Kingdom": { en: "United Kingdom (UK)", bn: "added (UK)" },
+  "United States": { en: "United States (USA)", bn: "added (USA)" },
+  "France": { en: "France", bn: "" },
+  "Germany": { en: "Germany", bn: "" },
+  "Thailand": { en: "Thailand", bn: "" },
+  "Bangladesh": { en: "Bangladesh", bn: "English" },
+  "India": { en: "India", bn: "" },
 };
 
 interface ProductDetailClientProps {
@@ -462,7 +462,7 @@ export function ProductDetailClient({
             {/* Badges */}
             <div className="absolute left-3.5 top-3.5 flex flex-col gap-1.5 z-10 pointer-events-none">
               {discountPercent > 0 && (
-                <span className="rounded-full bg-[#e91e63] px-3 py-1 text-xs font-black text-white shadow-sm">
+                <span className="rounded-full bg-[#1D6474] px-3 py-1 text-xs font-black text-white shadow-sm">
                   -{toBn(discountPercent)}% {t("product", "off")}
                 </span>
               )}
@@ -501,7 +501,7 @@ export function ProductDetailClient({
                 <Heart
                   className={cn(
                     "h-4.5 w-4.5 transition-colors",
-                    inWishlist ? "fill-[#e91e63] text-[#e91e63]" : "text-zinc-600"
+                    inWishlist ? "fill-[#1D6474] text-[#1D6474]" : "text-zinc-600"
                   )}
                 />
               </button>
@@ -519,7 +519,7 @@ export function ProductDetailClient({
                     setSelectedImage(imageUrls[prevIdx]);
                   }}
                   aria-label="Previous photo"
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-xs text-gray-700 hover:bg-white hover:text-[#e91e63] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-xs text-gray-700 hover:bg-white hover:text-[#1D6474] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -532,7 +532,7 @@ export function ProductDetailClient({
                     setSelectedImage(imageUrls[nextIdx]);
                   }}
                   aria-label="Next photo"
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-xs text-gray-700 hover:bg-white hover:text-[#e91e63] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-md backdrop-blur-xs text-gray-700 hover:bg-white hover:text-[#1D6474] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -581,11 +581,11 @@ export function ProductDetailClient({
             <div className="mx-auto w-full max-w-[420px] pt-1 space-y-2">
               <div className="flex items-center justify-between px-1">
                 <span className="text-[11px] font-extrabold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <Layers className="h-3.5 w-3.5 text-[#e91e63]" />
-                  {language === "bn" ? "প্রোডাক্ট ফটো গ্যালারি" : "Product Gallery"} ({toBn(imageUrls.length)})
+                  <Layers className="h-3.5 w-3.5 text-[#1D6474]" />
+                  {language === "bn" ? "Products  " : "Product Gallery"} ({toBn(imageUrls.length)})
                 </span>
                 <span className="text-[10px] font-medium text-gray-400">
-                  {language === "bn" ? "ছবি নির্বাচন করতে ক্লিক করুন" : "Click to switch photo"}
+                  {language === "bn" ? "    " : "Click to switch photo"}
                 </span>
               </div>
 
@@ -600,8 +600,8 @@ export function ProductDetailClient({
                       className={cn(
                         "relative aspect-square w-full overflow-hidden rounded-2xl border-2 transition-all p-1.5 bg-white shadow-2xs group cursor-pointer flex items-center justify-center",
                         isSelected
-                          ? "border-[#e91e63] ring-2 ring-[#e91e63]/30 shadow-md scale-105"
-                          : "border-gray-200 hover:border-pink-300 opacity-75 hover:opacity-100"
+                          ? "border-[#1D6474] ring-2 ring-[#1D6474]/30 shadow-md scale-105"
+                          : "border-gray-200 hover:border-teal-300 opacity-75 hover:opacity-100"
                       )}
                     >
                       <img
@@ -610,7 +610,7 @@ export function ProductDetailClient({
                         className="h-full w-full object-contain transition-transform group-hover:scale-105"
                       />
                       {isSelected && (
-                        <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-[#e91e63] ring-2 ring-white" />
+                        <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full bg-[#1D6474] ring-2 ring-white" />
                       )}
                     </button>
                   );
@@ -628,17 +628,17 @@ export function ProductDetailClient({
               {product.brands && (
                 <Link
                   href={`/products?brand=${product.brands.slug}`}
-                  className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-[#e91e63] hover:text-sg-pink-hover transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-[#1D6474] hover:text-sg-pink-hover transition-colors"
                 >
                   <span>{product.brands.name}</span>
                   <ChevronRight className="h-3 w-3" />
                 </Link>
               )}
               <span className="inline-flex items-center gap-1 rounded-md bg-zinc-100 border border-zinc-200 px-2 py-0.5 font-mono text-[11px] font-bold text-zinc-600">
-                {language === "bn" ? "প্রোডাক্ট আইডি / এসকেইউ:" : "ID / SKU:"} #{toBn(getShortProductId(product))}
+                {language === "bn" ? "Products ID / :" : "ID / SKU:"} #{toBn(getShortProductId(product))}
               </span>
               {product.volume_ml && (
-                <span className="inline-flex items-center gap-1 rounded-md bg-pink-50 border border-pink-200 px-2 py-0.5 text-[11px] font-extrabold text-[#e91e63]">
+                <span className="inline-flex items-center gap-1 rounded-md bg-teal-50/60 border border-teal-200 px-2 py-0.5 text-[11px] font-extrabold text-[#1D6474]">
                   🧴 {product.volume_ml}
                 </span>
               )}
@@ -676,16 +676,16 @@ export function ProductDetailClient({
                 {reviewsCount > 0 ? (
                   <>
                     <span className="font-bold text-text">{toBn(averageRating.toFixed(1))}</span>
-                    <span className="text-text-muted font-medium group-hover:text-[#e91e63] group-hover:underline transition-colors">
+                    <span className="text-text-muted font-medium group-hover:text-[#1D6474] group-hover:underline transition-colors">
                       {language === "bn"
-                        ? `(${toBn(reviewsCount)} টি ভেরিফাইড বায়ার রিভিউ)`
+                        ? `(${toBn(reviewsCount)} items   Reviews)`
                         : `(${reviewsCount} Verified Buyer ${reviewsCount === 1 ? "Review" : "Reviews"})`}
                     </span>
                   </>
                 ) : (
-                  <span className="text-text-muted font-medium group-hover:text-[#e91e63] group-hover:underline transition-colors">
+                  <span className="text-text-muted font-medium group-hover:text-[#1D6474] group-hover:underline transition-colors">
                     {language === "bn"
-                      ? "(এখনো কোনো রিভিউ নেই — প্রথম রিভিউ দিন)"
+                      ? "(  Reviews  —  Reviews Enter)"
                       : "(No reviews yet — be the first to review)"}
                   </span>
                 )}
@@ -698,12 +698,12 @@ export function ProductDetailClient({
                 {copied ? (
                   <>
                     <Check className="h-3.5 w-3.5 text-emerald-600" />
-                    <span className="text-emerald-700">{language === "bn" ? "লিংক কপি হয়েছে" : "Link Copied"}</span>
+                    <span className="text-emerald-700">{language === "bn" ? "Link  successfully" : "Link Copied"}</span>
                   </>
                 ) : (
                   <>
                     <Share2 className="h-3.5 w-3.5" />
-                    <span>{language === "bn" ? "শেয়ার" : "Share"}</span>
+                    <span>{language === "bn" ? "" : "Share"}</span>
                   </>
                 )}
               </button>
@@ -722,7 +722,7 @@ export function ProductDetailClient({
                 </strong>
                 <span className="text-gray-700 font-semibold">
                   {language === "bn"
-                    ? "জন ক্রেতা এখন এই পণ্যটি দেখছেন"
+                    ? "    Productsitems "
                     : "people are currently looking at this product"}
                 </span>
               </span>
@@ -742,7 +742,7 @@ export function ProductDetailClient({
                   </span>
                   <span className="rounded-lg bg-accent-500/10 border border-accent-500/20 px-2 py-0.5 text-xs font-extrabold text-accent-700">
                     {language === "bn"
-                      ? `সাশ্রয় ${formatPriceBn(product.regular_price - effectivePrice)}`
+                      ? ` ${formatPriceBn(product.regular_price - effectivePrice)}`
                       : `You Save ${formatPrice(product.regular_price - effectivePrice)}`}
                   </span>
                 </>
@@ -750,16 +750,16 @@ export function ProductDetailClient({
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-text-muted">
               {product.shipping_class === "free_shipping" ? (
-                <span className="font-bold text-[#e91e63] bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
-                  <Truck className="h-3.5 w-3.5 text-[#e91e63]" />
+                <span className="font-bold text-[#1D6474] bg-teal-50/60 border border-teal-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                  <Truck className="h-3.5 w-3.5 text-[#1D6474]" />
                   {language === "bn"
-                    ? "এই পণ্যে সারা দেশে ফ্রি ডেলিভারি!"
+                    ? " Products   Free Delivery!"
                     : "Free Nationwide Delivery on this product!"}
                 </span>
               ) : (
                 <span>
                   {language === "bn"
-                    ? "২,৫০০ টাকার অর্ডারে সারা দেশে ফ্রি ডেলিভারি।"
+                    ? "2,500 :00 Order   Free Delivery।"
                     : "Free Delivery available on orders over ৳2,500."}
                 </span>
               )}
@@ -771,10 +771,10 @@ export function ProductDetailClient({
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-text">
-                  {language === "bn" ? "শেড / সাইজ নির্বাচন করুন:" : "Select Shade / Size:"}
+                  {language === "bn" ? " / Size  :" : "Select Shade / Size:"}
                 </span>
                 {selectedVariant && (
-                  <span className="text-xs font-bold text-pink-600">
+                  <span className="text-xs font-bold text-[#1D6474]">
                     {selectedVariant.title || selectedVariant.name}
                   </span>
                 )}
@@ -792,7 +792,7 @@ export function ProductDetailClient({
                       className={cn(
                         "flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all btn-soft-fill",
                         isSelected
-                          ? "border-[#e91e63] bg-pink-50 text-[#e91e63] shadow-xs ring-2 ring-pink-200"
+                          ? "border-[#1D6474] bg-teal-50/60 text-[#1D6474] shadow-xs ring-2 ring-pink-200"
                           : "border-border bg-white text-text-secondary hover:border-text-muted hover:bg-gray-50"
                       )}
                     >
@@ -813,7 +813,7 @@ export function ProductDetailClient({
           {/* Availability Status */}
           <div className="flex items-center gap-3 text-xs">
             <span className="text-text-muted font-medium">
-              {language === "bn" ? "লভ্যতা:" : "Availability:"}
+              {language === "bn" ? ":" : "Availability:"}
             </span>
             <span
               className={cn(
@@ -826,7 +826,7 @@ export function ProductDetailClient({
               <Check className="h-3 w-3" />
               {isOutOfStock
                 ? t("productDetail", "outOfStock")
-                : `${t("productDetail", "inStock")} (${toBn(availableStock)} ${language === "bn" ? "টি স্টকে আছে" : "in stock"})`}
+                : `${t("productDetail", "inStock")} (${toBn(availableStock)} ${language === "bn" ? "items Stock " : "in stock"})`}
             </span>
           </div>
 
@@ -873,7 +873,7 @@ export function ProductDetailClient({
                 {justAdded ? (
                   <>
                     <Check className="h-4 w-4 mr-1.5 animate-in zoom-in-50" />
-                    {language === "bn" ? "কার্ট-এ যোগ হয়েছে!" : "Added to Bag!"}
+                    {language === "bn" ? "- Added!" : "Added to Bag!"}
                   </>
                 ) : (
                   <>
@@ -899,36 +899,36 @@ export function ProductDetailClient({
 
           {/* Authenticity & Batch Code Verification Card */}
           {featureSettings?.enable_authenticity_verification !== false && (
-            <div className="rounded-2xl border border-pink-200 bg-linear-to-r from-pink-50/50 to-purple-50/30 p-4 space-y-3">
+            <div className="rounded-2xl border border-teal-200 bg-linear-to-r from-pink-50/50 to-purple-50/30 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-[#e91e63]" />
+                  <ShieldCheck className="h-5 w-5 text-[#1D6474]" />
                   <span className="text-xs font-black text-pink-950 uppercase tracking-wider">
-                    {language === "bn" ? "১০০% অরিজিনাল ও অথেন্টিসিটি গ্যারান্টি" : "Authenticity & Provenance Guarantee"}
+                    {language === "bn" ? "100% Original  itemsitems items" : "Authenticity & Provenance Guarantee"}
                   </span>
                 </div>
                 <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                  {language === "bn" ? "ভেরিফাইড খাঁটি" : "Verified Genuine"}
+                  {language === "bn" ? " items" : "Verified Genuine"}
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-[11px] pt-1">
-                <div className="rounded-xl bg-white p-2 border border-pink-100 shadow-2xs">
-                  <span className="text-gray-400 font-medium block">{language === "bn" ? "উৎস দেশ:" : "Origin:"}</span>
+                <div className="rounded-xl bg-white p-2 border border-teal-100 shadow-2xs">
+                  <span className="text-gray-400 font-medium block">{language === "bn" ? " :" : "Origin:"}</span>
                   <span className="font-bold text-gray-900">
                     {language === "bn" ? (ORIGIN_MAP[originCountry]?.bn || originCountry) : (ORIGIN_MAP[originCountry]?.en || originCountry)}
                   </span>
                 </div>
-                <div className="rounded-xl bg-white p-2 border border-pink-100 shadow-2xs">
-                  <span className="text-gray-400 font-medium block">{language === "bn" ? "ব্যাচ কোড:" : "Batch Code:"}</span>
+                <div className="rounded-xl bg-white p-2 border border-teal-100 shadow-2xs">
+                  <span className="text-gray-400 font-medium block">{language === "bn" ? " Code:" : "Batch Code:"}</span>
                   <span className="font-mono font-bold text-gray-900">
                     {product.batch_number || "LOT2024BD01"}
                   </span>
                 </div>
-                <div className="rounded-xl bg-white p-2 border border-pink-100 shadow-2xs col-span-2 sm:col-span-1">
-                  <span className="text-gray-400 font-medium block">{language === "bn" ? "মেয়াদ:" : "Shelf Freshness:"}</span>
+                <div className="rounded-xl bg-white p-2 border border-teal-100 shadow-2xs col-span-2 sm:col-span-1">
+                  <span className="text-gray-400 font-medium block">{language === "bn" ? ":" : "Shelf Freshness:"}</span>
                   <span className="font-bold text-emerald-700">
-                    {product.expiry_date ? `Exp: ${product.expiry_date}` : (language === "bn" ? "২৪ মাস ফ্রেশ গ্যারান্টি" : "24M Fresh Guarantee")}
+                    {product.expiry_date ? `Exp: ${product.expiry_date}` : (language === "bn" ? "24   items" : "24M Fresh Guarantee")}
                   </span>
                 </div>
               </div>
@@ -938,19 +938,19 @@ export function ProductDetailClient({
           {/* Delivery & Returns Trust Badges */}
           <div className="grid grid-cols-3 gap-2 rounded-2xl border border-border bg-surface-secondary/50 p-3.5 text-center text-xs">
             <div className="flex flex-col items-center gap-1">
-              <ShieldCheck className="h-4.5 w-4.5 text-[#e91e63]" />
+              <ShieldCheck className="h-4.5 w-4.5 text-[#1D6474]" />
               <span className="font-bold text-text text-[11px]">{t("footer", "authenticTitle")}</span>
-              <span className="text-[10px] text-text-muted">{language === "bn" ? "সরাসরি আমদানিকৃত" : "Direct Importer"}</span>
+              <span className="text-[10px] text-text-muted">{language === "bn" ? " " : "Direct Importer"}</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <Truck className="h-4.5 w-4.5 text-[#e91e63]" />
+              <Truck className="h-4.5 w-4.5 text-[#1D6474]" />
               <span className="font-bold text-text text-[11px]">{t("footer", "deliveryTitle")}</span>
               <span className="text-[10px] text-text-muted">Steadfast &amp; Pathao</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <RotateCcw className="h-4.5 w-4.5 text-[#e91e63]" />
+              <RotateCcw className="h-4.5 w-4.5 text-[#1D6474]" />
               <span className="font-bold text-text text-[11px]">{t("footer", "returnTitle")}</span>
-              <span className="text-[10px] text-text-muted">{language === "bn" ? "সহজ এক্সচেঞ্জ" : "Easy Wallet Refund"}</span>
+              <span className="text-[10px] text-text-muted">{language === "bn" ? " " : "Easy Wallet Refund"}</span>
             </div>
           </div>
         </div>
@@ -973,7 +973,7 @@ export function ProductDetailClient({
               <div className="space-y-4 max-w-4xl">
                 {product.description ? (
                   <div
-                    className="prose prose-base sm:prose-lg prose-pink max-w-full text-base sm:text-[17px] font-normal text-gray-800 leading-relaxed sm:leading-8 [&_img]:rounded-2xl [&_img]:border [&_img]:border-gray-100 [&_img]:my-4 [&_a]:text-[#e91e63] [&_a]:underline"
+                    className="prose prose-base sm:prose-lg prose-pink max-w-full text-base sm:text-[17px] font-normal text-gray-800 leading-relaxed sm:leading-8 [&_img]:rounded-2xl [&_img]:border [&_img]:border-gray-100 [&_img]:my-4 [&_a]:text-[#1D6474] [&_a]:underline"
                     dangerouslySetInnerHTML={{ __html: product.description }}
                   />
                 ) : (
@@ -999,15 +999,15 @@ export function ProductDetailClient({
                 ) : (
                   <div className="space-y-3 text-base sm:text-[17px] text-gray-800 leading-relaxed">
                     <div className="flex items-start gap-2.5">
-                      <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
+                      <Sparkles className="h-5 w-5 text-[#1D6474] shrink-0 mt-0.5" />
                       <span>Leaves skin feeling soft, comfortable, and well-hydrated.</span>
                     </div>
                     <div className="flex items-start gap-2.5">
-                      <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
+                      <Sparkles className="h-5 w-5 text-[#1D6474] shrink-0 mt-0.5" />
                       <span>Formulated without harsh parabens, synthetic dyes, or drying sulfates.</span>
                     </div>
                     <div className="flex items-start gap-2.5">
-                      <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
+                      <Sparkles className="h-5 w-5 text-[#1D6474] shrink-0 mt-0.5" />
                       <span>Gentle and suitable for everyday skincare routines.</span>
                     </div>
                   </div>
@@ -1030,7 +1030,7 @@ export function ProductDetailClient({
                 ) : (
                   <div className="space-y-3 text-base sm:text-[17px] text-gray-800 leading-relaxed">
                     <p className="font-bold text-gray-900 text-lg">Recommended Beauty Routine Step:</p>
-                    <p className="text-[#e91e63] font-bold text-base pb-2">
+                    <p className="text-[#1D6474] font-bold text-base pb-2">
                       {product.routine_step ? `Step: ${product.routine_step}` : "Daily Skincare Routine"}
                     </p>
                     <ol className="list-decimal list-inside space-y-2.5 pl-1 text-gray-700">
@@ -1088,18 +1088,18 @@ export function ProductDetailClient({
             id: "authenticity",
             label: t("productDetail", "tabAuthenticity"),
             icon: ShieldCheck,
-            badge: language === "bn" ? "১০০% খাঁটি" : "100% Genuine",
+            badge: language === "bn" ? "100% items" : "100% Genuine",
             content: (
               <div className="space-y-4 max-w-4xl">
-                <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-pink-50/60 border border-pink-200">
-                  <ShieldCheck className="h-9 w-9 text-[#e91e63] shrink-0" />
+                <div className="flex items-center gap-3.5 p-4 sm:p-5 rounded-2xl bg-teal-50/60/60 border border-teal-200">
+                  <ShieldCheck className="h-9 w-9 text-[#1D6474] shrink-0" />
                   <div>
                     <h4 className="font-black text-gray-900 text-base sm:text-lg">
-                      {language === "bn" ? "১০০% গ্যারান্টিযুক্ত ব্র্যান্ড অথেন্টিসিটি" : "100% Guaranteed Brand Authenticity"}
+                      {language === "bn" ? "100% itemsadded Brand itemsitems" : "100% Guaranteed Brand Authenticity"}
                     </h4>
                     <p className="text-sm sm:text-base text-gray-700 leading-relaxed mt-0.5">
                       {language === "bn"
-                        ? `সরাসরি ${ORIGIN_MAP[originCountry]?.bn || originCountry}-এর অথরাইজড প্রস্তুতকারক থেকে আমদানিকৃত। কোনো রেপ্লিকা বা মেয়াদোত্তীর্ণ পণ্যের সুযোগ নেই।`
+                        ? ` ${ORIGIN_MAP[originCountry]?.bn || originCountry}-   from ।     Products Add ।`
                         : `Imported directly from authorized manufacturers in ${ORIGIN_MAP[originCountry]?.en || originCountry}. Zero replicas or expired stock guaranteed.`}
                     </p>
                   </div>
@@ -1107,13 +1107,13 @@ export function ProductDetailClient({
 
                 <div className="grid gap-3 sm:grid-cols-2 text-sm sm:text-base">
                   <div className="p-4 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
-                    <span className="font-bold text-gray-900 block">{language === "bn" ? "ব্যাচ কোড:" : "Batch Code:"}</span>
+                    <span className="font-bold text-gray-900 block">{language === "bn" ? " Code:" : "Batch Code:"}</span>
                     <span className="font-mono text-gray-700 font-semibold">{product.batch_number || "LOT2024BD01"}</span>
                   </div>
                   <div className="p-4 rounded-xl border border-gray-200 bg-surface-secondary/40 space-y-1">
-                    <span className="font-bold text-gray-900 block">{language === "bn" ? "মেয়াদ:" : "Freshness Shelf-Life:"}</span>
+                    <span className="font-bold text-gray-900 block">{language === "bn" ? ":" : "Freshness Shelf-Life:"}</span>
                     <span className="text-emerald-700 font-bold">
-                      {product.expiry_date ? `Exp: ${product.expiry_date}` : (language === "bn" ? "খোলার পর ২৪ মাস ব্যবহারযোগ্য" : "24 Months After Opening (PAO)")}
+                      {product.expiry_date ? `Exp: ${product.expiry_date}` : (language === "bn" ? "  24  useAdd" : "24 Months After Opening (PAO)")}
                     </span>
                   </div>
                 </div>
@@ -1122,27 +1122,27 @@ export function ProductDetailClient({
           },
           {
             id: "warranty",
-            label: language === "bn" ? "ডেলিভারি ও রিটার্ন" : "Delivery & Returns",
+            label: language === "bn" ? "Delivery  :00" : "Delivery & Returns",
             icon: Truck,
             badge: null,
             content: (
               <div className="space-y-3.5 max-w-4xl text-base sm:text-[17px] text-gray-800 leading-relaxed">
                 <p className="font-bold text-gray-900 text-base sm:text-lg">
-                  {language === "bn" ? "সারা দেশে ডেলিভারি ও রিটার্ন পলিসি:" : "Nationwide Shipping & Returns Policy:"}
+                  {language === "bn" ? "  Delivery  :00 Policy:" : "Nationwide Shipping & Returns Policy:"}
                 </p>
                 <p>
                   {language === "bn"
-                    ? "• ঢাকার ভেতরে: দ্রুততম কুরিয়ারে ২৪–৪৮ ঘণ্টার মধ্যে ডেলিভারি।"
+                    ? "•  :   24–48 Hours  Delivery।"
                     : "• Inside Dhaka: Delivered within 24–48 hours via fast courier (Steadfast / Pathao)."}
                 </p>
                 <p>
                   {language === "bn"
-                    ? "• ঢাকার বাইরে: ৩-৫ কার্যদিবসে সারা দেশে হোম ডেলিভারি ও ক্যাশ অন ডেলিভারি সুবিধা।"
+                    ? "•  : 3-5     Delivery  Cash  Delivery ।"
                     : "• Outside Dhaka: Delivered in 2–4 business days with Cash on Delivery available nationwide."}
                 </p>
                 <p>
                   {language === "bn"
-                    ? "• ৭ দিনের সহজ রিটার্ন: পণ্য অক্ষত ও সিলযুক্ত অবস্থায় ৭ দিনের মধ্যে সহজ এক্সচেঞ্জ ও রিটার্ন।"
+                    ? "• 7-Day Easy Return: Products   added  7 Enter     :00।"
                     : "• 7-Day Return Guarantee: Returns accepted if package is unopened and intact."}
                 </p>
               </div>
@@ -1150,7 +1150,7 @@ export function ProductDetailClient({
           },
           {
             id: "reviews",
-            label: language === "bn" ? "রিভিউ ও প্রশ্নোত্তর" : "Customer Reviews & Q&A",
+            label: language === "bn" ? "Reviews  Q&A" : "Customer Reviews & Q&A",
             icon: MessageSquare,
             badge: null,
             content: <ProductReviewsQA productId={product.id} />,
@@ -1168,7 +1168,7 @@ export function ProductDetailClient({
                 className={cn(
                   "w-full flex items-center justify-between gap-3 px-5 sm:px-7 py-4.5 text-left transition-all duration-200 group select-none",
                   isOpen
-                    ? "bg-pink-50/20 text-[#e91e63]"
+                    ? "bg-teal-50/60/20 text-[#1D6474]"
                     : "bg-white hover:bg-gray-50/70 text-gray-900"
                 )}
               >
@@ -1177,8 +1177,8 @@ export function ProductDetailClient({
                     className={cn(
                       "h-8 w-8 sm:h-9 sm:w-9 rounded-xl flex items-center justify-center transition-all shrink-0",
                       isOpen
-                        ? "bg-[#e91e63] text-white shadow-xs"
-                        : "bg-gray-100 text-gray-600 group-hover:bg-pink-100/60 group-hover:text-[#e91e63]"
+                        ? "bg-[#1D6474] text-white shadow-xs"
+                        : "bg-gray-100 text-gray-600 group-hover:bg-teal-100/70/60 group-hover:text-[#1D6474]"
                     )}
                   >
                     <Icon className="h-4.5 w-4.5" />
@@ -1186,13 +1186,13 @@ export function ProductDetailClient({
                   <span
                     className={cn(
                       "text-sm sm:text-base font-extrabold tracking-tight truncate",
-                      isOpen ? "text-[#e91e63]" : "text-gray-900 group-hover:text-[#e91e63]"
+                      isOpen ? "text-[#1D6474]" : "text-gray-900 group-hover:text-[#1D6474]"
                     )}
                   >
                     {item.label}
                   </span>
                   {item.badge && (
-                    <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-pink-100/70 text-[#e91e63] border border-pink-200">
+                    <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-100/70/70 text-[#1D6474] border border-teal-200">
                       {item.badge}
                     </span>
                   )}
@@ -1203,7 +1203,7 @@ export function ProductDetailClient({
                     className={cn(
                       "h-7 w-7 rounded-full flex items-center justify-center transition-transform duration-200",
                       isOpen
-                        ? "bg-pink-100 text-[#e91e63] rotate-180"
+                        ? "bg-teal-100/70 text-[#1D6474] rotate-180"
                         : "bg-gray-100 text-gray-400 group-hover:bg-gray-200 group-hover:text-gray-700"
                     )}
                   >
@@ -1213,7 +1213,7 @@ export function ProductDetailClient({
               </button>
 
               {isOpen && (
-                <div className="px-5 sm:px-8 pt-4 pb-6 sm:pb-8 text-base text-text-secondary leading-relaxed border-t border-pink-100/40 bg-white animate-in fade-in-50 duration-200">
+                <div className="px-5 sm:px-8 pt-4 pb-6 sm:pb-8 text-base text-text-secondary leading-relaxed border-t border-teal-100/40 bg-white animate-in fade-in-50 duration-200">
                   {item.content}
                 </div>
               )}
@@ -1228,16 +1228,16 @@ export function ProductDetailClient({
         (keyActives && keyActives.length > 0) ||
         product.routine_step ||
         (productTags && productTags.length > 0)) && (
-        <div className="rounded-3xl border border-pink-100 bg-linear-to-b from-pink-50/40 via-white to-purple-50/20 p-5 sm:p-7 shadow-xs space-y-5">
-          <div className="flex items-center justify-between border-b border-pink-100/80 pb-3">
+        <div className="rounded-3xl border border-teal-100 bg-linear-to-b from-pink-50/40 via-white to-purple-50/20 p-5 sm:p-7 shadow-xs space-y-5">
+          <div className="flex items-center justify-between border-b border-teal-100/80 pb-3">
             <h3 className="text-sm sm:text-base font-black text-gray-900 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#e91e63]" />
+              <Sparkles className="h-4 w-4 text-[#1D6474]" />
               {language === "bn"
-                ? "বিউটি স্পেসিফিকেশন ও প্রোডাক্ট ট্যাগস"
+                ? "items   Products "
                 : "Beauty Taxonomy Specs & Tags"}
             </h3>
             <span className="text-[11px] font-bold text-gray-400">
-              {language === "bn" ? "পণ্য খুঁজতে ট্যাগ এ ক্লিক করুন" : "Click to explore similar products"}
+              {language === "bn" ? "Products     " : "Click to explore similar products"}
             </span>
           </div>
 
@@ -1247,7 +1247,7 @@ export function ProductDetailClient({
               <div className="rounded-2xl border border-blue-100 bg-white/90 p-4 space-y-2 shadow-2xs">
                 <div className="flex items-center gap-1.5 font-extrabold text-blue-900 text-xs uppercase tracking-wider">
                   <Droplets className="h-3.5 w-3.5 text-blue-600" />
-                  <span>{language === "bn" ? "স্কিন টাইপ / উপযোগী ত্বক" : "Target Skin Types"}</span>
+                  <span>{language === "bn" ? " :00 / Add Cotton" : "Target Skin Types"}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {skinTypes.map((st: string) => (
@@ -1269,7 +1269,7 @@ export function ProductDetailClient({
               <div className="rounded-2xl border border-purple-100 bg-white/90 p-4 space-y-2 shadow-2xs">
                 <div className="flex items-center gap-1.5 font-extrabold text-purple-900 text-xs uppercase tracking-wider">
                   <Sparkles className="h-3.5 w-3.5 text-purple-600" />
-                  <span>{language === "bn" ? "স্কিন কনসার্ন / ত্বকের সমস্যা সমাধান" : "Skin Concerns & Benefits"}</span>
+                  <span>{language === "bn" ? "  / Cotton  " : "Skin Concerns & Benefits"}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {skinConcerns.map((sc: string) => (
@@ -1291,7 +1291,7 @@ export function ProductDetailClient({
               <div className="rounded-2xl border border-emerald-100 bg-white/90 p-4 space-y-2 shadow-2xs">
                 <div className="flex items-center gap-1.5 font-extrabold text-emerald-900 text-xs uppercase tracking-wider">
                   <Zap className="h-3.5 w-3.5 text-emerald-600" />
-                  <span>{language === "bn" ? "মূল উপাদান ও অ্যাক্টিভস" : "Key Active Ingredients"}</span>
+                  <span>{language === "bn" ? "   items" : "Key Active Ingredients"}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {keyActives.map((ka: string) => (
@@ -1310,16 +1310,16 @@ export function ProductDetailClient({
 
             {/* Routine Step & Country Details */}
             {(product.routine_step || originCountry) && (
-              <div className="rounded-2xl border border-pink-100 bg-white/90 p-4 space-y-2 shadow-2xs">
+              <div className="rounded-2xl border border-teal-100 bg-white/90 p-4 space-y-2 shadow-2xs">
                 <div className="flex items-center gap-1.5 font-extrabold text-pink-900 text-xs uppercase tracking-wider">
-                  <Tag className="h-3.5 w-3.5 text-[#e91e63]" />
-                  <span>{language === "bn" ? "স্কিনকেয়ার রুটিন ও অরিজিন" : "Routine Step & Origin"}</span>
+                  <Tag className="h-3.5 w-3.5 text-[#1D6474]" />
+                  <span>{language === "bn" ? "Casual Wear items  " : "Routine Step & Origin"}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {product.routine_step && (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-pink-50 border border-pink-200 px-3 py-1 text-xs font-bold text-[#e91e63]">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-50/60 border border-teal-200 px-3 py-1 text-xs font-bold text-[#1D6474]">
                       <span>✨</span>
-                      <span>{language === "bn" ? `ধাপ: ${product.routine_step}` : `Step: ${product.routine_step}`}</span>
+                      <span>{language === "bn" ? `: ${product.routine_step}` : `Step: ${product.routine_step}`}</span>
                     </span>
                   )}
                   {originCountry && (
@@ -1338,19 +1338,19 @@ export function ProductDetailClient({
 
           {/* Product Tags */}
           {productTags && productTags.length > 0 && (
-            <div className="pt-2 border-t border-pink-100/60">
+            <div className="pt-2 border-t border-teal-100/60">
               <div className="flex items-center gap-1.5 mb-2.5 font-extrabold text-gray-800 text-xs uppercase tracking-wider">
-                <Tag className="h-3.5 w-3.5 text-[#e91e63]" />
-                <span>{language === "bn" ? "প্রোডাক্ট ট্যাগস (#Tags)" : "Related Product Tags"}</span>
+                <Tag className="h-3.5 w-3.5 text-[#1D6474]" />
+                <span>{language === "bn" ? "Products  (#Tags)" : "Related Product Tags"}</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {productTags.map((tag: any) => (
                   <Link
                     key={tag.id || tag.slug || tag.name}
                     href={`/products?tag=${encodeURIComponent(tag.slug || tag.name)}`}
-                    className="inline-flex items-center gap-1 rounded-full bg-gray-100/80 border border-gray-200 hover:border-[#e91e63] hover:bg-pink-50 hover:text-[#e91e63] px-3 py-1 text-xs font-bold text-gray-700 transition-all shadow-2xs"
+                    className="inline-flex items-center gap-1 rounded-full bg-gray-100/80 border border-gray-200 hover:border-[#1D6474] hover:bg-teal-50/60 hover:text-[#1D6474] px-3 py-1 text-xs font-bold text-gray-700 transition-all shadow-2xs"
                   >
-                    <span className="text-[#e91e63] font-black">#</span>
+                    <span className="text-[#1D6474] font-black">#</span>
                     <span>{tag.name}</span>
                   </Link>
                 ))}
@@ -1365,11 +1365,11 @@ export function ProductDetailClient({
         <div className="space-y-5 pt-4">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <h3 className="text-base sm:text-lg font-black uppercase tracking-wider text-text">
-              {language === "bn" ? "আপনার আরও পছন্দ হতে পারে" : "You May Also Love"}
+              {language === "bn" ? "your more   " : "You May Also Love"}
             </h3>
             <Link
               href="/products"
-              className="text-xs font-extrabold text-[#e91e63] hover:underline"
+              className="text-xs font-extrabold text-[#1D6474] hover:underline"
             >
               {t("home", "viewAll")} &rarr;
             </Link>
@@ -1398,7 +1398,7 @@ export function ProductDetailClient({
             <div className="flex-1 min-w-0">
               <h4 className="text-xs font-black text-text truncate">{product.name}</h4>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-black text-pink-600">
+                <span className="text-sm font-black text-[#1D6474]">
                   {formatPriceBn(effectivePrice)}
                 </span>
                 {selectedVariant && (
@@ -1423,7 +1423,7 @@ export function ProductDetailClient({
                 disabled={isOutOfStock}
                 onClick={handleBuyNow}
                 size="sm"
-                className="rounded-xl h-10 px-4 bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-black shadow-md active:scale-95"
+                className="rounded-xl h-10 px-4 bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-black shadow-md active:scale-95"
               >
                 {t("product", "buyNow")}
               </Button>

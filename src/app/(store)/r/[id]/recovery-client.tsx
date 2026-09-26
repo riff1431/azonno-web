@@ -99,9 +99,9 @@ export function CartRecoveryClient({ lead }: CartRecoveryClientProps) {
             <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center mx-auto text-rose-600 shadow-inner">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 font-bengali">আপনার কার্ট লোড করা হচ্ছে...</h2>
+            <h2 className="text-xl font-bold text-gray-900 font-bengali">your    ...</h2>
             <p className="text-sm text-gray-500 font-bengali">
-              সংরক্ষিত প্রোডাক্টগুলো আপনার কার্টে যোগ করে সরাসরি চেকআউট পেজে নিয়ে যাওয়া হচ্ছে।
+               Products your  Add       ।
             </p>
           </div>
         )}
@@ -113,20 +113,20 @@ export function CartRecoveryClient({ lead }: CartRecoveryClientProps) {
             </div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-rose-500" />
-              কার্ট রিকভারি সফল!
+                !
             </div>
             <h2 className="text-xl font-bold text-gray-900 font-bengali">
-              স্বাগতম {lead?.customer_name && lead.customer_name !== "Guest Customer" ? lead.customer_name : ""}! 🌸
+               {lead?.customer_name && lead.customer_name !== "Guest Customer" ? lead.customer_name : ""}! 🌸
             </h2>
             <p className="text-sm text-gray-600 font-bengali">
-              আপনার পছন্দের {lead?.cart_items?.length || 1} টি আইটেম কার্টে যোগ করা হয়েছে। চেকআউট পেজে নিয়ে যাওয়া হচ্ছে...
+              your desired {lead?.cart_items?.length || 1} items   Add  successfully।     ...
             </p>
             <div className="pt-2">
               <Link
                 href="/checkout?recovered=1"
                 className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm transition-all shadow-md hover:shadow-lg"
               >
-                এখনই চেকআউটে যান <ArrowRight className="w-4 h-4" />
+                   <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
@@ -137,16 +137,16 @@ export function CartRecoveryClient({ lead }: CartRecoveryClientProps) {
             <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto text-amber-600">
               <ShoppingBag className="w-8 h-8" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 font-bengali">চেকআউট পেজে রিডাইরেক্ট করা হচ্ছে...</h2>
+            <h2 className="text-xl font-bold text-gray-900 font-bengali">    ...</h2>
             <p className="text-sm text-gray-500 font-bengali">
-              লিংকটি মেয়াদোত্তীর্ণ বা ইতোমধ্যেই কনফার্ম করা হয়েছে। আপনাকে চেকআউট পেজে রিডাইরেক্ট করা হচ্ছে।
+              Linkitems      successfully।      ।
             </p>
             <div className="pt-2">
               <Link
                 href="/checkout"
                 className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-medium text-sm transition-all"
               >
-                চেকআউট পেজ <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

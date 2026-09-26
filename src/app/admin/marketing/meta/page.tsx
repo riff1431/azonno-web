@@ -247,13 +247,13 @@ export default function AdminMetaSettingsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4 bg-white p-6 rounded-3xl shadow-card">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
-            <span className="text-[11px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200 uppercase">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#1D6474] animate-pulse" />
+            <span className="text-[11px] font-bold text-[#164E63] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200 uppercase">
               Omnichannel Tracking Hub
             </span>
           </div>
           <h1 className="text-2xl font-black text-gray-900 mt-1 flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-[#e91e63]" />
+            <Sparkles className="h-6 w-6 text-[#1D6474]" />
             Meta &amp; TikTok Pixel, CAPI &amp; DataLayer Settings
           </h1>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -264,7 +264,7 @@ export default function AdminMetaSettingsPage() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
+          className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
         >
           <Save className="h-3.5 w-3.5 mr-1.5" />
           {saving ? "Saving Changes..." : "Save Configuration"}
@@ -292,7 +292,7 @@ export default function AdminMetaSettingsPage() {
           onClick={() => setActiveTab("meta")}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 ${
             activeTab === "meta"
-              ? "border-[#e91e63] text-[#e91e63]"
+              ? "border-[#1D6474] text-[#1D6474]"
               : "border-transparent text-gray-500 hover:text-gray-900"
           }`}
         >
@@ -303,7 +303,7 @@ export default function AdminMetaSettingsPage() {
           onClick={() => setActiveTab("tiktok")}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 ${
             activeTab === "tiktok"
-              ? "border-[#e91e63] text-[#e91e63]"
+              ? "border-[#1D6474] text-[#1D6474]"
               : "border-transparent text-gray-500 hover:text-gray-900"
           }`}
         >
@@ -314,22 +314,22 @@ export default function AdminMetaSettingsPage() {
           onClick={() => setActiveTab("purchase_emq")}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === "purchase_emq"
-              ? "border-[#e91e63] text-[#e91e63]"
+              ? "border-[#1D6474] text-[#1D6474]"
               : "border-transparent text-gray-500 hover:text-gray-900"
           }`}
         >
-          <Target className="inline h-4 w-4 text-[#e91e63]" />
+          <Target className="inline h-4 w-4 text-[#1D6474]" />
           <span>Purchase Event Control</span>
         </button>
         <button
           onClick={() => setActiveTab("live_stream")}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === "live_stream"
-              ? "border-[#e91e63] text-[#e91e63]"
+              ? "border-[#1D6474] text-[#1D6474]"
               : "border-transparent text-gray-500 hover:text-gray-900"
           }`}
         >
-          <Activity className="inline h-4 w-4 text-[#e91e63]" />
+          <Activity className="inline h-4 w-4 text-[#1D6474]" />
           <span>Live Payload Stream &amp; Inspector</span>
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse ml-1" />
         </button>
@@ -337,7 +337,7 @@ export default function AdminMetaSettingsPage() {
           onClick={() => setActiveTab("gtm")}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 ${
             activeTab === "gtm"
-              ? "border-[#e91e63] text-[#e91e63]"
+              ? "border-[#1D6474] text-[#1D6474]"
               : "border-transparent text-gray-500 hover:text-gray-900"
           }`}
         >
@@ -348,7 +348,7 @@ export default function AdminMetaSettingsPage() {
           onClick={() => setActiveTab("catalog")}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 ${
             activeTab === "catalog"
-              ? "border-[#e91e63] text-[#e91e63]"
+              ? "border-[#1D6474] text-[#1D6474]"
               : "border-transparent text-gray-500 hover:text-gray-900"
           }`}
         >
@@ -365,7 +365,7 @@ export default function AdminMetaSettingsPage() {
               <div className="border-b border-border pb-3 flex items-center justify-between">
                 <div>
                   <h2 className="text-sm font-bold text-text flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#e91e63]" />
+                    <Sparkles className="h-4 w-4 text-[#1D6474]" />
                     Facebook Pixel &amp; Server-Side CAPI Credentials
                   </h2>
                   <p className="text-xs text-text-secondary mt-0.5">
@@ -377,7 +377,7 @@ export default function AdminMetaSettingsPage() {
                   href="https://business.facebook.com/events_manager2"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[11px] font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+                  className="text-[11px] font-bold text-[#1D6474] hover:underline flex items-center gap-1"
                 >
                   Meta Events Manager <ExternalLink className="h-3 w-3" />
                 </a>
@@ -449,7 +449,7 @@ export default function AdminMetaSettingsPage() {
                     type="checkbox"
                     checked={formData.meta_capi_enabled}
                     onChange={(e) => setFormData({ ...formData, meta_capi_enabled: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded border-border text-[#1D6474] focus:ring-[#1D6474]"
                   />
                 </label>
 
@@ -468,7 +468,7 @@ export default function AdminMetaSettingsPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, meta_advanced_matching_enabled: e.target.checked })
                     }
-                    className="h-4 w-4 rounded border-border text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded border-border text-[#1D6474] focus:ring-[#1D6474]"
                   />
                 </label>
               </div>
@@ -529,7 +529,7 @@ export default function AdminMetaSettingsPage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className="h-3.5 w-3.5 mr-1.5" />
                 {saving ? "Saving Changes..." : "Save Meta Settings"}
@@ -559,7 +559,7 @@ export default function AdminMetaSettingsPage() {
                   href="https://ads.tiktok.com/marketing_api/docs?id=1739584855420929"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[11px] font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+                  className="text-[11px] font-bold text-[#1D6474] hover:underline flex items-center gap-1"
                 >
                   TikTok Events API Docs <ExternalLink className="h-3 w-3" />
                 </a>
@@ -630,7 +630,7 @@ export default function AdminMetaSettingsPage() {
                     type="checkbox"
                     checked={tiktokData.tiktok_capi_enabled}
                     onChange={(e) => setTiktokData({ ...tiktokData, tiktok_capi_enabled: e.target.checked })}
-                    className="h-4 w-4 rounded border-border text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded border-border text-[#1D6474] focus:ring-[#1D6474]"
                   />
                 </label>
 
@@ -649,7 +649,7 @@ export default function AdminMetaSettingsPage() {
                     onChange={(e) =>
                       setTiktokData({ ...tiktokData, tiktok_advanced_matching_enabled: e.target.checked })
                     }
-                    className="h-4 w-4 rounded border-border text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded border-border text-[#1D6474] focus:ring-[#1D6474]"
                   />
                 </label>
               </div>
@@ -710,7 +710,7 @@ export default function AdminMetaSettingsPage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className="h-3.5 w-3.5 mr-1.5" />
                 {saving ? "Saving Changes..." : "Save TikTok Settings"}
@@ -728,7 +728,7 @@ export default function AdminMetaSettingsPage() {
             <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-5">
               <div className="border-b border-border pb-3">
                 <h2 className="text-sm font-bold text-text flex items-center gap-2">
-                  <Target className="h-4 w-4 text-[#e91e63]" />
+                  <Target className="h-4 w-4 text-[#1D6474]" />
                   Purchase Event Dispatch Control &amp; Optimization
                 </h2>
                 <p className="text-xs text-text-secondary mt-0.5">
@@ -745,7 +745,7 @@ export default function AdminMetaSettingsPage() {
                   <label
                     className={`cursor-pointer rounded-2xl border p-4 transition-all flex items-start gap-3 ${
                       formData.purchase_tracking_mode === "status_gated"
-                        ? "border-[#e91e63] bg-pink-50/40 ring-1 ring-[#e91e63]"
+                        ? "border-[#1D6474] bg-teal-50/60/40 ring-1 ring-[#1D6474]"
                         : "border-border bg-white hover:border-gray-300"
                     }`}
                   >
@@ -755,14 +755,14 @@ export default function AdminMetaSettingsPage() {
                       value="status_gated"
                       checked={formData.purchase_tracking_mode === "status_gated"}
                       onChange={() => setFormData({ ...formData, purchase_tracking_mode: "status_gated" })}
-                      className="mt-1 text-[#e91e63] focus:ring-[#e91e63]"
+                      className="mt-1 text-[#1D6474] focus:ring-[#1D6474]"
                     />
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-gray-900">
                           Order Status-Gated (Verified CAPI)
                         </span>
-                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-[#e91e63] text-white">
+                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-[#1D6474] text-white">
                           Recommended
                         </span>
                       </div>
@@ -775,7 +775,7 @@ export default function AdminMetaSettingsPage() {
                   <label
                     className={`cursor-pointer rounded-2xl border p-4 transition-all flex items-start gap-3 ${
                       formData.purchase_tracking_mode === "immediate"
-                        ? "border-[#e91e63] bg-pink-50/40 ring-1 ring-[#e91e63]"
+                        ? "border-[#1D6474] bg-teal-50/60/40 ring-1 ring-[#1D6474]"
                         : "border-border bg-white hover:border-gray-300"
                     }`}
                   >
@@ -785,7 +785,7 @@ export default function AdminMetaSettingsPage() {
                       value="immediate"
                       checked={formData.purchase_tracking_mode === "immediate"}
                       onChange={() => setFormData({ ...formData, purchase_tracking_mode: "immediate" })}
-                      className="mt-1 text-[#e91e63] focus:ring-[#e91e63]"
+                      className="mt-1 text-[#1D6474] focus:ring-[#1D6474]"
                     />
                     <div>
                       <div className="text-xs font-bold text-gray-900">
@@ -801,7 +801,7 @@ export default function AdminMetaSettingsPage() {
 
               {/* Status Trigger Dropdown */}
               {formData.purchase_tracking_mode === "status_gated" && (
-                <div className="rounded-2xl border border-pink-200 bg-pink-50/30 p-4 space-y-4">
+                <div className="rounded-2xl border border-teal-200 bg-teal-50/60/30 p-4 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-900 mb-1">
@@ -810,7 +810,7 @@ export default function AdminMetaSettingsPage() {
                       <select
                         value={formData.purchase_trigger_status || "completed"}
                         onChange={(e) => setFormData({ ...formData, purchase_trigger_status: e.target.value as any })}
-                        className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#e91e63]"
+                        className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1D6474]"
                       >
                         <option value="completed">Completed / Delivered (Recommended for COD)</option>
                         <option value="delivered">Delivered Only</option>
@@ -833,7 +833,7 @@ export default function AdminMetaSettingsPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, suppress_browser_pixel_on_status_gated: e.target.checked })
                           }
-                          className="h-4 w-4 rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                          className="h-4 w-4 rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                         />
                         <span className="text-xs text-gray-800 font-semibold">
                           Suppress browser Purchase pixel on checkout thank-you page
@@ -853,7 +853,7 @@ export default function AdminMetaSettingsPage() {
                   <label className="flex items-center justify-between">
                     <div>
                       <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                        <Sparkles className="h-3.5 w-3.5 text-[#e91e63]" />
+                        <Sparkles className="h-3.5 w-3.5 text-[#1D6474]" />
                         Meta CAPI Purchase Dispatch
                       </span>
                       <p className="text-[11px] text-gray-500 mt-0.5">
@@ -866,7 +866,7 @@ export default function AdminMetaSettingsPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, enable_meta_capi_purchase: e.target.checked })
                       }
-                      className="h-4 w-4 rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                      className="h-4 w-4 rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                     />
                   </label>
                 </div>
@@ -875,7 +875,7 @@ export default function AdminMetaSettingsPage() {
                   <label className="flex items-center justify-between">
                     <div>
                       <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                        <Video className="h-3.5 w-3.5 text-pink-600" />
+                        <Video className="h-3.5 w-3.5 text-[#1D6474]" />
                         TikTok Events API CompletePayment
                       </span>
                       <p className="text-[11px] text-gray-500 mt-0.5">
@@ -888,7 +888,7 @@ export default function AdminMetaSettingsPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, enable_tiktok_capi_purchase: e.target.checked })
                       }
-                      className="h-4 w-4 rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                      className="h-4 w-4 rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                     />
                   </label>
                 </div>
@@ -899,7 +899,7 @@ export default function AdminMetaSettingsPage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className="h-3.5 w-3.5 mr-1.5" />
                 {saving ? "Saving Changes..." : "Save Purchase & Tracking Settings"}
@@ -988,7 +988,7 @@ export default function AdminMetaSettingsPage() {
             <Button
               type="submit"
               disabled={saving}
-              className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+              className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
             >
               <Save className="h-3.5 w-3.5 mr-1.5" />
               {saving ? "Saving Changes..." : "Save GTM Settings"}
@@ -1021,7 +1021,7 @@ export default function AdminMetaSettingsPage() {
               <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
                 <div className="flex items-center justify-between text-xs font-bold text-gray-800">
                   <span className="flex items-center gap-1">
-                    <FileCode className="h-3.5 w-3.5 text-[#e91e63]" />
+                    <FileCode className="h-3.5 w-3.5 text-[#1D6474]" />
                     Meta XML Feed (Auto-Sync)
                   </span>
                   <a
@@ -1091,14 +1091,14 @@ export default function AdminMetaSettingsPage() {
             <div className="border-b border-border pb-3 flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-bold text-text flex items-center gap-2">
-                  <Video className="h-4 w-4 text-pink-600" />
+                  <Video className="h-4 w-4 text-[#1D6474]" />
                   TikTok Product Catalog Feed (TikTok Shop &amp; Ads Manager)
                 </h2>
                 <p className="text-xs text-text-secondary mt-0.5">
                   Formatted for TikTok Catalog Manager, Video Shopping Ads, and Dynamic Showcase Ads (DSA).
                 </p>
               </div>
-              <span className="text-[10px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200 uppercase">
+              <span className="text-[10px] font-bold text-[#164E63] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200 uppercase">
                 XML &amp; CSV Supported
               </span>
             </div>
@@ -1107,14 +1107,14 @@ export default function AdminMetaSettingsPage() {
               <div className="space-y-1.5 bg-gray-50/70 p-3 rounded-2xl border border-gray-200">
                 <div className="flex items-center justify-between text-xs font-bold text-gray-800">
                   <span className="flex items-center gap-1">
-                    <FileCode className="h-3.5 w-3.5 text-pink-600" />
+                    <FileCode className="h-3.5 w-3.5 text-[#1D6474]" />
                     TikTok XML Feed (Auto-Sync)
                   </span>
                   <a
                     href="/api/feed/tiktok"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[11px] text-pink-600 hover:underline flex items-center gap-1"
+                    className="text-[11px] text-[#1D6474] hover:underline flex items-center gap-1"
                   >
                     <ExternalLink className="h-3 w-3" /> View
                   </a>

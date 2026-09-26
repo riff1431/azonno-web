@@ -125,7 +125,7 @@ export async function getInvoiceSettings(): Promise<InvoiceSettings> {
   const settings = await getSettingsByGroup("invoice");
   return {
     invoice_logo_url: settings.invoice_logo_url || "",
-    invoice_brand_name: settings.invoice_brand_name || "BLUSH & BUDGET",
+    invoice_brand_name: settings.invoice_brand_name || "AZONNO",
     invoice_tagline: settings.invoice_tagline || "AUTHENTIC BEAUTY & SKINCARE ESSENTIALS",
     invoice_address: settings.invoice_address || "House 42, Road 11, Banani, Dhaka-1213, Bangladesh",
     invoice_phone: settings.invoice_phone || "+880 1700-000000",
@@ -137,7 +137,7 @@ export async function getInvoiceSettings(): Promise<InvoiceSettings> {
       settings.invoice_title && settings.invoice_title !== "TAX INVOICE"
         ? settings.invoice_title
         : "INVOICE",
-    invoice_accent_color: settings.invoice_accent_color || "#e91e63",
+    invoice_accent_color: settings.invoice_accent_color || "#1D6474",
     invoice_footer_notes:
       settings.invoice_footer_notes ||
       "Thank you for choosing us! All products are 100% genuine and imported directly from verified authorized distributors. For any warranty claims or return assistance, please keep this invoice handy.",
@@ -148,7 +148,7 @@ export async function getInvoiceSettings(): Promise<InvoiceSettings> {
     invoice_show_paid_stamp: settings.invoice_show_paid_stamp !== false,
 
     thermal_logo_url: settings.thermal_logo_url || "",
-    thermal_header_title: settings.thermal_header_title || "BLUSH & BUDGET • DISPATCH",
+    thermal_header_title: settings.thermal_header_title || "AZONNO • DISPATCH",
     thermal_return_address: settings.thermal_return_address || "House 42, Road 11, Banani, Dhaka",
     thermal_sender_phone: settings.thermal_sender_phone || "+880 1700-000000",
     thermal_show_item_breakdown: settings.thermal_show_item_breakdown !== false,
@@ -247,7 +247,7 @@ const DEFAULT_THEME_SETTINGS: ThemeSettings = {
   showDiscountBadge: true,
   showStockBadge: true,
   footerTagline: "Authentic Korean & UK Skincare & Cosmetics in Bangladesh",
-  copyrightText: `© ${new Date().getFullYear()} Blush & Budget. Authentic Skincare & Cosmetics Bangladesh.`,
+  copyrightText: `© ${new Date().getFullYear()} Azonno. Authentic Skincare & Cosmetics Bangladesh.`,
 };
 
 export async function getThemeSettings(): Promise<ThemeSettings> {

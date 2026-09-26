@@ -80,10 +80,10 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
   return (
     <div className="space-y-6 max-w-6xl pb-20">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-3xl border border-pink-100/80 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-3xl border border-teal-100/80 shadow-xs">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="p-2 bg-pink-50 text-[#e91e63] rounded-xl">
+            <span className="p-2 bg-teal-50/60 text-[#1D6474] rounded-xl">
               <Code2 className="h-5 w-5" />
             </span>
             <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">
@@ -99,7 +99,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-[#e91e63] hover:bg-pink-700 text-white font-bold rounded-2xl px-6 py-2.5 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold rounded-2xl px-6 py-2.5 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
           >
             {isSaving ? (
               <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -140,7 +140,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
                 onChange={(e) => setForm({ ...form, is_enabled: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e91e63]"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1D6474]"></div>
             </label>
             <div>
               <span className="text-xs font-black text-gray-900 flex items-center gap-1.5">
@@ -167,7 +167,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               onClick={() => setActiveTab("verification")}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeTab === "verification"
-                  ? "bg-white text-[#e91e63] shadow-xs"
+                  ? "bg-white text-[#1D6474] shadow-xs"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -178,7 +178,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               onClick={() => setActiveTab("head")}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeTab === "head"
-                  ? "bg-white text-[#e91e63] shadow-xs"
+                  ? "bg-white text-[#1D6474] shadow-xs"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -189,7 +189,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               onClick={() => setActiveTab("body")}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeTab === "body"
-                  ? "bg-white text-[#e91e63] shadow-xs"
+                  ? "bg-white text-[#1D6474] shadow-xs"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -200,7 +200,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               onClick={() => setActiveTab("footer")}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeTab === "footer"
-                  ? "bg-white text-[#e91e63] shadow-xs"
+                  ? "bg-white text-[#1D6474] shadow-xs"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -224,21 +224,21 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
         {/* TAB 1: Quick Domain Verification Tokens */}
         {activeTab === "verification" && (
           <div className="pt-6 space-y-6">
-            <div className="p-4 rounded-2xl bg-linear-to-r from-pink-50/70 to-purple-50/70 border border-pink-100 flex items-start gap-3">
-              <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-linear-to-r from-pink-50/70 to-purple-50/70 border border-teal-100 flex items-start gap-3">
+              <Sparkles className="h-5 w-5 text-[#1D6474] shrink-0 mt-0.5" />
               <div className="text-xs space-y-1">
                 <span className="font-bold text-gray-900">
                   100% Reliable HTML Domain Verification:
                 </span>
                 <p className="text-gray-600 leading-relaxed">
-                  Enter your verification codes or tokens below. The system automatically creates and outputs the exact <code className="bg-white/80 px-1.5 py-0.5 rounded text-pink-700 font-mono text-[11px]">&lt;meta&gt;</code> tags into the storefront <code className="bg-white/80 px-1.5 py-0.5 rounded text-pink-700 font-mono text-[11px]">&lt;head&gt;</code> for Google, Meta, Pinterest, and Bing.
+                  Enter your verification codes or tokens below. The system automatically creates and outputs the exact <code className="bg-white/80 px-1.5 py-0.5 rounded text-[#164E63] font-mono text-[11px]">&lt;meta&gt;</code> tags into the storefront <code className="bg-white/80 px-1.5 py-0.5 rounded text-[#164E63] font-mono text-[11px]">&lt;head&gt;</code> for Google, Meta, Pinterest, and Bing.
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Google Search Console */}
-              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-pink-300 transition-all shadow-xs space-y-3">
+              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-teal-300 transition-all shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">
@@ -266,7 +266,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
                       setForm({ ...form, google_site_verification: val });
                     }}
                     placeholder='e.g. 4zX7k_AbCdEfGhIjKlMnOpQrStUvWxYz12345 or <meta...>'
-                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden"
+                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden"
                   />
                   <p className="text-[10px] text-gray-400 mt-1">
                     Outputs: <code className="text-gray-600 font-mono">&lt;meta name=&quot;google-site-verification&quot; content=&quot;...&quot; /&gt;</code>
@@ -275,7 +275,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               </div>
 
               {/* Meta / Facebook Domain Verification */}
-              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-pink-300 transition-all shadow-xs space-y-3">
+              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-teal-300 transition-all shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs">
@@ -302,7 +302,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
                       setForm({ ...form, facebook_domain_verification: val });
                     }}
                     placeholder='e.g. 9abc123def456ghi789jkl012 or <meta...>'
-                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden"
+                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden"
                   />
                   <p className="text-[10px] text-gray-400 mt-1">
                     Outputs: <code className="text-gray-600 font-mono">&lt;meta name=&quot;facebook-domain-verification&quot; content=&quot;...&quot; /&gt;</code>
@@ -311,7 +311,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               </div>
 
               {/* Pinterest Claim Tag */}
-              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-pink-300 transition-all shadow-xs space-y-3">
+              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-teal-300 transition-all shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold text-xs">
@@ -338,7 +338,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
                       setForm({ ...form, pinterest_verification: val });
                     }}
                     placeholder='e.g. 6a1b2c3d4e5f6a7b8c9d0e or <meta...>'
-                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden"
+                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden"
                   />
                   <p className="text-[10px] text-gray-400 mt-1">
                     Outputs: <code className="text-gray-600 font-mono">&lt;meta name=&quot;p:domain_verify&quot; content=&quot;...&quot; /&gt;</code>
@@ -347,7 +347,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               </div>
 
               {/* Bing Webmaster Tools */}
-              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-pink-300 transition-all shadow-xs space-y-3">
+              <div className="p-5 rounded-3xl bg-white border border-gray-200 hover:border-teal-300 transition-all shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs">
@@ -374,7 +374,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
                       setForm({ ...form, bing_site_verification: val });
                     }}
                     placeholder='e.g. 89BC1A23D4E56F78901234567890ABCD or <meta...>'
-                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden"
+                    className="w-full text-xs font-mono px-3.5 py-2.5 rounded-xl border border-gray-200 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden"
                   />
                   <p className="text-[10px] text-gray-400 mt-1">
                     Outputs: <code className="text-gray-600 font-mono">&lt;meta name=&quot;msvalidate.01&quot; content=&quot;...&quot; /&gt;</code>
@@ -391,11 +391,11 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-                  <FileCode2 className="h-4 w-4 text-[#e91e63]" />
+                  <FileCode2 className="h-4 w-4 text-[#1D6474]" />
                   Header Scripts (&lt;head&gt;...&lt;/head&gt;)
                 </h3>
                 <p className="text-[11px] text-gray-500">
-                  Injected directly inside the HTML <code className="font-mono text-pink-700">&lt;head&gt;</code> tag on every page. Ideal for meta tags, tracking pixels, Google Tag Manager head, or custom styles.
+                  Injected directly inside the HTML <code className="font-mono text-[#164E63]">&lt;head&gt;</code> tag on every page. Ideal for meta tags, tracking pixels, Google Tag Manager head, or custom styles.
                 </p>
               </div>
 
@@ -449,7 +449,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               value={form.header_scripts}
               onChange={(e) => setForm({ ...form, header_scripts: e.target.value })}
               placeholder="<!-- Paste your custom HTML, <meta>, <script>, or <style> tags here -->"
-              className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden leading-relaxed shadow-inner"
+              className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden leading-relaxed shadow-inner"
               spellCheck={false}
             />
           </div>
@@ -461,11 +461,11 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-[#e91e63]" />
+                  <Layers className="h-4 w-4 text-[#1D6474]" />
                   Body Top Scripts (Immediately after &lt;body&gt;)
                 </h3>
                 <p className="text-[11px] text-gray-500">
-                  Injected immediately after the opening <code className="font-mono text-pink-700">&lt;body&gt;</code> tag. Primarily required for Google Tag Manager &lt;noscript&gt; fallback iframe.
+                  Injected immediately after the opening <code className="font-mono text-[#164E63]">&lt;body&gt;</code> tag. Primarily required for Google Tag Manager &lt;noscript&gt; fallback iframe.
                 </p>
               </div>
 
@@ -492,7 +492,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               value={form.body_top_scripts}
               onChange={(e) => setForm({ ...form, body_top_scripts: e.target.value })}
               placeholder="<!-- e.g. <noscript><iframe src='https://www.googletagmanager.com/ns.html?id=GTM-XXXXX' ...></iframe></noscript> -->"
-              className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden leading-relaxed shadow-inner"
+              className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden leading-relaxed shadow-inner"
               spellCheck={false}
             />
           </div>
@@ -504,11 +504,11 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-                  <MessageSquare className="h-4 w-4 text-[#e91e63]" />
+                  <MessageSquare className="h-4 w-4 text-[#1D6474]" />
                   Footer Scripts (Before &lt;/body&gt;)
                 </h3>
                 <p className="text-[11px] text-gray-500">
-                  Injected right before the closing <code className="font-mono text-pink-700">&lt;/body&gt;</code> tag. Perfect for Live Chat widgets (Tawk.to, Crisp), WhatsApp widgets, and third-party conversion widgets.
+                  Injected right before the closing <code className="font-mono text-[#164E63]">&lt;/body&gt;</code> tag. Perfect for Live Chat widgets (Tawk.to, Crisp), WhatsApp widgets, and third-party conversion widgets.
                 </p>
               </div>
 
@@ -548,7 +548,7 @@ export function CustomScriptsClient({ initialSettings }: CustomScriptsClientProp
               value={form.footer_scripts}
               onChange={(e) => setForm({ ...form, footer_scripts: e.target.value })}
               placeholder="<!-- Paste your live chat widget, tracking code or custom footer scripts here -->"
-              className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden leading-relaxed shadow-inner"
+              className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden leading-relaxed shadow-inner"
               spellCheck={false}
             />
           </div>

@@ -54,12 +54,12 @@ export default function WishlistPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pb-4 bg-white p-5 rounded-2xl border border-gray-200 shadow-xs">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2">
-            <Heart className="h-6 w-6 text-[#e91e63] fill-[#e91e63]" />
+            <Heart className="h-6 w-6 text-[#1D6474] fill-[#1D6474]" />
             {t("wishlist", "title")}
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
             {language === "bn"
-              ? `${toBn(wishlist.length)} টি পণ্য আপনার পছন্দের তালিকায় সংরক্ষিত রয়েছে।`
+              ? `${toBn(wishlist.length)} items Products your desired   ।`
               : `${wishlist.length} item${wishlist.length === 1 ? "" : "s"} saved for your beauty routine.`}
           </p>
         </div>
@@ -72,7 +72,7 @@ export default function WishlistPage() {
             className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 self-start sm:self-auto rounded-xl font-bold"
           >
             <Trash2 className="h-3.5 w-3.5 mr-1" />
-            {language === "bn" ? "তালিকা মুছুন" : "Clear All Wishlist"}
+            {language === "bn" ? " Delete" : "Clear All Wishlist"}
           </Button>
         )}
       </div>
@@ -80,7 +80,7 @@ export default function WishlistPage() {
       {/* Wishlist Grid */}
       {wishlist.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-gray-200 bg-white p-12 sm:p-16 text-center space-y-4 shadow-xs">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-50 text-[#e91e63]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-50/60 text-[#1D6474]">
             <Heart className="h-8 w-8 stroke-[1.5]" />
           </div>
           <div className="space-y-1">
@@ -90,7 +90,7 @@ export default function WishlistPage() {
             </p>
           </div>
           <Link href="/products" className="inline-block pt-2">
-            <Button className="rounded-xl text-xs font-black px-6 h-11 bg-[#e91e63] hover:bg-pink-600 text-white shadow-md">
+            <Button className="rounded-xl text-xs font-black px-6 h-11 bg-[#1D6474] hover:bg-[#164E63] text-white shadow-md">
               {t("wishlist", "exploreProducts")}
               <ArrowRight className="h-4 w-4 ml-1.5" />
             </Button>
@@ -107,7 +107,7 @@ export default function WishlistPage() {
             return (
               <div
                 key={item.id}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xs transition-all duration-200 hover:shadow-lg hover:border-pink-300"
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xs transition-all duration-200 hover:shadow-lg hover:border-teal-300"
               >
                 {/* Remove button */}
                 <button
@@ -120,7 +120,7 @@ export default function WishlistPage() {
 
                 {/* Discount Badge */}
                 {discountPercent && (
-                  <div className="absolute left-2 top-2 z-10 rounded-md bg-[#e91e63] px-1.5 py-0.5 text-[10px] font-black text-white shadow-xs">
+                  <div className="absolute left-2 top-2 z-10 rounded-md bg-[#1D6474] px-1.5 py-0.5 text-[10px] font-black text-white shadow-xs">
                     -{toBn(discountPercent)}% {t("product", "off")}
                   </div>
                 )}
@@ -144,13 +144,13 @@ export default function WishlistPage() {
                 {/* Content */}
                 <div className="flex flex-1 flex-col p-3.5 sm:p-4">
                   {item.brand_name && (
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#e91e63]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#1D6474]">
                       {item.brand_name}
                     </span>
                   )}
                   <Link
                     href={`/products/${item.slug}`}
-                    className="mt-0.5 block text-[11.5px] sm:text-[13px] md:text-sm font-semibold text-gray-900 hover:text-[#e91e63] transition-colors leading-snug"
+                    className="mt-0.5 block text-[11.5px] sm:text-[13px] md:text-sm font-semibold text-gray-900 hover:text-[#1D6474] transition-colors leading-snug"
                   >
                     {item.name}
                   </Link>
@@ -185,7 +185,7 @@ export default function WishlistPage() {
                     <button
                       type="button"
                       onClick={() => handleOrderNow(item)}
-                      className="w-full py-2 px-3 rounded-xl text-xs font-black bg-[#e91e63] hover:bg-pink-600 text-white transition-all shadow-xs active:scale-98"
+                      className="w-full py-2 px-3 rounded-xl text-xs font-black bg-[#1D6474] hover:bg-[#164E63] text-white transition-all shadow-xs active:scale-98"
                     >
                       {t("product", "orderNow")}
                     </button>

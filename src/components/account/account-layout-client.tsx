@@ -70,7 +70,7 @@ export default function AccountLayoutClient({
       case "/account/notifications":
         return t("account", "navNotifications");
       case "/account/profile":
-        return language === "bn" ? "প্রোফাইল তথ্য" : "Profile";
+        return language === "bn" ? "Profile Information" : "Profile";
       case "/account/security":
         return t("account", "navSecurity");
       default:
@@ -116,11 +116,11 @@ export default function AccountLayoutClient({
                       className={cn(
                         "flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-xs font-bold transition-all",
                         active
-                          ? "bg-pink-50 text-[#e91e63] shadow-xs scale-102"
+                          ? "bg-teal-50/60 text-[#1D6474] shadow-xs scale-102"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       )}
                     >
-                      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-[#e91e63]" : "text-gray-400")} />
+                      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-[#1D6474]" : "text-gray-400")} />
                       <span>{getTranslatedTitle(item.href, item.title)}</span>
                     </Link>
                   </li>

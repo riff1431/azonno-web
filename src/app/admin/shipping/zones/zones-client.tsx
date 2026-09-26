@@ -40,7 +40,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
     setRegions("");
     setCharge("60");
     setFreeThreshold("2500");
-    setDeliveryTime(isBn ? "২৪-৪৮ ঘণ্টা" : "24-48 Hours");
+    setDeliveryTime(isBn ? "24-48 Hours" : "24-48 Hours");
     setEnabled(true);
     setSfRate("60");
     setPathaoRate("70");
@@ -65,11 +65,11 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError(isBn ? "জোনের নাম প্রদান করুন" : "Please provide a zone name");
+      setError(isBn ? "Zone Name Provide" : "Please provide a zone name");
       return;
     }
     if (!charge || Number(charge) < 0) {
-      setError(isBn ? "সঠিক ডেলিভারি চার্জ প্রদান করুন" : "Please provide a valid delivery charge");
+      setError(isBn ? "Accurate Delivery Charge Provide" : "Please provide a valid delivery charge");
       return;
     }
 
@@ -93,20 +93,20 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
       setZones(updated);
       setShowModal(false);
     } catch (err: any) {
-      setError(err.message || (isBn ? "শিপিং জোন সংরক্ষণ ব্যর্থ হয়েছে" : "Failed to save shipping zone"));
+      setError(err.message || (isBn ? "Shipping Zone Save Failed successfully" : "Failed to save shipping zone"));
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(isBn ? "আপনি কি নিশ্চিত যে এই শিপিং জোনটি মুছে ফেলতে চান?" : "Are you sure you want to delete this shipping zone?")) return;
+    if (!confirm(isBn ? "Are you sure you want to Confirmed   Shipping Zoneitems want to delete?" : "Are you sure you want to delete this shipping zone?")) return;
     setDeletingId(id);
     try {
       const updated = await deleteShippingZone(id);
       setZones(updated);
     } catch (err: any) {
-      alert((isBn ? "জোন মুছতে ব্যর্থ হয়েছে: " : "Failed to delete zone: ") + err.message);
+      alert((isBn ? "Zone  Failed successfully: " : "Failed to delete zone: ") + err.message);
     } finally {
       setDeletingId(null);
     }
@@ -116,10 +116,10 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <ModuleHeader
-          title={isBn ? "ভৌগোলিক শিপিং জোন ও ডেলিভারি চার্জ" : "Geographic Shipping Zones & Delivery Rates"}
+          title={isBn ? " Shipping Zone  Delivery Charge" : "Geographic Shipping Zones & Delivery Rates"}
           description={
             isBn
-              ? "বাংলাদেশের বিভিন্ন অঞ্চলের পার্সেল ডেলিভারি চার্জ, ট্রানজিট সময় এবং ফ্রি ডেলিভারি থ্রেশহোল্ড নির্ধারণ করুন।"
+              ? "English    Delivery Charge,   and Free Delivery   ।"
               : "Configure regional parcel delivery fees, estimated transit days, and free delivery thresholds for Bangladesh."
           }
           iconName="MapPin"
@@ -128,7 +128,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
 
         <Button onClick={openAddModal} size="sm" className="text-xs shrink-0">
           <Plus className="h-3.5 w-3.5 mr-1" />
-          {isBn ? "শিপিং জোন যোগ করুন" : "Add Shipping Zone"}
+          {isBn ? "Shipping Zone Add to Cart" : "Add Shipping Zone"}
         </Button>
       </div>
 
@@ -144,11 +144,11 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
                   <h3 className="text-base font-bold text-text">{zone.name}</h3>
                   {zone.enabled ? (
                     <span className="rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-[10px] font-bold uppercase border border-emerald-200">
-                      {isBn ? "সক্রিয় জোন" : "Active Zone"}
+                      {isBn ? "Active Zone" : "Active Zone"}
                     </span>
                   ) : (
                     <span className="rounded-full bg-surface-secondary text-text-muted px-2.5 py-0.5 text-[10px] font-bold uppercase border border-border">
-                      {isBn ? "নিষ্ক্রিয়" : "Disabled"}
+                      {isBn ? "Inactive" : "Disabled"}
                     </span>
                   )}
                 </div>
@@ -166,13 +166,13 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
                   className="text-xs h-8 px-3"
                 >
                   <Edit2 className="h-3 w-3 mr-1 text-primary-600" />
-                  {isBn ? "চার্জ পরিবর্তন" : "Edit Rates"}
+                  {isBn ? " " : "Edit Rates"}
                 </Button>
                 <button
                   onClick={() => handleDelete(zone.id)}
                   disabled={deletingId === zone.id}
                   className="p-1.5 text-text-muted hover:text-red-600 transition-colors"
-                  title={isBn ? "জোন মুছুন" : "Delete zone"}
+                  title={isBn ? "Zone Delete" : "Delete zone"}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -182,7 +182,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
               <div className="rounded-xl border border-border bg-surface-secondary/40 p-3 space-y-1">
                 <span className="text-text-muted font-medium text-[11px] block">
-                  {isBn ? "গ্রাহক ডেলিভারি ফি" : "Customer Delivery Fee"}
+                  {isBn ? " Delivery " : "Customer Delivery Fee"}
                 </span>
                 <span className="text-base font-extrabold text-primary-600">
                   {formatPrice(zone.charge)}
@@ -191,7 +191,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
 
               <div className="rounded-xl border border-border bg-surface-secondary/40 p-3 space-y-1">
                 <span className="text-text-muted font-medium text-[11px] block">
-                  {isBn ? "ফ্রি শিপিং প্রযোজ্য" : "Free Shipping Above"}
+                  {isBn ? " Shipping " : "Free Shipping Above"}
                 </span>
                 <span className="text-base font-extrabold text-emerald-600">
                   {formatPrice(zone.freeThreshold)}
@@ -200,7 +200,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
 
               <div className="rounded-xl border border-border bg-surface-secondary/40 p-3 space-y-1">
                 <span className="text-text-muted font-medium text-[11px] block">
-                  {isBn ? "আনুমানিক সময়" : "Estimated Transit"}
+                  {isBn ? " " : "Estimated Transit"}
                 </span>
                 <span className="text-sm font-bold text-text flex items-center gap-1 mt-0.5">
                   <Clock className="h-3.5 w-3.5 text-text-muted" />
@@ -210,7 +210,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
 
               <div className="rounded-xl border border-border bg-surface-secondary/40 p-3 space-y-1">
                 <span className="text-text-muted font-medium text-[11px] block">
-                  {isBn ? "কুরিয়ার আনুমানিক খরচ" : "Courier Cost Est."}
+                  {isBn ? "Courier  " : "Courier Cost Est."}
                 </span>
                 <span className="text-xs font-mono text-text block">
                   SF: ৳{zone.courierRates?.steadfast || zone.charge} | Pathao: ৳{zone.courierRates?.pathao || zone.charge + 10}
@@ -229,8 +229,8 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-primary-600" />
                 {editingZone
-                  ? (isBn ? "শিপিং জোন রেট সম্পাদনা" : "Edit Shipping Zone Rates")
-                  : (isBn ? "নতুন শিপিং জোন তৈরি" : "Create Shipping Zone")}
+                  ? (isBn ? "Shipping Zone  Edit" : "Edit Shipping Zone Rates")
+                  : (isBn ? " Shipping Zone " : "Create Shipping Zone")}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -249,10 +249,10 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
 
             <form onSubmit={handleSave} className="space-y-3 text-xs">
               <div className="space-y-1">
-                <Label htmlFor="zone-name">{isBn ? "জোনের নাম" : "Zone Title"}</Label>
+                <Label htmlFor="zone-name">{isBn ? "Zone Name" : "Zone Title"}</Label>
                 <Input
                   id="zone-name"
-                  placeholder={isBn ? "যেমন: ঢাকা সিটির ভিতরে (এক্সপ্রেস)" : "e.g. Inside Dhaka City (Express)"}
+                  placeholder={isBn ? "e.g.:  items  ()" : "e.g. Inside Dhaka City (Express)"}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -260,13 +260,13 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="zone-regions">{isBn ? "অন্তর্ভুক্ত জেলা বা এলাকাসমূহ" : "Included Districts / Areas"}</Label>
+                <Label htmlFor="zone-regions">{isBn ? " District  " : "Included Districts / Areas"}</Label>
                 <textarea
                   id="zone-regions"
                   rows={2}
                   placeholder={
                     isBn
-                      ? "যেমন: ঢাকা উত্তর, ঢাকা দক্ষিণ, গুলশান, বনানী, ধানমন্ডি..."
+                      ? "e.g.:  Answer,  , , , ..."
                       : "e.g. Dhaka North, Dhaka South, Gulshan, Banani, Dhanmondi..."
                   }
                   value={regions}
@@ -278,7 +278,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label htmlFor="zone-charge">{isBn ? "গ্রাহক ডেলিভারি ফি (৳)" : "Customer Delivery Fee (৳)"}</Label>
+                  <Label htmlFor="zone-charge">{isBn ? " Delivery  (৳)" : "Customer Delivery Fee (৳)"}</Label>
                   <Input
                     id="zone-charge"
                     type="number"
@@ -290,7 +290,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="zone-free">{isBn ? "ফ্রি ডেলিভারি প্রযোজ্য হবে (৳)" : "Free Delivery Above (৳)"}</Label>
+                  <Label htmlFor="zone-free">{isBn ? "Free Delivery   (৳)" : "Free Delivery Above (৳)"}</Label>
                   <Input
                     id="zone-free"
                     type="number"
@@ -304,32 +304,32 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label htmlFor="zone-time">{isBn ? "আনুমানিক ট্রানজিট সময়" : "Estimated Transit"}</Label>
+                  <Label htmlFor="zone-time">{isBn ? "  " : "Estimated Transit"}</Label>
                   <Input
                     id="zone-time"
-                    placeholder={isBn ? "যেমন: ২৪-৪৮ ঘণ্টা" : "e.g. 24-48 Hours"}
+                    placeholder={isBn ? "e.g.: 24-48 Hours" : "e.g. 24-48 Hours"}
                     value={deliveryTime}
                     onChange={(e) => setDeliveryTime(e.target.value)}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="zone-enabled">{isBn ? "স্ট্যাটাস" : "Status"}</Label>
+                  <Label htmlFor="zone-enabled">{isBn ? "Status" : "Status"}</Label>
                   <select
                     id="zone-enabled"
                     value={enabled ? "active" : "disabled"}
                     onChange={(e) => setEnabled(e.target.value === "active")}
                     className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-text focus:border-primary-500 focus:outline-none"
                   >
-                    <option value="active">{isBn ? "সক্রিয় জোন" : "Active Zone"}</option>
-                    <option value="disabled">{isBn ? "নিষ্ক্রিয়" : "Disabled"}</option>
+                    <option value="active">{isBn ? "Active Zone" : "Active Zone"}</option>
+                    <option value="disabled">{isBn ? "Inactive" : "Disabled"}</option>
                   </select>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-1 border-t border-border">
                 <div className="space-y-1">
-                  <Label htmlFor="zone-sf">{isBn ? "স্টিডফাস্ট রেট (৳)" : "SteadFast Rate (৳)"}</Label>
+                  <Label htmlFor="zone-sf">{isBn ? "items  (৳)" : "SteadFast Rate (৳)"}</Label>
                   <Input
                     id="zone-sf"
                     type="number"
@@ -339,7 +339,7 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="zone-pathao">{isBn ? "পাঠাও রেট (৳)" : "Pathao Rate (৳)"}</Label>
+                  <Label htmlFor="zone-pathao">{isBn ? "Pathao  (৳)" : "Pathao Rate (৳)"}</Label>
                   <Input
                     id="zone-pathao"
                     type="number"
@@ -356,12 +356,12 @@ export function ZonesClient({ initialZones }: ZonesClientProps) {
                   size="sm"
                   onClick={() => setShowModal(false)}
                 >
-                  {isBn ? "বাতিল" : "Cancel"}
+                  {isBn ? "Cancel" : "Cancel"}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
                   {submitting
-                    ? (isBn ? "সংরক্ষণ হচ্ছে..." : "Saving...")
-                    : (isBn ? "জোন রেট সংরক্ষণ করুন" : "Save Zone Rates")}
+                    ? (isBn ? "Save ..." : "Saving...")
+                    : (isBn ? "Zone  Save" : "Save Zone Rates")}
                 </Button>
               </div>
             </form>

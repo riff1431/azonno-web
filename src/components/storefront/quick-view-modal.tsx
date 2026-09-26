@@ -20,47 +20,58 @@ interface QuickViewProduct {
   name: string;
   slug: string;
   sku?: string | null;
-  regular_price: number;
-  sale_price: number | null;
+  regular_price?: number;
+  sale_price?: number | null;
+  regularPrice?: number;
+  salePrice?: number | null;
   image_url?: string | null;
+  primaryImage?: string;
+  images?: string[];
   brand_name?: string | null;
+  brandName?: string | null;
   category_name?: string | null;
+  categoryName?: string | null;
 }
 
 interface QuickViewModalProps {
   product: QuickViewProduct | null;
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
 }
 
-export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
+export function QuickViewModal({ product, isOpen = true, onClose }: QuickViewModalProps) {
   const [quantity, setQuantity] = useState(1);
   const { isWishlisted, toggleWishlist } = useWishlist();
   const { addItem } = useCart();
   const { language, toBn, formatPriceBn } = useLanguage();
   const isBn = language === "bn";
 
+  const regularPrice = product?.regular_price ?? product?.regularPrice ?? 0;
+  const salePrice = product?.sale_price ?? product?.salePrice ?? null;
+  const effectivePrice = salePrice ?? regularPrice;
+  const imageUrl = product?.image_url || product?.primaryImage || (product?.images && product.images[0]) || "";
+  const brand = product?.brand_name || product?.brandName || "Azonno";
+  const category = product?.category_name || product?.categoryName || "Clothing";
+
   useEffect(() => {
     if (isOpen && product) {
-      const effectivePrice = product.sale_price ?? product.regular_price;
       trackViewItem({
         item_id: getShortProductId(product),
         item_name: product.name,
-        item_brand: product.brand_name || undefined,
-        item_category: product.category_name || undefined,
+        item_brand: brand,
+        item_category: category,
         price: effectivePrice,
         quantity: 1,
       });
     }
-  }, [isOpen, product]);
+  }, [isOpen, product, brand, category, effectivePrice]);
 
   if (!isOpen || !product) return null;
 
   const inWishlist = isWishlisted(product.id);
-  const effectivePrice = product.sale_price ?? product.regular_price;
   const discountPercent =
-    product.sale_price && product.regular_price > product.sale_price
-      ? Math.round(((product.regular_price - product.sale_price) / product.regular_price) * 100)
+    salePrice && regularPrice > salePrice
+      ? Math.round(((regularPrice - salePrice) / regularPrice) * 100)
       : 0;
 
   const handleAddToCartClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -70,8 +81,8 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
         {
           item_id: getShortProductId(product),
           item_name: product.name,
-          item_brand: product.brand_name || undefined,
-          item_category: product.category_name || undefined,
+          item_brand: brand,
+          item_category: category,
           price: effectivePrice,
           quantity,
         },
@@ -87,9 +98,9 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
         name: product.name,
         slug: product.slug,
         price: effectivePrice,
-        regular_price: product.regular_price,
-        image_url: product.image_url || null,
-        brand_name: product.brand_name || null,
+        regular_price: regularPrice,
+        image_url: imageUrl || null,
+        brand_name: brand || null,
       },
       quantity
     );
@@ -103,8 +114,8 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
           {
             item_id: getShortProductId(product),
             item_name: product.name,
-            item_brand: product.brand_name || undefined,
-            item_category: product.category_name || undefined,
+            item_brand: brand,
+            item_category: category,
             price: effectivePrice,
             quantity: 1,
           },
@@ -116,10 +127,10 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
       id: product.id,
       name: product.name,
       slug: product.slug,
-      regular_price: product.regular_price,
-      sale_price: product.sale_price,
-      image_url: product.image_url || null,
-      brand_name: product.brand_name || null,
+      regular_price: regularPrice,
+      sale_price: salePrice,
+      image_url: imageUrl || null,
+      brand_name: brand || null,
     });
   };
 
@@ -137,9 +148,9 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
         <div className="grid grid-cols-1 sm:grid-cols-2">
           {/* Product Image */}
           <div className="relative aspect-square w-full overflow-hidden bg-surface-secondary">
-            {product.image_url ? (
+            {imageUrl ? (
               <img
-                src={product.image_url}
+                src={imageUrl}
                 alt={product.name}
                 className="h-full w-full object-cover"
               />
@@ -150,7 +161,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
             )}
             {discountPercent > 0 && (
               <span className="absolute top-3 left-3 rounded-md bg-accent-500 px-2 py-0.5 text-xs font-bold text-white shadow">
-                {isBn ? `${toBn(discountPercent)}% ছাড়` : `-${discountPercent}% OFF`}
+                {isBn ? `${toBn(discountPercent)}% OFF` : `-${discountPercent}% OFF`}
               </span>
             )}
           </div>
@@ -158,9 +169,9 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
           {/* Product Details */}
           <div className="flex flex-col p-6 space-y-4">
             <div>
-              {product.brand_name && (
-                <span className="text-xs font-bold uppercase tracking-wide text-primary-600">
-                  {product.brand_name}
+              {brand && (
+                <span className="text-xs font-bold uppercase tracking-wide text-[#1D6474]">
+                  {brand}
                 </span>
               )}
               <h2 className="mt-1 text-base sm:text-lg font-bold text-text line-clamp-2">
@@ -175,26 +186,26 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
                   <Star className="h-3.5 w-3.5 fill-current" />
                   <Star className="h-3.5 w-3.5 fill-current" />
                 </div>
-                <span className="font-semibold text-text">{isBn ? "৫.০" : "5.0"}</span>
-                <span className="text-text-muted">({isBn ? "যাচাইকৃত আসল পণ্য" : "Verified Authentic"})</span>
+                <span className="font-semibold text-text">{isBn ? "5.0" : "5.0"}</span>
+                <span className="text-text-muted">({isBn ? "100% Authentic Cotton Products" : "Verified Authentic"})</span>
               </div>
             </div>
 
             {/* Pricing */}
             <div className="flex items-baseline gap-2">
               <span className="text-2xl font-extrabold text-text">
-                {formatPriceBn(product.sale_price ?? product.regular_price)}
+                {formatPriceBn(effectivePrice)}
               </span>
-              {product.sale_price && product.sale_price < product.regular_price && (
+              {salePrice && salePrice < regularPrice && (
                 <span className="text-sm text-text-muted line-through">
-                  {formatPriceBn(product.regular_price)}
+                  {formatPriceBn(regularPrice)}
                 </span>
               )}
             </div>
 
             {/* Quantity Selector */}
             <div className="flex items-center gap-3">
-              <span className="text-xs font-medium text-text-muted">{isBn ? "পরিমাণ:" : "Quantity:"}</span>
+              <span className="text-xs font-medium text-text-muted">{isBn ? "Quantity:" : "Quantity:"}</span>
               <div className="flex items-center rounded-lg border border-border bg-surface-secondary">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -219,10 +230,10 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
             <div className="space-y-2 pt-2">
               <Button
                 onClick={handleAddToCartClick}
-                className="btn-add-to-cart ripple-container w-full py-5 text-xs sm:text-sm font-black shadow-sm flex items-center justify-center gap-2 uppercase tracking-wide"
+                className="w-full py-5 text-xs sm:text-sm font-black shadow-sm flex items-center justify-center gap-2 uppercase tracking-wider bg-[#1D6474] hover:bg-[#164E63] text-white cursor-pointer rounded-lg"
               >
                 <ShoppingBag className="h-4 w-4" />
-                {isBn ? `কার্টে যোগ করুন (${toBn(quantity)})` : `Add to Cart (${quantity})`}
+                {isBn ? `Add to Bag (${toBn(quantity)})` : `Add to Bag (${quantity})`}
               </Button>
 
               <div className="flex gap-2">
@@ -233,12 +244,12 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
                   className="flex-1 text-xs sm:text-[13px] font-bold"
                 >
                   <Heart className={`h-3.5 w-3.5 mr-1 ${inWishlist ? "fill-accent-500 text-accent-500" : ""}`} />
-                  {inWishlist ? (isBn ? "সংরক্ষিত" : "Saved") : (isBn ? "উইশলিস্ট" : "Wishlist")}
+                  {inWishlist ? "Saved" : "Wishlist"}
                 </Button>
 
-                <Link href={`/products/${product.slug}`} onClick={onClose} className="flex-1">
+                <Link href={`/product/${product.slug}`} onClick={onClose} className="flex-1">
                   <Button variant="outline" size="sm" className="w-full text-xs sm:text-[13px] font-bold">
-                    {isBn ? "বিস্তারিত দেখুন" : "Full Details"} &rarr;
+                    Full Details &rarr;
                   </Button>
                 </Link>
               </div>
@@ -246,7 +257,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
 
             <div className="pt-2 border-t border-border flex items-center gap-1.5 text-xs sm:text-[13px] text-text-muted font-medium">
               <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>{isBn ? "১০০% আসল পণ্য | ক্যাশ অন ডেলিভারি সুবিধা" : "100% Authentic Products | Cash on Delivery Available"}</span>
+              <span>100% Authentic Cotton | Cash on Delivery Available</span>
             </div>
           </div>
         </div>

@@ -282,7 +282,7 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
                         acc.type.includes("Bank")
                           ? "bg-blue-50 text-blue-700 border border-blue-200"
                           : acc.type.includes("MFS")
-                          ? "bg-pink-50 text-pink-700 border border-pink-200"
+                          ? "bg-teal-50/60 text-[#164E63] border border-teal-200"
                           : acc.type.includes("Cash")
                           ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                           : acc.type.includes("Receivable")
@@ -331,7 +331,7 @@ export function AccountingClient({ initialAccounts }: AccountingClientProps) {
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl space-y-4 border border-border animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
-                <ArrowRightLeft className="h-4 w-4 text-[#e91e63]" />
+                <ArrowRightLeft className="h-4 w-4 text-[#1D6474]" />
                 Internal Fund Transfer
               </h3>
               <button onClick={() => setShowTransferModal(false)} className="text-text-muted hover:text-text cursor-pointer">

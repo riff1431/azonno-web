@@ -123,7 +123,7 @@ export default function OrderAutomationSettingsClient({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 sm:p-6 rounded-3xl border border-gray-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-[#e91e63]" />
+            <Zap className="h-5 w-5 text-[#1D6474]" />
             <h1 className="text-xl sm:text-2xl font-black text-gray-900">
               {t("order_automation_title")}
             </h1>
@@ -137,7 +137,7 @@ export default function OrderAutomationSettingsClient({
           type="button"
           onClick={handleSubmit}
           disabled={saving}
-          className="bg-[#e91e63] hover:bg-[#d81557] text-white font-black text-xs px-5 py-2.5 rounded-2xl shadow-xs shrink-0 self-start sm:self-center"
+          className="bg-[#1D6474] hover:bg-[#d81557] text-white font-black text-xs px-5 py-2.5 rounded-2xl shadow-xs shrink-0 self-start sm:self-center"
         >
           {saving ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -177,7 +177,7 @@ export default function OrderAutomationSettingsClient({
             </h2>
             <Link
               href="/admin/shipping"
-              className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-1"
             >
               <span>Manage Shipping Dashboard</span>
               <ExternalLink className="h-3 w-3" />
@@ -408,7 +408,7 @@ export default function OrderAutomationSettingsClient({
                   type="checkbox"
                   checked={form.autoRestockOnReturn}
                   onChange={(e) => setForm({ ...form, autoRestockOnReturn: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                  className="h-4 w-4 rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                 />
                 <div>
                   <span className="font-bold text-gray-900 block">Auto-Restock Products on Parcel Return</span>
@@ -426,7 +426,7 @@ export default function OrderAutomationSettingsClient({
         {/* ============================================================ */}
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
           <h2 className="text-sm font-black uppercase text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-            <Sparkles className="h-4 w-4 text-[#e91e63]" /> Post-Purchase & Replenishment Automation
+            <Sparkles className="h-4 w-4 text-[#1D6474]" /> Post-Purchase & Replenishment Automation
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

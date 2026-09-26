@@ -1,4 +1,4 @@
-# Azonno Ecommerce Website
+# Blush & Budget (ecomXbd)
 
 A modern, high-performance E-Commerce platform built with **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS**, and **Supabase (PostgreSQL, Auth, RLS)**, engineered specifically for the Bangladesh market.
 

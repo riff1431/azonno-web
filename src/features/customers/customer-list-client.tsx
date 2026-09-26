@@ -443,7 +443,7 @@ export function CustomerListClient({ initialCustomers }: CustomerListClientProps
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border border-zinc-200 transition-all shadow-xs"
           >
             <ShieldAlert className="h-4 w-4 text-red-600" />
-            <span>{isBn ? "ফ্রড ইঞ্জিন হাব" : "Fraud Engine Hub"}</span>
+            <span>{isBn ? "Fraud Engine Hub" : "Fraud Engine Hub"}</span>
             <ExternalLink className="h-3 w-3 text-zinc-400" />
           </Link>
         </div>

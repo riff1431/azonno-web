@@ -29,7 +29,7 @@ export async function generateMetadata({
   const baseUrl = getBaseUrl();
   if (!post) return { title: "Article Not Found" };
 
-  const title = post.seo_title || `${post.title} | Blush & Budget Journal`;
+  const title = post.seo_title || `${post.title} | Azonno Journal`;
   const description = post.seo_description || post.excerpt;
   const canonicalUrl = `${baseUrl}/blog/${slug}`;
   const ogImages = post.featured_image ? [post.featured_image] : [];
@@ -44,7 +44,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: "Blush & Budget",
+      siteName: "Azonno",
       images: ogImages,
       type: "article",
       publishedTime: post.published_at,
@@ -121,7 +121,7 @@ export default async function BlogPostPage({
         image={post.featured_image}
         datePublished={post.published_at}
         author={{
-          name: post.author?.name || "Blush & Budget Editorial Team",
+          name: post.author?.name || "Azonno Editorial Team",
           url: authorUrl,
           jobTitle: post.author?.job_title,
           avatarUrl: post.author?.avatar_url,

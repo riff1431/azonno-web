@@ -87,11 +87,11 @@ export function BrandsClient({ brands }: BrandsClientProps) {
   return (
     <div className="min-h-screen bg-[#faf8f9] pb-16">
       {/* Hero Header Section */}
-      <div className="relative border-b border-pink-100/80 bg-gradient-to-b from-pink-50/70 via-white to-[#faf8f9] pt-6 pb-10">
+      <div className="relative border-b border-teal-100/80 bg-gradient-to-b from-pink-50/70 via-white to-[#faf8f9] pt-6 pb-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-5">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs font-semibold text-gray-500">
-            <Link href="/" className="hover:text-pink-600 transition-colors">
+            <Link href="/" className="hover:text-[#1D6474] transition-colors">
               {t("mobileNav", "home")}
             </Link>
             <span className="text-gray-300">/</span>
@@ -101,31 +101,31 @@ export function BrandsClient({ brands }: BrandsClientProps) {
           {/* Title & Badge */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100/80 border border-pink-200 text-[#e91e63] text-xs font-extrabold tracking-wide uppercase shadow-2xs">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-100/70/80 border border-teal-200 text-[#1D6474] text-xs font-extrabold tracking-wide uppercase shadow-2xs">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                <span>{isBn ? "১০০% আসল ও অনুমোদিত ব্র্যান্ড ডিরেক্টরি" : "100% Authentic Authorized Brands"}</span>
+                <span>{isBn ? "100% Authentic   Brand " : "100% Authentic Authorized Brands"}</span>
               </div>
               <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
-                {isBn ? "সকল স্কিনকেয়ার ও বিউটি ব্র্যান্ডসমূহ" : "All Authentic Skincare & Beauty Brands"}
+                {isBn ? "All Casual Wear  items Brand" : "All Authentic Skincare & Beauty Brands"}
               </h1>
               <p className="mt-1 text-xs sm:text-sm text-gray-600 max-w-2xl">
                 {isBn
-                  ? "দক্ষিণ কোরিয়া, যুক্তরাজ্য, যুক্তরাষ্ট্র ও জাপানের সেরা কসমেটিক্স এবং স্কিনকেয়ার ব্র্যান্ডগুলো থেকে আপনার পছন্দের আসল পণ্যটি বেছে নিন।"
+                  ? " , added, added    items and Casual Wear Brand from your desired Authentic Productsitems  ।"
                   : "Discover certified 100% genuine skincare and cosmetics from top South Korean, UK, US & Japanese dermatological brands."}
               </p>
             </div>
 
             {/* Total Brands Counter Badge */}
-            <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-pink-100 shadow-sm shrink-0">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-50 text-[#e91e63] font-black text-base">
+            <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-teal-100 shadow-sm shrink-0">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50/60 text-[#1D6474] font-black text-base">
                 <Sparkles className="h-5 w-5" />
               </div>
               <div>
                 <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
-                  {isBn ? "মোট ব্র্যান্ড" : "Total Brands"}
+                  {isBn ? "Total Brand" : "Total Brands"}
                 </p>
                 <p className="text-lg font-black text-gray-900 leading-tight">
-                  {toBn(brands.length)} {isBn ? "টি ব্র্যান্ড" : "Brands"}
+                  {toBn(brands.length)} {isBn ? "items Brand" : "Brands"}
                 </p>
               </div>
             </div>
@@ -141,10 +141,10 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={
                   isBn
-                    ? "ব্র্যান্ডের নাম বা উপাদান লিখে খুঁজুন (যেমন: COSRX, The Ordinary, CeraVe)..."
+                    ? "Brand Name    Search (e.g.: COSRX, The Ordinary, CeraVe)..."
                     : "Search brands by name (e.g. COSRX, The Ordinary, CeraVe, Anua)..."
                 }
-                className="w-full rounded-2xl border-2 border-pink-200 bg-white pl-12 pr-10 py-3.5 text-xs sm:text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-[#e91e63] focus:outline-none focus:ring-4 focus:ring-pink-500/10 shadow-sm transition-all"
+                className="w-full rounded-2xl border-2 border-teal-200 bg-white pl-12 pr-10 py-3.5 text-xs sm:text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:border-[#1D6474] focus:outline-none focus:ring-4 focus:ring-[#1D6474]/10 shadow-sm transition-all"
               />
               {searchQuery && (
                 <button
@@ -165,11 +165,11 @@ export function BrandsClient({ brands }: BrandsClientProps) {
               onClick={() => setSelectedLetter("ALL")}
               className={`px-3.5 py-1.5 rounded-xl transition-all shrink-0 ${
                 selectedLetter === "ALL"
-                  ? "bg-[#e91e63] text-white shadow-xs"
-                  : "bg-white text-gray-700 border border-gray-200 hover:border-pink-300 hover:text-[#e91e63]"
+                  ? "bg-[#1D6474] text-white shadow-xs"
+                  : "bg-white text-gray-700 border border-gray-200 hover:border-teal-300 hover:text-[#1D6474]"
               }`}
             >
-              {isBn ? "সকল (All)" : "ALL"}
+              {isBn ? "All (All)" : "ALL"}
             </button>
             {alphabetLetters.map((letter) => (
               <button
@@ -178,8 +178,8 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                 onClick={() => setSelectedLetter(letter)}
                 className={`h-8 w-8 rounded-xl flex items-center justify-center transition-all shrink-0 ${
                   selectedLetter === letter
-                    ? "bg-[#e91e63] text-white shadow-xs"
-                    : "bg-white text-gray-700 border border-gray-200 hover:border-pink-300 hover:text-[#e91e63]"
+                    ? "bg-[#1D6474] text-white shadow-xs"
+                    : "bg-white text-gray-700 border border-gray-200 hover:border-teal-300 hover:text-[#1D6474]"
                 }`}
               >
                 {letter}
@@ -194,14 +194,14 @@ export function BrandsClient({ brands }: BrandsClientProps) {
         {/* Search Results Summary Header */}
         <div className="flex items-center justify-between border-b border-gray-200 pb-3">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="h-4 w-4 text-[#e91e63]" />
+            <SlidersHorizontal className="h-4 w-4 text-[#1D6474]" />
             <h2 className="text-sm font-extrabold text-gray-800">
               {searchQuery || selectedLetter !== "ALL"
                 ? isBn
-                  ? `খোঁজের ফলাফল (${toBn(filteredBrands.length)}টি ব্র্যান্ড পাওয়া গেছে)`
+                  ? `  (${toBn(filteredBrands.length)}items Brand  )`
                   : `Filtered Results (${filteredBrands.length} brands found)`
                 : isBn
-                ? "আমাদের সকল অথেনটিক ব্র্যান্ড কালেকশন"
+                ? " All items Brand "
                 : "Explore All Authentic Brand Collections"}
             </h2>
           </div>
@@ -213,10 +213,10 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                 setSearchQuery("");
                 setSelectedLetter("ALL");
               }}
-              className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-1"
             >
               <X className="h-3.5 w-3.5" />
-              {isBn ? "ফিল্টার রিসেট করুন" : "Reset Filters"}
+              {isBn ? ":00 Reset " : "Reset Filters"}
             </button>
           )}
         </div>
@@ -224,16 +224,16 @@ export function BrandsClient({ brands }: BrandsClientProps) {
         {/* Brand Cards Grid */}
         {filteredBrands.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-gray-300 bg-white p-12 text-center space-y-4 shadow-xs">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-50 text-[#e91e63]">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-teal-50/60 text-[#1D6474]">
               <Search className="h-8 w-8" />
             </div>
             <div>
               <h3 className="text-base font-bold text-gray-900">
-                {isBn ? "কোনো ব্র্যান্ড খুঁজে পাওয়া যায়নি" : "No brands found matching your search"}
+                {isBn ? " Brand   Tracking" : "No brands found matching your search"}
               </h3>
               <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
                 {isBn
-                  ? `"${searchQuery}" এর সাথে কোনো ব্র্যান্ড মিলেনি। অনুগ্রহ করে বানানের সঠিকতা চেক করুন বা ফিল্টার রিসেট করুন।`
+                  ? `"${searchQuery}"    Brand । Please       :00 Reset ।`
                   : `We couldn't find any brand matching "${searchQuery}". Please check your spelling or clear filters.`}
               </p>
             </div>
@@ -243,9 +243,9 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                 setSearchQuery("");
                 setSelectedLetter("ALL");
               }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#e91e63] text-white text-xs font-bold hover:bg-pink-700 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1D6474] text-white text-xs font-bold hover:bg-[#164E63] transition-colors shadow-xs"
             >
-              {isBn ? "সকল ব্র্যান্ড দেখুন" : "View All Brands"}
+              {isBn ? "All Brand View" : "View All Brands"}
             </button>
           </div>
         ) : (
@@ -254,11 +254,11 @@ export function BrandsClient({ brands }: BrandsClientProps) {
               <div key={letter} className="space-y-4">
                 {/* Alphabet Section Marker */}
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#e91e63] text-white text-sm font-black shadow-2xs">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#1D6474] text-white text-sm font-black shadow-2xs">
                     {letter}
                   </div>
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                    {toBn(groupList.length)} {isBn ? "টি ব্র্যান্ড" : "Brands"}
+                    {toBn(groupList.length)} {isBn ? "items Brand" : "Brands"}
                   </span>
                   <div className="flex-1 h-px bg-gray-200" />
                 </div>
@@ -270,16 +270,16 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                       <Link
                         key={brand.id}
                         href={`/brands/${brand.slug}`}
-                        className="group relative flex flex-col items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 text-center transition-all duration-200 hover:-translate-y-1 hover:border-[#e91e63] hover:shadow-lg shadow-2xs overflow-hidden"
+                        className="group relative flex flex-col items-center justify-between rounded-2xl border border-gray-200 bg-white p-4 text-center transition-all duration-200 hover:-translate-y-1 hover:border-[#1D6474] hover:shadow-lg shadow-2xs overflow-hidden"
                       >
                         {/* Verified Guarantee Badge */}
                         <div className="w-full flex items-center justify-between mb-2">
                           <span className="inline-flex items-center gap-1 text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-200">
                             <CheckCircle2 className="h-2.5 w-2.5 text-emerald-600" />
-                            100% {isBn ? "আসল" : "Original"}
+                            100% {isBn ? "Authentic" : "Original"}
                           </span>
                           {brand.product_count > 0 && (
-                            <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-pink-700 bg-pink-50 px-1.5 py-0.5 rounded-md border border-pink-100">
+                            <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-[#164E63] bg-teal-50/60 px-1.5 py-0.5 rounded-md border border-teal-100">
                               <Package className="h-2.5 w-2.5" />
                               {toBn(brand.product_count)}
                             </span>
@@ -287,7 +287,7 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                         </div>
 
                         {/* Brand Logo Box */}
-                        <div className="flex h-20 w-full items-center justify-center rounded-xl bg-gray-50/70 p-2.5 border border-gray-100 group-hover:bg-pink-50/40 group-hover:border-pink-200 transition-all">
+                        <div className="flex h-20 w-full items-center justify-center rounded-xl bg-gray-50/70 p-2.5 border border-gray-100 group-hover:bg-teal-50/60/40 group-hover:border-teal-200 transition-all">
                           {brand.logo_url ? (
                             <img
                               src={brand.logo_url}
@@ -296,7 +296,7 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                               loading="lazy"
                             />
                           ) : (
-                            <span className="font-black text-[#e91e63] text-xl tracking-wider">
+                            <span className="font-black text-[#1D6474] text-xl tracking-wider">
                               {brand.name.substring(0, 2).toUpperCase()}
                             </span>
                           )}
@@ -304,7 +304,7 @@ export function BrandsClient({ brands }: BrandsClientProps) {
 
                         {/* Brand Details */}
                         <div className="mt-3 w-full space-y-1">
-                          <h3 className="text-xs sm:text-sm font-extrabold text-gray-900 group-hover:text-[#e91e63] transition-colors line-clamp-1">
+                          <h3 className="text-xs sm:text-sm font-extrabold text-gray-900 group-hover:text-[#1D6474] transition-colors line-clamp-1">
                             {brand.name}
                           </h3>
                           {brand.description ? (
@@ -313,14 +313,14 @@ export function BrandsClient({ brands }: BrandsClientProps) {
                             </p>
                           ) : (
                             <p className="text-[10px] text-gray-400 italic">
-                              {isBn ? "অথেনটিক স্কিনকেয়ার কালেকশন" : "Authentic Skincare Collection"}
+                              {isBn ? "items Casual Wear " : "Authentic Skincare Collection"}
                             </p>
                           )}
                         </div>
 
                         {/* Action CTA Button */}
-                        <div className="mt-3.5 w-full pt-2 border-t border-gray-100 flex items-center justify-center gap-1 text-[11px] font-bold text-[#e91e63] group-hover:text-pink-700">
-                          <span>{isBn ? "কালেকশন দেখুন" : "View Products"}</span>
+                        <div className="mt-3.5 w-full pt-2 border-t border-gray-100 flex items-center justify-center gap-1 text-[11px] font-bold text-[#1D6474] group-hover:text-[#164E63]">
+                          <span>{isBn ? " View" : "View Products"}</span>
                           <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
                         </div>
                       </Link>

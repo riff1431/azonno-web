@@ -66,7 +66,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
     if (!currentUser) {
       setReviewMsg({
         text: isBn
-          ? "রিভিউ লেখার জন্য অনুগ্রহ করে লগইন করুন।"
+          ? "Reviews  for Please  Login ।"
           : "Please log in to submit a verified review.",
         isError: true,
       });
@@ -86,14 +86,14 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
     if (res.error) {
       setReviewMsg({
         text: (res as any).requireLogin
-          ? (isBn ? "রিভিউ জমা দেওয়ার জন্য অনুগ্রহ করে লগইন করুন।" : "Please sign in to submit a review.")
+          ? (isBn ? "Reviews   for Please  Login ।" : "Please sign in to submit a review.")
           : res.error,
         isError: true,
       });
     } else {
       setReviewMsg({
         text: isBn
-          ? "ধন্যবাদ! আপনার রিভিউ সফলভাবে প্রকাশিত হয়েছে।"
+          ? "! your Reviews permanently  successfully।"
           : "Thank you! Your review has been published.",
         isError: false,
       });
@@ -113,7 +113,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
     if (!currentUser) {
       setQuestionMsg({
         text: isBn
-          ? "প্রশ্ন করার জন্য অনুগ্রহ করে লগইন করুন।"
+          ? "Question  for Please  Login ।"
           : "Please sign in to ask a question.",
         isError: true,
       });
@@ -127,14 +127,14 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
     if (res.error) {
       setQuestionMsg({
         text: (res as any).requireLogin
-          ? (isBn ? "প্রশ্ন করার জন্য অনুগ্রহ করে প্রথমে লগইন করুন।" : "Please sign in to ask a question.")
+          ? (isBn ? "Question  for Please   Login ।" : "Please sign in to ask a question.")
           : res.error,
         isError: true,
       });
     } else {
       setQuestionMsg({
         text: isBn
-          ? "আপনার প্রশ্নটি জমা হয়েছে! আমাদের টিম দ্রুত উত্তর দেবে।"
+          ? "your Questionitems  successfully!  items  Answer ।"
           : "Your question has been posted! Our team will respond shortly.",
         isError: false,
       });
@@ -144,7 +144,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           (Array.isArray(res.question.profiles) ? res.question.profiles[0]?.full_name : res.question.profiles?.full_name) ||
           currentUser.user_metadata?.full_name ||
           currentUser.email?.split("@")[0] ||
-          (isBn ? "সম্মানিত ক্রেতা" : "Customer");
+          (isBn ? " " : "Customer");
         setQuestions([
           {
             ...res.question,
@@ -172,7 +172,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           }`}
         >
           <Star className="h-4 w-4 fill-current text-amber-400" />
-          <span>{isBn ? `কাস্টমার রিভিউ (${toBn(reviews.length)})` : `Customer Reviews (${reviews.length})`}</span>
+          <span>{isBn ? `Customers Reviews (${toBn(reviews.length)})` : `Customer Reviews (${reviews.length})`}</span>
         </button>
 
         <button
@@ -184,7 +184,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           }`}
         >
           <MessageSquare className="h-4 w-4 text-primary-600" />
-          <span>{isBn ? `প্রশ্ন ও উত্তর (${toBn(questions.length)})` : `Questions & Answers (${questions.length})`}</span>
+          <span>{isBn ? `Question  Answer (${toBn(questions.length)})` : `Questions & Answers (${questions.length})`}</span>
         </button>
       </div>
 
@@ -193,50 +193,50 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           {/* Write a Review Card - Only for Logged In Users */}
           {checkingAuth ? (
             <div className="h-32 rounded-2xl border border-border bg-gray-50/70 animate-pulse flex items-center justify-center text-xs text-gray-400">
-              {isBn ? "যাচাইকরণ লোড হচ্ছে..." : "Loading verification..."}
+              {isBn ? "Verification  ..." : "Loading verification..."}
             </div>
           ) : !currentUser ? (
-            <div className="rounded-3xl border border-pink-100 bg-linear-to-r from-pink-50/70 via-rose-50/30 to-purple-50/40 p-6 sm:p-7 text-center space-y-3.5 shadow-2xs">
-              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-xs text-[#e91e63] border border-pink-200">
+            <div className="rounded-3xl border border-teal-100 bg-linear-to-r from-pink-50/70 via-rose-50/30 to-purple-50/40 p-6 sm:p-7 text-center space-y-3.5 shadow-2xs">
+              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-xs text-[#1D6474] border border-teal-200">
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div className="max-w-md mx-auto space-y-1">
                 <h3 className="text-sm sm:text-base font-black text-gray-900">
-                  {isBn ? "রিভিউ লেখার জন্য লগইন করুন" : "Sign in to Leave a Review"}
+                  {isBn ? "Reviews  for Login " : "Sign in to Leave a Review"}
                 </h3>
                 <p className="text-xs text-gray-600 leading-relaxed">
                   {isBn
-                    ? "লগইন করে আপনার বাস্তব অভিজ্ঞতা ও মতামত শেয়ার করুন।"
+                    ? "Login  your      ।"
                     : "Sign in to share your genuine experience and helpful feedback."}
                 </p>
               </div>
               <div className="pt-1 flex items-center justify-center gap-2.5 flex-wrap">
                 <Link
                   href={`/login?redirect=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname : "")}`}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#e91e63] hover:bg-pink-700 text-white px-4 py-2 text-xs font-black shadow-md transition-all active:scale-95"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#1D6474] hover:bg-[#164E63] text-white px-4 py-2 text-xs font-black shadow-md transition-all active:scale-95"
                 >
                   <LogIn className="h-3.5 w-3.5" />
-                  <span>{isBn ? "লগইন করুন" : "Log In to Review"}</span>
+                  <span>{isBn ? "Login " : "Log In to Review"}</span>
                 </Link>
                 <Link
                   href={`/signup?redirect=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname : "")}`}
                   className="inline-flex items-center gap-1.5 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 text-xs font-bold transition-all active:scale-95"
                 >
-                  <span>{isBn ? "রেজিস্ট্রেশন" : "Sign Up"}</span>
+                  <span>{isBn ? "" : "Sign Up"}</span>
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-pink-100 bg-linear-to-b from-white to-pink-50/20 p-5 space-y-4 text-xs shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-pink-100 pb-3">
+            <div className="rounded-2xl border border-teal-100 bg-linear-to-b from-white to-pink-50/20 p-5 space-y-4 text-xs shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-teal-100 pb-3">
                 <h3 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-1.5">
                   <Sparkles className="h-4 w-4 text-amber-500" />
-                  {isBn ? "আপনার রিভিউ লিখুন" : "Write a Review"}
+                  {isBn ? "your Reviews " : "Write a Review"}
                 </h3>
                 <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800">
                   <Check className="h-3 w-3 text-emerald-600" />
                   <span>
-                    {isBn ? "লগইন আছেন:" : "Logged in as:"}{" "}
+                    {isBn ? "Login :" : "Logged in as:"}{" "}
                     <strong className="font-extrabold text-emerald-950">
                       {currentUser.user_metadata?.full_name || currentUser.email?.split("@")[0] || "Customer"}
                     </strong>
@@ -247,7 +247,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
               <form onSubmit={handleReviewSubmit} className="space-y-3.5">
                 <div>
                   <label className="block font-bold text-gray-800 mb-1">
-                    {isBn ? "আপনার রেটিং নির্বাচন করুন" : "Select Your Rating"}
+                    {isBn ? "your items  " : "Select Your Rating"}
                   </label>
                   <div className="flex items-center gap-1.5">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -265,44 +265,44 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                       </button>
                     ))}
                     <span className="ml-2 font-black text-gray-800 text-sm">
-                      {isBn ? `${toBn(rating)}.০ / ৫.০` : `${rating}.0 / 5.0`}
+                      {isBn ? `${toBn(rating)}.0 / 5.0` : `${rating}.0 / 5.0`}
                     </span>
                     <span className="text-[11px] text-gray-500 font-medium">
                       {rating === 5
-                        ? (isBn ? "— চমৎকার! খুবই সন্তুষ্ট" : "— Excellent! Loved it")
+                        ? (isBn ? "— !  " : "— Excellent! Loved it")
                         : rating === 4
-                        ? (isBn ? "— ভালো লেগেছে" : "— Very Good")
+                        ? (isBn ? "—  " : "— Very Good")
                         : rating === 3
-                        ? (isBn ? "— মাঝারি মানের" : "— Average")
-                        : (isBn ? "— সন্তোষজনক নয়" : "— Could be better")}
+                        ? (isBn ? "—  " : "— Average")
+                        : (isBn ? "—  " : "— Could be better")}
                     </span>
                   </div>
                 </div>
 
                 <div>
                   <label className="block font-bold text-gray-800 mb-1">
-                    {isBn ? "রিভিউ শিরোনাম" : "Review Headline"}
+                    {isBn ? "Reviews Name" : "Review Headline"}
                   </label>
                   <input
                     type="text"
-                    placeholder={isBn ? "যেমন: হালকা টেক্সচার, ত্বককে ফ্রেশ রাখে!" : "e.g. Lightweight texture, leaves skin feeling fresh!"}
+                    placeholder={isBn ? "e.g.:  Texture, Cotton  !" : "e.g. Lightweight texture, leaves skin feeling fresh!"}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-xs text-gray-900 focus:border-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-xs text-gray-900 focus:border-[#1D6474] focus:outline-none"
                   />
                 </div>
 
                 <div>
                   <label className="block font-bold text-gray-800 mb-1">
-                    {isBn ? "বিস্তারিত অভিজ্ঞতা" : "Detailed Review"} <span className="text-red-500">*</span>
+                    {isBn ? "View Details " : "Detailed Review"} <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     rows={3}
                     required
-                    placeholder={isBn ? "এই পণ্যটি ব্যবহার করে আপনার কেমন লেগেছে তা শেয়ার করুন..." : "Share how this product felt and worked for you..."}
+                    placeholder={isBn ? " Productsitems use  your     ..." : "Share how this product felt and worked for you..."}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    className="w-full rounded-xl border border-gray-200 bg-white p-3.5 text-sm sm:text-base text-gray-900 focus:border-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border border-gray-200 bg-white p-3.5 text-sm sm:text-base text-gray-900 focus:border-[#1D6474] focus:outline-none"
                   />
                 </div>
 
@@ -322,10 +322,10 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                   <Button
                     type="submit"
                     disabled={submittingReview}
-                    className="ml-auto bg-[#e91e63] hover:bg-pink-700 text-white font-black text-sm rounded-xl px-6 py-2.5 shadow-sm transition-all active:scale-95 cursor-pointer"
+                    className="ml-auto bg-[#1D6474] hover:bg-[#164E63] text-white font-black text-sm rounded-xl px-6 py-2.5 shadow-sm transition-all active:scale-95 cursor-pointer"
                   >
                     {submittingReview ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Send className="h-4 w-4 mr-1.5" />}
-                    {isBn ? "রিভিউ জমা দিন" : "Submit Review"}
+                    {isBn ? "Reviews  Enter" : "Submit Review"}
                   </Button>
                 </div>
               </form>
@@ -336,7 +336,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           <div className="space-y-4">
             {reviews.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center text-text-muted text-sm sm:text-base">
-                {isBn ? "এখনো কোনো রিভিউ দেওয়া হয়নি। আপনার অভিজ্ঞতা প্রথম শেয়ার করুন!" : "No reviews yet. Be the first to share your experience!"}
+                {isBn ? "  Reviews  । your    !" : "No reviews yet. Be the first to share your experience!"}
               </div>
             ) : (
               reviews.map((r) => (
@@ -361,11 +361,11 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                     <span className="font-bold text-gray-900 text-base">
                       {(Array.isArray(r.profiles) ? r.profiles[0]?.full_name : r.profiles?.full_name) ||
                         (Array.isArray(r.profiles) ? r.profiles[0]?.email : r.profiles?.email) ||
-                        (isBn ? "ভেরিফায়েড ক্রেতা" : "Verified Customer")}
+                        (isBn ? " " : "Verified Customer")}
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-xs font-bold border border-emerald-200">
                       <ShieldCheck className="h-3.5 w-3.5" />
-                      {isBn ? "যাচাইকৃত ক্রয়" : "Verified Purchase"}
+                      {isBn ? "Verification " : "Verified Purchase"}
                     </span>
                   </div>
 
@@ -376,7 +376,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                   {r.admin_reply && (
                     <div className="mt-3 rounded-xl bg-primary-50/70 border border-primary-100 p-3.5 sm:p-4 space-y-1">
                       <span className="font-bold text-sm text-primary-900 block">
-                        {isBn ? "ব্লাশ অ্যান্ড বাজেট টিমের উত্তর:" : "Response from Blush & Budget Team:"}
+                        {isBn ? "   items Answer:" : "Response from Azonno Team:"}
                       </span>
                       <p className="text-sm sm:text-base text-primary-800 leading-relaxed">{r.admin_reply}</p>
                     </div>
@@ -394,20 +394,20 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           <div className="rounded-2xl border border-border bg-surface-secondary/40 p-5 sm:p-6 space-y-3.5 text-sm sm:text-base">
             <h3 className="text-base sm:text-lg font-bold text-text flex items-center gap-2">
               <HelpCircle className="h-5 w-5 text-primary-600" />
-              {isBn ? "ব্যবহার বা উপাদান সম্পর্কে কোনো প্রশ্ন আছে?" : "Have questions about how to use this or its ingredients?"}
+              {isBn ? "use     Question ?" : "Have questions about how to use this or its ingredients?"}
             </h3>
 
             {!currentUser ? (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-white border border-gray-200">
                 <span className="text-sm text-gray-700 font-medium">
-                  {isBn ? "প্রশ্ন করার জন্য অনুগ্রহ করে আপনার অ্যাকাউন্টে লগইন করুন।" : "Please sign in to your account to ask questions."}
+                  {isBn ? "Question  for Please  your  Login ।" : "Please sign in to your account to ask questions."}
                 </span>
                 <Link
                   href={`/login?redirect=${encodeURIComponent(typeof window !== "undefined" ? window.location.pathname : "")}`}
                   className="inline-flex items-center gap-1.5 rounded-xl bg-gray-900 hover:bg-black text-white px-4 py-2 text-sm font-bold shrink-0 shadow-xs active:scale-95"
                 >
                   <LogIn className="h-4 w-4" />
-                  <span>{isBn ? "লগইন করুন" : "Sign In"}</span>
+                  <span>{isBn ? "Login " : "Sign In"}</span>
                 </Link>
               </div>
             ) : (
@@ -415,14 +415,14 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                 <input
                   type="text"
                   required
-                  placeholder={isBn ? "যেমন: এটি কি প্রতিদিন ব্যবহার করা যাবে?" : "e.g. Can this be used daily?"}
+                  placeholder={isBn ? "e.g.: items  Enter use  ?" : "e.g. Can this be used daily?"}
                   value={questionText}
                   onChange={(e) => setQuestionText(e.target.value)}
                   className="flex-1 rounded-xl border border-border bg-white px-4 py-2.5 text-sm sm:text-base text-text focus:outline-none"
                 />
                 <Button type="submit" size="sm" disabled={submittingQuestion} className="text-sm font-semibold px-4 py-2.5">
                   {submittingQuestion ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Send className="h-4 w-4 mr-1" />}
-                  {isBn ? "প্রশ্ন করুন" : "Ask"}
+                  {isBn ? "Question " : "Ask"}
                 </Button>
               </form>
             )}
@@ -442,25 +442,25 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
           <div className="space-y-3">
             {questions.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border bg-white p-8 text-center text-text-muted text-xs">
-                {isBn ? "এখনো কোনো প্রশ্ন করা হয়নি। নির্দ্বিধায় প্রশ্ন করুন!" : "No questions asked yet. Ask our team anything!"}
+                {isBn ? "  Question  ।  Question !" : "No questions asked yet. Ask our team anything!"}
               </div>
             ) : (
               questions.map((q) => {
                 const customerName =
                   (Array.isArray(q.profiles) ? q.profiles[0]?.full_name : q.profiles?.full_name) ||
                   (Array.isArray(q.profiles) ? q.profiles[0]?.email : q.profiles?.email) ||
-                  (isBn ? "সম্মানিত ক্রেতা" : "Verified Customer");
+                  (isBn ? " " : "Verified Customer");
 
                 return (
                   <div key={q.id} className="rounded-2xl border border-border bg-white p-5 shadow-xs space-y-3 text-xs">
                     <div className="flex items-start gap-2.5">
-                      <span className="font-black text-pink-600 text-sm bg-pink-50 rounded-lg px-2 py-0.5 border border-pink-100">
+                      <span className="font-black text-[#1D6474] text-sm bg-teal-50/60 rounded-lg px-2 py-0.5 border border-teal-100">
                         Q
                       </span>
                       <div className="space-y-1 flex-1">
                         <p className="font-bold text-gray-900 text-sm">{q.question}</p>
                         <div className="text-[11px] text-gray-500 flex items-center flex-wrap gap-1.5">
-                          <span>{isBn ? "প্রশ্ন করেছেন" : "Asked by"}</span>
+                          <span>{isBn ? "Question " : "Asked by"}</span>
                           <strong className="text-gray-900 font-bold bg-gray-100 px-2 py-0.5 rounded text-[11px]">
                             {customerName}
                           </strong>
@@ -471,18 +471,18 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                     </div>
 
                     {q.answers && q.answers.length > 0 ? (
-                      <div className="pl-4 border-l-2 border-pink-500 space-y-2 mt-2">
+                      <div className="pl-4 border-l-2 border-[#1D6474] space-y-2 mt-2">
                         {q.answers.map((a: any) => (
                           <div key={a.id} className="space-y-1.5">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-gray-900">{isBn ? "উত্তর:" : "Answer:"}</span>
+                              <span className="font-bold text-gray-900">{isBn ? "Answer:" : "Answer:"}</span>
                               {a.is_official && (
-                                <span className="rounded-md bg-pink-100 text-[#e91e63] border border-pink-200 text-[10px] sm:text-xs font-black px-2 py-0.5">
-                                  {isBn ? "অফিসিয়াল উত্তর" : "Official Answer"}
+                                <span className="rounded-md bg-teal-100/70 text-[#1D6474] border border-teal-200 text-[10px] sm:text-xs font-black px-2 py-0.5">
+                                  {isBn ? " Answer" : "Official Answer"}
                                 </span>
                               )}
                             </div>
-                            <p className="text-gray-700 leading-relaxed bg-pink-50/40 p-3 rounded-xl border border-pink-100/60 font-medium">
+                            <p className="text-gray-700 leading-relaxed bg-teal-50/60/40 p-3 rounded-xl border border-teal-100/60 font-medium">
                               {a.answer}
                             </p>
                           </div>
@@ -490,7 +490,7 @@ export function ProductReviewsQA({ productId }: ProductReviewsQAProps) {
                       </div>
                     ) : (
                       <p className="text-xs text-gray-400 italic pl-4 border-l-2 border-gray-200">
-                        {isBn ? "আমাদের টিমের উত্তরের অপেক্ষায়..." : "Awaiting response from our team..."}
+                        {isBn ? " items Answer ..." : "Awaiting response from our team..."}
                       </p>
                     )}
                   </div>

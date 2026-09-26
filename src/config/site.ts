@@ -1,12 +1,17 @@
 // Site-wide configuration constants
 
 export const siteConfig = {
-  name: process.env.NEXT_PUBLIC_APP_NAME || "Azonno Ecommerce Website",
-  url: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "",
-  description: "Azonno Ecommerce Website in Bangladesh",
+  name: process.env.NEXT_PUBLIC_APP_NAME || "Azonno",
+  url: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  tagline: "Everything within Reach",
+  description: "Premium Bangladeshi Clothing & Lifestyle Brand — Casual Shirts, Panjabis, Polos, Western & Contemporary Fashion.",
   defaultCurrency: "BDT",
+  currencySymbol: "৳",
   defaultLocale: "en-BD",
   defaultTimezone: "Asia/Dhaka",
+  supportPhone: "+880 1800-AZONNO (296666)",
+  supportEmail: "support@azonno.com.bd",
+  freeShippingThreshold: 1999,
 } as const;
 
 // Bangladesh divisions, districts, areas for checkout

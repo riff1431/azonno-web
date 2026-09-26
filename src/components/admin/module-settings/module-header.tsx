@@ -133,7 +133,7 @@ export function ModuleHeader({
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-text-muted hover:text-text mb-3"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          {isBn ? "ইন্টিগ্রেশন তালিকায় ফিরুন" : "Back to Integrations"}
+          {isBn ? "Back to Integrations" : "Back to Integrations"}
         </Link>
       )}
 
@@ -155,7 +155,7 @@ export function ModuleHeader({
               )}
               {isCore && (
                 <span className="rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 border border-blue-200">
-                  {isBn ? "মূল মডিউল" : "Core Module"}
+                  {isBn ? "Core Modules" : "Core Module"}
                 </span>
               )}
             </div>
@@ -167,8 +167,8 @@ export function ModuleHeader({
           <div className="flex items-center gap-3 bg-white border border-border px-4 py-2 rounded-xl shadow-sm">
             <span className="text-xs font-semibold text-text">
               {isEnabled
-                ? (isBn ? "মডিউল সক্রিয়" : "Module Enabled")
-                : (isBn ? "মডিউল নিষ্ক্রিয়" : "Module Disabled")}
+                ? (isBn ? "Module Active" : "Module Enabled")
+                : (isBn ? "Module Inactive" : "Module Disabled")}
             </span>
             <label className="relative inline-flex items-center cursor-pointer">
               <input

@@ -14,7 +14,7 @@ export default function AdminEmailSettingsPage() {
     port: 465,
     username: "resend",
     password: "",
-    from_name: "Blush & Budget Orders",
+    from_name: "Azonno Orders",
     from_email: "orders@blushbudget.com",
     encryption: "ssl",
   });

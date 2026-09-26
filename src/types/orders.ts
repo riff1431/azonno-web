@@ -1,5 +1,5 @@
 /**
- * Core Domain Models & Type System for Blush & Budget E-Commerce Orders
+ * Core Domain Models & Type System for Azonno E-Commerce Orders
  * Specifically tailored for high-volume Bangladeshi logistics (SteadFast, Pathao, COD)
  */
 
@@ -490,7 +490,7 @@ export function generateWhatsAppOrderMessage(
     const replacements: Record<string, string> = {
       customer_name: name,
       order_number: String(orderNum),
-      store_name: "Blush & Budget",
+      store_name: "Azonno",
       items_summary: itemsSummary,
       cod_due: String(codDue),
       courier_name: courier,
@@ -509,19 +509,19 @@ export function generateWhatsAppOrderMessage(
   } else {
     // Standard system default templates (Humanized Bangla with English Order Numbers)
     if (templateType === "abandoned") {
-      text = `প্রিয় ${name}, আসসালামু আলাইকুম! 🌸 আপনি Blush & Budget-এ আপনার পছন্দের কিছু প্রোডাক্ট কার্টে রেখে গিয়েছিলেন (${itemsSummary})。\n\nআপনি চাইলে এখনই আপনার অর্ডারটি কনফার্ম করতে পারেন। আপনার সুবিধার্থে আমরা দিচ্ছি দ্রুত হোম ডেলিভারি।\n\nঅর্ডার সম্পূর্ণ করতে ভিজিট করুন: ${fallbackCheckoutUrl}\nযেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের মেসেজ দিন। ধন্যবাদ!`;
+      text = ` ${name}, Hello! 🌸  Azonno- your desired  Products    (${itemsSummary})。\n\n   your Orderitems   । your  We    Delivery।\n\nOrder Complete   : ${fallbackCheckoutUrl}\n Question  Add for   Enter। !`;
     } else if (templateType === "confirm") {
-      text = `প্রিয় ${name}, Blush & Budget-এ আপনার অর্ডারটির জন্য আন্তরিক ধন্যবাদ! 🌸\n\nঅর্ডার নাম্বার: #${orderNum}\nপ্রোডাক্ট: ${itemsSummary}\nক্যাশ অন ডেলিভারি বিল: ৳${codDue}\n\nআমরা আপনার পার্সেলটি যত্ন সহকারে প্যাক করছি এবং দ্রুততম সময়ে ডেলিভারির জন্য প্রস্তুত করছি। ডেলিভারি রাইডার কল করলে অনুগ্রহ করে রিসিভ করবেন।`;
+      text = ` ${name}, Azonno- your Orderitems for  ! 🌸\n\nOrder Name: #${orderNum}\nProducts: ${itemsSummary}\nCash  Delivery : ৳${codDue}\n\nWe your items     and   Delivery for  । Delivery    Please  Received ।`;
     } else if (templateType === "shipped") {
-      text = `প্রিয় ${name}, সুখবর! আপনার অর্ডারটি (#${orderNum}) কুরিয়ারে হ্যান্ডওভার করা হয়েছে। 🚚\n\nকুরিয়ার: ${courier}\nট্র্যাকিং আইডি: ${tracking}\nলাইভ ট্র্যাকিং লিংক: ${trackUrl}\nডেলিভারি রাইডারকে প্রদেয় মোট টাকা: ৳${codDue}\n\nরাইডার আপনার ঠিকানায় পৌঁছানোর আগে কল করবেন। যেকোনো প্রয়োজনে আমাদের এই নম্বরে মেসেজ দিন।`;
+      text = ` ${name}, ! your Orderitems (#${orderNum})    successfully। 🚚\n\n: ${courier}\nTracking ID: ${tracking}\n Tracking Link: ${trackUrl}\nDelivery   Total :00: ৳${codDue}\n\n your Address    ।     Number  Enter।`;
     } else if (templateType === "advance") {
-      text = `প্রিয় ${name}, Blush & Budget থেকে শুভেচ্ছা! আপনার অর্ডার #${orderNum} টি চূড়ান্তভাবে প্রসেসিং করতে ঢাকার বাইরের ডেলিভারি চার্জ বাবদ ৳${advanceFee} অগ্রিম প্রদান করার জন্য বিনীত অনুরোধ করছি।\n\nবাকি ৳${remainingDue} আপনি পার্সেল হাতে পেয়ে ক্যাশ অন ডেলিভারিতে পরিশোধ করবেন।\n\nবিকাশ/নগদ মার্চেন্ট নম্বরে পেমেন্ট করার পর ট্রানজেকশন আইডি বা স্ক্রিনশট এই চ্যাটে পাঠিয়ে কনফার্ম করুন। ধন্যবাদ!`;
+      text = ` ${name}, Azonno from ! your Order #${orderNum} items permanently Processing    Delivery Charge  ৳${advanceFee}    for   ।\n\n ৳${remainingDue}     Cash  Delivery  ।\n\n/  Number Payment    ID       । !`;
     } else if (templateType === "review") {
-      text = `প্রিয় ${name}, আসসালামু আলাইকুম! আশা করি Blush & Budget থেকে নেওয়া আপনার প্রোডাক্টগুলো হাতে পেয়েছেন এবং ব্যবহার উপভোগ করছেন। ✨\n\nআমাদের প্রোডাক্ট ও সার্ভিসের অভিজ্ঞতা আপনার কেমন লাগলো? আপনার মূল্যবান রিভিউ অথবা একটি সুন্দর ছবি আমাদের সাথে শেয়ার করলে আমরা অনেক আনন্দিত হব!`;
+      text = ` ${name}, Hello!   Azonno from  your Products   and use  । ✨\n\n Products    your  ? your Price Reviews or items       We   !`;
     } else if (templateType === "cancelled") {
-      text = `প্রিয় ${name}, আমরা আন্তরিকভাবে দুঃখের সাথে জানাচ্ছি যে আপনার অর্ডারটি (#${orderNum}) বাতিল করা হয়েছে।\n\nকোনো ভুল বোঝাবুঝি হয়ে থাকলে অথবা পুনরায় অর্ডার করতে চাইলে অনুগ্রহ করে এই চ্যাটে আমাদের জানান। আমরা আপনাকে সাহায্য করতে সবসময় প্রস্তুত।`;
+      text = ` ${name}, We permanently     your Orderitems (#${orderNum}) Cancel  successfully।\n\n Invalid    or again Order   Please     । We     ।`;
     } else if (templateType === "refund") {
-      text = `প্রিয় ${name}, আপনার অর্ডার #${orderNum}-এর রিফান্ড সফলভাবে সম্পন্ন হয়েছে। আপনার দেওয়া পেমেন্ট একাউন্টটি অনুগ্রহ করে চেক করে নিন।\n\nযেকোনো সহযোগিতার জন্য আমরা পাশে আছি। Blush & Budget-এর সাথে থাকার জন্য ধন্যবাদ।`;
+      text = ` ${name}, your Order #${orderNum}- Refund permanently Completed successfully। your  Payment items Please    ।\n\n Add for We  । Azonno-   for ।`;
     }
   }
 

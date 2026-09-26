@@ -128,12 +128,12 @@ export function PnLClient({ initialData }: PnLClientProps) {
         <div className="rounded-2xl border border-border bg-white p-5 shadow-card space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-text-muted font-medium">Gross Profit</span>
-            <div className="h-7 w-7 rounded-lg bg-pink-50 text-[#e91e63] flex items-center justify-center">
+            <div className="h-7 w-7 rounded-lg bg-teal-50/60 text-[#1D6474] flex items-center justify-center">
               <TrendingUp className="h-4 w-4" />
             </div>
           </div>
           <p className="text-2xl font-extrabold text-text">{formatPrice(data.grossProfit)}</p>
-          <span className="text-[11px] text-[#e91e63] font-bold">
+          <span className="text-[11px] text-[#1D6474] font-bold">
             {data.grossMarginPct}% Gross Margin
           </span>
         </div>
@@ -160,7 +160,7 @@ export function PnLClient({ initialData }: PnLClientProps) {
           </h2>
           {loading && (
             <span className="text-xs text-text-muted flex items-center gap-1.5">
-              <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#e91e63]" /> Recalculating...
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#1D6474]" /> Recalculating...
             </span>
           )}
         </div>

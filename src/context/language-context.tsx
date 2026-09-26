@@ -15,9 +15,9 @@ export interface LocalizationConfig {
 }
 
 export const DEFAULT_LOCALIZATION_CONFIG: LocalizationConfig = {
-  default_language: "bn",
-  enable_language_switcher: true,
-  show_homepage_language_bar: true,
+  default_language: "en",
+  enable_language_switcher: false,
+  show_homepage_language_bar: false,
 };
 
 interface LanguageContextType {
@@ -27,9 +27,9 @@ interface LanguageContextType {
   isSwitcherEnabled: boolean;
   showHomepageBar: boolean;
   defaultLanguage: Language;
-  t: <N extends keyof (typeof translations)["bn"]>(
+  t: <N extends keyof (typeof translations)["en"]>(
     namespace: N,
-    key: keyof (typeof translations)["bn"][N]
+    key: keyof (typeof translations)["en"][N]
   ) => string;
   toBn: (val: string | number) => string;
   formatPriceBn: (amount: number) => string;
@@ -45,108 +45,73 @@ export function LanguageProvider({
   initialConfig?: LocalizationConfig;
 }) {
   const config = initialConfig || DEFAULT_LOCALIZATION_CONFIG;
-  const configuredDefault = config.default_language || "bn";
-
-  // If switcher is disabled by admin, strictly lock to admin's configured default language
-  const [language, setLanguageState] = useState<Language>(configuredDefault);
+  const configuredDefault = config.default_language || "en";
+  const [language, setLanguageState] = useState<Language>("en");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!config.enable_language_switcher) {
-      setLanguageState(configuredDefault);
-      return;
-    }
-
-    try {
-      const saved = localStorage.getItem("ecom_lang") as Language | null;
-      if (saved === "en" || saved === "bn") {
-        setLanguageState(saved);
-      } else {
-        setLanguageState(configuredDefault);
-        localStorage.setItem("ecom_lang", configuredDefault);
-      }
-    } catch {
-      // Ignore localStorage errors
-    }
+    setLanguageState("en");
     setMounted(true);
-  }, [config.enable_language_switcher, configuredDefault]);
+    try {
+      localStorage.setItem("ecom_lang", "en");
+    } catch {}
+  }, []);
 
-  // Synchronize document attributes and font classes for Hind Siliguri vs Inter
+  // Synchronize document attributes and font classes
   useEffect(() => {
     if (typeof document !== "undefined") {
-      const isBn = language === "bn";
-      document.documentElement.lang = isBn ? "bn" : "en";
-      document.documentElement.classList.toggle("lang-bn", isBn);
-      document.documentElement.classList.toggle("lang-en", !isBn);
+      document.documentElement.lang = "en";
+      document.documentElement.classList.remove("lang-bn");
+      document.documentElement.classList.add("lang-en");
     }
-  }, [language]);
+  }, []);
 
-  const setLanguage = useCallback((lang: Language) => {
-    if (!config.enable_language_switcher) return; // Admin locked
-    setLanguageState(lang);
-    try {
-      localStorage.setItem("ecom_lang", lang);
-    } catch {}
-  }, [config.enable_language_switcher]);
+  const setLanguage = useCallback((_lang: Language) => {
+    // English locked
+  }, []);
 
   const toggleLanguage = useCallback(() => {
-    if (!config.enable_language_switcher) return; // Admin locked
-    setLanguageState((prev) => {
-      const next = prev === "bn" ? "en" : "bn";
-      try {
-        localStorage.setItem("ecom_lang", next);
-      } catch {}
-      return next;
-    });
-  }, [config.enable_language_switcher]);
+    // English locked
+  }, []);
 
   const t = useCallback(
-    <N extends keyof (typeof translations)["bn"]>(
+    <N extends keyof (typeof translations)["en"]>(
       namespace: N,
-      key: keyof (typeof translations)["bn"][N]
+      key: keyof (typeof translations)["en"][N]
     ): string => {
-      const currentDict = translations[language] || translations.bn;
+      const currentDict = translations.en;
       const section = currentDict[namespace] as Record<string, string>;
       if (section && typeof section[key as string] === "string") {
         return section[key as string];
       }
-      // Fallback to Bangla, then English
-      const fallbackBn = (translations.bn[namespace] as Record<string, string>)?.[key as string];
-      if (fallbackBn) return fallbackBn;
-      const fallbackEn = (translations.en[namespace] as Record<string, string>)?.[key as string];
-      return fallbackEn || String(key);
+      return String(key);
     },
-    [language]
+    []
   );
 
   const toBn = useCallback(
     (val: string | number) => {
-      if (language === "en") return String(val);
-      return toBengaliNumber(val);
+      return String(val);
     },
-    [language]
+    []
   );
 
   const formatPriceBn = useCallback(
     (amount: number) => {
-      if (language === "bn") {
-        const formatted = amount.toLocaleString("en-IN");
-        return `৳${toBengaliNumber(formatted)}`;
-      }
       return formatPrice(amount);
     },
-    [language]
+    []
   );
 
   return (
     <LanguageContext.Provider
       value={{
-        language,
+        language: "en",
         setLanguage,
         toggleLanguage,
-        isSwitcherEnabled: config.enable_language_switcher,
-        showHomepageBar: config.show_homepage_language_bar,
-        defaultLanguage: configuredDefault,
+        isSwitcherEnabled: false,
+        showHomepageBar: false,
+        defaultLanguage: "en",
         t,
         toBn,
         formatPriceBn,

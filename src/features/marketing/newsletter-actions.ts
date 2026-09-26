@@ -14,7 +14,7 @@ export async function subscribeNewsletter(email: string, lang: "en" | "bn" = "bn
   if (!email || !email.includes("@") || email.length < 5) {
     return {
       success: false,
-      message: lang === "bn" ? "অনুগ্রহ করে একটি সঠিক ইমেইল ঠিকানা দিন।" : "Please enter a valid email address.",
+      message: lang === "bn" ? "Please enter a valid email Address Enter।" : "Please enter a valid email address.",
     };
   }
 
@@ -39,7 +39,7 @@ export async function subscribeNewsletter(email: string, lang: "en" | "bn" = "bn
       if (!insertErr) {
         return {
           success: true,
-          message: lang === "bn" ? "অভিনন্দন! আপনার সাবস্ক্রিপশন সফলভাবে সম্পন্ন হয়েছে।" : "Congratulations! You have successfully subscribed.",
+          message: lang === "bn" ? "Congratulations! your Subscription permanently Completed successfully।" : "Congratulations! You have successfully subscribed.",
         };
       }
     } catch {
@@ -78,13 +78,13 @@ export async function subscribeNewsletter(email: string, lang: "en" | "bn" = "bn
 
     return {
       success: true,
-      message: lang === "bn" ? "অভিনন্দন! আপনার সাবস্ক্রিপশন সফলভাবে সম্পন্ন হয়েছে।" : "Congratulations! You have successfully subscribed.",
+      message: lang === "bn" ? "Congratulations! your Subscription permanently Completed successfully।" : "Congratulations! You have successfully subscribed.",
     };
   } catch (error: any) {
     console.error("Newsletter subscription error:", error);
     return {
       success: false,
-      message: lang === "bn" ? "কিছু ভুল হয়েছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।" : "Something went wrong. Please try again shortly.",
+      message: lang === "bn" ? " Invalid successfully। Please     :00 ।" : "Something went wrong. Please try again shortly.",
     };
   }
 }

@@ -149,7 +149,7 @@ export function BDCourierBadge({
         reason,
       });
       if (res.success) {
-        setBlockSuccessMsg(isBn ? "নাম্বারটি ফ্রড ব্লকলিস্টে যুক্ত করা হয়েছে!" : "Phone added to Fraud Blacklist!");
+        setBlockSuccessMsg(isBn ? "Number added to Fraud Blocklist!" : "Phone added to Fraud Blacklist!");
         setTimeout(() => setBlockSuccessMsg(null), 4000);
       }
     } catch (e) {
@@ -179,7 +179,7 @@ export function BDCourierBadge({
   const safeVerdict =
     typeof report?.risk_verdict === "string"
       ? report.risk_verdict
-      : report?.raw_risk_verdict?.action || (isBn ? "কুরিয়ার নেটওয়ার্কে কাস্টমারের ডেলিভারি ট্র্যাকিং মূল্যায়ন।" : "Live customer delivery evaluation across courier networks.");
+      : report?.raw_risk_verdict?.action || (isBn ? "Courier network Customers Delivery Tracking PriceTracking।" : "Live customer delivery evaluation across courier networks.");
 
   // Build complete list of all 11 supported couriers in Bangladesh
   const courierMap = report?.courier_details || {};
@@ -203,11 +203,11 @@ export function BDCourierBadge({
 
   const tooltipTitle = isLoaded
     ? isNew
-      ? isBn ? "বিডি কুরিয়ার: নতুন ক্রেতা (পূর্বে কোনো পার্সেল রেকর্ড নেই)" : "BDCourier: New Customer (0 past parcel history)"
+      ? isBn ? " Courier: New Customer (    )" : "BDCourier: New Customer (0 past parcel history)"
       : isBn
-      ? `বিডি কুরিয়ার: ${currentRatio}% ডেলিভারি সফল (${report?.success_parcel ?? 0}/${currentTotal} ডেলিভারি হয়েছে)। বিস্তারিত দেখতে ক্লিক করুন।`
+      ? ` Courier: ${currentRatio}% Delivery  (${report?.success_parcel ?? 0}/${currentTotal} Delivery successfully)। View Details   ।`
       : `BDCourier: ${currentRatio}% Delivery Success (${report?.success_parcel ?? 0}/${currentTotal} delivered across BD Couriers). Click to view breakdown.`
-    : isBn ? `${phone} নম্বরের লাইভ কুরিয়ার হিস্ট্রি লোড হচ্ছে...` : `Querying BDCourier live stats for ${phone}...`;
+    : isBn ? `${phone} Number  Courier   ...` : `Querying BDCourier live stats for ${phone}...`;
 
   return (
     <>
@@ -223,34 +223,34 @@ export function BDCourierBadge({
           {loading ? (
             <span className="flex items-center gap-1">
               <Loader2 className="h-2.5 w-2.5 animate-spin text-primary-600" />
-              <span className="opacity-80">{isBn ? "চেক হচ্ছে..." : "Checking..."}</span>
+              <span className="opacity-80">{isBn ? " ..." : "Checking..."}</span>
             </span>
           ) : isLoaded ? (
             <>
               {isNew ? (
                 <>
                   <Truck className="h-3 w-3 shrink-0 text-zinc-500" />
-                  <span>{isBn ? "নতুন ক্রেতা (০)" : "New Buyer (0)"}</span>
+                  <span>{isBn ? "New Customer (0)" : "New Buyer (0)"}</span>
                 </>
               ) : isRed ? (
                 <>
                   <ShieldAlert className="h-3 w-3 shrink-0 text-red-600" />
                   <span>
-                    {currentRatio}% {isBn ? "সফল" : "Delivery"} ({report?.success_parcel ?? 0}/{currentTotal})
+                    {currentRatio}% {isBn ? "" : "Delivery"} ({report?.success_parcel ?? 0}/{currentTotal})
                   </span>
                 </>
               ) : isAmber ? (
                 <>
                   <AlertTriangle className="h-3 w-3 shrink-0 text-amber-600" />
                   <span>
-                    {currentRatio}% {isBn ? "সফল" : "Delivery"} ({report?.success_parcel ?? 0}/{currentTotal})
+                    {currentRatio}% {isBn ? "" : "Delivery"} ({report?.success_parcel ?? 0}/{currentTotal})
                   </span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="h-3 w-3 shrink-0 text-emerald-600" />
                   <span>
-                    {currentRatio}% {isBn ? "সফল" : "Delivery"} ({report?.success_parcel ?? 0}/{currentTotal})
+                    {currentRatio}% {isBn ? "" : "Delivery"} ({report?.success_parcel ?? 0}/{currentTotal})
                   </span>
                 </>
               )}
@@ -258,7 +258,7 @@ export function BDCourierBadge({
           ) : (
             <>
               <Truck className="h-3 w-3 shrink-0" />
-              <span>{isBn ? "কুরিয়ার রিপোর্ট" : "BDCourier Check"}</span>
+              <span>{isBn ? "Courier Reports" : "BDCourier Check"}</span>
             </>
           )}
         </button>
@@ -300,15 +300,15 @@ export function BDCourierBadge({
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-pink-50 rounded-xl text-[#e91e63] border border-pink-200">
+                <div className="p-1.5 bg-teal-50/60 rounded-xl text-[#1D6474] border border-teal-200">
                   <Truck className="h-4 w-4" />
                 </div>
                 <div>
                   <h4 className="text-sm font-black text-gray-900">
-                    {isBn ? "বিডি কুরিয়ার মাল্টি-নেটওয়ার্ক ডেলিভারি রিপোর্ট" : "BD Courier Multi-Logistics Report"}
+                    {isBn ? " Courier items- Delivery Reports" : "BD Courier Multi-Logistics Report"}
                   </h4>
                   <p className="text-[11px] text-gray-500 font-mono">
-                    {isBn ? "কাস্টমার নম্বর:" : "Customer Mobile:"} {phone}
+                    {isBn ? "Customers Number:" : "Customer Mobile:"} {phone}
                   </p>
                 </div>
               </div>
@@ -317,11 +317,11 @@ export function BDCourierBadge({
                   type="button"
                   onClick={handleManualRefresh}
                   disabled={loading}
-                  className="px-2.5 py-1 rounded-xl text-gray-700 hover:text-[#e91e63] hover:bg-pink-50 transition-colors flex items-center gap-1 text-[11px] font-bold border border-gray-200"
+                  className="px-2.5 py-1 rounded-xl text-gray-700 hover:text-[#1D6474] hover:bg-teal-50/60 transition-colors flex items-center gap-1 text-[11px] font-bold border border-gray-200"
                   title="Force re-check live data from BDCourier API"
                 >
-                  <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[#e91e63]" : ""}`} />
-                  <span>{isBn ? "পুনরায় চেক করুন" : "Re-Check"}</span>
+                  <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[#1D6474]" : ""}`} />
+                  <span>{isBn ? "  " : "Re-Check"}</span>
                 </button>
                 <button
                   type="button"
@@ -342,9 +342,9 @@ export function BDCourierBadge({
 
             {loading ? (
               <div className="py-10 flex flex-col items-center justify-center gap-2 text-gray-400">
-                <Loader2 className="h-7 w-7 animate-spin text-[#e91e63]" />
+                <Loader2 className="h-7 w-7 animate-spin text-[#1D6474]" />
                 <span className="text-xs font-bold">
-                  {isBn ? "লাইভ কুরিয়ার ডাটা সংগ্রহ করা হচ্ছে..." : "Querying Live BDCourier Records..."}
+                  {isBn ? " Courier :00   ..." : "Querying Live BDCourier Records..."}
                 </span>
               </div>
             ) : report ? (
@@ -353,7 +353,7 @@ export function BDCourierBadge({
                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-gray-700">
-                      {isBn ? "সামগ্রিক ডেলিভারি সফলতার হার:" : "Overall Delivery Success Ratio:"}
+                      {isBn ? " Delivery  :" : "Overall Delivery Success Ratio:"}
                     </span>
                     <span
                       className={`px-2.5 py-0.5 rounded-full text-xs font-black border ${
@@ -367,8 +367,8 @@ export function BDCourierBadge({
                       }`}
                     >
                       {report.total_parcel === 0
-                        ? (isBn ? "নতুন ক্রেতা (০ রেকর্ড)" : "New Buyer (0 Records)")
-                        : `${report.success_ratio}% ${isBn ? "ডেলিভারি সম্পন্ন" : "Delivered"}`}
+                        ? (isBn ? "New Customer (0 )" : "New Buyer (0 Records)")
+                        : `${report.success_ratio}% ${isBn ? "Delivered" : "Delivered"}`}
                     </span>
                   </div>
 
@@ -399,19 +399,19 @@ export function BDCourierBadge({
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="p-3 bg-white rounded-2xl border border-gray-200 shadow-2xs">
                     <span className="text-[10px] text-gray-400 block font-bold uppercase">
-                      {isBn ? "মোট পার্সেল" : "Total Parcels"}
+                      {isBn ? "Total " : "Total Parcels"}
                     </span>
                     <span className="font-black text-gray-900 text-base">{report.total_parcel.toLocaleString()}</span>
                   </div>
                   <div className="p-3 bg-emerald-50/60 rounded-2xl border border-emerald-200 shadow-2xs">
                     <span className="text-[10px] text-emerald-700 block font-bold uppercase">
-                      {isBn ? "সফল ডেলিভারি" : "Delivered"}
+                      {isBn ? " Delivery" : "Delivered"}
                     </span>
                     <span className="font-black text-emerald-700 text-base">{report.success_parcel.toLocaleString()}</span>
                   </div>
                   <div className="p-3 bg-red-50/60 rounded-2xl border border-red-200 shadow-2xs">
                     <span className="text-[10px] text-red-700 block font-bold uppercase">
-                      {isBn ? "বাতিল / রিটার্ন" : "Cancelled / RTO"}
+                      {isBn ? "Cancel / Return" : "Cancelled / RTO"}
                     </span>
                     <span className="font-black text-red-700 text-base">{report.cancelled_parcel.toLocaleString()}</span>
                   </div>
@@ -422,18 +422,18 @@ export function BDCourierBadge({
                   <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 text-xs space-y-1.5">
                     <span className="font-bold flex items-center gap-1.5 text-amber-900">
                       <KeyRound className="h-3.5 w-3.5 text-amber-700 shrink-0" />
-                      <span>{isBn ? "বিডি কুরিয়ার এপিআই যুক্ত করুন" : "Connect BDCourier Live API"}</span>
+                      <span>{isBn ? " Courier  added " : "Connect BDCourier Live API"}</span>
                     </span>
                     <p className="text-[11px] text-amber-800 leading-relaxed">
                       {isBn
-                        ? "পাঠাও, স্টেডফাস্ট, রেডএক্স, পেপারফ্লাই সহ সকল কুরিয়ারের লাইভ দেশব্যাপী ডাটা দেখতে বিডি কুরিয়ার API Key সেট করুন।"
+                        ? "Pathao, Steadfast, RedX, Paperfly  All Courier   :00   Courier API Key  ।"
                         : "To view live nationwide fraud scores & delivery success rates across Pathao, SteadFast, RedX, PaperFly, please enter your BDCourier API key."}
                     </p>
                     <Link
                       href="/admin/orders/fraud?tab=settings"
                       className="inline-flex items-center gap-1 text-[11px] font-black text-primary-700 hover:underline pt-0.5"
                     >
-                      {isBn ? "এপিআই কী কনফিগার করুন →" : "Configure BDCourier API Key →"}
+                      {isBn ? "  Configure  →" : "Configure BDCourier API Key →"}
                     </Link>
                   </div>
                 )}
@@ -443,11 +443,11 @@ export function BDCourierBadge({
                   <div className="flex items-center justify-between">
                     <span className="uppercase font-bold text-gray-500 text-[10px] tracking-wider block">
                       {isBn
-                        ? `সকল সমর্থিত কুরিয়ার সার্ভিস (${allSupportedCouriers.length}টি)`
+                        ? `All  Courier  (${allSupportedCouriers.length}items)`
                         : `Supported BD Couriers Breakdown (${allSupportedCouriers.length})`}
                     </span>
                     <span className="text-[10px] text-gray-400 font-bold">
-                      {activeCouriers.length} {isBn ? "টি কুরিয়ারে সক্রিয় হিস্ট্রি রয়েছে" : "Active with Orders"}
+                      {activeCouriers.length} {isBn ? "items Courier Active  " : "Active with Orders"}
                     </span>
                   </div>
 
@@ -485,24 +485,24 @@ export function BDCourierBadge({
                               </span>
                             ) : (
                               <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
-                                {isBn ? "০ পার্সেল" : "0 Parcels"}
+                                {isBn ? "0 " : "0 Parcels"}
                               </span>
                             )}
                           </div>
 
                           {c.hasHistory ? (
                             <div className="mt-2 pt-1.5 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-600 font-mono">
-                              <span>{isBn ? `মোট: ${c.total}` : `Total: ${c.total}`}</span>
+                              <span>{isBn ? `Total: ${c.total}` : `Total: ${c.total}`}</span>
                               <span className="text-emerald-700 font-bold">
-                                {isBn ? `সফল: ${c.success}` : `Del: ${c.success}`}
+                                {isBn ? `: ${c.success}` : `Del: ${c.success}`}
                               </span>
                               <span className="text-red-700 font-bold">
-                                {isBn ? `বাতিল: ${c.cancelled}` : `Can: ${c.cancelled}`}
+                                {isBn ? `Cancel: ${c.cancelled}` : `Can: ${c.cancelled}`}
                               </span>
                             </div>
                           ) : (
                             <div className="mt-1 text-[9.5px] text-gray-400 italic">
-                              {isBn ? "কোনো ডেলিভারি হিস্ট্রি পাওয়া যায়নি" : "No delivery records on file"}
+                              {isBn ? " Delivery   Tracking" : "No delivery records on file"}
                             </div>
                           )}
                         </div>
@@ -517,7 +517,7 @@ export function BDCourierBadge({
                     <span className="font-bold text-red-900 flex items-center gap-1.5">
                       <AlertTriangle className="h-3.5 w-3.5 text-red-600 shrink-0" />
                       <span>
-                        {report.reports.length} {isBn ? "টি ফ্রড ও ক্যান্সেলেশন অভিযোগ জমা আছে" : "Fraud Report(s) on file"}
+                        {report.reports.length} {isBn ? "items    Add  " : "Fraud Report(s) on file"}
                       </span>
                     </span>
                     <div className="space-y-1 max-h-32 overflow-y-auto">
@@ -537,7 +537,7 @@ export function BDCourierBadge({
                       href={`/admin/orders/fraud?phone=${report.phone}&tab=lookup`}
                       className="text-primary-600 font-bold hover:underline text-xs inline-flex items-center gap-1"
                     >
-                      <span>{isBn ? "সম্পূর্ণ ফ্রড হাব ওপেন করুন" : "Open Full Fraud Hub"}</span>
+                      <span>{isBn ? "Complete    " : "Open Full Fraud Hub"}</span>
                       <ExternalLink className="h-3 w-3" />
                     </Link>
                   </div>
@@ -551,7 +551,7 @@ export function BDCourierBadge({
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-xs transition-colors disabled:opacity-50"
                       >
                         {blocking ? <Loader2 className="h-3 w-3 animate-spin" /> : <Ban className="h-3 w-3" />}
-                        <span>{isBn ? "ব্লকলিস্টে যুক্ত করুন" : "Add to Blacklist"}</span>
+                        <span>{isBn ? "to blocklist added " : "Add to Blacklist"}</span>
                       </button>
                     )}
                     <button
@@ -559,7 +559,7 @@ export function BDCourierBadge({
                       onClick={() => setModalOpen(false)}
                       className="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold transition-colors"
                     >
-                      {isBn ? "বন্ধ করুন" : "Close"}
+                      {isBn ? " " : "Close"}
                     </button>
                   </div>
                 </div>

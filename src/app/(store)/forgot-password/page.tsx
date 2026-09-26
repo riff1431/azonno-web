@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
     } catch {
       setError(
         language === "bn"
-          ? "একটি অপ্রত্যাশিত সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
+          ? "items   successfully। Please   :00 ।"
           : "An unexpected error occurred. Please try again."
       );
     } finally {
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
             </span>
           </Link>
           <p className="mt-2 text-sm text-text-secondary">
-            {language === "bn" ? "পাসওয়ার্ড রিসেট করুন" : "Reset your password"}
+            {language === "bn" ? "Password Reset " : "Reset your password"}
           </p>
         </div>
 
@@ -72,17 +72,17 @@ export default function ForgotPasswordPage() {
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <h2 className="text-lg font-semibold text-text">
-                {language === "bn" ? "আপনার ইমেইল চেক করুন" : "Check your email"}
+                {language === "bn" ? "your Email  " : "Check your email"}
               </h2>
               <p className="text-sm text-text-secondary">
                 {language === "bn"
-                  ? `আমরা আপনার ইমেইলে (${email}) পাসওয়ার্ড রিসেটের লিঙ্ক পাঠিয়েছি। ইনবক্স অথবা স্প্যাম ফোল্ডার চেক করুন।`
+                  ? `We your Email (${email}) Password Reset  । box or    ।`
                   : `We sent a password reset link to ${email}. Please check your inbox and spam folder.`}
               </p>
               <Link href="/login">
                 <Button variant="outline" className="mt-4">
                   <ArrowLeft className="h-4 w-4 mr-1.5" />
-                  {language === "bn" ? "লগইন পেজে ফিরুন" : "Back to Sign In"}
+                  {language === "bn" ? "Login  " : "Back to Sign In"}
                 </Button>
               </Link>
             </div>
@@ -97,14 +97,14 @@ export default function ForgotPasswordPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="email">
-                    {language === "bn" ? "মোবাইল নম্বর বা ইমেইল অ্যাড্রেস" : "Mobile Number or Email Address"}
+                    {language === "bn" ? "Mobile Number  Email " : "Mobile Number or Email Address"}
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
                     <Input
                       id="email"
                       type="text"
-                      placeholder={language === "bn" ? "০১XXXXXXXXX বা you@example.com" : "01XXXXXXXXX or you@example.com"}
+                      placeholder={language === "bn" ? "01XXXXXXXXX  you@example.com" : "01XXXXXXXXX or you@example.com"}
                       className="pl-10"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -113,21 +113,21 @@ export default function ForgotPasswordPage() {
                   </div>
                   <p className="text-xs text-text-muted">
                     {language === "bn"
-                      ? "আপনার অ্যাকাউন্টের সাথে যুক্ত মোবাইল নম্বর বা ইমেইলটি লিখুন, আমরা পাসওয়ার্ড রিসেট করার ব্যবস্থা করব।"
+                      ? "your   added Mobile Number  Emailitems , We Password Reset   ।"
                       : "Enter the mobile number or email associated with your account to reset your password."}
                   </p>
                 </div>
 
-                <Button type="submit" className="w-full bg-[#e91e63] hover:bg-pink-600 text-white font-bold" size="lg" disabled={loading}>
+                <Button type="submit" className="w-full bg-[#1D6474] hover:bg-[#164E63] text-white font-bold" size="lg" disabled={loading}>
                   {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                  {language === "bn" ? "রিসেট লিঙ্ক পাঠান" : "Send Reset Link"}
+                  {language === "bn" ? "Reset  " : "Send Reset Link"}
                 </Button>
               </form>
 
               <div className="mt-6 text-center text-sm text-text-secondary">
-                {language === "bn" ? "পাসওয়ার্ড মনে পড়েছে? " : "Remember your password? "}
-                <Link href="/login" className="font-bold text-[#e91e63] hover:underline">
-                  {language === "bn" ? "লগইন করুন" : "Sign in"}
+                {language === "bn" ? "Password  ? " : "Remember your password? "}
+                <Link href="/login" className="font-bold text-[#1D6474] hover:underline">
+                  {language === "bn" ? "Login " : "Sign in"}
                 </Link>
               </div>
             </>

@@ -136,7 +136,7 @@ export function LivePayloadInspector() {
         return {
           icon: <Video className="h-3 w-3 text-[#ff0050] shrink-0" />,
           label: "Browser TikTok (ttq)",
-          badgeClass: "bg-pink-50 text-pink-700 border-pink-200",
+          badgeClass: "bg-teal-50/60 text-[#164E63] border-teal-200",
         };
       case "server_tiktok":
         return {
@@ -200,13 +200,13 @@ export function LivePayloadInspector() {
           <div className="text-[10px] text-indigo-600/80 mt-0.5">Graph API v21.0 CAPI</div>
         </div>
 
-        <div className="bg-pink-50/50 rounded-2xl border border-pink-200 p-3.5 shadow-xs">
-          <div className="flex items-center justify-between text-[11px] font-bold text-pink-700 uppercase">
+        <div className="bg-teal-50/60/50 rounded-2xl border border-teal-200 p-3.5 shadow-xs">
+          <div className="flex items-center justify-between text-[11px] font-bold text-[#164E63] uppercase">
             <span>Browser TikTok</span>
-            <Video className="h-3.5 w-3.5 text-pink-600" />
+            <Video className="h-3.5 w-3.5 text-[#1D6474]" />
           </div>
           <div className="text-xl font-black text-pink-900 mt-1">{stats.browser_tiktok}</div>
-          <div className="text-[10px] text-pink-600/80 mt-0.5">Client `ttq` Pixel</div>
+          <div className="text-[10px] text-[#1D6474]/80 mt-0.5">Client `ttq` Pixel</div>
         </div>
 
         <div className="bg-purple-50/50 rounded-2xl border border-purple-200 p-3.5 shadow-xs">
@@ -323,7 +323,7 @@ export function LivePayloadInspector() {
       <div className="rounded-3xl border border-border bg-white shadow-card overflow-hidden">
         <div className="border-b border-border bg-gray-50/70 px-6 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-[#e91e63]" />
+            <Activity className="h-4 w-4 text-[#1D6474]" />
             <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
               Live Payload Stream ({filteredLogs.length} Events)
             </h3>
@@ -335,7 +335,7 @@ export function LivePayloadInspector() {
 
         {filteredLogs.length === 0 ? (
           <div className="p-12 text-center space-y-3">
-            <div className="h-12 w-12 rounded-full bg-pink-50 text-[#e91e63] flex items-center justify-center mx-auto">
+            <div className="h-12 w-12 rounded-full bg-teal-50/60 text-[#1D6474] flex items-center justify-center mx-auto">
               <Zap className="h-6 w-6" />
             </div>
             <h4 className="text-sm font-bold text-gray-900">No events in live buffer yet</h4>
@@ -423,7 +423,7 @@ export function LivePayloadInspector() {
                     <div className="bg-gray-950 text-gray-200 p-5 mx-4 mb-4 rounded-2xl border border-gray-800 space-y-4 shadow-inner text-xs font-mono">
                       <div className="flex items-center justify-between border-b border-gray-800 pb-3">
                         <div className="flex items-center gap-2">
-                          <Code2 className="h-4 w-4 text-[#e91e63]" />
+                          <Code2 className="h-4 w-4 text-[#1D6474]" />
                           <span className="text-xs font-bold text-gray-200 font-sans uppercase tracking-wider">
                             Full Dispatched Payload ({log.channelLabel})
                           </span>

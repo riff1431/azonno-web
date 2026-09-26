@@ -40,19 +40,19 @@ export function TagDetailClient({
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-text-muted">
         <Link href="/" className="hover:text-text transition-colors">
-          {isBn ? "হোম" : "Home"}
+          {isBn ? "" : "Home"}
         </Link>
         <ChevronRight className="h-3 w-3 text-zinc-400" />
         <Link href="/products" className="hover:text-text transition-colors">
-          {isBn ? "ট্যাগস" : "Tags"}
+          {isBn ? "" : "Tags"}
         </Link>
         <ChevronRight className="h-3 w-3 text-zinc-400" />
         <span className="text-text font-bold">#{tag.name}</span>
       </nav>
 
       {/* Tag Hero Header Banner */}
-      <div className="flex flex-col sm:flex-row items-center gap-5 rounded-3xl border border-pink-200 bg-linear-to-r from-pink-50 via-purple-50 to-pink-50 p-6 sm:p-8 shadow-xs">
-        <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-[#e91e63] text-white shadow-md">
+      <div className="flex flex-col sm:flex-row items-center gap-5 rounded-3xl border border-teal-200 bg-linear-to-r from-pink-50 via-purple-50 to-pink-50 p-6 sm:p-8 shadow-xs">
+        <div className="flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-2xl bg-[#1D6474] text-white shadow-md">
           <Tag className="h-8 w-8 sm:h-10 sm:w-10" />
         </div>
 
@@ -61,15 +61,15 @@ export function TagDetailClient({
             <h1 className="text-2xl sm:text-3xl font-black text-gray-900">
               #{tag.name}
             </h1>
-            <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 px-3 py-0.5 text-xs font-bold text-[#e91e63] border border-pink-200">
+            <span className="inline-flex items-center gap-1 rounded-full bg-teal-100/70 px-3 py-0.5 text-xs font-bold text-[#1D6474] border border-teal-200">
               <Sparkles className="h-3.5 w-3.5" />
-              {isBn ? "জনপ্রিয় ট্যাগ কালেকশন" : "Curated Tag Collection"}
+              {isBn ? "  " : "Curated Tag Collection"}
             </span>
           </div>
 
           <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-2xl">
             {isBn
-              ? `"${tag.name}" ট্যাগযুক্ত আসল ও যাচাইকৃত বিউটি এবং স্কিনকেয়ার প্রোডাক্টসমূহ ক্যাশ অন ডেলিভারি সুবিধাসহ অন্বেষণ করুন।`
+              ? `"${tag.name}" added Authentic  Verification items and  Products Cash  Delivery   ।`
               : `Explore all 100% genuine skincare and cosmetics tagged with #${tag.name}, imported from authorized global brand distributors.`}
           </p>
         </div>
@@ -79,11 +79,11 @@ export function TagDetailClient({
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-border pb-3">
           <h2 className="text-base sm:text-lg font-black text-text">
-            {isBn ? `"${tag.name}" ট্যাগের সকল পণ্য` : `Products tagged #${tag.name}`}
+            {isBn ? `"${tag.name}"  All Products` : `Products tagged #${tag.name}`}
           </h2>
           <span className="text-xs font-semibold text-text-muted">
             {isBn
-              ? `${toBn(productCards.length)}টি পণ্য পাওয়া গেছে`
+              ? `${toBn(productCards.length)}items Products  `
               : `${productCards.length} product${productCards.length === 1 ? "" : "s"} found`}
           </span>
         </div>
@@ -92,14 +92,14 @@ export function TagDetailClient({
           <div className="rounded-3xl border border-dashed border-border bg-white p-16 text-center text-text-muted space-y-2">
             <p className="text-sm font-bold text-text">
               {isBn
-                ? "এই ট্যাগের কোনো পণ্য বর্তমানে পাওয়া যায়নি।"
+                ? "   Products   Tracking।"
                 : "No products currently found under this tag."}
             </p>
             <Link
               href="/products"
               className="text-xs font-bold text-primary-600 hover:underline inline-block"
             >
-              {isBn ? "সকল পণ্য ব্রাউজ করুন →" : "Browse All Products →"}
+              {isBn ? "All Products   →" : "Browse All Products →"}
             </Link>
           </div>
         ) : (

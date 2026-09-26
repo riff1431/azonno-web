@@ -42,8 +42,8 @@ export function ConnectionStatusBadge({
           {showIcon && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />}
           <span>
             {normStatus === "connected"
-              ? (isBn ? "সংযুক্ত" : "Connected")
-              : (isBn ? "সক্রিয়" : "Active")}
+              ? (isBn ? "Connected" : "Connected")
+              : (isBn ? "Active" : "Active")}
           </span>
         </span>
       );
@@ -57,7 +57,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <Wifi className="h-3.5 w-3.5 text-emerald-600" />}
-          <span>{isBn ? "লাইভ মোড" : "Live Mode"}</span>
+          <span>{isBn ? "Live Mode" : "Live Mode"}</span>
         </span>
       );
 
@@ -70,7 +70,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />}
-          <span>{isBn ? "স্যান্ডবক্স / টেস্ট" : "Sandbox / Test"}</span>
+          <span>{isBn ? "Sandbox / Test" : "Sandbox / Test"}</span>
         </span>
       );
 
@@ -83,7 +83,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <XCircle className="h-3.5 w-3.5 text-red-600" />}
-          <span>{isBn ? "ত্রুটি" : "Error"}</span>
+          <span>{isBn ? "Error" : "Error"}</span>
         </span>
       );
 
@@ -99,8 +99,8 @@ export function ConnectionStatusBadge({
           {showIcon && <WifiOff className="h-3.5 w-3.5 text-text-muted" />}
           <span>
             {normStatus === "disconnected"
-              ? (isBn ? "বিচ্ছিন্ন" : "Disconnected")
-              : (isBn ? "নিষ্ক্রিয়" : "Disabled")}
+              ? (isBn ? "Disconnected" : "Disconnected")
+              : (isBn ? "Inactive" : "Disabled")}
           </span>
         </span>
       );
@@ -115,7 +115,7 @@ export function ConnectionStatusBadge({
           )}
         >
           {showIcon && <HelpCircle className="h-3.5 w-3.5 text-text-muted" />}
-          <span>{isBn ? "কনফিগার করা হয়নি" : "Not Configured"}</span>
+          <span>{isBn ? "Configure  " : "Not Configured"}</span>
         </span>
       );
   }

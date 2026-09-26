@@ -50,9 +50,9 @@ const THEME_PALETTES: ThemePaletteDef[] = [
     id: "rose",
     name: "Rose Gold Luxe",
     desc: "Signature K-Beauty aesthetic with soft rose gold and vibrant pink accents",
-    primaryColor: "#e91e63",
+    primaryColor: "#1D6474",
     accentColor: "#fdf2f8",
-    bgClass: "bg-[#e91e63]",
+    bgClass: "bg-[#1D6474]",
     badge: "Default K-Beauty",
   },
   {
@@ -146,7 +146,7 @@ export function ThemeClient({ initialSettings }: ThemeClientProps) {
   const [showDiscountBadge, setShowDiscountBadge] = useState(initialSettings.showDiscountBadge !== false);
   const [showStockBadge, setShowStockBadge] = useState(initialSettings.showStockBadge !== false);
   const [footerTagline, setFooterTagline] = useState(initialSettings.footerTagline || "Authentic Korean & UK Skincare & Cosmetics in Bangladesh");
-  const [copyrightText, setCopyrightText] = useState(initialSettings.copyrightText || `© ${new Date().getFullYear()} Blush & Budget. Authentic Skincare & Cosmetics Bangladesh.`);
+  const [copyrightText, setCopyrightText] = useState(initialSettings.copyrightText || `© ${new Date().getFullYear()} Azonno. Authentic Skincare & Cosmetics Bangladesh.`);
 
   // Preview Modal
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -609,7 +609,7 @@ export function ThemeClient({ initialSettings }: ThemeClientProps) {
                 type="text"
                 value={copyrightText}
                 onChange={(e) => setCopyrightText(e.target.value)}
-                placeholder="© 2026 Blush & Budget. All rights reserved."
+                placeholder="© 2026 Azonno. All rights reserved."
                 className="text-xs"
               />
             </div>

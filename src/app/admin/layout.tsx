@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: {
       default: "Admin",
-      template: "%s | Admin — Blush & Budget",
+      template: "%s | Admin — Azonno",
     },
     robots: { index: false, follow: false },
     icons: {
@@ -39,8 +39,8 @@ export default async function AdminLayout({
   const logoImageUrl =
     homepageConfig?.headerConfig?.adminLogoImageUrl ||
     homepageConfig?.headerConfig?.logoImageUrl ||
-    "/images/blush-logo.png";
-  const brandName = homepageConfig?.headerConfig?.logoText || "Blush & Budget";
+    "/images/azonno-logo-dark.png";
+  const brandName = homepageConfig?.headerConfig?.logoText || "Azonno";
 
   return (
     <AdminLayoutClient

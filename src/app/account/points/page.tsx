@@ -61,20 +61,20 @@ export default function AccountPointsPage() {
       {/* Rewards Catalog */}
       <div className="space-y-3">
         <h2 className="text-sm font-black uppercase tracking-wider text-gray-800 flex items-center gap-1.5">
-          <Gift className="h-4 w-4 text-[#e91e63]" /> Redeem Points for Cash Vouchers
+          <Gift className="h-4 w-4 text-[#1D6474]" /> Redeem Points for Cash Vouchers
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-3 flex flex-col justify-between">
             <div>
-              <span className="text-xs font-black text-[#e91e63] bg-pink-50 px-2.5 py-1 rounded-lg">৳100 OFF</span>
+              <span className="text-xs font-black text-[#1D6474] bg-teal-50/60 px-2.5 py-1 rounded-lg">৳100 OFF</span>
               <h3 className="font-bold text-sm text-gray-900 mt-2">100 BDT Voucher</h3>
               <p className="text-[11px] text-gray-500">Min. order ৳1,200</p>
             </div>
             <Button
               onClick={() => handleRedeem(200, "GLAM100")}
               disabled={points < 200}
-              className="w-full text-xs font-bold bg-[#e91e63] hover:bg-sg-pink-hover text-white"
+              className="w-full text-xs font-bold bg-[#1D6474] hover:bg-[#164E63] text-white"
             >
               Redeem (200 pts)
             </Button>
@@ -89,7 +89,7 @@ export default function AccountPointsPage() {
             <Button
               onClick={() => handleRedeem(500, "GLAM250")}
               disabled={points < 500}
-              className="w-full text-xs font-bold bg-[#e91e63] hover:bg-sg-pink-hover text-white"
+              className="w-full text-xs font-bold bg-[#1D6474] hover:bg-[#164E63] text-white"
             >
               Redeem (500 pts)
             </Button>
@@ -104,7 +104,7 @@ export default function AccountPointsPage() {
             <Button
               onClick={() => handleRedeem(150, "FREESHIPPASS")}
               disabled={points < 150}
-              className="w-full text-xs font-bold bg-[#e91e63] hover:bg-sg-pink-hover text-white"
+              className="w-full text-xs font-bold bg-[#1D6474] hover:bg-[#164E63] text-white"
             >
               Redeem (150 pts)
             </Button>

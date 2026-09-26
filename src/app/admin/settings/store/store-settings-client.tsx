@@ -19,7 +19,7 @@ export function StoreSettingsClient({
   const { t, lang, setLang } = useAdminLang();
 
   const [formData, setFormData] = useState({
-    store_name: initialSettings.store_name || "Blush & Budget",
+    store_name: initialSettings.store_name || "Azonno",
     store_url: initialSettings.store_url || (typeof window !== "undefined" ? window.location.origin : ""),
     store_email: initialSettings.store_email || "support@blushbudget.com",
     store_phone: initialSettings.store_phone || "+880 1700-000000",
@@ -203,7 +203,7 @@ export function StoreSettingsClient({
         <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-border pb-3">
             <div className="flex items-center gap-2">
-              <Languages className="h-4 w-4 text-[#e91e63]" />
+              <Languages className="h-4 w-4 text-[#1D6474]" />
               <h2 className="text-sm font-bold text-text">{t("language_localization_title")}</h2>
             </div>
             <span
@@ -234,7 +234,7 @@ export function StoreSettingsClient({
                       })
                     }
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      localizationData.enable_language_switcher ? "bg-[#e91e63]" : "bg-gray-300"
+                      localizationData.enable_language_switcher ? "bg-[#1D6474]" : "bg-gray-300"
                     }`}
                   >
                     <span
@@ -266,7 +266,7 @@ export function StoreSettingsClient({
                   }
                   className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                     localizationData.default_language === "bn"
-                      ? "border-[#e91e63] bg-pink-50/60 text-[#e91e63] font-bold shadow-2xs"
+                      ? "border-[#1D6474] bg-teal-50/60/60 text-[#1D6474] font-bold shadow-2xs"
                       : "border-border bg-white text-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -284,7 +284,7 @@ export function StoreSettingsClient({
                   }
                   className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                     localizationData.default_language === "en"
-                      ? "border-[#e91e63] bg-pink-50/60 text-[#e91e63] font-bold shadow-2xs"
+                      ? "border-[#1D6474] bg-teal-50/60/60 text-[#1D6474] font-bold shadow-2xs"
                       : "border-border bg-white text-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -309,7 +309,7 @@ export function StoreSettingsClient({
                   onClick={() => handleAdminLangChange("bn")}
                   className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                     localizationData.admin_default_language === "bn"
-                      ? "border-[#e91e63] bg-pink-50/60 text-[#e91e63] font-bold shadow-2xs"
+                      ? "border-[#1D6474] bg-teal-50/60/60 text-[#1D6474] font-bold shadow-2xs"
                       : "border-border bg-white text-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -322,7 +322,7 @@ export function StoreSettingsClient({
                   onClick={() => handleAdminLangChange("en")}
                   className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                     localizationData.admin_default_language === "en"
-                      ? "border-[#e91e63] bg-pink-50/60 text-[#e91e63] font-bold shadow-2xs"
+                      ? "border-[#1D6474] bg-teal-50/60/60 text-[#1D6474] font-bold shadow-2xs"
                       : "border-border bg-white text-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -340,7 +340,7 @@ export function StoreSettingsClient({
               <div>
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-text text-xs flex items-center gap-1.5">
-                    <Sparkles className="h-3.5 w-3.5 text-pink-600" />
+                    <Sparkles className="h-3.5 w-3.5 text-[#1D6474]" />
                     {t("homepage_quick_lang_title")}
                   </span>
                   <button
@@ -356,7 +356,7 @@ export function StoreSettingsClient({
                       !localizationData.enable_language_switcher
                         ? "opacity-50 cursor-not-allowed bg-gray-200"
                         : localizationData.show_homepage_language_bar
-                        ? "bg-[#e91e63]"
+                        ? "bg-[#1D6474]"
                         : "bg-gray-300"
                     }`}
                   >

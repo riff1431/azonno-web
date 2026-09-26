@@ -127,7 +127,7 @@ export function RichArticleEditor({
     if (!linkUrl.trim()) return;
     const textToUse = linkText.trim() || linkUrl.trim();
     const targetAttr = linkNewTab ? ' target="_blank" rel="noopener noreferrer"' : "";
-    const html = `<a href="${linkUrl.trim()}"${targetAttr} class="text-[#e91e63] font-bold underline hover:text-[#c2185b]">${textToUse}</a>`;
+    const html = `<a href="${linkUrl.trim()}"${targetAttr} class="text-[#1D6474] font-bold underline hover:text-[#0E7490]">${textToUse}</a>`;
     insertHtmlAtCursor(html);
     setLinkModalOpen(false);
     setLinkUrl("");
@@ -155,8 +155,8 @@ export function RichArticleEditor({
 
   const insertBeautyCallout = () => {
     const html = `
-<div class="my-6 rounded-2xl bg-pink-50/80 border-l-4 border-[#e91e63] p-5 shadow-xs">
-  <div class="flex items-center gap-2 text-xs font-black uppercase text-[#e91e63] mb-1">
+<div class="my-6 rounded-2xl bg-teal-50/60/80 border-l-4 border-[#1D6474] p-5 shadow-xs">
+  <div class="flex items-center gap-2 text-xs font-black uppercase text-[#1D6474] mb-1">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.439a11.955 11.955 0 01-4.5 0m4.5 0a1.5 1.5 0 01-1.5 1.5h-1.5a1.5 1.5 0 01-1.5-1.5m3-13.5a6 6 0 10-6 0c0 2.22 1.206 4.157 3 5.195V12h6v-.555c1.794-1.038 3-2.975 3-5.195z"/></svg>
     <span>Beauty Expert Pro Tip</span>
   </div>
@@ -185,8 +185,8 @@ export function RichArticleEditor({
 
   const insertRoutineStep = (stepNumber: number, stepTitle: string, description: string) => {
     const html = `
-<div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs hover:border-[#e91e63] transition-colors">
-  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">
+<div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs hover:border-[#1D6474] transition-colors">
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10 text-[#1D6474] font-black text-sm">
     #${stepNumber}
   </div>
   <div class="space-y-1">
@@ -212,7 +212,7 @@ export function RichArticleEditor({
 <h3>Step-by-Step Daily Morning Routine</h3>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#1</div>
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10 text-[#1D6474] font-black text-sm">#1</div>
   <div class="space-y-1">
     <h4 class="text-sm font-black text-gray-900 m-0">Gentle Everyday Cleanser</h4>
     <p class="text-xs text-gray-600 leading-relaxed m-0">Use a gentle gel cleanser to wash away overnight oil and sweat without leaving your skin feeling dry or tight.</p>
@@ -220,7 +220,7 @@ export function RichArticleEditor({
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#2</div>
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10 text-[#1D6474] font-black text-sm">#2</div>
   <div class="space-y-1">
     <h4 class="text-sm font-black text-gray-900 m-0">Hydrating Toner or Essence</h4>
     <p class="text-xs text-gray-600 leading-relaxed m-0">Pat a lightweight layer of Centella or Snail Mucin essence to hydrate and leave skin feeling calm and refreshed.</p>
@@ -228,7 +228,7 @@ export function RichArticleEditor({
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#3</div>
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10 text-[#1D6474] font-black text-sm">#3</div>
   <div class="space-y-1">
     <h4 class="text-sm font-black text-gray-900 m-0">Balancing Serum (Niacinamide)</h4>
     <p class="text-xs text-gray-600 leading-relaxed m-0">Helps balance excess oil and leaves the skin with a smooth, even-looking finish.</p>
@@ -236,7 +236,7 @@ export function RichArticleEditor({
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#4</div>
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10 text-[#1D6474] font-black text-sm">#4</div>
   <div class="space-y-1">
     <h4 class="text-sm font-black text-gray-900 m-0">Lightweight Gel Moisturizer</h4>
     <p class="text-xs text-gray-600 leading-relaxed m-0">Locks in daily moisture with a non-greasy feel that keeps skin soft throughout the day.</p>
@@ -244,15 +244,15 @@ export function RichArticleEditor({
 </div>
 
 <div class="my-4 flex items-start gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-2xs">
-  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-500/10 text-[#e91e63] font-black text-sm">#5</div>
+  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10 text-[#1D6474] font-black text-sm">#5</div>
   <div class="space-y-1">
     <h4 class="text-sm font-black text-gray-900 m-0">Daily SPF Sunscreen</h4>
     <p class="text-xs text-gray-600 leading-relaxed m-0">Apply sunscreen evenly to protect against sun rays and keep your complexion bright and fresh.</p>
   </div>
 </div>
 
-<div class="my-6 rounded-2xl bg-pink-50/80 border-l-4 border-[#e91e63] p-5 shadow-xs">
-  <div class="flex items-center gap-2 text-xs font-black uppercase text-[#e91e63] mb-1">
+<div class="my-6 rounded-2xl bg-teal-50/60/80 border-l-4 border-[#1D6474] p-5 shadow-xs">
+  <div class="flex items-center gap-2 text-xs font-black uppercase text-[#1D6474] mb-1">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.439a11.955 11.955 0 01-4.5 0m4.5 0a1.5 1.5 0 01-1.5 1.5h-1.5a1.5 1.5 0 01-1.5-1.5m3-13.5a6 6 0 10-6 0c0 2.22 1.206 4.157 3 5.195V12h6v-.555c1.794-1.038 3-2.975 3-5.195z"/></svg>
     <span>Daily Skincare Tip</span>
   </div>
@@ -289,8 +289,8 @@ export function RichArticleEditor({
   <li><strong>Storage:</strong> Keep in a cool place away from direct sunlight.</li>
 </ul>
 
-<div class="my-6 rounded-2xl bg-pink-50/80 border-l-4 border-[#e91e63] p-5 shadow-xs">
-  <div class="flex items-center gap-2 text-xs font-black uppercase text-[#e91e63] mb-1">
+<div class="my-6 rounded-2xl bg-teal-50/60/80 border-l-4 border-[#1D6474] p-5 shadow-xs">
+  <div class="flex items-center gap-2 text-xs font-black uppercase text-[#1D6474] mb-1">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.439a11.955 11.955 0 01-4.5 0m4.5 0a1.5 1.5 0 01-1.5 1.5h-1.5a1.5 1.5 0 01-1.5-1.5m3-13.5a6 6 0 10-6 0c0 2.22 1.206 4.157 3 5.195V12h6v-.555c1.794-1.038 3-2.975 3-5.195z"/></svg>
     <span>Can You Use Both?</span>
   </div>
@@ -314,19 +314,19 @@ export function RichArticleEditor({
       <div className="border-b border-gray-100 bg-gray-50/80 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
         <div className="flex items-center gap-2">
           <span className="font-bold text-gray-600 flex items-center gap-1 text-[11px] uppercase tracking-wider">
-            <Sparkles className="h-3.5 w-3.5 text-[#e91e63]" /> Quick Templates:
+            <Sparkles className="h-3.5 w-3.5 text-[#1D6474]" /> Quick Templates:
           </span>
           <button
             type="button"
             onClick={() => loadTemplate("routine")}
-            className="rounded-lg bg-white border border-gray-200 px-2.5 py-1 font-bold text-gray-700 hover:border-[#e91e63] hover:text-[#e91e63] transition-colors shadow-2xs inline-flex items-center gap-1.5"
+            className="rounded-lg bg-white border border-gray-200 px-2.5 py-1 font-bold text-gray-700 hover:border-[#1D6474] hover:text-[#1D6474] transition-colors shadow-2xs inline-flex items-center gap-1.5"
           >
-            <Sparkles className="h-3 w-3 text-[#e91e63]" /> 5-Step Routine
+            <Sparkles className="h-3 w-3 text-[#1D6474]" /> 5-Step Routine
           </button>
           <button
             type="button"
             onClick={() => loadTemplate("ingredient")}
-            className="rounded-lg bg-white border border-gray-200 px-2.5 py-1 font-bold text-gray-700 hover:border-[#e91e63] hover:text-[#e91e63] transition-colors shadow-2xs inline-flex items-center gap-1.5"
+            className="rounded-lg bg-white border border-gray-200 px-2.5 py-1 font-bold text-gray-700 hover:border-[#1D6474] hover:text-[#1D6474] transition-colors shadow-2xs inline-flex items-center gap-1.5"
           >
             <BookOpen className="h-3 w-3 text-purple-600" /> Ingredient Guide
           </button>
@@ -339,7 +339,7 @@ export function RichArticleEditor({
             onClick={() => setViewMode("visual")}
             className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition-all ${
               viewMode === "visual"
-                ? "bg-white text-[#e91e63] shadow-xs"
+                ? "bg-white text-[#1D6474] shadow-xs"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -350,7 +350,7 @@ export function RichArticleEditor({
             onClick={() => setViewMode("html")}
             className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition-all ${
               viewMode === "html"
-                ? "bg-white text-[#e91e63] shadow-xs"
+                ? "bg-white text-[#1D6474] shadow-xs"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -361,7 +361,7 @@ export function RichArticleEditor({
             onClick={() => setViewMode("split")}
             className={`flex items-center gap-1 rounded-lg px-2.5 py-1 transition-all ${
               viewMode === "split"
-                ? "bg-white text-[#e91e63] shadow-xs"
+                ? "bg-white text-[#1D6474] shadow-xs"
                 : "text-gray-600 hover:text-gray-900"
             }`}
           >
@@ -378,7 +378,7 @@ export function RichArticleEditor({
             type="button"
             title="Paragraph Text (<p>)"
             onClick={() => executeCommand("formatBlock", "<p>")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <Pilcrow className="h-4 w-4" />
           </button>
@@ -386,7 +386,7 @@ export function RichArticleEditor({
             type="button"
             title="Heading 2 (<h2>)"
             onClick={() => executeCommand("formatBlock", "<h2>")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] font-black text-xs transition-colors flex items-center gap-0.5"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] font-black text-xs transition-colors flex items-center gap-0.5"
           >
             <Heading2 className="h-4 w-4" />
           </button>
@@ -394,7 +394,7 @@ export function RichArticleEditor({
             type="button"
             title="Heading 3 (<h3>)"
             onClick={() => executeCommand("formatBlock", "<h3>")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] font-black text-xs transition-colors flex items-center gap-0.5"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] font-black text-xs transition-colors flex items-center gap-0.5"
           >
             <Heading3 className="h-4 w-4" />
           </button>
@@ -402,7 +402,7 @@ export function RichArticleEditor({
             type="button"
             title="Heading 4 (<h4>)"
             onClick={() => executeCommand("formatBlock", "<h4>")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] font-black text-xs transition-colors flex items-center gap-0.5"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] font-black text-xs transition-colors flex items-center gap-0.5"
           >
             <Heading4 className="h-4 w-4" />
           </button>
@@ -414,7 +414,7 @@ export function RichArticleEditor({
             type="button"
             title="Bold (Ctrl+B)"
             onClick={() => executeCommand("bold")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <Bold className="h-4 w-4" />
           </button>
@@ -422,7 +422,7 @@ export function RichArticleEditor({
             type="button"
             title="Italic (Ctrl+I)"
             onClick={() => executeCommand("italic")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <Italic className="h-4 w-4" />
           </button>
@@ -430,7 +430,7 @@ export function RichArticleEditor({
             type="button"
             title="Underline (Ctrl+U)"
             onClick={() => executeCommand("underline")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <Underline className="h-4 w-4" />
           </button>
@@ -438,7 +438,7 @@ export function RichArticleEditor({
             type="button"
             title="Strikethrough"
             onClick={() => executeCommand("strikeThrough")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <Strikethrough className="h-4 w-4" />
           </button>
@@ -450,7 +450,7 @@ export function RichArticleEditor({
             type="button"
             title="Bullet List (<ul>)"
             onClick={() => executeCommand("insertUnorderedList")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <List className="h-4 w-4" />
           </button>
@@ -458,7 +458,7 @@ export function RichArticleEditor({
             type="button"
             title="Numbered List (<ol>)"
             onClick={() => executeCommand("insertOrderedList")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <ListOrdered className="h-4 w-4" />
           </button>
@@ -466,7 +466,7 @@ export function RichArticleEditor({
             type="button"
             title="Blockquote"
             onClick={() => executeCommand("formatBlock", "<blockquote>")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <Quote className="h-4 w-4" />
           </button>
@@ -474,7 +474,7 @@ export function RichArticleEditor({
             type="button"
             title="Horizontal Divider (<hr>)"
             onClick={() => executeCommand("insertHorizontalRule")}
-            className="rounded-lg p-1.5 text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="rounded-lg p-1.5 text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <Minus className="h-4 w-4" />
           </button>
@@ -486,7 +486,7 @@ export function RichArticleEditor({
             type="button"
             title="Insert Link"
             onClick={() => setLinkModalOpen(true)}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <LinkIcon className="h-3.5 w-3.5" /> Link
           </button>
@@ -494,7 +494,7 @@ export function RichArticleEditor({
             type="button"
             title="Insert Image"
             onClick={() => setImageModalOpen(true)}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-gray-700 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-gray-700 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
           >
             <ImageIcon className="h-3.5 w-3.5" /> Image
           </button>
@@ -505,7 +505,7 @@ export function RichArticleEditor({
           <button
             type="button"
             onClick={insertBeautyCallout}
-            className="flex items-center gap-1 rounded-lg bg-pink-50 px-2 py-1 text-xs font-bold text-[#e91e63] hover:bg-pink-100 transition-colors border border-pink-200 shadow-2xs"
+            className="flex items-center gap-1 rounded-lg bg-teal-50/60 px-2 py-1 text-xs font-bold text-[#1D6474] hover:bg-teal-100/70 transition-colors border border-teal-200 shadow-2xs"
           >
             <Sparkles className="h-3 w-3" /> + Beauty Tip Box
           </button>
@@ -533,10 +533,10 @@ export function RichArticleEditor({
 
       {/* 3. Link Insertion Modal */}
       {linkModalOpen && (
-        <div className="border-b border-pink-100 bg-pink-50/70 p-4 animate-in fade-in-0 slide-in-from-top-2 duration-150">
+        <div className="border-b border-teal-100 bg-teal-50/60/70 p-4 animate-in fade-in-0 slide-in-from-top-2 duration-150">
           <div className="max-w-md space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-[#e91e63] flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase text-[#1D6474] flex items-center gap-1.5">
                 <LinkIcon className="h-3.5 w-3.5" /> Insert Hyperlink
               </span>
               <button
@@ -554,14 +554,14 @@ export function RichArticleEditor({
                 placeholder="https://example.com/..."
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
-                className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
               />
               <input
                 type="text"
                 placeholder="Link Anchor Text"
                 value={linkText}
                 onChange={(e) => setLinkText(e.target.value)}
-                className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
               />
             </div>
             <div className="flex items-center justify-between pt-1">
@@ -570,7 +570,7 @@ export function RichArticleEditor({
                   type="checkbox"
                   checked={linkNewTab}
                   onChange={(e) => setLinkNewTab(e.target.checked)}
-                  className="rounded text-[#e91e63] focus:ring-0"
+                  className="rounded text-[#1D6474] focus:ring-0"
                 />
                 Open in new tab
               </label>
@@ -588,7 +588,7 @@ export function RichArticleEditor({
                   type="button"
                   size="sm"
                   onClick={handleInsertLink}
-                  className="bg-[#e91e63] text-white text-xs font-bold rounded-xl h-7"
+                  className="bg-[#1D6474] text-white text-xs font-bold rounded-xl h-7"
                 >
                   Insert Link
                 </Button>
@@ -600,10 +600,10 @@ export function RichArticleEditor({
 
       {/* 4. Image Insertion Modal */}
       {imageModalOpen && (
-        <div className="border-b border-pink-100 bg-pink-50/70 p-4 animate-in fade-in-0 slide-in-from-top-2 duration-150">
+        <div className="border-b border-teal-100 bg-teal-50/60/70 p-4 animate-in fade-in-0 slide-in-from-top-2 duration-150">
           <div className="max-w-lg space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-[#e91e63] flex items-center gap-1.5">
+              <span className="text-xs font-black uppercase text-[#1D6474] flex items-center gap-1.5">
                 <ImageIcon className="h-3.5 w-3.5" /> Insert Beauty Illustration or Photo
               </span>
               <button
@@ -628,14 +628,14 @@ export function RichArticleEditor({
                   placeholder="Image Alt Text (for SEO)"
                   value={imageAlt}
                   onChange={(e) => setImageAlt(e.target.value)}
-                  className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
                 <input
                   type="text"
                   placeholder="Optional Image Caption"
                   value={imageCaption}
                   onChange={(e) => setImageCaption(e.target.value)}
-                  className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  className="rounded-xl border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
             </div>
@@ -653,7 +653,7 @@ export function RichArticleEditor({
                 type="button"
                 size="sm"
                 onClick={handleInsertImage}
-                className="bg-[#e91e63] text-white text-xs font-bold rounded-xl h-7"
+                className="bg-[#1D6474] text-white text-xs font-bold rounded-xl h-7"
               >
                 Insert Image
               </Button>
@@ -673,7 +673,7 @@ export function RichArticleEditor({
             ref={visualEditorRef}
             contentEditable
             onInput={handleVisualInput}
-            className="prose prose-pink max-w-none p-6 text-sm text-gray-900 focus:outline-none leading-relaxed min-h-95 [&_h2]:text-xl [&_h2]:font-black [&_h2]:text-gray-900 [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-base [&_h3]:font-black [&_h3]:text-gray-800 [&_h3]:mt-5 [&_h3]:mb-2 [&_h4]:text-sm [&_h4]:font-bold [&_h4]:text-gray-800 [&_p]:text-gray-700 [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-[#e91e63] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4"
+            className="prose prose-pink max-w-none p-6 text-sm text-gray-900 focus:outline-none leading-relaxed min-h-95 [&_h2]:text-xl [&_h2]:font-black [&_h2]:text-gray-900 [&_h2]:mt-6 [&_h2]:mb-3 [&_h3]:text-base [&_h3]:font-black [&_h3]:text-gray-800 [&_h3]:mt-5 [&_h3]:mb-2 [&_h4]:text-sm [&_h4]:font-bold [&_h4]:text-gray-800 [&_p]:text-gray-700 [&_p]:leading-relaxed [&_p]:mb-4 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4 [&_li]:mb-1 [&_blockquote]:border-l-4 [&_blockquote]:border-[#1D6474] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-4"
           />
         )}
 
@@ -699,14 +699,14 @@ export function RichArticleEditor({
               <textarea
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="flex-1 w-full p-4 rounded-xl border border-gray-300 bg-white font-mono text-xs text-gray-900 focus:outline-none focus:border-[#e91e63] resize-none leading-relaxed"
+                className="flex-1 w-full p-4 rounded-xl border border-gray-300 bg-white font-mono text-xs text-gray-900 focus:outline-none focus:border-[#1D6474] resize-none leading-relaxed"
                 placeholder="<p>Write HTML...</p>"
               />
             </div>
 
             {/* Right: Real-time Live Render Preview */}
             <div className="p-6 overflow-y-auto max-h-125 bg-white">
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#e91e63] mb-3 block">
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#1D6474] mb-3 block">
                 Live Storefront Render Preview
               </span>
               <div
@@ -728,7 +728,7 @@ export function RichArticleEditor({
             Characters: <strong>{(value || "").replace(/<[^>]*>/g, "").length}</strong>
           </span>
         </div>
-        <div className="flex items-center gap-1 text-[11px] text-[#e91e63] font-bold">
+        <div className="flex items-center gap-1 text-[11px] text-[#1D6474] font-bold">
           <Check className="h-3 w-3" /> Rich Formatting Ready
         </div>
       </div>

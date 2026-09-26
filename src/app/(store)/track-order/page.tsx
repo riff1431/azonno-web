@@ -64,11 +64,11 @@ export default function TrackOrderPage() {
   const isBn = language === "bn";
 
   const statusSteps = [
-    { key: "pending", label: isBn ? "অর্ডার গ্রহণ" : "Order Placed" },
-    { key: "confirmed", label: isBn ? "নিশ্চিত হয়েছে" : "Confirmed" },
-    { key: "processing", label: isBn ? "প্যাকেজিং" : "Packaging" },
-    { key: "shipped", label: isBn ? "ডেলিভারিতে আছে" : "In Transit" },
-    { key: "delivered", label: isBn ? "ডেলিভারি সম্পন্ন" : "Delivered" },
+    { key: "pending", label: isBn ? "Order Placed" : "Order Placed" },
+    { key: "confirmed", label: isBn ? "Confirmed successfully" : "Confirmed" },
+    { key: "processing", label: isBn ? "" : "Packaging" },
+    { key: "shipped", label: isBn ? "Delivery " : "In Transit" },
+    { key: "delivered", label: isBn ? "Delivered" : "Delivered" },
   ];
 
   const getStepIndex = (status: string) => {
@@ -114,14 +114,14 @@ export default function TrackOrderPage() {
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700 border border-primary-200">
           <Truck className="h-3.5 w-3.5" />
-          {isBn ? "পার্সেল ট্র্যাকিং" : "Order Tracking"}
+          {isBn ? " " : "Order Tracking"}
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-text">
           {t("orders", "trackOrderTitle")}
         </h1>
         <p className="text-xs sm:text-sm text-text-secondary max-w-md mx-auto">
           {isBn
-            ? "আপনার অর্ডার নম্বর এবং মোবাইল নম্বর দিয়ে রিয়েল-টাইম কুরিয়ার ডেলিভারি আপডেট জানুন।"
+            ? "your Order Number and Mobile Number  Real-time-  Delivery  ।"
             : "Enter your Order Number and Bangladesh mobile number to check real-time courier updates."}
         </p>
       </div>
@@ -162,7 +162,7 @@ export default function TrackOrderPage() {
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  {isBn ? "অর্ডার অনুসন্ধান করা হচ্ছে..." : "Locating Order..."}
+                  {isBn ? "Order   ..." : "Locating Order..."}
                 </>
               ) : (
                 <>
@@ -194,7 +194,7 @@ export default function TrackOrderPage() {
                   {order.order_number}
                 </p>
                 <p className="text-[11px] text-text-muted mt-0.5">
-                  {isBn ? "অর্ডারের তারিখ: " : "Placed on: "}
+                  {isBn ? "Order Date: " : "Placed on: "}
                   {new Date(order.created_at).toLocaleDateString(isBn ? "bn-BD" : "en-GB", {
                     day: "numeric",
                     month: "long",
@@ -224,11 +224,11 @@ export default function TrackOrderPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-rose-900">
-                    {isBn ? "এই অর্ডারটি বাতিল করা হয়েছে" : "This order has been cancelled"}
+                    {isBn ? " Orderitems Cancel  successfully" : "This order has been cancelled"}
                   </h3>
                   <p className="text-xs text-rose-700 mt-0.5">
                     {isBn
-                      ? "অর্ডারটি বাতিল করা হয়েছে। কোনো প্রশ্ন বা সহায়তার প্রয়োজন হলে অনুগ্রহ করে আমাদের কাস্টমার সাপোর্টে মেসেজ দিন।"
+                      ? "Orderitems Cancel  successfully।  Question     Please   Customers   Enter।"
                       : "This order was cancelled. If you need any assistance or have questions, please reach out to our customer support."}
                   </p>
                 </div>
@@ -243,11 +243,11 @@ export default function TrackOrderPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-amber-900">
-                    {isBn ? "পার্সেলটি রিটার্ন প্রক্রিয়ায় রয়েছে" : "Parcel in Return Process"}
+                    {isBn ? "items :00  " : "Parcel in Return Process"}
                   </h3>
                   <p className="text-xs text-amber-700 mt-0.5">
                     {isBn
-                      ? "ডেলিভারি সম্পন্ন না হওয়ায় পার্সেলটি ফেরত পাঠানো হচ্ছে। বিস্তারিত জানতে আমাদের কাস্টমার সাপোর্টে যোগাযোগ করুন।"
+                      ? "Delivered   items   ।    Customers  AddAdd to Cart।"
                       : "The parcel could not be delivered and is currently being returned to our warehouse."}
                   </p>
                 </div>
@@ -266,13 +266,13 @@ export default function TrackOrderPage() {
                       <div key={step.key} className="space-y-2">
                         <div
                           className={`h-2.5 rounded-full transition-all duration-300 ${
-                            isCompleted ? "bg-[#e91e63]" : "bg-zinc-200"
+                            isCompleted ? "bg-[#1D6474]" : "bg-zinc-200"
                           }`}
                         />
                         <span
                           className={`block text-[11px] leading-tight transition-colors ${
                             isCurrent
-                              ? "font-black text-[#e91e63]"
+                              ? "font-black text-[#1D6474]"
                               : isCompleted
                               ? "font-bold text-gray-800"
                               : "text-gray-400 font-medium"
@@ -292,12 +292,12 @@ export default function TrackOrderPage() {
               <div className="rounded-2xl border border-primary-100 bg-gradient-to-r from-pink-50/50 via-rose-50/30 to-purple-50/40 p-4 sm:p-5 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-white border border-primary-200 flex items-center justify-center text-[#e91e63] shadow-xs">
+                    <div className="h-9 w-9 rounded-xl bg-white border border-primary-200 flex items-center justify-center text-[#1D6474] shadow-xs">
                       <Truck className="h-4.5 w-4.5" />
                     </div>
                     <div>
                       <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider block">
-                        {isBn ? "কুরিয়ার লজিস্টিকস" : "Courier Partner"}
+                        {isBn ? " items" : "Courier Partner"}
                       </span>
                       <span className="font-bold text-xs text-gray-900">
                         {courierName}
@@ -326,9 +326,9 @@ export default function TrackOrderPage() {
                         href={liveTrackingUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold bg-[#e91e63] hover:bg-pink-700 text-white px-3 py-1.5 rounded-xl transition-all shadow-xs"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold bg-[#1D6474] hover:bg-[#164E63] text-white px-3 py-1.5 rounded-xl transition-all shadow-xs"
                       >
-                        <span>{isBn ? "লাইভ ট্র্যাকিং" : "Live Track"}</span>
+                        <span>{isBn ? " " : "Live Track"}</span>
                         <ExternalLink className="h-3 w-3" />
                       </a>
                     )}
@@ -342,15 +342,15 @@ export default function TrackOrderPage() {
               <div className="pt-4 border-t border-border space-y-3.5">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5 text-[#e91e63]" />
-                    <span>{isBn ? "ডেলিভারি ট্র্যাকিং হিস্ট্রি" : "Delivery Tracking History"}</span>
+                    <Clock className="h-3.5 w-3.5 text-[#1D6474]" />
+                    <span>{isBn ? "Delivery  " : "Delivery Tracking History"}</span>
                   </h3>
                   <span className="text-[10px] text-text-muted font-medium">
-                    {history.length} {isBn ? "টি আপডেট" : "Updates"}
+                    {history.length} {isBn ? "items " : "Updates"}
                   </span>
                 </div>
 
-                <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-pink-100">
+                <div className="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-teal-100/70">
                   {history.map((h: any, idx: number) => {
                     const view = formatCustomerLogEntry(
                       { status: h.status, note: h.note, courier_name: courierName },
@@ -364,8 +364,8 @@ export default function TrackOrderPage() {
                         <div
                           className={`absolute -left-6 top-1 h-4 w-4 rounded-full border-2 flex items-center justify-center transition-all ${
                             isLatest
-                              ? "bg-[#e91e63] border-white shadow-xs"
-                              : "bg-white border-pink-300"
+                              ? "bg-[#1D6474] border-white shadow-xs"
+                              : "bg-white border-teal-300"
                           }`}
                         >
                           <div className={`h-1.5 w-1.5 rounded-full ${isLatest ? "bg-white" : "bg-pink-400"}`} />
@@ -373,7 +373,7 @@ export default function TrackOrderPage() {
 
                         {/* Event Content */}
                         <div className={`rounded-2xl border p-3.5 text-xs transition-colors space-y-1 ${
-                          isLatest ? "bg-pink-50/40 border-pink-200" : "bg-white border-gray-100"
+                          isLatest ? "bg-teal-50/60/40 border-teal-200" : "bg-white border-gray-100"
                         }`}>
                           <div className="flex items-center justify-between gap-2 flex-wrap">
                             <span className="font-bold text-gray-900 text-xs sm:text-[13px]">
@@ -450,9 +450,9 @@ export default function TrackOrderPage() {
                 <span className="text-primary-700 font-black">{formatPriceBn(order.total)}</span>
               </div>
               <div className="flex justify-between text-[11px] text-text-muted font-medium">
-                <span>{isBn ? "পেমেন্ট মাধ্যম:" : "Payment Method:"}</span>
+                <span>{isBn ? "Payment :" : "Payment Method:"}</span>
                 <span className="uppercase font-bold text-emerald-700">
-                  {order.payment_method === "cod" ? (isBn ? "ক্যাশ অন ডেলিভারি (COD)" : "Cash on Delivery") : order.payment_method}
+                  {order.payment_method === "cod" ? (isBn ? "Cash  Delivery (COD)" : "Cash on Delivery") : order.payment_method}
                 </span>
               </div>
             </div>

@@ -1,8 +1,8 @@
 import { LanguageProvider } from "@/context/language-context";
 import { WishlistProvider } from "@/context/wishlist-context";
 import { CartProvider } from "@/context/cart-context";
-import { StorefrontHeader } from "@/components/storefront/storefront-header";
-import { StorefrontFooter } from "@/components/storefront/storefront-footer";
+import { AzonnoHeader } from "@/components/storefront/azonno-header";
+import { AzonnoFooter } from "@/components/storefront/azonno-footer";
 import { MobileBottomNav } from "@/components/storefront/mobile-bottom-nav";
 import { CartDrawer } from "@/components/storefront/cart-drawer";
 import { StorefrontMaintenanceScreen } from "@/components/storefront/storefront-maintenance-screen";
@@ -124,9 +124,9 @@ export default async function StorefrontLayout({
                 </div>
               </div>
             )}
-            <StorefrontHeader initialThemeSettings={themeSettings} />
+            <AzonnoHeader />
             <main className="flex-1 min-h-[calc(100vh-80px)]">{children}</main>
-            <StorefrontFooter />
+            <AzonnoFooter />
             <MobileBottomNav />
             <CartDrawer />
           </div>

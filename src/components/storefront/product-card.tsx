@@ -203,7 +203,7 @@ export function ProductCard({
   };
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-gray-200/90 bg-white transition-all duration-300 ease-out hover:scale-[1.04] hover:-translate-y-1 hover:shadow-2xl hover:border-[#e91e63] cursor-pointer btn-soft-fill">
+    <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-gray-200/90 bg-white transition-all duration-300 ease-out hover:scale-[1.04] hover:-translate-y-1 hover:shadow-2xl hover:border-[#1D6474] cursor-pointer btn-soft-fill">
       {/* 1. Top Image & Badges Container */}
       <div className="relative aspect-square w-full overflow-hidden bg-white flex items-center justify-center">
         {/* Top-Left Discount Badge */}
@@ -212,8 +212,8 @@ export function ProductCard({
             style={{ position: "absolute", top: "10px", left: "10px", zIndex: 20 }}
             className="pointer-events-none"
           >
-            <span className="rounded-md bg-[#e91e63] px-2 py-0.5 text-[11px] sm:text-xs font-black text-white shadow-xs tracking-wider">
-              {toBn(discountPercent)}% {language === "bn" ? "ছাড়" : "OFF"}
+            <span className="rounded-md bg-[#1D6474] px-2 py-0.5 text-[11px] sm:text-xs font-black text-white shadow-xs tracking-wider">
+              {toBn(discountPercent)}% {language === "bn" ? "OFF" : "OFF"}
             </span>
           </div>
         )}
@@ -231,8 +231,8 @@ export function ProductCard({
               className={cn(
                 "h-4 w-4 transition-colors",
                 inWishlist
-                  ? "fill-[#e91e63] text-[#e91e63]"
-                  : "text-gray-700 hover:text-[#e91e63]"
+                  ? "fill-[#1D6474] text-[#1D6474]"
+                  : "text-gray-700 hover:text-[#1D6474]"
               )}
             />
           </button>
@@ -257,10 +257,10 @@ export function ProductCard({
         {(product.is_free_shipping === true || product.shipping_class === "free_shipping") && (
           <div
             style={{ position: "absolute", bottom: "0px", left: "0px", right: "0px", zIndex: 10 }}
-            className="bg-[#e91e63] py-1 text-center shadow-xs pointer-events-none"
+            className="bg-[#1D6474] py-1 text-center shadow-xs pointer-events-none"
           >
             <span className="text-xs sm:text-[12.5px] font-black uppercase tracking-wider text-white">
-              {language === "bn" ? "ফ্রি ডেলিভারি" : (cardSettings?.freeShippingText || "FREE SHIPPING")}
+              {language === "bn" ? "Free Delivery" : (cardSettings?.freeShippingText || "FREE SHIPPING")}
             </span>
           </div>
         )}
@@ -281,7 +281,7 @@ export function ProductCard({
           {(product.brand_name || product.origin_country || product.country) && (
             <div className="flex items-center justify-between gap-1 text-[10.5px] sm:text-xs md:text-sm font-bold text-gray-500">
               {product.brand_name ? (
-                <span className="truncate text-[#e91e63] uppercase tracking-wider font-extrabold hover:underline">
+                <span className="truncate text-[#1D6474] uppercase tracking-wider font-extrabold hover:underline">
                   {product.brand_name}
                 </span>
               ) : <span />}
@@ -300,7 +300,7 @@ export function ProductCard({
           {/* Full Product Title - Completely Visible with Compact Clean Font */}
           <Link
             href={`/products/${product.slug}`}
-            className="block text-[11.5px] sm:text-[13px] md:text-sm font-semibold text-gray-900 leading-snug hover:text-[#e91e63] transition-colors"
+            className="block text-[11.5px] sm:text-[13px] md:text-sm font-semibold text-gray-900 leading-snug hover:text-[#1D6474] transition-colors"
             title={product.name}
           >
             {product.name}
@@ -329,7 +329,7 @@ export function ProductCard({
 
             {/* Size / Volume Pill Badge */}
             {cardSettings?.showSizeBadge !== false && detectedSize && (
-              <span className="rounded-md bg-pink-50 border border-pink-100 px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-xs md:text-sm font-bold text-[#e91e63] whitespace-nowrap">
+              <span className="rounded-md bg-teal-50/60 border border-teal-100 px-1.5 sm:px-2 py-0.5 text-[9.5px] sm:text-xs md:text-sm font-bold text-[#1D6474] whitespace-nowrap">
                 {detectedSize}
               </span>
             )}
@@ -337,7 +337,7 @@ export function ProductCard({
 
           {/* Pricing Row */}
           <div className="flex items-baseline gap-1.5 sm:gap-2 pt-0.5">
-            <span className="text-sm sm:text-lg lg:text-xl font-black text-[#e91e63]">
+            <span className="text-sm sm:text-lg lg:text-xl font-black text-[#1D6474]">
               {formatPriceBn(product.sale_price ?? product.regular_price)}
             </span>
             {product.sale_price && product.sale_price < product.regular_price && (
@@ -369,12 +369,12 @@ export function ProductCard({
               {justAdded ? (
                 <>
                   <Check className="h-3.5 w-3.5 stroke-3 animate-in zoom-in-50" />
-                  <span>{language === "bn" ? "যোগ হয়েছে" : "ADDED"}</span>
+                  <span>{language === "bn" ? "Added" : "ADDED"}</span>
                 </>
               ) : (
                 <>
                   <ShoppingBag className="h-3.5 w-3.5" />
-                  <span>{language === "bn" ? "কার্টে যোগ" : "ADD TO CART"}</span>
+                  <span>{language === "bn" ? " Add" : "ADD TO CART"}</span>
                 </>
               )}
             </button>
@@ -389,10 +389,10 @@ export function ProductCard({
                 "ripple-container w-full rounded-xl py-2.5 px-2 text-xs sm:text-sm font-black uppercase flex items-center justify-center gap-1 transition-all active:scale-95",
                 product.is_in_stock === false
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-                  : "bg-[#e91e63] text-white hover:bg-sg-pink-hover shadow-xs"
+                  : "bg-[#1D6474] text-white hover:bg-[#164E63] shadow-xs"
               )}
             >
-              <span>{language === "bn" ? "অর্ডার করুন" : "ORDER NOW"}</span>
+              <span>{language === "bn" ? "Order " : "ORDER NOW"}</span>
             </button>
           </div>
         </div>

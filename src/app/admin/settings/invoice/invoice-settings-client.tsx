@@ -42,7 +42,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
     if (confirm("Reset all invoice and thermal settings to recommended defaults?")) {
       setFormData({
         invoice_logo_url: "",
-        invoice_brand_name: "BLUSH & BUDGET",
+        invoice_brand_name: "AZONNO",
         invoice_tagline: "AUTHENTIC BEAUTY & SKINCARE ESSENTIALS",
         invoice_address: "House 42, Road 11, Banani, Dhaka-1213, Bangladesh",
         invoice_email: "",
@@ -50,7 +50,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
         invoice_tax_id_or_bin: "BIN: 002349182-0101",
 
         invoice_title: "INVOICE",
-        invoice_accent_color: "#e91e63",
+        invoice_accent_color: "#1D6474",
         invoice_footer_notes:
           "Thank you for choosing us! All products are 100% genuine and imported directly from verified authorized distributors. For any warranty claims or return assistance, please keep this invoice handy.",
         invoice_authorized_signatory_text: "Authorized Signature",
@@ -60,7 +60,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
         invoice_show_paid_stamp: true,
 
         thermal_logo_url: "",
-        thermal_header_title: "BLUSH & BUDGET • DISPATCH",
+        thermal_header_title: "AZONNO • DISPATCH",
         thermal_return_address: "House 42, Road 11, Banani, Dhaka",
         thermal_sender_phone: "+880 1700-000000",
         thermal_show_item_breakdown: true,
@@ -326,13 +326,13 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                       <div className="flex items-center gap-2">
                         <input
                           type="color"
-                          value={formData.invoice_accent_color || "#e91e63"}
+                          value={formData.invoice_accent_color || "#1D6474"}
                           onChange={(e) => updateField("invoice_accent_color", e.target.value)}
                           className="h-9 w-12 rounded-lg border border-border cursor-pointer p-0.5"
                         />
                         <input
                           type="text"
-                          value={formData.invoice_accent_color || "#e91e63"}
+                          value={formData.invoice_accent_color || "#1D6474"}
                           onChange={(e) => updateField("invoice_accent_color", e.target.value)}
                           className="flex-1 rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-mono text-text focus:outline-none"
                         />
@@ -556,7 +556,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                       className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none"
                     >
                       <option value="en">English (Default)</option>
-                      <option value="bn">Bangla (বাংলা)</option>
+                      <option value="bn">Bangla (English)</option>
                     </select>
                   </div>
                 </div>
@@ -622,7 +622,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                       />
                     ) : (
                       <span className="font-black text-[11px] text-gray-900 tracking-wider block">
-                        {formData.invoice_brand_name || "BLUSH & BUDGET"}
+                        {formData.invoice_brand_name || "AZONNO"}
                       </span>
                     )}
                     <span className="text-[7.5px] font-bold text-gray-500 uppercase block">
@@ -636,7 +636,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                   <div className="text-right">
                     <span
                       className="font-black text-xs block uppercase"
-                      style={{ color: formData.invoice_accent_color || "#e91e63" }}
+                      style={{ color: formData.invoice_accent_color || "#1D6474" }}
                     >
                       {formData.invoice_title || "INVOICE"}
                     </span>
@@ -694,7 +694,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                     <div className="text-[7.5px] text-gray-500">Delivery: ৳60</div>
                     <div
                       className="font-black text-[10px] pt-0.5 border-t border-gray-200"
-                      style={{ color: formData.invoice_accent_color || "#e91e63" }}
+                      style={{ color: formData.invoice_accent_color || "#1D6474" }}
                     >
                       TOTAL: ৳2,760
                     </div>
@@ -714,7 +714,7 @@ export function InvoiceSettingsClient({ initialSettings }: InvoiceSettingsClient
                 {/* Header */}
                 <div className="border-b-2 border-black pb-1.5 text-center">
                   <div className="font-black text-[10px] tracking-wider uppercase">
-                    {formData.thermal_header_title || "BLUSH & BUDGET • DISPATCH"}
+                    {formData.thermal_header_title || "AZONNO • DISPATCH"}
                   </div>
                   <div className="text-[7px] font-bold text-gray-600 truncate">
                     From: {formData.thermal_return_address || "Banani, Dhaka"} • {formData.thermal_sender_phone}

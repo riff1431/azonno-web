@@ -51,7 +51,7 @@ function RegisterForm() {
   }, []);
 
   const logoImg = config.headerConfig?.logoImageUrl;
-  const brandName = config.headerConfig?.logoText || "Blush & Budget";
+  const brandName = config.headerConfig?.logoText || "Azonno";
 
   const updateField = (field: string, value: string) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -63,12 +63,12 @@ function RegisterForm() {
     setNeedsVerification(false);
 
     if (formData.password !== formData.confirmPassword) {
-      setError(language === "bn" ? "পাসওয়ার্ড দুটি মেলেনি।" : "Passwords do not match.");
+      setError(language === "bn" ? "Password items ।" : "Passwords do not match.");
       return;
     }
 
     if (formData.password.length < 8) {
-      setError(language === "bn" ? "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।" : "Password must be at least 8 characters.");
+      setError(language === "bn" ? "Password  8   ।" : "Password must be at least 8 characters.");
       return;
     }
 
@@ -99,7 +99,7 @@ function RegisterForm() {
       if (signInError) {
         setSuccessMsg(
           language === "bn"
-            ? "অ্যাকাউন্ট তৈরি হয়েছে! অনুগ্রহ করে আপনার পাসওয়ার্ড দিয়ে লগইন করুন।"
+            ? "  successfully! Please  your Password  Login ।"
             : "Account created successfully! Please sign in with your credentials."
         );
         setNeedsVerification(true);
@@ -110,7 +110,7 @@ function RegisterForm() {
       if (signInData?.session) {
         setSuccessMsg(
           language === "bn"
-            ? "অ্যাকাউন্ট তৈরি এবং লগইন সফল হয়েছে! অ্যাকাউন্টে নিয়ে যাওয়া হচ্ছে..."
+            ? "  and Login  successfully!  with  ..."
             : "Account created and logged in! Redirecting to your account..."
         );
         setTimeout(() => {
@@ -121,7 +121,7 @@ function RegisterForm() {
 
       setSuccessMsg(
         language === "bn"
-          ? "অ্যাকাউন্ট তৈরি সফল হয়েছে! রিডাইরেক্ট হচ্ছে..."
+          ? "   successfully!  ..."
           : "Account created successfully! Redirecting..."
       );
       setTimeout(() => {
@@ -130,7 +130,7 @@ function RegisterForm() {
     } catch {
       setError(
         language === "bn"
-          ? "একটি অপ্রত্যাশিত সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।"
+          ? "items   successfully। Please   :00 ।"
           : "An unexpected error occurred. Please try again."
       );
       setLoading(false);
@@ -174,9 +174,9 @@ function RegisterForm() {
               <div className="pt-2 border-t border-emerald-200/60 flex justify-end">
                 <Link
                   href={`/login?redirect=${encodeURIComponent(redirectTo)}`}
-                  className="inline-flex items-center gap-1 font-black text-[#e91e63] hover:underline"
+                  className="inline-flex items-center gap-1 font-black text-[#1D6474] hover:underline"
                 >
-                  {language === "bn" ? "লগইন পেজে যান →" : "Proceed to Sign In →"}
+                  {language === "bn" ? "Login   →" : "Proceed to Sign In →"}
                 </Link>
               </div>
             )}
@@ -195,14 +195,14 @@ function RegisterForm() {
           <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="reg-name" className="text-xs font-bold text-gray-800">
-                {language === "bn" ? "পূর্ণ নাম" : "Full Name"}
+                {language === "bn" ? " Name" : "Full Name"}
               </Label>
               <div className="relative">
                 <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="reg-name"
                   type="text"
-                  placeholder={language === "bn" ? "যেমন: মোহাম্মদ রাহিম" : "Rahim Ahmed"}
+                  placeholder={language === "bn" ? "e.g.:  " : "Rahim Ahmed"}
                   value={formData.fullName}
                   onChange={(e) => updateField("fullName", e.target.value)}
                   required
@@ -214,7 +214,7 @@ function RegisterForm() {
 
             <div className="space-y-1.5">
               <Label htmlFor="reg-email" className="text-xs font-bold text-gray-800">
-                {language === "bn" ? "ইমেইল অ্যাড্রেস" : "Email Address"}
+                {language === "bn" ? "Email " : "Email Address"}
               </Label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -233,7 +233,7 @@ function RegisterForm() {
 
             <div className="space-y-1.5">
               <Label htmlFor="reg-phone" className="text-xs font-bold text-gray-800">
-                {language === "bn" ? "মোবাইল নম্বর" : "Phone Number"}
+                {language === "bn" ? "Mobile Number" : "Phone Number"}
               </Label>
               <div className="relative">
                 <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -251,14 +251,14 @@ function RegisterForm() {
 
             <div className="space-y-1.5">
               <Label htmlFor="reg-password" className="text-xs font-bold text-gray-800">
-                {language === "bn" ? "পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)" : "Password (min. 8 characters)"}
+                {language === "bn" ? "Password ( 8 )" : "Password (min. 8 characters)"}
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="reg-password"
                   type={showPassword ? "text" : "password"}
-                  placeholder={language === "bn" ? "একটি নিরাপদ পাসওয়ার্ড দিন" : "Create a strong password"}
+                  placeholder={language === "bn" ? "items  Password Enter" : "Create a strong password"}
                   value={formData.password}
                   onChange={(e) => updateField("password", e.target.value)}
                   required
@@ -279,14 +279,14 @@ function RegisterForm() {
 
             <div className="space-y-1.5">
               <Label htmlFor="reg-confirm" className="text-xs font-bold text-gray-800">
-                {language === "bn" ? "পাসওয়ার্ড নিশ্চিত করুন" : "Confirm Password"}
+                {language === "bn" ? "Password Confirmed " : "Confirm Password"}
               </Label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="reg-confirm"
                   type={showPassword ? "text" : "password"}
-                  placeholder={language === "bn" ? "পাসওয়ার্ড পুনরায় লিখুন" : "Repeat your password"}
+                  placeholder={language === "bn" ? "Password again " : "Repeat your password"}
                   value={formData.confirmPassword}
                   onChange={(e) => updateField("confirmPassword", e.target.value)}
                   required
@@ -300,15 +300,15 @@ function RegisterForm() {
               id="register-submit-btn"
               type="submit"
               disabled={loading || !!successMsg}
-              className="w-full h-11 rounded-xl bg-[#e91e63] hover:bg-pink-600 text-white font-extrabold text-sm shadow-md transition-all active:scale-95 mt-2"
+              className="w-full h-11 rounded-xl bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold text-sm shadow-md transition-all active:scale-95 mt-2"
             >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {language === "bn" ? "অ্যাকাউন্ট তৈরি হচ্ছে..." : "Creating Your Account..."}
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {language === "bn" ? "  ..." : "Creating Your Account..."}
                 </>
               ) : successMsg ? (
                 <>
-                  <CheckCircle2 className="mr-2 h-4 w-4" /> {language === "bn" ? "সফল হয়েছে!" : "Success!"}
+                  <CheckCircle2 className="mr-2 h-4 w-4" /> {language === "bn" ? " successfully!" : "Success!"}
                 </>
               ) : (
                 <>
@@ -324,7 +324,7 @@ function RegisterForm() {
           <span>{t("auth", "haveAccount")} </span>
           <Link
             href={redirectTo !== "/account" ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login"}
-            className="font-bold text-[#e91e63] hover:underline"
+            className="font-bold text-[#1D6474] hover:underline"
           >
             {t("auth", "loginHere")}
           </Link>

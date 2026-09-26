@@ -112,7 +112,7 @@ export default function FraudBlacklistClient({
       setAddValue("");
       setAddReason("");
       setShowAddModal(false);
-      showFeedback(isBn ? "সিকিউরিটি ব্লকলিস্টে যুক্ত করা হয়েছে!" : "Entry added to security blacklist!");
+      showFeedback(isBn ? "Security to blocklist added  successfully!" : "Entry added to security blacklist!");
     }
     setSaving(false);
   };
@@ -120,7 +120,7 @@ export default function FraudBlacklistClient({
   const handleRemove = async (id: string) => {
     await removeBlacklistEntry(id);
     setProfiles(profiles.filter((p) => p.id !== id));
-    showFeedback(isBn ? "ব্লকলিস্ট থেকে এন্ট্রি সরানো হয়েছে।" : "Entry removed from blacklist.");
+    showFeedback(isBn ? " from   successfully।" : "Entry removed from blacklist.");
   };
 
   // Save BDCourier Settings
@@ -133,9 +133,9 @@ export default function FraudBlacklistClient({
     });
     if (res.success && res.settings) {
       setBdSettings(res.settings);
-      showFeedback(isBn ? "বিডিকুরিয়ার কনফিগারেশন সফলভাবে সংরক্ষিত হয়েছে!" : "BDCourier configuration saved successfully!");
+      showFeedback(isBn ? "Courier  permanently  successfully!" : "BDCourier configuration saved successfully!");
     } else {
-      showFeedback(res.error || (isBn ? "সেটিংস সংরক্ষণ ব্যর্থ হয়েছে।" : "Failed to save settings."));
+      showFeedback(res.error || (isBn ? "Settings Save Failed successfully।" : "Failed to save settings."));
     }
     setSavingSettings(false);
   };
@@ -145,7 +145,7 @@ export default function FraudBlacklistClient({
     if (!apiKeyInput.trim()) {
       setVerifyResult({
         success: false,
-        message: isBn ? "প্রথমে আপনার বিডিকুরিয়ার এপিআই কি দিন।" : "Please enter your BDCourier API Key first.",
+        message: isBn ? " your Courier   Enter।" : "Please enter your BDCourier API Key first.",
         isLive: false,
       });
       return;
@@ -176,12 +176,12 @@ export default function FraudBlacklistClient({
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-red-600" />
             <h1 className="text-xl sm:text-2xl font-black text-gray-900">
-              {isBn ? "ফ্রড প্রতিরোধ ও বিডিকুরিয়ার মাল্টি-কুরিয়ার হাব" : "Fraud Detection & BDCourier Multi-Courier Hub"}
+              {isBn ? "   Courier items-Courier " : "Fraud Detection & BDCourier Multi-Courier Hub"}
             </h1>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
             {isBn
-              ? "বিডিকুরিয়ার এর মাধ্যমে গ্রাহকের ডেলিভারি সাকসেস রেশিও যাচাই করুন, ফেক সিওডি অর্ডার রোধ করুন এবং ব্লকলিস্ট পরিচালনা করুন।"
+              ? "Courier via  Delivery   Verification ,   Order   and   ।"
               : "Cross-check customer delivery success ratio via BDCourier, prevent fake Cash on Delivery orders, and manage security blocklists."}
           </p>
         </div>
@@ -193,7 +193,7 @@ export default function FraudBlacklistClient({
               className="bg-red-600 hover:bg-red-700 text-white font-black text-xs rounded-xl shadow-xs"
             >
               <Plus className="h-4 w-4 mr-1.5" />
-              {isBn ? "ব্লকলিস্টে যোগ করুন" : "Add to Blacklist"}
+              {isBn ? "to blocklist Add to Cart" : "Add to Blacklist"}
             </Button>
           )}
         </div>
@@ -220,7 +220,7 @@ export default function FraudBlacklistClient({
           }`}
         >
           <ShieldAlert className="h-3.5 w-3.5" />
-          <span>{isBn ? "ফ্রড ব্লকলিস্ট" : "Fraud Blacklist"} ({blacklistedCount})</span>
+          <span>{isBn ? " " : "Fraud Blacklist"} ({blacklistedCount})</span>
         </button>
 
         <button
@@ -233,7 +233,7 @@ export default function FraudBlacklistClient({
           }`}
         >
           <Search className="h-3.5 w-3.5" />
-          <span>{isBn ? "বিডিকুরিয়ার লাইভ নম্বর যাচাই" : "BDCourier Live Phone Lookup"}</span>
+          <span>{isBn ? "Courier  Number Verification" : "BDCourier Live Phone Lookup"}</span>
         </button>
 
         <button
@@ -246,7 +246,7 @@ export default function FraudBlacklistClient({
           }`}
         >
           <Settings2 className="h-3.5 w-3.5" />
-          <span>{isBn ? "বিডিকুরিয়ার সেটিংস" : "BDCourier API Settings"}</span>
+          <span>{isBn ? "Courier Settings" : "BDCourier API Settings"}</span>
         </button>
       </div>
 
@@ -507,13 +507,13 @@ export default function FraudBlacklistClient({
               <div className="flex items-center justify-between border-red-200/60 pb-3 border-b">
                 <h2 className="text-sm font-black text-red-900 flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 text-red-600" />
-                  {isBn ? "ব্লকলিস্ট ও ব্লকিং রুল যুক্ত করুন" : "Add Blacklist & Blocking Rule"}
+                  {isBn ? "    added " : "Add Blacklist & Blocking Rule"}
                 </h2>
                 <button
                   onClick={() => setShowAddModal(false)}
                   className="text-xs text-gray-500 hover:text-gray-900 font-bold"
                 >
-                  {isBn ? "বাতিল" : "Cancel"}
+                  {isBn ? "Cancel" : "Cancel"}
                 </button>
               </div>
 
@@ -521,22 +521,22 @@ export default function FraudBlacklistClient({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block font-bold text-gray-800 mb-1">
-                      {isBn ? "টার্গেট ধরন" : "Target Type"}
+                      {isBn ? ":00 " : "Target Type"}
                     </label>
                     <select
                       value={addType}
                       onChange={(e) => setAddType(e.target.value as any)}
                       className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-bold focus:border-red-600 focus:outline-none"
                     >
-                      <option value="phone">{isBn ? "মোবাইল ফোন নম্বর (০১...)" : "Mobile Phone Number (01...)"}</option>
-                      <option value="ip">{isBn ? "আইপি অ্যাড্রেস" : "IP Address"}</option>
-                      <option value="email">{isBn ? "ইমেইল অ্যাড্রেস" : "Email Address"}</option>
+                      <option value="phone">{isBn ? "Mobile Phone Number (01...)" : "Mobile Phone Number (01...)"}</option>
+                      <option value="ip">{isBn ? " " : "IP Address"}</option>
+                      <option value="email">{isBn ? "Email " : "Email Address"}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block font-bold text-gray-800 mb-1">
-                      {isBn ? "ব্লককৃত নম্বর / আইপি / ইমেইল" : "Blocked Identifier Value"}
+                      {isBn ? " Number /  / Email" : "Blocked Identifier Value"}
                     </label>
                     <input
                       type="text"
@@ -550,13 +550,13 @@ export default function FraudBlacklistClient({
 
                   <div>
                     <label className="block font-bold text-gray-800 mb-1">
-                      {isBn ? "ব্লকলিস্টের কারণ" : "Reason for Blacklist"}
+                      {isBn ? "to blocklist " : "Reason for Blacklist"}
                     </label>
                     <input
                       type="text"
                       placeholder={
                         isBn
-                          ? "যেমন: পার্সেল গ্রহণ না করা / বারবার ভুয়া অর্ডার"
+                          ? "e.g.:     /   Order"
                           : "e.g. Repeated doorstep refusal / BDCourier fraud report"
                       }
                       value={addReason}
@@ -574,7 +574,7 @@ export default function FraudBlacklistClient({
                     onClick={() => setShowAddModal(false)}
                     className="text-xs font-bold rounded-xl"
                   >
-                    {isBn ? "বাতিল" : "Cancel"}
+                    {isBn ? "Cancel" : "Cancel"}
                   </Button>
                   <Button
                     type="submit"
@@ -583,8 +583,8 @@ export default function FraudBlacklistClient({
                     className="bg-red-600 hover:bg-red-700 text-white font-black text-xs rounded-xl"
                   >
                     {saving
-                      ? (isBn ? "যোগ হচ্ছে..." : "Adding...")
-                      : (isBn ? "সিকিউরিটি ব্লকলিস্টে যোগ করুন" : "Add to Security Blacklist")}
+                      ? (isBn ? "Add ..." : "Adding...")
+                      : (isBn ? "Security to blocklist Add to Cart" : "Add to Security Blacklist")}
                   </Button>
                 </div>
               </form>
@@ -596,12 +596,12 @@ export default function FraudBlacklistClient({
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <h2 className="text-sm font-black uppercase text-gray-900">
                 {isBn
-                  ? `ব্লককৃত পরিচিতি ও উচ্চ ঝুঁকির প্রোফাইল (${profiles.length})`
+                  ? `     Profile (${profiles.length})`
                   : `Blocked Identifiers & High-Risk Profiles (${profiles.length})`}
               </h2>
               <span className="text-xs text-gray-400 font-bold">
                 {isBn
-                  ? "এই সব কন্টাক্ট থেকে আসা অর্ডার কঠোরভাবে বাতিল করা হবে"
+                  ? "  :00 from  Order permanently Cancel  "
                   : "Orders with these contacts will be strictly rejected"}
               </span>
             </div>
@@ -637,25 +637,25 @@ export default function FraudBlacklistClient({
                           }`}
                         >
                           {p.is_blacklisted
-                            ? (isBn ? "ব্লকড" : "Blocked")
-                            : (isBn ? "সতর্ক" : "Flagged")}
+                            ? (isBn ? "" : "Blocked")
+                            : (isBn ? "" : "Flagged")}
                         </span>
                       </div>
                       <p className="text-[11px] text-gray-500 mt-0.5">
-                        {p.blacklist_reason || p.notes || (isBn ? "কোনো কারণ উল্লেখ নেই" : "No additional reason provided")}
+                        {p.blacklist_reason || p.notes || (isBn ? "   " : "No additional reason provided")}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 self-end sm:self-center">
                     <span className="text-[11px] text-gray-400">
-                      {isBn ? "ঝুঁকি:" : "Risk:"} <strong className="text-red-600">{p.risk_score}/100</strong>
+                      {isBn ? ":" : "Risk:"} <strong className="text-red-600">{p.risk_score}/100</strong>
                     </span>
                     <button
                       type="button"
                       onClick={() => handleRemove(p.id)}
                       className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title={isBn ? "ব্লকলিস্ট থেকে সরান" : "Remove from Blacklist"}
+                      title={isBn ? " from " : "Remove from Blacklist"}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -667,7 +667,7 @@ export default function FraudBlacklistClient({
                 <div className="p-8 text-center text-gray-400">
                   <ShieldCheck className="h-8 w-8 mx-auto text-emerald-500 mb-2 opacity-60" />
                   <p className="font-bold">
-                    {isBn ? "ব্লকলিস্ট বর্তমানে খালি রয়েছে।" : "Blacklist is currently empty."}
+                    {isBn ? "   ।" : "Blacklist is currently empty."}
                   </p>
                 </div>
               )}

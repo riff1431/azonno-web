@@ -70,7 +70,7 @@ export default function AdminCatalogFeedsPage() {
       name: "TikTok Product Catalog Feed (TikTok Shop & Ads Manager)",
       badge: "TikTok Ads",
       icon: Video,
-      iconColor: "text-pink-600 bg-pink-50 border-pink-200",
+      iconColor: "text-[#1D6474] bg-teal-50/60 border-teal-200",
       xmlUrl: `${origin}/api/feed/tiktok`,
       csvUrl: `${origin}/api/feed/tiktok?format=csv`,
       supportedFormats: "RSS 2.0 XML (TikTok Spec) & CSV",
@@ -226,7 +226,7 @@ export default function AdminCatalogFeedsPage() {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-[11px] font-bold text-gray-700">
                     <span className="flex items-center gap-1.5">
-                      <FileCode className="h-3.5 w-3.5 text-[#e91e63]" />
+                      <FileCode className="h-3.5 w-3.5 text-[#1D6474]" />
                       Primary XML Feed URL (Auto-Sync)
                     </span>
                     <span className="text-[10px] text-gray-400 font-normal">Recommended for scheduled daily fetch</span>

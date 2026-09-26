@@ -62,7 +62,7 @@ export default function AccountSecurityPage() {
     <div className="space-y-6 max-w-3xl">
       <div className="border-b border-gray-100 pb-4">
         <h1 className="text-xl font-black text-gray-900 flex items-center gap-2">
-          <Lock className="h-5 w-5 text-[#e91e63]" /> Account Security & Password
+          <Lock className="h-5 w-5 text-[#1D6474]" /> Account Security & Password
         </h1>
         <p className="text-xs text-gray-500 mt-0.5">
           Manage your account credentials and password security settings.
@@ -138,7 +138,7 @@ export default function AccountSecurityPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold px-6 py-2.5 text-xs rounded-xl shadow-md transition-all active:scale-95"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold px-6 py-2.5 text-xs rounded-xl shadow-md transition-all active:scale-95"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <ShieldCheck className="h-4 w-4 mr-1.5" />}
             {loading ? "Updating Password..." : "Update Password"}

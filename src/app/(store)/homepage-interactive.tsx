@@ -99,16 +99,16 @@ export function HomepageInteractive({
     }
     switch (iconName) {
       case "shield":
-        return <ShieldCheck className="h-6 w-6 text-[#e91e63] shrink-0" />;
+        return <ShieldCheck className="h-6 w-6 text-[#1D6474] shrink-0" />;
       case "truck":
-        return <Truck className="h-6 w-6 text-[#e91e63] shrink-0" />;
+        return <Truck className="h-6 w-6 text-[#1D6474] shrink-0" />;
       case "zap":
-        return <Zap className="h-6 w-6 text-[#e91e63] shrink-0" />;
+        return <Zap className="h-6 w-6 text-[#1D6474] shrink-0" />;
       case "clock":
-        return <Clock className="h-6 w-6 text-[#e91e63] shrink-0" />;
+        return <Clock className="h-6 w-6 text-[#1D6474] shrink-0" />;
       case "rotate":
       default:
-        return <RotateCcw className="h-6 w-6 text-[#e91e63] shrink-0" />;
+        return <RotateCcw className="h-6 w-6 text-[#1D6474] shrink-0" />;
     }
   };
 
@@ -171,7 +171,7 @@ export function HomepageInteractive({
               className={cn(
                 "rounded-full transition-all duration-300",
                 currentSlide === idx
-                  ? "h-2.5 w-2.5 bg-[#e91e63] scale-110"
+                  ? "h-2.5 w-2.5 bg-[#1D6474] scale-110"
                   : "h-2 w-2 bg-[#4a4a4a] hover:bg-gray-600"
               )}
               aria-label={`Go to slide ${idx + 1}`}
@@ -184,11 +184,11 @@ export function HomepageInteractive({
       {/* 1.5 HOMEPAGE AUTHENTICITY TRUST BAR */}
       {/* ============================================================ */}
       <section className="container-main py-1.5 sm:py-2">
-        <div className="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-50 via-rose-50/70 to-pink-50 border border-pink-200/80 px-4 py-2 sm:py-2.5 text-center shadow-xs">
-          <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#e91e63] shrink-0" />
+        <div className="flex items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-pink-50 via-rose-50/70 to-pink-50 border border-teal-200/80 px-4 py-2 sm:py-2.5 text-center shadow-xs">
+          <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#1D6474] shrink-0" />
           <span className="text-xs sm:text-sm md:text-base font-black text-gray-900 tracking-normal">
             {language === "bn"
-              ? "১০০% খাঁটি ও অথেনটিক প্রসাধনী — সারা দেশে দ্রুত ডেলিভারি"
+              ? "100% items  items  —    Delivery"
               : "100% Genuine & Authentic Beauty Products — Fast Nationwide Delivery"}
           </span>
         </div>
@@ -280,7 +280,7 @@ export function HomepageInteractive({
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
           {limitedOffers.map((offer, idx) => {
             const cardGradients = [
-              "from-[#e91e63] via-[#db2777] to-[#be185d]", // BOGO - Signature Blush Pink
+              "from-[#1D6474] via-[#db2777] to-[#be185d]", // BOGO - Signature Blush Pink
               "from-[#9333ea] via-[#7e22ce] to-[#581c87]", // COMBO - Royal Purple
               "from-[#f43f5e] via-[#e11d48] to-[#9f1239]", // OFFERS - Radiant Ruby
               "from-[#0284c7] via-[#0369a1] to-[#075985]", // CLEARANCE - Sapphire Blue
@@ -313,7 +313,7 @@ export function HomepageInteractive({
 
                 {/* Subtle Action Pill */}
                 <span className="relative z-10 mt-1 text-xs sm:text-sm font-bold text-white/90 group-hover:text-white flex items-center gap-1 transition-colors">
-                  <span>{language === "bn" ? "অফার দেখুন" : "Shop Deals"}</span>
+                  <span>{language === "bn" ? " View" : "Shop Deals"}</span>
                   <span className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
                 </span>
               </Link>
@@ -340,7 +340,7 @@ export function HomepageInteractive({
             <Link
               key={cat.id || idx}
               href={`/products?category=${cat.slug}`}
-              className="group relative flex flex-col items-center justify-between overflow-hidden rounded-3xl sm:rounded-[30px] border border-gray-200/90 bg-linear-to-b from-[#38bdf8] via-[#0284c7] to-[#0369a1] shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#e91e63] aspect-square btn-soft-fill"
+              className="group relative flex flex-col items-center justify-between overflow-hidden rounded-3xl sm:rounded-[30px] border border-gray-200/90 bg-linear-to-b from-[#38bdf8] via-[#0284c7] to-[#0369a1] shadow-md transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-[#1D6474] aspect-square btn-soft-fill"
             >
               {/* Model Photo Background */}
               <img
@@ -366,8 +366,8 @@ export function HomepageInteractive({
 
               {/* Bottom Subtle Pill */}
               <div className="relative z-10 pb-2.5 px-2 text-center w-full">
-                <span className="inline-block rounded-full bg-white/25 backdrop-blur-xs px-2.5 py-0.5 text-xs font-bold text-white uppercase tracking-wider group-hover:bg-[#e91e63] group-hover:text-white transition-colors shadow-xs">
-                  {language === "bn" ? "কিনুন" : "SHOP NOW"}
+                <span className="inline-block rounded-full bg-white/25 backdrop-blur-xs px-2.5 py-0.5 text-xs font-bold text-white uppercase tracking-wider group-hover:bg-[#1D6474] group-hover:text-white transition-colors shadow-xs">
+                  {language === "bn" ? "" : "SHOP NOW"}
                 </span>
               </div>
             </Link>
@@ -414,7 +414,7 @@ export function HomepageInteractive({
           </div>
           <Link
             href="/products"
-            className="text-sm sm:text-base font-bold text-[#e91e63] hover:underline flex items-center gap-1 group"
+            className="text-sm sm:text-base font-bold text-[#1D6474] hover:underline flex items-center gap-1 group"
           >
             <span>{language === "bn" ? t("home", "trendingViewAll") : trendingViewAllText}</span>
           </Link>

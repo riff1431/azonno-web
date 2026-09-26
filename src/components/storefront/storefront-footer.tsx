@@ -73,13 +73,13 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
     fc.brandText ||
     config.footerBrandText ||
     config.headerConfig?.logoText ||
-    "Blush & Budget";
+    "Azonno";
 
   const aboutText =
     language === "bn"
       ? fc.aboutTextBn ||
         config.footerAboutText ||
-        "বাংলাদেশের নির্ভরযোগ্য বিউটি শপ। ১০০% আসল আন্তর্জাতিক স্কিনকেয়ার, মেকআপ ও হেয়ার কেয়ার সামগ্রী সারা দেশে ক্যাশ অন ডেলিভারিতে দ্রুত পৌঁছে দেওয়া হয়।"
+        "EnglishBangladesh's Premier Clothing Brand। 100% Authentic Premium Casual Wear, Apparel       Cash  Delivery    ।"
       : fc.aboutText ||
         config.footerAboutText ||
         "Your trusted beauty store in Bangladesh for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.";
@@ -93,18 +93,18 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
   const supportEmail = fc.supportEmail || config.supportEmail || "support@example.com";
   const supportAddress =
     language === "bn"
-      ? fc.supportAddressBn || "গুলশান, ঢাকা, বাংলাদেশ"
+      ? fc.supportAddressBn || ", , English"
       : fc.supportAddress || "Gulshan, Dhaka, Bangladesh";
   const supportWhatsapp = fc.supportWhatsapp || "+880 1700-000000";
 
   const newsletterTitle =
     language === "bn"
-      ? fc.newsletterTitleBn || "বিশেষ অফার ও বিউটি টিপস পান"
+      ? fc.newsletterTitleBn || "   items items "
       : fc.newsletterTitle || "Get Special Offers & Beauty Tips";
 
   const newsletterSubtitle =
     language === "bn"
-      ? fc.newsletterSubtitleBn || "নতুন পণ্য, ডিসকাউন্ট ও সহজ স্কিনকেয়ার গাইডের আপডেট পেতে সাবস্ক্রাইব করুন।"
+      ? fc.newsletterSubtitleBn || " Products, Discount   Casual Wear     ।"
       : fc.newsletterSubtitle || "Subscribe for new arrivals, discounts, and simple skincare guides.";
 
   const showTrustPillars = fc.showTrustPillars !== false;
@@ -143,7 +143,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
         ...rawCareLinks.slice(0, 2),
         {
           label: "Routine Finder (Quiz)",
-          labelBn: "রুটিন ফাইন্ডার (কুইজ)",
+          labelBn: "items  ()",
           href: "/quiz",
           isHighlight: true,
         },
@@ -170,7 +170,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
         success: false,
         message:
           language === "bn"
-            ? "সাবস্ক্রিপশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।"
+            ? "Subscription Failed successfully।  :00 ।"
             : "Subscription failed. Please try again.",
       });
     } finally {
@@ -220,7 +220,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                 return pillars.map((tp, idx) => (
                   <div
                     key={tp.id || idx}
-                    className="group flex items-center gap-2.5 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-slate-900/95 border border-slate-800 hover:border-pink-500/50 transition-all shadow-xs"
+                    className="group flex items-center gap-2.5 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-slate-900/95 border border-slate-800 hover:border-[#1D6474]/50 transition-all shadow-xs"
                   >
                     <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-linear-to-br from-pink-500 to-rose-600 text-white shadow-md shadow-pink-500/30 group-hover:scale-105 transition-transform">
                       {getPillarIcon(tp.iconName, tp.imageUrl)}
@@ -284,12 +284,12 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                     onChange={(e) => setNewsletterEmail(e.target.value)}
                     placeholder={t("footer", "emailPlaceholder")}
                     disabled={subscribing}
-                    className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900/90 px-4 py-3 text-sm sm:text-base text-white placeholder:text-zinc-400 focus:outline-hidden focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] transition-all"
+                    className="flex-1 rounded-xl border border-zinc-700 bg-zinc-900/90 px-4 py-3 text-sm sm:text-base text-white placeholder:text-zinc-400 focus:outline-hidden focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] transition-all"
                   />
                   <button
                     type="submit"
                     disabled={subscribing}
-                    className="rounded-xl bg-[#e91e63] px-5 py-3 text-sm sm:text-base font-black text-white hover:bg-sg-pink-hover active:scale-95 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                    className="rounded-xl bg-[#1D6474] px-5 py-3 text-sm sm:text-base font-black text-white hover:bg-[#164E63] active:scale-95 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
                   >
                     {subscribing ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -321,7 +321,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
             {showSocialLinks && fc.socialLinks && (
               <div className="pt-2">
                 <span className="text-sm font-bold uppercase tracking-wider text-zinc-300 block mb-2.5">
-                  {language === "bn" ? "আমাদের সাথে যুক্ত থাকুন" : "Follow Us"}
+                  {language === "bn" ? "  added " : "Follow Us"}
                 </span>
                 <div className="flex flex-wrap items-center gap-2.5">
                   {fc.socialLinks.facebook && (
@@ -422,7 +422,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
               <h3 className="text-sm sm:text-base lg:text-lg font-black uppercase tracking-wider text-white">
                 {t("header", "categories")}
               </h3>
-              <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
+              <div className="mt-2 h-0.75 w-8 rounded-full bg-[#1D6474]" />
             </div>
             <ul className="space-y-3 text-sm sm:text-base text-zinc-300 font-medium">
               {categoryLinks.map((cat, idx) => (
@@ -430,7 +430,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                   <Link
                     href={cat.href}
                     className={cn(
-                      "hover:text-[#e91e63] transition-colors block py-0.5",
+                      "hover:text-[#1D6474] transition-colors block py-0.5",
                       cat.isHighlight && "text-pink-400 font-bold"
                     )}
                   >
@@ -447,7 +447,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
               <h3 className="text-sm sm:text-base lg:text-lg font-black uppercase tracking-wider text-white">
                 {t("footer", "customerCare")}
               </h3>
-              <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
+              <div className="mt-2 h-0.75 w-8 rounded-full bg-[#1D6474]" />
             </div>
             <ul className="space-y-3 text-sm sm:text-base text-zinc-300 font-medium">
               {customerCareLinks.map((link, idx) => (
@@ -455,14 +455,14 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
                   <Link
                     href={link.href}
                     className={cn(
-                      "hover:text-[#e91e63] transition-colors inline-flex items-center gap-1.5 py-0.5",
+                      "hover:text-[#1D6474] transition-colors inline-flex items-center gap-1.5 py-0.5",
                       link.isHighlight ? "text-pink-400 font-bold hover:text-pink-300" : "text-zinc-300"
                     )}
                   >
                     <span>{language === "bn" && link.labelBn ? link.labelBn : link.label}</span>
                     {link.isHighlight && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-pink-500/15 text-pink-400 border border-pink-500/30">
-                        {link.href === "/quiz" ? (language === "bn" ? "কুইজ" : "Quiz") : (language === "bn" ? "জরুরি" : "Hot")}
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold bg-[#1D6474]/15 text-pink-400 border border-[#1D6474]/30">
+                        {link.href === "/quiz" ? (language === "bn" ? "" : "Quiz") : (language === "bn" ? "" : "Hot")}
                       </span>
                     )}
                   </Link>
@@ -476,9 +476,9 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
             <div>
               <div className="mb-4">
                 <h3 className="text-sm sm:text-base lg:text-lg font-black uppercase tracking-wider text-white">
-                  {language === "bn" ? "যোগাযোগ করুন" : "Contact Us"}
+                  {language === "bn" ? "AddAdd to Cart" : "Contact Us"}
                 </h3>
-                <div className="mt-2 h-0.75 w-8 rounded-full bg-[#e91e63]" />
+                <div className="mt-2 h-0.75 w-8 rounded-full bg-[#1D6474]" />
               </div>
               <div className="space-y-3.5 text-sm sm:text-base text-zinc-300 font-medium">
                 <div className="flex items-start gap-3">
@@ -527,7 +527,7 @@ export function StorefrontFooter({ config: initialConfig }: { config?: HomepageF
             {showPaymentBadges && (
               <div className="pt-4 border-t border-zinc-800">
                 <span className="text-xs uppercase font-extrabold tracking-wider text-zinc-400 block mb-3">
-                  {language === "bn" ? "আমরা গ্রহণ করি" : "We Accept"}
+                  {language === "bn" ? "We  " : "We Accept"}
                 </span>
                 <div className="flex flex-wrap items-center gap-2">
                   {/* Standard Payment Badges (Clean Uniform Same-Size Cards with Custom Image Support) */}

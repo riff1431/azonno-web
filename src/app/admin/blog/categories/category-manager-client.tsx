@@ -87,7 +87,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
           </Link>
           <div>
             <h1 className="text-xl font-bold text-text flex items-center gap-2">
-              <FolderTree className="h-5 w-5 text-[#e91e63]" />
+              <FolderTree className="h-5 w-5 text-[#1D6474]" />
               Blog Categories &amp; Topics
             </h1>
             <p className="text-xs text-text-secondary mt-0.5">
@@ -98,7 +98,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
 
         <Button
           onClick={handleCreateNew}
-          className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
+          className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs shrink-0"
         >
           <Plus className="h-3.5 w-3.5 mr-1.5" /> {t("add_category_btn")}
         </Button>
@@ -115,7 +115,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
         <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-5 animate-in fade-in-0">
           <div className="flex items-center justify-between border-b border-border pb-3">
             <h3 className="text-sm font-bold text-text flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#e91e63]" />
+              <Sparkles className="h-4 w-4 text-[#1D6474]" />
               {editingCategory.id ? "Edit Category" : "Create Category"}
             </h3>
             <Button
@@ -188,7 +188,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className="h-3.5 w-3.5 mr-1.5" />
                 {saving ? t("saving_changes_btn") : t("save_category_btn")}
@@ -214,7 +214,7 @@ export function CategoryManagerClient({ initialCategories }: CategoryManagerProp
               <tr key={cat.id} className="hover:bg-surface-secondary/40 transition-colors">
                 <td className="p-4 font-bold text-text">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-[#e91e63]" />
+                    <BookOpen className="h-4 w-4 text-[#1D6474]" />
                     <span>{cat.name}</span>
                   </div>
                 </td>

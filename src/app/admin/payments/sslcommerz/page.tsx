@@ -162,7 +162,7 @@ export default function AdminSslcommerzPage() {
                 onChange={(e) => setIsEnabled(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#e91e63]"></div>
+              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1D6474]"></div>
             </label>
           </div>
 
@@ -185,7 +185,7 @@ export default function AdminSslcommerzPage() {
         <button
           type="button"
           onClick={handleFillSandbox}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e91e63] hover:text-sg-pink-hover hover:underline transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D6474] hover:text-sg-pink-hover hover:underline transition-colors"
         >
           <Sparkles className="h-3.5 w-3.5" />
           Auto-Fill Sandbox Simulator Keys
@@ -323,7 +323,7 @@ export default function AdminSslcommerzPage() {
             type="button"
             onClick={handleRunSimulation}
             disabled={simulating || !formData.store_id}
-            className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl shadow-xs"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shadow-xs"
           >
             <Zap className={`h-3.5 w-3.5 mr-1.5 ${simulating ? "animate-spin" : ""}`} />
             {simulating ? "Verifying Transaction..." : `Execute Double-Check Verification (৳${simAmount})`}
@@ -413,7 +413,7 @@ export default function AdminSslcommerzPage() {
             type="submit"
             disabled={saving}
             size="sm"
-            className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl shadow-xs px-5"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shadow-xs px-5"
           >
             <Save className="h-3.5 w-3.5 mr-1.5" />
             {saving ? "Saving Changes..." : "Save SSLCommerz Settings"}

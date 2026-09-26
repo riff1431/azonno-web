@@ -23,10 +23,10 @@ export async function generateMetadata({
 
   if (!category) return { title: "Category Not Found" };
 
-  const title = category.seo_title || `${category.name} in Bangladesh — 100% Authentic | Blush & Budget`;
+  const title = category.seo_title || `${category.name} in Bangladesh — 100% Authentic | Azonno`;
   const description =
     category.seo_description ||
-    `Shop 100% genuine ${category.name} at best prices in Bangladesh. Fast nationwide doorstep delivery & Cash on Delivery from Blush & Budget.`;
+    `Shop 100% genuine ${category.name} at best prices in Bangladesh. Fast nationwide doorstep delivery & Cash on Delivery from Azonno.`;
   const canonicalUrl = `${baseUrl}/categories/${slug}`;
 
   return {
@@ -39,7 +39,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: "Blush & Budget",
+      siteName: "Azonno",
       images: category.image_url ? [category.image_url] : [],
       type: "website",
     },
@@ -202,7 +202,7 @@ export default async function CategoryDetailPage({
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
       <ItemListJsonLd
-        name={`${category.name} Products — Blush & Budget`}
+        name={`${category.name} Products — Azonno`}
         url={`${baseUrl}/categories/${category.slug}`}
         items={itemList}
       />

@@ -16,43 +16,43 @@ import { cn } from "@/lib/utils";
 const FINANCE_NAV_ITEMS = [
   {
     href: "/admin/finance/sales",
-    labelBn: "বিক্রয় রিপোর্ট",
+    labelBn: "Sales Report",
     labelEn: "Sales & Revenue",
     icon: BarChart3,
   },
   {
     href: "/admin/finance/pnl",
-    labelBn: "লাভ-ক্ষতি (P&L)",
+    labelBn: "- (P&L)",
     labelEn: "Profit & Loss",
     icon: TrendingUp,
   },
   {
     href: "/admin/finance/costs",
-    labelBn: "খরচ (Expenses)",
+    labelBn: " (Expenses)",
     labelEn: "Expenses & OPEX",
     icon: Receipt,
   },
   {
     href: "/admin/finance/accounting",
-    labelBn: "হিসাব (Accounts)",
+    labelBn: " (Accounts)",
     labelEn: "Bank & MFS Ledger",
     icon: Landmark,
   },
   {
     href: "/admin/finance/suppliers",
-    labelBn: "সাপ্লায়ার",
+    labelBn: "Suppliers",
     labelEn: "Suppliers & POs",
     icon: Building2,
   },
   {
     href: "/admin/finance/dues",
-    labelBn: "বকেয়া ম্যানেজার",
+    labelBn: "Due ",
     labelEn: "Dues & Remittance",
     icon: Truck,
   },
   {
     href: "/admin/finance/investors",
-    labelBn: "বিনিয়োগকারী",
+    labelBn: "",
     labelEn: "Investors & Equity",
     icon: Users,
   },
@@ -75,7 +75,7 @@ export function FinanceSubNav() {
               className={cn(
                 "inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 border shrink-0 select-none",
                 isActive
-                  ? "bg-[#e91e63] text-white border-[#e91e63] shadow-xs shadow-pink-500/20"
+                  ? "bg-[#1D6474] text-white border-[#1D6474] shadow-xs shadow-pink-500/20"
                   : "bg-surface-secondary/40 text-text-secondary border-transparent hover:border-border hover:bg-surface-secondary hover:text-text"
               )}
             >

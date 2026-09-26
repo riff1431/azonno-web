@@ -73,7 +73,7 @@ export function ProductJsonLd({
           : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "Blush & Budget",
+        name: "Azonno",
       },
     },
   };
@@ -136,7 +136,7 @@ export function ArticleJsonLd({
   datePublished,
   dateModified,
   author,
-  publisherName = "Blush & Budget",
+  publisherName = "Azonno",
   publisherLogo,
   url,
 }: ArticleJsonLdProps) {
@@ -191,7 +191,7 @@ export function PersonJsonLd({
   url,
   image,
   socialLinks = [],
-  worksFor = "Blush & Budget",
+  worksFor = "Azonno",
 }: PersonJsonLdProps) {
   const data = {
     "@context": "https://schema.org",
@@ -236,11 +236,11 @@ export function FaqJsonLd({ items }: { items: FaqItem[] }) {
 }
 
 export function OrganizationJsonLd({
-  name = "Blush & Budget",
+  name = "Azonno",
   url = getBaseUrl(),
   logo,
   contactPhone = "+880 1700-000000",
-  contactEmail = "support@blushbudget.com",
+  contactEmail = "support@azonno.com",
 }: {
   name?: string;
   url?: string;
@@ -273,7 +273,7 @@ export function OrganizationJsonLd({
 
 export function WebSiteJsonLd({
   url = getBaseUrl(),
-  name = "Blush & Budget",
+  name = "Azonno",
 }: {
   url?: string;
   name?: string;

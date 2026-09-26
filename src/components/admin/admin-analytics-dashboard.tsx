@@ -317,7 +317,7 @@ export default function AdminAnalyticsDashboard({
     });
   }, [products]);
 
-  // Top Performing Products (সেরা বিক্রিত প্রোডাক্ট: নাম, ইউনিট সোল্ড, স্টক লেভেল এবং মোট প্রফিট)
+  // Top Performing Products (Best Selling Products: Name, Units Sold, Stock  and Total )
   const topPerformingProducts = useMemo(() => {
     // 1. Aggregate actual sales from non-cancelled/non-failed orders
     const idSalesMap = new Map<
@@ -589,7 +589,7 @@ export default function AdminAnalyticsDashboard({
           </h1>
           <p className="text-xs text-gray-500 mt-0.5">
             {isBn
-              ? "রিয়েল-টাইম গ্রস বিক্রয়, পণ্যের ক্রয়মূল্য (COGS), নিট লাভ, ব্যাচ ও মেয়াদ অ্যালার্ট, হট সেলিং স্টক এবং রিটার্ন রেট অ্যানালিটিক্স।"
+              ? "Real-time-  , Products Price (COGS),  ,    ,   Stock and Return  items।"
               : "Real-time gross revenue, product buying cost (COGS), profit margins, batch & expiry red-flags, hot-selling alerts, and return rate metrics."}
           </p>
         </div>
@@ -601,7 +601,7 @@ export default function AdminAnalyticsDashboard({
               size="sm"
               className="text-xs font-bold rounded-xl border-gray-300"
             >
-              <ExternalLink className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
+              <ExternalLink className="h-3.5 w-3.5 mr-1 text-[#1D6474]" />
               Storefront
             </Button>
           </Link>
@@ -609,16 +609,16 @@ export default function AdminAnalyticsDashboard({
             <Button
               variant="outline"
               size="sm"
-              className="text-xs font-bold rounded-xl border-gray-300 hover:border-pink-500 hover:text-pink-600"
+              className="text-xs font-bold rounded-xl border-gray-300 hover:border-[#1D6474] hover:text-[#1D6474]"
             >
-              <Package className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
+              <Package className="h-3.5 w-3.5 mr-1 text-[#1D6474]" />
               {t("inventory")}
             </Button>
           </Link>
           <Link href="/admin/products/create">
             <Button
               size="sm"
-              className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-black rounded-xl shadow-md"
+              className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-black rounded-xl shadow-md"
             >
               + {t("add_product")}
             </Button>
@@ -630,7 +630,7 @@ export default function AdminAnalyticsDashboard({
       <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
           <span className="text-xs font-bold text-gray-700 mr-1 flex items-center gap-1">
-            <Filter className="h-3.5 w-3.5 text-[#e91e63]" /> Timeframe:
+            <Filter className="h-3.5 w-3.5 text-[#1D6474]" /> Timeframe:
           </span>
           {[
             { id: "all", label: t("all_time") },
@@ -645,7 +645,7 @@ export default function AdminAnalyticsDashboard({
               onClick={() => setDateFilter(tab.id as DateRangeFilter)}
               className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
                 dateFilter === tab.id
-                  ? "bg-[#e91e63] text-white shadow-xs"
+                  ? "bg-[#1D6474] text-white shadow-xs"
                   : "bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
@@ -682,7 +682,7 @@ export default function AdminAnalyticsDashboard({
       {/* 1. Primary KPI Grid (6 Top Cards) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-3 sm:gap-4">
         {/* Gross Revenue */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#e91e63] transition-colors">
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#1D6474] transition-colors">
           <div className="flex items-center justify-between">
             <div className="rounded-2xl bg-emerald-50 text-emerald-600 p-2.5">
               <DollarSign className="h-5 w-5" />
@@ -702,12 +702,12 @@ export default function AdminAnalyticsDashboard({
         </div>
 
         {/* Total Orders */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#e91e63] transition-colors">
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#1D6474] transition-colors">
           <div className="flex items-center justify-between">
-            <div className="rounded-2xl bg-pink-50 text-[#e91e63] p-2.5">
+            <div className="rounded-2xl bg-teal-50/60 text-[#1D6474] p-2.5">
               <ShoppingBag className="h-5 w-5" />
             </div>
-            <span className="text-[10px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+            <span className="text-[10px] font-bold text-[#164E63] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200">
               {completedOrders} {t("status_delivered")}
             </span>
           </div>
@@ -722,7 +722,7 @@ export default function AdminAnalyticsDashboard({
         </div>
 
         {/* Average Order Value (AOV) */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#e91e63] transition-colors">
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#1D6474] transition-colors">
           <div className="flex items-center justify-between">
             <div className="rounded-2xl bg-purple-50 text-purple-600 p-2.5">
               <TrendingUp className="h-5 w-5" />
@@ -741,8 +741,8 @@ export default function AdminAnalyticsDashboard({
           </div>
         </div>
 
-        {/* Return Rate (রিটার্ন রেট) */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#e91e63] transition-colors">
+        {/* Return Rate (Return ) */}
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#1D6474] transition-colors">
           <div className="flex items-center justify-between">
             <div className="rounded-2xl bg-rose-50 text-rose-600 p-2.5">
               <RotateCcw className="h-5 w-5" />
@@ -758,14 +758,14 @@ export default function AdminAnalyticsDashboard({
             >
               {returnRateNum <= 4.0
                 ? isBn
-                  ? "স্বাভাবিক"
+                  ? "Regular Fit"
                   : "Low Risk"
                 : returnRateNum <= 8.0
                 ? isBn
-                  ? "মাঝারি"
+                  ? ""
                   : "Moderate"
                 : isBn
-                ? "উচ্চ ঝুঁকি"
+                ? " "
                 : "High Risk"}
             </span>
           </div>
@@ -776,7 +776,7 @@ export default function AdminAnalyticsDashboard({
               </span>
               <Link
                 href="/admin/returns"
-                className="text-[10px] font-bold text-[#e91e63] hover:underline"
+                className="text-[10px] font-bold text-[#1D6474] hover:underline"
               >
                 {t("view_all")} →
               </Link>
@@ -785,13 +785,13 @@ export default function AdminAnalyticsDashboard({
               {returnRate}%
             </p>
             <span className="text-[10px] text-gray-400 block">
-              {totalReturnCount} {isBn ? "টি পার্সেল রিটার্ন" : "parcels returned"}
+              {totalReturnCount} {isBn ? "items  Return" : "parcels returned"}
             </span>
           </div>
         </div>
 
         {/* Active Customers */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#e91e63] transition-colors">
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#1D6474] transition-colors">
           <div className="flex items-center justify-between">
             <div className="rounded-2xl bg-blue-50 text-blue-600 p-2.5">
               <Users className="h-5 w-5" />
@@ -811,7 +811,7 @@ export default function AdminAnalyticsDashboard({
         </div>
 
         {/* Pending Orders */}
-        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#e91e63] transition-colors">
+        <div className="rounded-3xl border border-gray-200 bg-white p-4 sm:p-5 shadow-xs space-y-2 hover:border-[#1D6474] transition-colors">
           <div className="flex items-center justify-between">
             <div className="rounded-2xl bg-amber-50 text-amber-600 p-2.5">
               <Clock className="h-5 w-5" />
@@ -841,9 +841,9 @@ export default function AdminAnalyticsDashboard({
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
               <CreditCard className="h-4 w-4 text-[#e2136e]" />
-              {isBn ? "সিওডি ও বিকাশ পেমেন্ট" : "COD & bKash Orders"}
+              {isBn ? "   Payment" : "COD & bKash Orders"}
             </span>
-            <span className="text-[10px] font-black text-[#e2136e] bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+            <span className="text-[10px] font-black text-[#e2136e] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200">
               {paymentBreakdown.bkashCount + paymentBreakdown.codCount > 0
                 ? `${paymentBreakdown.bkashPercent}% bKash`
                 : "0%"}
@@ -864,7 +864,7 @@ export default function AdminAnalyticsDashboard({
               </div>
               <div className="text-base sm:text-lg font-black text-gray-900 leading-tight">
                 {paymentBreakdown.codCount}{" "}
-                <span className="text-[10px] font-bold text-gray-500">{isBn ? "অর্ডার" : "orders"}</span>
+                <span className="text-[10px] font-bold text-gray-500">{isBn ? "Order" : "orders"}</span>
               </div>
               <div className="text-[11px] font-bold text-amber-900 font-mono truncate">
                 {formatPrice(paymentBreakdown.codTotal)}
@@ -872,7 +872,7 @@ export default function AdminAnalyticsDashboard({
             </div>
 
             {/* bKash Block */}
-            <div className="rounded-2xl bg-pink-50/70 border border-pink-200/80 p-2.5 space-y-0.5">
+            <div className="rounded-2xl bg-teal-50/60/70 border border-teal-200/80 p-2.5 space-y-0.5">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black text-[#e2136e] uppercase tracking-wider flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#e2136e] animate-pulse shrink-0" />
@@ -884,7 +884,7 @@ export default function AdminAnalyticsDashboard({
               </div>
               <div className="text-base sm:text-lg font-black text-gray-900 leading-tight">
                 {paymentBreakdown.bkashCount}{" "}
-                <span className="text-[10px] font-bold text-pink-700">{isBn ? "অর্ডার" : "orders"}</span>
+                <span className="text-[10px] font-bold text-[#164E63]">{isBn ? "Order" : "orders"}</span>
               </div>
               <div className="text-[11px] font-bold text-[#e2136e] font-mono truncate">
                 {formatPrice(paymentBreakdown.bkashTotal)}
@@ -898,18 +898,18 @@ export default function AdminAnalyticsDashboard({
               <div
                 className="bg-amber-400 h-full transition-all duration-300"
                 style={{ width: `${paymentBreakdown.codPercent}%` }}
-                title={`COD: ${paymentBreakdown.codCount}টি (${paymentBreakdown.codPercent}%)`}
+                title={`COD: ${paymentBreakdown.codCount}items (${paymentBreakdown.codPercent}%)`}
               />
               <div
                 className="bg-[#e2136e] h-full transition-all duration-300"
                 style={{ width: `${paymentBreakdown.bkashPercent}%` }}
-                title={`bKash: ${paymentBreakdown.bkashCount}টি (${paymentBreakdown.bkashPercent}%)`}
+                title={`bKash: ${paymentBreakdown.bkashCount}items (${paymentBreakdown.bkashPercent}%)`}
               />
               {paymentBreakdown.otherPercent > 0 && (
                 <div
                   className="bg-indigo-500 h-full transition-all duration-300"
                   style={{ width: `${paymentBreakdown.otherPercent}%` }}
-                  title={`Cards: ${paymentBreakdown.otherCount}টি (${paymentBreakdown.otherPercent}%)`}
+                  title={`Cards: ${paymentBreakdown.otherCount}items (${paymentBreakdown.otherPercent}%)`}
                 />
               )}
             </div>
@@ -918,16 +918,16 @@ export default function AdminAnalyticsDashboard({
             <div className="flex justify-between items-center text-[10px] font-bold pt-1.5 text-gray-500">
               <span className="flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shrink-0" />
-                {isBn ? "ক্যাশ:" : "COD:"} {paymentBreakdown.codCount}টি
+                {isBn ? "Cash:" : "COD:"} {paymentBreakdown.codCount}items
               </span>
               <span className="flex items-center gap-1 text-[#e2136e]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#e2136e] shrink-0" />
-                {isBn ? "বিকাশ:" : "bKash:"} {paymentBreakdown.bkashCount}টি
+                {isBn ? ":" : "bKash:"} {paymentBreakdown.bkashCount}items
               </span>
               {paymentBreakdown.otherCount > 0 && (
                 <span className="flex items-center gap-1 text-indigo-600">
                   <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />
-                  {paymentBreakdown.otherCount}টি
+                  {paymentBreakdown.otherCount}items
                 </span>
               )}
             </div>
@@ -945,11 +945,11 @@ export default function AdminAnalyticsDashboard({
             </span>
           </div>
           <p className="text-lg sm:text-xl font-black text-gray-900 mt-0.5">
-            {avgBasketSize} {isBn ? "টি পণ্য / অর্ডার" : "items / order"}
+            {avgBasketSize} {isBn ? "items Products / Order" : "items / order"}
           </p>
           <span className="text-[10px] text-gray-400 block">
             {isBn
-              ? "কম্বো ও রুটিন বান্ডেল সেলস পারফরম্যান্স"
+              ? "Combo  items   "
               : "Beauty combo & routine bundle index"}
           </span>
         </div>
@@ -968,7 +968,7 @@ export default function AdminAnalyticsDashboard({
             {deliveryFulfillmentRate}%
           </p>
           <span className="text-[10px] text-gray-400 block">
-            {completedOrders} {isBn ? "টি সফল ডেলিভারি" : "completed orders"}
+            {completedOrders} {isBn ? "items  Delivery" : "completed orders"}
           </span>
         </div>
 
@@ -977,11 +977,11 @@ export default function AdminAnalyticsDashboard({
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
               <ShoppingCart className="h-4 w-4 text-orange-600" />{" "}
-              {isBn ? "অসম্পূর্ণ লিডস" : "Abandoned Leads"}
+              {isBn ? "Complete " : "Abandoned Leads"}
             </span>
             <Link
               href="/admin/orders/incomplete"
-              className="text-[10px] font-bold text-[#e91e63] hover:underline"
+              className="text-[10px] font-bold text-[#1D6474] hover:underline"
             >
               {t("view_all")} →
             </Link>
@@ -989,11 +989,11 @@ export default function AdminAnalyticsDashboard({
           <p className="text-lg sm:text-xl font-black text-orange-600 mt-0.5">
             {abandonedCheckouts.length}{" "}
             <span className="text-xs font-semibold text-gray-500">
-              {isBn ? "টি লিড" : "leads"}
+              {isBn ? "items " : "leads"}
             </span>
           </p>
           <span className="text-[10px] text-gray-400 block">
-            {isBn ? "হোয়াটসঅ্যাপ ও এসএমএস রিকভারি সক্রিয়" : "WhatsApp/SMS 1-click recovery"}
+            {isBn ? "  SMS  Active" : "WhatsApp/SMS 1-click recovery"}
           </span>
         </div>
       </div>
@@ -1008,7 +1008,7 @@ export default function AdminAnalyticsDashboard({
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
               Accurately calculated using each product&apos;s procurement buying price (
-              <code className="font-mono text-pink-700">cost_price</code>) vs retail selling
+              <code className="font-mono text-[#164E63]">cost_price</code>) vs retail selling
               price.
             </p>
           </div>
@@ -1044,14 +1044,14 @@ export default function AdminAnalyticsDashboard({
           </div>
 
           {/* Gross Profit */}
-          <div className="rounded-2xl bg-pink-50/40 p-4 border border-pink-100 space-y-1">
-            <span className="text-[11px] font-bold text-pink-700 uppercase">
+          <div className="rounded-2xl bg-teal-50/60/40 p-4 border border-teal-100 space-y-1">
+            <span className="text-[11px] font-bold text-[#164E63] uppercase">
               3. {t("gross_profit")}
             </span>
             <p className="text-2xl font-black text-gray-900">
               {formatPrice(grossProfit)}
             </p>
-            <span className="text-[10px] text-pink-700 font-bold">
+            <span className="text-[10px] text-[#164E63] font-bold">
               Sales minus Buying Cost
             </span>
           </div>
@@ -1078,7 +1078,7 @@ export default function AdminAnalyticsDashboard({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
             <div>
               <h2 className="text-base font-black text-gray-900 flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-[#e91e63]" /> Sales vs. Expense & COGS Trend
+                <BarChart3 className="h-5 w-5 text-[#1D6474]" /> Sales vs. Expense & COGS Trend
               </h2>
               <p className="text-xs text-gray-500 mt-0.5">
                 Visual comparison between Gross Sales Revenue (Green) and Product Procurement
@@ -1142,7 +1142,7 @@ export default function AdminAnalyticsDashboard({
         <div className="lg:col-span-12 xl:col-span-4 space-y-6">
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
             <h2 className="text-base font-black text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-              <Truck className="h-5 w-5 text-[#e91e63]" /> {t("delivery_success")}
+              <Truck className="h-5 w-5 text-[#1D6474]" /> {t("delivery_success")}
             </h2>
 
             <div className="space-y-4">
@@ -1218,26 +1218,26 @@ export default function AdminAnalyticsDashboard({
         </div>
       </div>
 
-      {/* 4. Top Performing Products Table (সর্বোচ্চ বিক্রিত পণ্যসমূহ - ডায়নামিক পেজিনেশন) */}
+      {/* 4. Top Performing Products Table (  Products - Name ) */}
       <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-pink-100 text-[#e91e63]">
+              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-teal-100/70 text-[#1D6474]">
                 <Award className="h-4 w-4" />
               </span>
               <h2 className="text-base font-black text-gray-900">
                 {t("top_performing")}
               </h2>
-              <span className="rounded-full bg-pink-50 text-[#e91e63] border border-pink-200 px-2.5 py-0.5 text-[10px] font-black uppercase">
+              <span className="rounded-full bg-teal-50/60 text-[#1D6474] border border-teal-200 px-2.5 py-0.5 text-[10px] font-black uppercase">
                 {isBn
-                  ? `মোট ${totalProducts}টি পণ্য (পৃষ্ঠা ${activePage}/${totalPages})`
+                  ? `Total ${totalProducts}items Products ( ${activePage}/${totalPages})`
                   : `Total ${totalProducts} Products (Page ${activePage}/${totalPages})`}
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-1">
               {isBn
-                ? "অর্ডার সংখ্যা এবং বিক্রিত ইউনিটের ভিত্তিতে সাজানো। সর্বোচ্চ বিক্রিত পণ্য সর্বদা ১ম স্থানে থাকবে।"
+                ? "Order  and    ।   Products  1  ।"
                 : "Dynamic ranking of all products based on units sold and order volume. Most ordered product is always #1."}
             </p>
           </div>
@@ -1246,7 +1246,7 @@ export default function AdminAnalyticsDashboard({
             {/* Page Size Selector */}
             <div className="inline-flex items-center rounded-xl bg-gray-100 p-1 text-xs font-bold">
               <span className="px-2 text-[10px] text-gray-500 uppercase tracking-wider hidden md:inline">
-                {isBn ? "প্রতি পেজে:" : "Per page:"}
+                {isBn ? " :" : "Per page:"}
               </span>
               {[5, 10, 20].map((size) => (
                 <button
@@ -1275,7 +1275,7 @@ export default function AdminAnalyticsDashboard({
                     : "text-gray-500 hover:text-gray-900"
                 }`}
               >
-                {isBn ? "সব" : "All"}
+                {isBn ? "" : "All"}
               </button>
             </div>
 
@@ -1283,7 +1283,7 @@ export default function AdminAnalyticsDashboard({
               <Button
                 variant="outline"
                 size="sm"
-                className="text-xs font-bold rounded-xl border-gray-200 hover:border-pink-300 hover:text-[#e91e63]"
+                className="text-xs font-bold rounded-xl border-gray-200 hover:border-teal-300 hover:text-[#1D6474]"
               >
                 {t("view_all_products")} →
               </Button>
@@ -1296,19 +1296,19 @@ export default function AdminAnalyticsDashboard({
             <thead className="bg-gray-50 text-gray-500 uppercase font-black border-b border-gray-100">
               <tr>
                 <th className="px-4 py-3.5 w-14 text-center">#</th>
-                <th className="px-4 py-3.5">{isBn ? "পণ্য ও ব্যাচ" : "Product & Batch"}</th>
+                <th className="px-4 py-3.5">{isBn ? "Products  " : "Product & Batch"}</th>
                 <th className="px-4 py-3.5 text-center">{t("units_sold")}</th>
                 <th className="px-4 py-3.5 text-center">{t("stock_level")}</th>
                 <th className="px-4 py-3.5 text-right">{t("total_revenue")}</th>
                 <th className="px-4 py-3.5 text-right">{t("profit")}</th>
-                <th className="px-4 py-3.5 text-center">{isBn ? "একশন" : "Action"}</th>
+                <th className="px-4 py-3.5 text-center">{isBn ? "" : "Action"}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {paginatedProducts.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-10 text-center text-gray-400 font-medium">
-                    {isBn ? "কোনো পণ্য পাওয়া যায়নি" : "No products found"}
+                    {isBn ? " Products  " : "No products found"}
                   </td>
                 </tr>
               ) : (
@@ -1357,7 +1357,7 @@ export default function AdminAnalyticsDashboard({
                           <div className="min-w-0">
                             <Link
                               href={`/admin/products/${p.id}/edit`}
-                              className="font-bold text-gray-900 hover:text-[#e91e63] transition-colors block truncate max-w-64"
+                              className="font-bold text-gray-900 hover:text-[#1D6474] transition-colors block truncate max-w-64"
                             >
                               {p.name}
                             </Link>
@@ -1377,20 +1377,20 @@ export default function AdminAnalyticsDashboard({
                       <td className="px-4 py-3 text-center">
                         <div className="inline-block text-center min-w-24">
                           <span className="text-sm font-black text-gray-900 block">
-                            {p.unitsSold} {isBn ? "পিস" : "sold"}
+                            {p.unitsSold} {isBn ? "" : "sold"}
                           </span>
                           {p.ordersCount > 0 ? (
                             <span className="text-[10px] text-gray-500 font-semibold block">
-                              ({p.ordersCount} {isBn ? "টি অর্ডার" : "orders"})
+                              ({p.ordersCount} {isBn ? "items Order" : "orders"})
                             </span>
                           ) : (
                             <span className="text-[10px] text-gray-400 font-medium block">
-                              {isBn ? "(০ অর্ডার)" : "(0 orders)"}
+                              {isBn ? "(0 Order)" : "(0 orders)"}
                             </span>
                           )}
                           <div className="w-20 mx-auto h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
                             <div
-                              className="h-full bg-linear-to-r from-pink-500 to-[#e91e63] rounded-full"
+                              className="h-full bg-linear-to-r from-pink-500 to-[#1D6474] rounded-full"
                               style={{ width: `${soldProgress}%` }}
                             />
                           </div>
@@ -1410,14 +1410,14 @@ export default function AdminAnalyticsDashboard({
                         >
                           {p.stockQty <= 0
                             ? isBn
-                              ? "স্টক আউট (০)"
+                              ? "Stock  (0)"
                               : "Out of Stock (0)"
                             : p.stockQty <= 5
                             ? isBn
-                              ? `সীমিত স্টক (${p.stockQty})`
+                              ? ` Stock (${p.stockQty})`
                               : `Low: ${p.stockQty} left`
                             : isBn
-                            ? `${p.stockQty}টি ইন-স্টক`
+                            ? `${p.stockQty}items -Stock`
                             : `${p.stockQty} in stock`}
                         </span>
                       </td>
@@ -1443,9 +1443,9 @@ export default function AdminAnalyticsDashboard({
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 text-[11px] font-bold text-[#e91e63] hover:bg-pink-50"
+                            className="h-7 text-[11px] font-bold text-[#1D6474] hover:bg-teal-50/60"
                           >
-                            {isBn ? "এডিট" : "Edit"}
+                            {isBn ? "" : "Edit"}
                           </Button>
                         </Link>
                       </td>
@@ -1464,9 +1464,9 @@ export default function AdminAnalyticsDashboard({
             <div className="text-xs text-gray-500 font-medium text-center sm:text-left">
               {isBn ? (
                 <>
-                  মোট <span className="font-black text-gray-900">{totalProducts}</span>টি পণ্যের মধ্যে{" "}
+                  Total <span className="font-black text-gray-900">{totalProducts}</span>items Products {" "}
                   <span className="font-black text-gray-900">{startIndex + 1}</span> -{" "}
-                  <span className="font-black text-gray-900">{endIndex}</span> দেখানো হচ্ছে
+                  <span className="font-black text-gray-900">{endIndex}</span>  
                 </>
               ) : (
                 <>
@@ -1488,7 +1488,7 @@ export default function AdminAnalyticsDashboard({
                   aria-label="Previous Page"
                 >
                   <ChevronLeft className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">{isBn ? "আগের পেজ" : "Prev"}</span>
+                  <span className="hidden sm:inline">{isBn ? " " : "Prev"}</span>
                 </button>
 
                 <div className="flex items-center gap-1">
@@ -1508,7 +1508,7 @@ export default function AdminAnalyticsDashboard({
                         onClick={() => setCurrentPage(num as number)}
                         className={`min-w-8 h-8 px-2 rounded-xl text-xs font-black transition-all ${
                           isCurrent
-                            ? "bg-[#e91e63] text-white shadow-xs shadow-pink-200"
+                            ? "bg-[#1D6474] text-white shadow-xs shadow-pink-200"
                             : "border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
                         }`}
                       >
@@ -1525,7 +1525,7 @@ export default function AdminAnalyticsDashboard({
                   className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                   aria-label="Next Page"
                 >
-                  <span className="hidden sm:inline">{isBn ? "পরের পেজ" : "Next"}</span>
+                  <span className="hidden sm:inline">{isBn ? " " : "Next"}</span>
                   <ChevronRight className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -1549,13 +1549,13 @@ export default function AdminAnalyticsDashboard({
                 </h2>
                 {criticalExpiryCount > 0 && (
                   <span className="rounded-full bg-rose-500 text-white px-2 py-0.2 text-[10px] font-black animate-pulse">
-                    {criticalExpiryCount} {isBn ? "জরুরি" : "Urgent"}
+                    {criticalExpiryCount} {isBn ? "" : "Urgent"}
                   </span>
                 )}
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 {isBn
-                  ? "বিউটি ও স্কিনকেয়ার পণ্যের শেলফ-লাইফ মনিটর। ৩–৬ মাসের মধ্যে মেয়াদ শেষ হতে যাওয়া প্রোডাক্ট আগে ডিসকাউন্টে ক্লিয়ার করুন।"
+                  ? "items  Casual Wear Products - । 3–6       Products  Discount  ।"
                   : "Beauty batch freshness monitor. Identify products expiring in 3–6 months to initiate clearance discounts before expiration."}
               </p>
             </div>
@@ -1580,7 +1580,7 @@ export default function AdminAnalyticsDashboard({
                     : "text-gray-500 hover:text-gray-900"
                 }`}
               >
-                &lt; 3 {isBn ? "মাস" : "Mos"} ({criticalExpiryCount})
+                &lt; 3 {isBn ? "" : "Mos"} ({criticalExpiryCount})
               </button>
               <button
                 onClick={() => setExpiryTab("approaching")}
@@ -1590,7 +1590,7 @@ export default function AdminAnalyticsDashboard({
                     : "text-gray-500 hover:text-gray-900"
                 }`}
               >
-                3–6 {isBn ? "মাস" : "Mos"} ({approachingExpiryCount})
+                3–6 {isBn ? "" : "Mos"} ({approachingExpiryCount})
               </button>
             </div>
           </div>
@@ -1599,12 +1599,12 @@ export default function AdminAnalyticsDashboard({
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div className="p-3 rounded-2xl bg-rose-50/70 border border-rose-100">
               <span className="text-[10px] uppercase font-bold text-rose-700 block">
-                {isBn ? "জরুরি রেড ফ্ল্যাগ" : "Critical Red Flags"}
+                {isBn ? "  " : "Critical Red Flags"}
               </span>
               <p className="text-lg font-black text-rose-700 mt-0.5">
                 {criticalExpiryCount}{" "}
                 <span className="text-xs font-medium text-rose-600">
-                  {isBn ? "টি ব্যাচ" : "batches"}
+                  {isBn ? "items " : "batches"}
                 </span>
               </p>
               <span className="text-[10px] text-rose-500 block">&lt; 90 days remaining</span>
@@ -1612,26 +1612,26 @@ export default function AdminAnalyticsDashboard({
 
             <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-100">
               <span className="text-[10px] uppercase font-bold text-amber-700 block">
-                {isBn ? "আসন্ন মেয়াদ (৩-৬ মাস)" : "Approaching (3-6 Mos)"}
+                {isBn ? "  (3-6 )" : "Approaching (3-6 Mos)"}
               </span>
               <p className="text-lg font-black text-amber-800 mt-0.5">
                 {approachingExpiryCount}{" "}
                 <span className="text-xs font-medium text-amber-700">
-                  {isBn ? "টি ব্যাচ" : "batches"}
+                  {isBn ? "items " : "batches"}
                 </span>
               </p>
               <span className="text-[10px] text-amber-600 block">Schedule promos</span>
             </div>
 
-            <div className="p-3 rounded-2xl bg-pink-50/70 border border-pink-100 col-span-2 sm:col-span-1">
-              <span className="text-[10px] uppercase font-bold text-[#e91e63] block">
-                {isBn ? "ঝুঁকিতে থাকা স্টক" : "At-Risk Stock Value"}
+            <div className="p-3 rounded-2xl bg-teal-50/60/70 border border-teal-100 col-span-2 sm:col-span-1">
+              <span className="text-[10px] uppercase font-bold text-[#1D6474] block">
+                {isBn ? "  Stock" : "At-Risk Stock Value"}
               </span>
               <p className="text-lg font-black text-gray-900 mt-0.5">
                 {formatPrice(totalAtRiskValue)}
               </p>
-              <span className="text-[10px] text-pink-600 block">
-                {totalAtRiskStock} {isBn ? "ইউনিট ইনভেন্টরি" : "units in stock"}
+              <span className="text-[10px] text-[#1D6474] block">
+                {totalAtRiskStock} {isBn ? " " : "units in stock"}
               </span>
             </div>
           </div>
@@ -1642,11 +1642,11 @@ export default function AdminAnalyticsDashboard({
               <div className="p-8 text-center rounded-2xl bg-emerald-50/60 border border-emerald-200">
                 <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
                 <h4 className="text-sm font-black text-emerald-950">
-                  {isBn ? "সব প্রোডাক্টের ফ্রেশ মেয়াদ আছে" : "All Cosmetic Batches Fresh & Safe"}
+                  {isBn ? " Products   " : "All Cosmetic Batches Fresh & Safe"}
                 </h4>
                 <p className="text-xs text-emerald-700 mt-1">
                   {isBn
-                    ? "আগামী ৬ মাসের মধ্যে মেয়াদ শেষ হতে যাওয়া কোনো পণ্য পাওয়া যায়নি।"
+                    ? " 6        Products  Tracking।"
                     : "No inventory batches are approaching their expiration date within the next 6 months."}
                 </p>
               </div>
@@ -1688,7 +1688,7 @@ export default function AdminAnalyticsDashboard({
                           </span>
                           <span className="text-gray-500">Exp: {p.expiry_date}</span>
                           <span className="font-bold text-gray-700">
-                            {p.stockQty} {isBn ? "পিস স্টক" : "in stock"}
+                            {p.stockQty} {isBn ? " Stock" : "in stock"}
                           </span>
                         </div>
                       </div>
@@ -1706,20 +1706,20 @@ export default function AdminAnalyticsDashboard({
                       >
                         {p.diffDays < 0
                           ? isBn
-                            ? `${Math.abs(p.diffDays)} দিন আগে মেয়াদোত্তীর্ণ`
+                            ? `${Math.abs(p.diffDays)} Enter  `
                             : `Expired ${Math.abs(p.diffDays)}d ago`
                           : isBn
-                          ? `${p.diffDays} দিন বাকি (${p.diffMonths} মাস)`
+                          ? `${p.diffDays} Enter  (${p.diffMonths} )`
                           : `${p.diffDays} days left (~${p.diffMonths} mos)`}
                       </span>
 
                       <Link href={`/admin/products/${p.id}/edit`}>
                         <Button
                           size="sm"
-                          className="h-7 text-[10px] font-black bg-[#e91e63] hover:bg-pink-700 text-white rounded-xl shadow-xs"
+                          className="h-7 text-[10px] font-black bg-[#1D6474] hover:bg-[#164E63] text-white rounded-xl shadow-xs"
                         >
                           <Tag className="h-3 w-3 mr-1" />
-                          {isBn ? "ক্লিয়ারেন্স ডিসকাউন্ট" : "Clearance"}
+                          {isBn ? " Discount" : "Clearance"}
                         </Button>
                       </Link>
                     </div>
@@ -1731,14 +1731,14 @@ export default function AdminAnalyticsDashboard({
 
           <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
             <span className="flex items-center gap-1 text-[11px]">
-              <Sparkles className="h-3.5 w-3.5 text-[#e91e63]" />
+              <Sparkles className="h-3.5 w-3.5 text-[#1D6474]" />
               {isBn
-                ? "পরামর্শ: ৩ মাসের কম থাকা সিরাম/ক্রিমে ২০%-৪০% ডিসকাউন্ট দিলে স্টক জট হয় না।"
+                ? ": 3    Oxford Shirt/ 20%-40% Discount  Stock   ।"
                 : "Beauty Tip: Apply 20%-40% flash clearance discounts to liquidate stock prior to expiration."}
             </span>
             <Link
               href="/admin/inventory"
-              className="font-bold text-[#e91e63] hover:underline shrink-0"
+              className="font-bold text-[#1D6474] hover:underline shrink-0"
             >
               {t("inventory")} →
             </Link>
@@ -1759,13 +1759,13 @@ export default function AdminAnalyticsDashboard({
               </div>
               <p className="text-[11px] text-gray-500 mt-1">
                 {isBn
-                  ? "হট সেলিং সিরাম বা ক্রিম স্টক আউট হওয়ার আগে রিয়েল-টাইম ওয়ার্নিং।"
+                  ? "  Oxford Shirt   Stock    - ।"
                   : "Real-time stock-out warnings for hot selling serums & skincare creams."}
               </p>
             </div>
             <Link
               href="/admin/inventory"
-              className="text-xs font-bold text-[#e91e63] hover:underline"
+              className="text-xs font-bold text-[#1D6474] hover:underline"
             >
               {t("inventory")} →
             </Link>
@@ -1791,7 +1791,7 @@ export default function AdminAnalyticsDashboard({
                     <div className="flex items-center gap-1.5">
                       {isHot && (
                         <span className="inline-flex items-center gap-0.5 rounded-full bg-linear-to-r from-red-500 to-amber-500 px-1.5 py-0.2 text-[9px] font-black text-white shadow-xs animate-pulse">
-                          🔥 {isBn ? "হট সেলিং" : "HOT"}
+                          🔥 {isBn ? " " : "HOT"}
                         </span>
                       )}
                       <span className="font-bold text-gray-900 block truncate">
@@ -1805,7 +1805,7 @@ export default function AdminAnalyticsDashboard({
                       </span>
                       <span>•</span>
                       <span className="font-bold text-gray-700">
-                        {p.unitsSold} {isBn ? "টি বিক্রি হয়েছে" : "sold recently"}
+                        {p.unitsSold} {isBn ? "items  successfully" : "sold recently"}
                       </span>
                     </div>
                   </div>
@@ -1820,18 +1820,18 @@ export default function AdminAnalyticsDashboard({
                     >
                       {isOut
                         ? isBn
-                          ? "স্টক আউট"
+                          ? "Stock "
                           : "Out of Stock"
                         : isBn
-                        ? `${p.stockQty}টি বাকি`
+                        ? `${p.stockQty}items `
                         : `${p.stockQty} Left`}
                     </span>
                     <Link
                       href={`/admin/products/${p.id}/edit`}
                       className="block mt-1"
                     >
-                      <span className="text-[10px] font-bold text-[#e91e63] hover:underline flex items-center justify-end gap-0.5">
-                        {isBn ? "রিস্টক করুন" : "Restock"} →
+                      <span className="text-[10px] font-bold text-[#1D6474] hover:underline flex items-center justify-end gap-0.5">
+                        {isBn ? "Stock " : "Restock"} →
                       </span>
                     </Link>
                   </div>
@@ -1846,7 +1846,7 @@ export default function AdminAnalyticsDashboard({
               variant="outline"
               className="w-full text-xs font-bold rounded-xl border-gray-200"
             >
-              {isBn ? "ইনভেন্টরি ম্যানেজার খুলুন" : "Open Inventory Manager"} (
+              {isBn ? "  " : "Open Inventory Manager"} (
               {products.length})
             </Button>
           </Link>
@@ -1864,7 +1864,7 @@ export default function AdminAnalyticsDashboard({
           </div>
           <Link
             href="/admin/orders"
-            className="text-xs font-bold text-[#e91e63] hover:underline"
+            className="text-xs font-bold text-[#1D6474] hover:underline"
           >
             {t("view_all_orders")} →
           </Link>
@@ -1889,7 +1889,7 @@ export default function AdminAnalyticsDashboard({
                   key={ord.id}
                   className="hover:bg-gray-50/70 transition-colors"
                 >
-                  <td className="px-5 py-3.5 font-mono font-bold text-[#e91e63]">
+                  <td className="px-5 py-3.5 font-mono font-bold text-[#1D6474]">
                     <Link
                       href={`/admin/orders/${ord.id}`}
                       className="hover:underline"
@@ -1903,7 +1903,7 @@ export default function AdminAnalyticsDashboard({
                       "Customer"}
                   </td>
                   <td className="px-5 py-3.5">
-                    <span className="rounded-full bg-pink-50 text-[#e91e63] px-2.5 py-0.5 text-[10px] font-black uppercase border border-pink-200">
+                    <span className="rounded-full bg-teal-50/60 text-[#1D6474] px-2.5 py-0.5 text-[10px] font-black uppercase border border-teal-200">
                       {ord.status}
                     </span>
                   </td>

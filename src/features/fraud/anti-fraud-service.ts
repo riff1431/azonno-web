@@ -195,7 +195,7 @@ export async function generateCheckoutOtp(phone: string): Promise<{ success: boo
   const normalizedPhone = cleanPhone.slice(-11);
 
   if (normalizedPhone.length !== 11 || !normalizedPhone.startsWith("01")) {
-    return { success: false, message: "একটি সঠিক ১১ ডিজিটের বাংলাদেশী মোবাইল নম্বর দিন।" };
+    return { success: false, message: "items  11  EnglishBangladeshi Mobile Number Enter।" };
   }
 
   // Generate 4-digit OTP
@@ -213,7 +213,7 @@ export async function generateCheckoutOtp(phone: string): Promise<{ success: boo
       variables: {
         customer_name: "Customer",
         otp_code: code,
-        store_name: "Blush & Budget",
+        store_name: "Azonno",
       },
     });
 
@@ -221,20 +221,20 @@ export async function generateCheckoutOtp(phone: string): Promise<{ success: boo
       console.error("[Anti-Fraud SMS Gateway] Failed to dispatch OTP:", smsRes.error);
       return {
         success: false,
-        message: "ভেরিফিকেশন কোড পাঠানো সম্ভব হয়নি। অনুগ্রহ করে আপনার মোবাইল নম্বরটি পরীক্ষা করে কিছুক্ষণ পর পুনরায় চেষ্টা করুন।",
+        message: " Code   । Please  your Mobile Numberitems     again :00 ।",
       };
     }
   } catch (err: any) {
     console.warn("SMS gateway send warning:", err);
     return {
       success: false,
-      message: "সাময়িক সমস্যার কারণে ভেরিফিকেশন কোড পাঠানো যায়নি। অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।",
+      message: "    Code  Tracking। Please    :00 ।",
     };
   }
 
   return {
     success: true,
-    message: `আপনার মোবাইল নম্বরে ৪ সংখ্যার ভেরিফিকেশন কোড পাঠানো হয়েছে।`,
+    message: `your Mobile Number 4   Code  successfully।`,
   };
 }
 
@@ -247,16 +247,16 @@ export async function verifyCheckoutOtp(phone: string, inputCode: string): Promi
 
   const entry = otpStore.get(normalizedPhone);
   if (!entry) {
-    return { valid: false, error: "ভেরিফিকেশন কোডের মেয়াদ শেষ হয়ে গেছে। অনুগ্রহ করে নতুন কোড নিন।" };
+    return { valid: false, error: " Code    । Please   Code ।" };
   }
 
   if (Date.now() > entry.expiresAt) {
     otpStore.delete(normalizedPhone);
-    return { valid: false, error: "ভেরিফিকেশন কোডের সময়সীমা শেষ হয়ে গেছে। অনুগ্রহ করে আবার নতুন কোড নিন।" };
+    return { valid: false, error: " Code    । Please    Code ।" };
   }
 
   if (entry.code !== inputCode.trim()) {
-    return { valid: false, error: "ভুল ভেরিফিকেশন কোড। অনুগ্রহ করে সঠিক ৪-সংখ্যার কোডটি লিখুন।" };
+    return { valid: false, error: "Invalid  Code। Please   4- Codeitems ।" };
   }
 
   // OTP verified successfully, clear entry

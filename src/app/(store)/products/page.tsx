@@ -24,36 +24,36 @@ export async function generateMetadata({
   const { category, type, brand, tag, skin_concern, search } = await searchParams;
   const baseUrl = getBaseUrl();
 
-  let title = "Authentic Skincare & Beauty Catalogue — Blush & Budget";
+  let title = "Authentic Skincare & Beauty Catalogue — Azonno";
   let description = "Explore 100% genuine skincare, cosmetics, sunscreens, and K-Beauty bestsellers imported from authorized distributors in Bangladesh.";
   let canonicalUrl = `${baseUrl}/products`;
 
   if (search) {
-    title = `Search Results for "${search}" | Blush & Budget`;
-    description = `Find authentic beauty and skincare products matching "${search}" at Blush & Budget with cash on delivery.`;
+    title = `Search Results for "${search}" | Azonno`;
+    description = `Find authentic beauty and skincare products matching "${search}" at Azonno with cash on delivery.`;
   } else if (brand) {
     const formattedBrand = brand.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    title = `${formattedBrand} Products in Bangladesh — 100% Authentic | Blush & Budget`;
-    description = `Shop genuine ${formattedBrand} skincare, makeup, and cosmetics in Bangladesh with fast doorstep delivery from Blush & Budget.`;
+    title = `${formattedBrand} Products in Bangladesh — 100% Authentic | Azonno`;
+    description = `Shop genuine ${formattedBrand} skincare, makeup, and cosmetics in Bangladesh with fast doorstep delivery from Azonno.`;
     canonicalUrl = `${baseUrl}/products?brand=${brand}`;
   } else if (category && type) {
     const formattedCat = category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     const formattedType = type.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    title = `${formattedCat}: ${formattedType} — Authentic Beauty in Bangladesh | Blush & Budget`;
-    description = `Buy authentic ${formattedType} under ${formattedCat} at best BDT prices from Blush & Budget.`;
+    title = `${formattedCat}: ${formattedType} — Authentic Beauty in Bangladesh | Azonno`;
+    description = `Buy authentic ${formattedType} under ${formattedCat} at best BDT prices from Azonno.`;
     canonicalUrl = `${baseUrl}/products?category=${category}&type=${type}`;
   } else if (category) {
     const formattedCat = category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    title = `${formattedCat} Products in Bangladesh — 100% Genuine | Blush & Budget`;
-    description = `Explore 100% original ${formattedCat} items from top Korean, UK, and US brands at Blush & Budget.`;
+    title = `${formattedCat} Products in Bangladesh — 100% Genuine | Azonno`;
+    description = `Explore 100% original ${formattedCat} items from top Korean, UK, and US brands at Azonno.`;
     canonicalUrl = `${baseUrl}/products?category=${category}`;
   } else if (skin_concern) {
-    title = `${skin_concern} Skincare Solutions in Bangladesh | Blush & Budget`;
-    description = `Target ${skin_concern} with clinically proven, authentic Korean and international skincare routines from Blush & Budget.`;
+    title = `${skin_concern} Skincare Solutions in Bangladesh | Azonno`;
+    description = `Target ${skin_concern} with clinically proven, authentic Korean and international skincare routines from Azonno.`;
     canonicalUrl = `${baseUrl}/products?skin_concern=${encodeURIComponent(skin_concern)}`;
   } else if (tag) {
-    title = `#${tag} Collection | Blush & Budget Bangladesh`;
-    description = `Shop authentic trending products tagged #${tag} at Blush & Budget with cash on delivery nationwide.`;
+    title = `#${tag} Collection | Azonno Bangladesh`;
+    description = `Shop authentic trending products tagged #${tag} at Azonno with cash on delivery nationwide.`;
     canonicalUrl = `${baseUrl}/products?tag=${tag}`;
   }
 
@@ -67,7 +67,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: "Blush & Budget",
+      siteName: "Azonno",
       type: "website",
     },
     twitter: {
@@ -114,32 +114,32 @@ export const BEAUTY_TYPE_SYNONYMS: Record<string, string[]> = {
 };
 
 export const TYPE_NAME_MAP: Record<string, { en: string; bn: string }> = {
-  lotion: { en: "Lotion & Creams", bn: "লোশন ও ক্রিম" },
-  moisturizer: { en: "Moisturizer & Hydration", bn: "ময়েশ্চারাইজার" },
-  cleanser: { en: "Cleanser & Facewash", bn: "ক্লিনজার ও ফেসওয়াশ" },
-  wash: { en: "Body Wash & Shower Gel", bn: "বডি ওয়াশ ও শাওয়ার জেল" },
-  serum: { en: "Serum & Essence", bn: "সিরাম ও এসেন্স" },
-  sunscreen: { en: "Sunscreen & SPF", bn: "সানস্ক্রিন (SPF)" },
-  toner: { en: "Toner & Mist", bn: "ট্যোনার ও মিস্ট" },
-  oil: { en: "Hair Oil & Serum", bn: "হেয়ার অয়েল" },
-  shampoo: { en: "Shampoo & Scalp Care", bn: "শ্যাম্পু" },
-  conditioner: { en: "Conditioner & Mask", bn: "কন্ডিশনার" },
-  scalp: { en: "Scalp Scrub", bn: "স্ক্যাল্প স্ক্রাব" },
-  styling: { en: "Hair Styling", bn: "হেয়ার স্টাইলিং" },
-  scrub: { en: "Body Scrub", bn: "বডি স্ক্রাব" },
-  "hand-foot": { en: "Hand & Foot Care", bn: "হ্যান্ড ও ফুট কেয়ার" },
-  diaper: { en: "Diaper Care", bn: "ডায়াপার কেয়ার" },
-  maternity: { en: "Mom Care", bn: "মম কেয়ার" },
-  foundation: { en: "Foundation & BB Cream", bn: "ফাউন্ডেশন" },
-  lipstick: { en: "Lipstick & Lip Tint", bn: "লিপস্টিক" },
-  eyeliner: { en: "Eyeliner & Kajal", bn: "আইলাইনার" },
-  eyes: { en: "Eyeshadow & Mascara", bn: "আইশ্যাডো ও মাশকারা" },
-  powder: { en: "Setting Powder & Spray", bn: "পাউডার ও স্প্রে" },
-  blush: { en: "Blush & Highlighter", bn: "ব্লাশ ও হাইলাইটার" },
-  women: { en: "Women's Fragrance", bn: "পারফিউম" },
-  men: { en: "Men's Cologne", bn: "মেনস কোলন" },
-  mist: { en: "Body Mist", bn: "বডি মিস্ট" },
-  attar: { en: "Attar & Perfume Oil", bn: "আতর ও অয়েল" },
+  lotion: { en: "Lotion & Creams", bn: "  " },
+  moisturizer: { en: "Moisturizer & Hydration", bn: "" },
+  cleanser: { en: "Cleanser & Facewash", bn: "  " },
+  wash: { en: "Body Wash & Shower Gel", bn: "    " },
+  serum: { en: "Serum & Essence", bn: "Oxford Shirt  " },
+  sunscreen: { en: "Sunscreen & SPF", bn: "Panjabi (SPF)" },
+  toner: { en: "Toner & Mist", bn: "  " },
+  oil: { en: "Hair Oil & Serum", bn: " " },
+  shampoo: { en: "Shampoo & Scalp Care", bn: "" },
+  conditioner: { en: "Conditioner & Mask", bn: "" },
+  scalp: { en: "Scalp Scrub", bn: " " },
+  styling: { en: "Hair Styling", bn: " :00" },
+  scrub: { en: "Body Scrub", bn: " " },
+  "hand-foot": { en: "Hand & Foot Care", bn: "   " },
+  diaper: { en: "Diaper Care", bn: " " },
+  maternity: { en: "Mom Care", bn: " " },
+  foundation: { en: "Foundation & BB Cream", bn: "" },
+  lipstick: { en: "Lipstick & Lip Tint", bn: "items" },
+  eyeliner: { en: "Eyeliner & Kajal", bn: "" },
+  eyes: { en: "Eyeshadow & Mascara", bn: "  " },
+  powder: { en: "Setting Powder & Spray", bn: "  " },
+  blush: { en: "Blush & Highlighter", bn: "  :00" },
+  women: { en: "Women's Fragrance", bn: "" },
+  men: { en: "Men's Cologne", bn: " " },
+  mist: { en: "Body Mist", bn: " " },
+  attar: { en: "Attar & Perfume Oil", bn: "  " },
 };
 
 export const SKIN_CONCERN_KEYWORDS: Record<string, string[]> = {

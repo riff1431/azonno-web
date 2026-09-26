@@ -336,11 +336,11 @@ export function formatCustomerLogEntry(
   // 1. Out for delivery
   if (noteLower.includes("out for delivery") || status === "out_for_delivery") {
     return {
-      title: isBn ? "ডেলিভারি রাইডার পথে আছে" : "Out for Delivery",
+      title: isBn ? "Delivery rider is on the way" : "Out for Delivery",
       description: isBn
-        ? "ডেলিভারি রাইডার আপনার পার্সেলটি নিয়ে বের হয়েছে। অনুগ্রহ করে আপনার মোবাইল সচল রাখুন।"
+        ? "The delivery rider is on the way with your parcel  successfully। Please  your Mobile  ।"
         : "The delivery rider is on the way to your address with your parcel. Please keep your phone active.",
-      badge: isBn ? "রাইডার পথে আছে" : "Out for Delivery",
+      badge: isBn ? "  " : "Out for Delivery",
       badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200",
     };
   }
@@ -354,11 +354,11 @@ export function formatCustomerLogEntry(
     (status === "shipped" && noteLower.includes("live api"))
   ) {
     return {
-      title: isBn ? "পার্সেল ট্রানজিটে রয়েছে" : "Parcel In Transit",
+      title: isBn ? "  " : "Parcel In Transit",
       description: isBn
-        ? "পার্সেলটি আপনার স্থানীয় ডেলিভারি সেন্টারে পৌঁছানোর জন্য ট্রানজিটে রয়েছে।"
+        ? "items your  Delivery :00  for  ।"
         : "Parcel is in transit to your local delivery hub.",
-      badge: isBn ? "ট্রানজিটে আছে" : "In Transit",
+      badge: isBn ? " " : "In Transit",
       badgeColor: "bg-sky-50 text-sky-700 border-sky-200",
     };
   }
@@ -374,17 +374,17 @@ export function formatCustomerLogEntry(
       ? "Pathao Courier"
       : noteLower.includes("steadfast")
       ? "SteadFast Courier"
-      : (entry.courier_name || (isBn ? "কুরিয়ার" : "Courier"));
+      : (entry.courier_name || (isBn ? "" : "Courier"));
 
     const trackMatch = note.match(/Tracking Code:\s*([A-Za-z0-9-_]+)/i) || note.match(/Consignment ID:\s*([A-Za-z0-9-_]+)/i);
     const trackCode = trackMatch ? trackMatch[1] : null;
 
     return {
-      title: isBn ? "কুরিয়ারে হস্তান্তর সম্পন্ন" : "Handed Over to Courier",
+      title: isBn ? "  Completed" : "Handed Over to Courier",
       description: isBn
-        ? `আপনার পার্সেলটি ${courier}-এ তুলে দেওয়া হয়েছে এবং ডেলিভারির জন্য রওনা হয়েছে।${trackCode ? ` (ট্র্যাকিং কোড: ${trackCode})` : ""}`
+        ? `your items ${courier}-   successfully and Delivery for  successfully।${trackCode ? ` (Tracking Code: ${trackCode})` : ""}`
         : `Your parcel has been handed over to ${courier} and is now on the way.${trackCode ? ` (Tracking: ${trackCode})` : ""}`,
-      badge: isBn ? "ডেলিভারিতে আছে" : "In Transit",
+      badge: isBn ? "Delivery " : "In Transit",
       badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
     };
   }
@@ -396,11 +396,11 @@ export function formatCustomerLogEntry(
     status === "completed"
   ) {
     return {
-      title: isBn ? "ডেলিভারি সম্পন্ন হয়েছে" : "Delivered Successfully",
+      title: isBn ? "Delivered successfully" : "Delivered Successfully",
       description: isBn
-        ? "আপনার পার্সেলটি সফলভাবে ডেলিভারি সম্পন্ন হয়েছে। Blush & Budget-এর সাথে কেনাকাটার জন্য আন্তরিক ধন্যবাদ! 🌸"
-        : "Your parcel has been delivered successfully. Thank you for shopping with Blush & Budget!",
-      badge: isBn ? "ডেলিভারি সম্পন্ন" : "Delivered",
+        ? "your items permanently Delivered successfully। Azonno-  :00 for  ! 🌸"
+        : "Your parcel has been delivered successfully. Thank you for shopping with Azonno!",
+      badge: isBn ? "Delivered" : "Delivered",
       badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
     };
   }
@@ -411,11 +411,11 @@ export function formatCustomerLogEntry(
     status === "cancelled"
   ) {
     return {
-      title: isBn ? "অর্ডারটি বাতিল করা হয়েছে" : "Order Cancelled",
+      title: isBn ? "Orderitems Cancel  successfully" : "Order Cancelled",
       description: isBn
-        ? "অর্ডারটি বাতিল করা হয়েছে। কোনো প্রশ্ন বা সহায়তার প্রয়োজন হলে আমাদের কাস্টমার সাপোর্টে মেসেজ দিন।"
+        ? "Orderitems Cancel  successfully।  Question      Customers   Enter।"
         : "This order has been cancelled. Please contact customer support if you need assistance.",
-      badge: isBn ? "বাতিলকৃত" : "Cancelled",
+      badge: isBn ? "Cancel" : "Cancelled",
       badgeColor: "bg-rose-50 text-rose-700 border-rose-200",
     };
   }
@@ -429,11 +429,11 @@ export function formatCustomerLogEntry(
     status === "failed"
   ) {
     return {
-      title: isBn ? "পার্সেল রিটার্ন প্রক্রিয়ায় রয়েছে" : "Parcel Returned",
+      title: isBn ? " Return  " : "Parcel Returned",
       description: isBn
-        ? "গ্রাহকের সাথে যোগাযোগ সম্ভব না হওয়ায় বা ডেলিভারি ব্যর্থ হওয়ায় পার্সেলটি ফেরত প্রক্রিয়ায় রয়েছে।"
+        ? "  AddAdd     Delivery Failed  items   ।"
         : "Parcel could not be delivered and is currently being returned to the warehouse.",
-      badge: isBn ? "রিটার্ন" : "Returned",
+      badge: isBn ? "Return" : "Returned",
       badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
     };
   }
@@ -444,11 +444,11 @@ export function formatCustomerLogEntry(
     status === "confirmed"
   ) {
     return {
-      title: isBn ? "অর্ডার নিশ্চিত করা হয়েছে" : "Order Confirmed",
+      title: isBn ? "Order Confirmed  successfully" : "Order Confirmed",
       description: isBn
-        ? "আপনার অর্ডারটি সফলভাবে ভেরিফাই করে কনফার্ম করা হয়েছে।"
+        ? "your Orderitems permanently     successfully।"
         : "Your order has been verified and confirmed.",
-      badge: isBn ? "নিশ্চিত হয়েছে" : "Confirmed",
+      badge: isBn ? "Confirmed successfully" : "Confirmed",
       badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
     };
   }
@@ -464,11 +464,11 @@ export function formatCustomerLogEntry(
     status === "ready_for_pickup"
   ) {
     return {
-      title: isBn ? "প্যাকেজিং ও প্রস্তুতি চলছে" : "Packaging & Quality Check",
+      title: isBn ? "   " : "Packaging & Quality Check",
       description: isBn
-        ? "আপনার অর্ডারের পণ্যগুলো যত্ন সহকারে চেক ও প্যাকেজিং করা হচ্ছে।"
+        ? "your Order Products       ।"
         : "Your items are being carefully inspected and packed for dispatch.",
-      badge: isBn ? "প্রসেসিং" : "Processing",
+      badge: isBn ? "Processing" : "Processing",
       badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
     };
   }
@@ -480,11 +480,11 @@ export function formatCustomerLogEntry(
     noteLower.includes("paid")
   ) {
     return {
-      title: isBn ? "পেমেন্ট সফলভাবে গৃহীত" : "Payment Received",
+      title: isBn ? "Payment permanently " : "Payment Received",
       description: isBn
-        ? "আপনার অর্ডারের পেমেন্ট সফলভাবে গ্রহণ ও যাচাই করা হয়েছে।"
+        ? "your Order Payment permanently   Verification  successfully।"
         : "Payment for your order has been successfully verified.",
-      badge: isBn ? "পেইড" : "Paid",
+      badge: isBn ? "" : "Paid",
       badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
     };
   }
@@ -496,11 +496,11 @@ export function formatCustomerLogEntry(
     status === "pending"
   ) {
     return {
-      title: isBn ? "অর্ডার গ্রহণ করা হয়েছে" : "Order Placed",
+      title: isBn ? "Order Placed  successfully" : "Order Placed",
       description: isBn
-        ? "আমাদের ওয়েবসাইটে আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।"
+        ? "  your Orderitems permanently   successfully।"
         : "Your order has been placed successfully on our website.",
-      badge: isBn ? "অর্ডার গৃহীত" : "Order Placed",
+      badge: isBn ? "Order " : "Order Placed",
       badgeColor: "bg-zinc-100 text-zinc-700 border-zinc-200",
     };
   }
@@ -514,9 +514,9 @@ export function formatCustomerLogEntry(
     .trim();
 
   return {
-    title: isBn ? "স্ট্যাটাস আপডেট" : "Status Updated",
-    description: cleanNote || (isBn ? "আপনার অর্ডারের স্ট্যাটাস আপডেট করা হয়েছে।" : "Your order status has been updated."),
-    badge: isBn ? "আপডেট" : "Updated",
+    title: isBn ? "Status " : "Status Updated",
+    description: cleanNote || (isBn ? "your Order Status   successfully।" : "Your order status has been updated."),
+    badge: isBn ? "" : "Updated",
     badgeColor: "bg-zinc-50 text-zinc-700 border-zinc-200",
   };
 }
@@ -534,69 +534,69 @@ export function getCustomerOrderStatusInfo(
   switch (norm) {
     case "pending":
       return {
-        label: isBn ? "অর্ডার গৃহীত" : "Order Placed",
+        label: isBn ? "Order " : "Order Placed",
         color: "bg-amber-50 text-amber-800 border-amber-200",
-        desc: isBn ? "আপনার অর্ডারটি গ্রহণ করা হয়েছে এবং পর্যালোচনায় রয়েছে।" : "Your order has been received and is under review.",
+        desc: isBn ? "your Orderitems   successfully and  ।" : "Your order has been received and is under review.",
       };
     case "confirmed":
       return {
-        label: isBn ? "অর্ডার নিশ্চিত" : "Order Confirmed",
+        label: isBn ? "Order Confirmed" : "Order Confirmed",
         color: "bg-blue-50 text-blue-700 border-blue-200",
-        desc: isBn ? "আপনার অর্ডারটি কনফার্ম করা হয়েছে।" : "Your order has been verified and confirmed.",
+        desc: isBn ? "your Orderitems   successfully।" : "Your order has been verified and confirmed.",
       };
     case "processing":
     case "packed":
     case "ready_for_pickup":
       return {
-        label: isBn ? "প্যাকেজিং চলছে" : "Processing & Packed",
+        label: isBn ? " " : "Processing & Packed",
         color: "bg-purple-50 text-purple-700 border-purple-200",
-        desc: isBn ? "আপনার পার্সেলটি যত্ন সহকারে প্যাক করা হচ্ছে।" : "Your items are being packed for dispatch.",
+        desc: isBn ? "your items     ।" : "Your items are being packed for dispatch.",
       };
     case "shipped":
     case "in_transit":
       return {
-        label: isBn ? "ডেলিভারিতে আছে (In Transit)" : "In Transit",
+        label: isBn ? "Delivery  (In Transit)" : "In Transit",
         color: "bg-blue-50 text-blue-700 border-blue-200",
-        desc: isBn ? "পার্সেলটি কুরিয়ারে হস্তান্তর করা হয়েছে এবং ডেলিভারির পথে রয়েছে।" : "Parcel has been handed over to courier and is in transit.",
+        desc: isBn ? "items    successfully and Out for Delivery ।" : "Parcel has been handed over to courier and is in transit.",
       };
     case "out_for_delivery":
       return {
-        label: isBn ? "রাইডার ডেলিভারির পথে" : "Out for Delivery",
+        label: isBn ? " Out for Delivery" : "Out for Delivery",
         color: "bg-indigo-50 text-indigo-700 border-indigo-200",
-        desc: isBn ? "ডেলিভারি রাইডার আপনার ঠিকানায় পৌঁছানোর জন্য বের হয়েছে।" : "Rider is out for delivery to your location.",
+        desc: isBn ? "Delivery  your Address  for  successfully।" : "Rider is out for delivery to your location.",
       };
     case "delivered":
     case "completed":
       return {
-        label: isBn ? "ডেলিভারি সম্পন্ন ✓" : "Delivered Successfully",
+        label: isBn ? "Delivered ✓" : "Delivered Successfully",
         color: "bg-emerald-50 text-emerald-800 border-emerald-300",
-        desc: isBn ? "আপনার পার্সেলটি সফলভাবে ডেলিভারি সম্পন্ন হয়েছে।" : "Parcel has been delivered successfully.",
+        desc: isBn ? "your items permanently Delivered successfully।" : "Parcel has been delivered successfully.",
       };
     case "cancelled":
       return {
-        label: isBn ? "অর্ডার বাতিল" : "Cancelled",
+        label: isBn ? "Order Cancel" : "Cancelled",
         color: "bg-rose-50 text-rose-700 border-rose-200",
-        desc: isBn ? "অর্ডারটি বাতিল করা হয়েছে।" : "This order has been cancelled.",
+        desc: isBn ? "Orderitems Cancel  successfully।" : "This order has been cancelled.",
       };
     case "returned":
     case "failed":
       return {
-        label: isBn ? "পার্সেল রিটার্ন" : "Returned",
+        label: isBn ? " Return" : "Returned",
         color: "bg-amber-50 text-amber-700 border-amber-200",
-        desc: isBn ? "পার্সেলটি রিটার্ন প্রক্রিয়ায় রয়েছে।" : "Parcel is in return process.",
+        desc: isBn ? "items Return  ।" : "Parcel is in return process.",
       };
     case "on-hold":
     case "on_hold":
       return {
-        label: isBn ? "যাচাই প্রক্রিয়াধীন" : "Under Verification",
+        label: isBn ? "Verification " : "Under Verification",
         color: "bg-orange-50 text-orange-700 border-orange-200",
-        desc: isBn ? "অর্ডারটি চূড়ান্ত ভেরিফিকেশনের জন্য হোল্ডে রয়েছে।" : "Order is awaiting verification.",
+        desc: isBn ? "Orderitems   for  ।" : "Order is awaiting verification.",
       };
     default:
       return {
-        label: isBn ? "প্রসেসিং" : status,
+        label: isBn ? "Processing" : status,
         color: "bg-gray-50 text-gray-700 border-gray-200",
-        desc: isBn ? "অর্ডারের কাজ চলছে।" : "Order is being processed.",
+        desc: isBn ? "Order  ।" : "Order is being processed.",
       };
   }
 }

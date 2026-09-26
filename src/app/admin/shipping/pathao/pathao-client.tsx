@@ -26,10 +26,10 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
   const [successMsg, setSuccessMsg] = useState(false);
 
   const tabs = [
-    { id: "general", label: isBn ? "সাধারণ ও স্টোর" : "General & Store" },
-    { id: "credentials", label: isBn ? "এপিআই ক্রেডেনশিয়াল" : "API Credentials (OAuth2)" },
-    { id: "automation", label: isBn ? "অটোমেশন নিয়ম" : "Automation Rules" },
-    { id: "webhook", label: isBn ? "স্ট্যাটাস ওয়েবহুক" : "Status Webhook" },
+    { id: "general", label: isBn ? "General & Store" : "General & Store" },
+    { id: "credentials", label: isBn ? "API Credentials" : "API Credentials (OAuth2)" },
+    { id: "automation", label: isBn ? "Automation Rules" : "Automation Rules" },
+    { id: "webhook", label: isBn ? "Status Webhook" : "Status Webhook" },
   ];
 
   const handleSave = async (e: React.FormEvent) => {
@@ -70,9 +70,9 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
         if (res.stores.length > 0 && !formData.store_id) {
           setFormData({ ...formData, store_id: String(res.stores[0].store_id || res.stores[0].id) });
         }
-        alert(isBn ? `সফলভাবে পাঠাও থেকে ${res.stores.length} টি স্টোর পাওয়া গেছে!` : `Successfully fetched ${res.stores.length} store(s) from Pathao!`);
+        alert(isBn ? `permanently Pathao from ${res.stores.length} items   !` : `Successfully fetched ${res.stores.length} store(s) from Pathao!`);
       } else {
-        alert(res.error || (isBn ? "স্টোর আনতে ব্যর্থ হয়েছে। পাঠাও এপিআই তথ্য যাচাই করুন।" : "Failed to fetch stores. Please verify your Pathao API credentials."));
+        alert(res.error || (isBn ? "  Failed successfully। Pathao   Verification ।" : "Failed to fetch stores. Please verify your Pathao API credentials."));
       }
     } finally {
       setFetchingStores(false);
@@ -82,10 +82,10 @@ export function PathaoClient({ initialSettings }: PathaoClientProps) {
   return (
     <div className="space-y-6 max-w-4xl">
       <ModuleHeader
-        title={isBn ? "পাঠাও কুরিয়ার ইন্টিগ্রেশন" : "Pathao Courier Integration"}
+        title={isBn ? "Pathao Courier items" : "Pathao Courier Integration"}
         description={
           isBn
-            ? "পাঠাও অন-ডিমান্ড ডেলিভারি এপিআই, স্বয়ংক্রিয় পার্সেল ট্র্যাকিং ও সিওডি রিকনসিলিয়েশন সংযোগ করুন।"
+            ? "Pathao - Delivery ,   Tracking    Add to Cart।"
             : "Pathao on-demand delivery API, automated parcel tracking, and Cash on Delivery reconciliation for Bangladesh."
         }
         icon={Truck}

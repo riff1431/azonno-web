@@ -1,17 +1,19 @@
 async function verifyAllRoutes() {
   const routes = [
     "/",
-    "/products",
+    "/shop",
+    "/category/casual-shirt",
+    "/product/robin-oxford-casual-shirt",
+    "/cart",
     "/checkout",
-    "/blog",
-    "/blog/how-to-identify-authentic-vs-fake-cosmetics-bangladesh",
-    "/blog/k-beauty-glass-skin-routine-bangladesh",
-    "/blog/top-10-vitamin-c-serums-dark-spots-bangladesh",
-    "/page/authenticity-guarantee",
-    "/page/about-us",
-    "/page/delivery-policy",
-    "/page/return-refund-policy",
-    "/page/terms-and-conditions",
+    "/track-order",
+    "/account",
+    "/admin",
+    "/admin/orders",
+    "/admin/products",
+    "/admin/shipping/steadfast",
+    "/admin/payments/bkash",
+    "/admin/marketing/homepage",
   ];
 
   console.log("=== Verifying Routes at http://localhost:3000 ===");

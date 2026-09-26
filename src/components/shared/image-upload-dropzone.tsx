@@ -138,7 +138,7 @@ export function ImageUploadDropzone({
           <button
             type="button"
             onClick={() => setShowUrlInput(!showUrlInput)}
-            className="text-[11px] font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+            className="text-[11px] font-bold text-[#1D6474] hover:underline flex items-center gap-1"
           >
             {showUrlInput ? (
               <>
@@ -167,7 +167,7 @@ export function ImageUploadDropzone({
               value={value}
               onChange={(e) => onChange(e.target.value)}
               disabled={disabled}
-              className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#e91e63] shadow-2xs pr-8"
+              className="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#1D6474] shadow-2xs pr-8"
             />
             {value && (
               <button
@@ -209,7 +209,7 @@ export function ImageUploadDropzone({
             /* Active Image Preview Card */
             <div
               className={cn(
-                "relative group overflow-hidden border-2 border-gray-200 bg-gray-50/50 transition-all hover:border-[#e91e63]/60 shadow-2xs",
+                "relative group overflow-hidden border-2 border-gray-200 bg-gray-50/50 transition-all hover:border-[#1D6474]/60 shadow-2xs",
                 previewShape === "circle"
                   ? "h-32 w-32 rounded-full mx-auto"
                   : previewShape === "banner"
@@ -259,26 +259,26 @@ export function ImageUploadDropzone({
               className={cn(
                 "relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-200 text-center",
                 isDragging
-                  ? "border-[#e91e63] bg-pink-50/70 scale-[0.99] shadow-sm"
-                  : "border-gray-300 bg-gray-50/60 hover:bg-pink-50/30 hover:border-[#e91e63]/60",
+                  ? "border-[#1D6474] bg-teal-50/60/70 scale-[0.99] shadow-sm"
+                  : "border-gray-300 bg-gray-50/60 hover:bg-teal-50/60/30 hover:border-[#1D6474]/60",
                 previewShape === "circle" ? "h-36 w-36 rounded-full mx-auto" : "w-full",
                 previewShape === "banner" ? "min-h-35" : "min-h-30"
               )}
             >
               {isUploading ? (
                 <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-8 w-8 animate-spin text-[#e91e63]" />
-                  <p className="text-xs font-black text-[#e91e63]">Uploading Image...</p>
+                  <Loader2 className="h-8 w-8 animate-spin text-[#1D6474]" />
+                  <p className="text-xs font-black text-[#1D6474]">Uploading Image...</p>
                   <span className="text-[10px] text-gray-500">Optimizing &amp; storing...</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-1.5 pointer-events-none">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-pink-100 text-[#e91e63] shadow-2xs">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-100/70 text-[#1D6474] shadow-2xs">
                     <UploadCloud className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-xs font-bold text-gray-800">
-                      <span className="text-[#e91e63] hover:underline">Click to upload</span> or drag and drop
+                      <span className="text-[#1D6474] hover:underline">Click to upload</span> or drag and drop
                     </p>
                     <p className="text-[10px] text-gray-500 mt-0.5">
                       JPG, PNG, WebP or SVG (up to 15MB)

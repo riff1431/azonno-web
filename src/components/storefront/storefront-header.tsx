@@ -116,9 +116,9 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
     : DEFAULT_HOMEPAGE_CONFIG.headerConfig.searchPlaceholders;
 
   const bnPlaceholders = [
-    "প্রোডাক্ট খুঁজুন... যেমন সিরাম, সানস্ক্রিন",
-    "কোরিয়ান স্কিনকেয়ার বা মেকআপ খুঁজুন...",
-    "ব্র্যান্ড বা উপাদানের নাম লিখে খুঁজুন...",
+    "Products Search... e.g. Oxford Shirt, Panjabi",
+    "   Apparel Search...",
+    "Brand   Name  Search...",
   ];
   const activePlaceholders =
     language === "bn"
@@ -270,9 +270,9 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
       <div className="absolute top-full left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl animate-in fade-in-0 zoom-in-95">
         {isSearching ? (
           <div className="p-6 text-center text-xs text-gray-500">
-            <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#e91e63]" />
+            <Loader2 className="mx-auto h-5 w-5 animate-spin text-[#1D6474]" />
             <p className="mt-2 font-medium">
-              {language === "bn" ? "প্রোডাক্ট অনুসন্ধান করা হচ্ছে..." : "Searching authentic beauty & skincare..."}
+              {language === "bn" ? "Products   ..." : "Searching authentic beauty & skincare..."}
             </p>
           </div>
         ) : hasAnyResults ? (
@@ -280,7 +280,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             {/* Matching Ingredients */}
             {searchResults.ingredients && searchResults.ingredients.length > 0 && (
               <div>
-                <span className="px-2 text-[10px] font-extrabold uppercase tracking-wider text-[#e91e63] flex items-center gap-1">
+                <span className="px-2 text-[10px] font-extrabold uppercase tracking-wider text-[#1D6474] flex items-center gap-1">
                   <Sparkles className="h-3 w-3" />
                   {t("header", "actives")}
                 </span>
@@ -290,9 +290,9 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       key={ing.slug}
                       href={`/products?key_actives=${encodeURIComponent(ing.slug)}`}
                       onClick={() => setShowSearchDropdown(false)}
-                      className="inline-flex items-center gap-1 rounded-full bg-pink-50 border border-pink-200 px-3 py-1 text-xs font-bold text-pink-700 hover:bg-pink-100 hover:border-pink-300 transition-colors"
+                      className="inline-flex items-center gap-1 rounded-full bg-teal-50/60 border border-teal-200 px-3 py-1 text-xs font-bold text-[#164E63] hover:bg-teal-100/70 hover:border-teal-300 transition-colors"
                     >
-                      <Sparkles className="h-2.5 w-2.5 text-pink-600 shrink-0" />
+                      <Sparkles className="h-2.5 w-2.5 text-[#1D6474] shrink-0" />
                       <span>{ing.name}</span>
                     </Link>
                   ))}
@@ -334,7 +334,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       key={cat.id}
                       href={`/products?category=${cat.slug}`}
                       onClick={() => setShowSearchDropdown(false)}
-                      className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-800 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+                      className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-800 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
                     >
                       {cat.name}
                     </Link>
@@ -355,7 +355,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       key={b.id}
                       href={`/products?brand=${b.slug}`}
                       onClick={() => setShowSearchDropdown(false)}
-                      className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+                      className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
                     >
                       {b.name}
                     </Link>
@@ -368,8 +368,8 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             {searchResults.tags && searchResults.tags.length > 0 && (
               <div className="pt-2 border-t border-gray-100">
                 <span className="px-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1">
-                  <Tag className="h-3 w-3 text-pink-500" />
-                  {language === "bn" ? "ট্যাগস" : "Tags"}
+                  <Tag className="h-3 w-3 text-[#1D6474]" />
+                  {language === "bn" ? "" : "Tags"}
                 </span>
                 <div className="mt-1 flex flex-wrap gap-1.5">
                   {searchResults.tags.map((tg) => (
@@ -377,7 +377,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       key={tg.id}
                       href={`/tags/${tg.slug}`}
                       onClick={() => setShowSearchDropdown(false)}
-                      className="rounded-full bg-pink-50/70 border border-pink-100 px-3 py-1 text-xs font-semibold text-pink-700 hover:bg-pink-100 transition-colors flex items-center gap-1"
+                      className="rounded-full bg-teal-50/60/70 border border-teal-100 px-3 py-1 text-xs font-semibold text-[#164E63] hover:bg-teal-100/70 transition-colors flex items-center gap-1"
                     >
                       <span>#{tg.name}</span>
                     </Link>
@@ -446,7 +446,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
               <button
                 type="button"
                 onClick={handleSearchSubmit}
-                className="w-full text-center text-xs font-bold text-[#e91e63] hover:underline py-1"
+                className="w-full text-center text-xs font-bold text-[#1D6474] hover:underline py-1"
               >
                 {t("header", "viewAllResults")} &ldquo;{searchQuery}&rdquo; &rarr;
               </button>
@@ -566,12 +566,12 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             {headerConfig.mobileLogoImageUrl || headerConfig.logoImageUrl ? (
               <img
                 src={headerConfig.mobileLogoImageUrl || headerConfig.logoImageUrl}
-                alt={headerConfig.mobileLogoText || headerConfig.logoText || "Blush & Budget"}
+                alt={headerConfig.mobileLogoText || headerConfig.logoText || "Azonno"}
                 className="h-8 sm:h-9 max-h-9 w-auto max-w-37.5 sm:max-w-45 object-contain shrink-0"
               />
             ) : (
               <span className="text-xl sm:text-2xl font-black text-black tracking-[0.15em] uppercase font-sans">
-                {headerConfig.mobileLogoText || headerConfig.logoText || "Blush & Budget"}
+                {headerConfig.mobileLogoText || headerConfig.logoText || "Azonno"}
               </span>
             )}
           </Link>
@@ -614,12 +614,12 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
               {headerConfig.logoImageUrl ? (
                 <img
                   src={headerConfig.logoImageUrl}
-                  alt={headerConfig.logoText || "Blush & Budget"}
+                  alt={headerConfig.logoText || "Azonno"}
                   className="h-10 xl:h-11 max-h-12 w-auto max-w-50 xl:max-w-60 object-contain shrink-0"
                 />
               ) : (
                 <span className="text-2xl xl:text-3xl font-black text-black tracking-[0.15em] uppercase font-sans">
-                  {headerConfig.logoText || "Blush & Budget"}
+                  {headerConfig.logoText || "Azonno"}
                 </span>
               )}
             </Link>
@@ -632,7 +632,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             >
               <button
                 type="button"
-                className="text-xs font-bold uppercase tracking-wider text-gray-800 hover:text-[#e91e63] flex items-center gap-1 py-2"
+                className="text-xs font-bold uppercase tracking-wider text-gray-800 hover:text-[#1D6474] flex items-center gap-1 py-2"
               >
                 <span>{t("header", "brands")}</span>
                 <ChevronDown className="h-3.5 w-3.5" />
@@ -640,10 +640,10 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
 
               {/* Brands Mega-Dropdown Menu */}
               {brandsMegaOpen && (
-                <div className="absolute top-full left-0 z-50 w-96 rounded-3xl border border-pink-100 bg-white p-4 shadow-2xl animate-in fade-in-0 zoom-in-95">
+                <div className="absolute top-full left-0 z-50 w-96 rounded-3xl border border-teal-100 bg-white p-4 shadow-2xl animate-in fade-in-0 zoom-in-95">
                   <div className="border-b border-gray-100 pb-2.5 mb-3 flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <Sparkles className="h-3.5 w-3.5 text-[#e91e63]" />
+                      <Sparkles className="h-3.5 w-3.5 text-[#1D6474]" />
                       <span className="text-xs font-black uppercase text-gray-900 tracking-wider">
                         {t("header", "topBrands")}
                       </span>
@@ -651,7 +651,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                     <Link
                       href="/brands"
                       onClick={() => setBrandsMegaOpen(false)}
-                      className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-0.5"
+                      className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-0.5"
                     >
                       {t("header", "viewAll")} &rarr;
                     </Link>
@@ -664,9 +664,9 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                         key={brand.slug}
                         href={`/brands/${brand.slug}`}
                         onClick={() => setBrandsMegaOpen(false)}
-                        className="flex items-center gap-2 rounded-xl p-2 text-xs font-bold text-gray-800 hover:bg-pink-50/80 hover:text-[#e91e63] border border-transparent hover:border-pink-200 transition-all group"
+                        className="flex items-center gap-2 rounded-xl p-2 text-xs font-bold text-gray-800 hover:bg-teal-50/60/80 hover:text-[#1D6474] border border-transparent hover:border-teal-200 transition-all group"
                       >
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-50 p-1 border border-gray-100 group-hover:bg-white group-hover:border-pink-200 transition-colors">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gray-50 p-1 border border-gray-100 group-hover:bg-white group-hover:border-teal-200 transition-colors">
                           {brand.logo_url ? (
                             <img
                               src={brand.logo_url}
@@ -674,7 +674,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                               className="max-h-full max-w-full object-contain"
                             />
                           ) : (
-                            <span className="text-[10px] font-black text-[#e91e63]">
+                            <span className="text-[10px] font-black text-[#1D6474]">
                               {brand.name.substring(0, 2).toUpperCase()}
                             </span>
                           )}
@@ -686,13 +686,13 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
 
                   {/* Footer CTA */}
                   <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-[11px]">
-                    <span className="text-gray-400 font-medium">১০০% আসল ও অনুমোদিত</span>
+                    <span className="text-gray-400 font-medium">100% Authentic  </span>
                     <Link
                       href="/brands"
                       onClick={() => setBrandsMegaOpen(false)}
-                      className="font-black text-[#e91e63] hover:underline"
+                      className="font-black text-[#1D6474] hover:underline"
                     >
-                      {language === "bn" ? "সকল ব্র্যান্ড দেখুন" : "View All Brands"} &rarr;
+                      {language === "bn" ? "All Brand View" : "View All Brands"} &rarr;
                     </Link>
                   </div>
                 </div>
@@ -735,12 +735,12 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
 
             <Link
               href="/account/wishlist"
-              className="text-gray-700 hover:text-[#e91e63] flex items-center gap-1.5 text-xs font-bold uppercase transition-colors px-2 py-2"
+              className="text-gray-700 hover:text-[#1D6474] flex items-center gap-1.5 text-xs font-bold uppercase transition-colors px-2 py-2"
             >
               <Heart className="h-4 w-4" />
               <span>{t("header", "wishlist")}</span>
               {wishlistCount > 0 && (
-                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e91e63] px-1 text-[9px] font-black text-white">
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-[#1D6474] px-1 text-[9px] font-black text-white">
                   {wishlistCount}
                 </span>
               )}
@@ -750,7 +750,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             {isAdmin ? (
               <Link
                 href="/admin"
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white flex items-center gap-1.5 text-xs font-black uppercase transition-all px-3.5 py-1.5 rounded-full shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white flex items-center gap-1.5 text-xs font-black uppercase transition-all px-3.5 py-1.5 rounded-full shadow-xs"
               >
                 <ShieldCheck className="h-4 w-4" />
                 <span>{t("header", "admin")}</span>
@@ -758,7 +758,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             ) : (
               <Link
                 href={user ? "/account" : "/login"}
-                className="text-gray-700 hover:text-[#e91e63] flex items-center gap-1.5 text-xs font-bold uppercase transition-colors px-2 py-2"
+                className="text-gray-700 hover:text-[#1D6474] flex items-center gap-1.5 text-xs font-bold uppercase transition-colors px-2 py-2"
               >
                 <User className="h-4 w-4" />
                 <span>{user ? t("header", "account") : t("header", "login")}</span>
@@ -768,7 +768,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             <button
               type="button"
               onClick={openCart}
-              className="bg-sg-pink text-white font-bold text-xs uppercase px-4 py-2.5 rounded-full hover:bg-sg-pink-hover transition-colors flex items-center gap-1.5 shadow-xs"
+              className="bg-sg-pink text-white font-bold text-xs uppercase px-4 py-2.5 rounded-full hover:bg-[#164E63] transition-colors flex items-center gap-1.5 shadow-xs"
             >
               <ShoppingBag className="h-3.5 w-3.5" />
               <span>{t("header", "cart")}</span>
@@ -897,7 +897,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       <Link
                         key={idx}
                         href={sub.href}
-                        className="group flex items-center justify-between rounded-xl p-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-pink-50 hover:text-sg-pink transition-colors"
+                        className="group flex items-center justify-between rounded-xl p-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:bg-teal-50/60 hover:text-sg-pink transition-colors"
                       >
                         <span className="truncate">{sub.name}</span>
                         <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-sg-pink group-hover:translate-x-0.5 transition-all shrink-0" />
@@ -917,7 +917,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                         <Link
                           key={idx}
                           href={`/products?search=${encodeURIComponent(brand)}`}
-                          className="rounded-full bg-gray-50 border border-gray-200 px-3.5 py-1 text-xs sm:text-sm font-bold text-gray-700 hover:border-sg-pink hover:bg-pink-50 hover:text-sg-pink transition-colors"
+                          className="rounded-full bg-gray-50 border border-gray-200 px-3.5 py-1 text-xs sm:text-sm font-bold text-gray-700 hover:border-sg-pink hover:bg-teal-50/60 hover:text-sg-pink transition-colors"
                         >
                           {brand}
                         </Link>
@@ -979,12 +979,12 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                 {headerConfig.drawerLogoImageUrl || headerConfig.mobileLogoImageUrl || headerConfig.logoImageUrl ? (
                   <img
                     src={headerConfig.drawerLogoImageUrl || headerConfig.mobileLogoImageUrl || headerConfig.logoImageUrl}
-                    alt={headerConfig.drawerLogoText || headerConfig.mobileLogoText || headerConfig.logoText || "Blush & Budget"}
+                    alt={headerConfig.drawerLogoText || headerConfig.mobileLogoText || headerConfig.logoText || "Azonno"}
                     className="h-7 sm:h-8 max-h-8 w-auto max-w-40 object-contain shrink-0"
                   />
                 ) : (
                   <span className="text-base font-black text-gray-900 tracking-wider">
-                    {headerConfig.drawerLogoText || headerConfig.mobileLogoText || headerConfig.logoText || "Blush & Budget"}
+                    {headerConfig.drawerLogoText || headerConfig.mobileLogoText || headerConfig.logoText || "Azonno"}
                   </span>
                 )}
               </Link>
@@ -999,19 +999,19 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
             </div>
 
             {/* User Account Strip */}
-            <div className="p-4 bg-pink-50/50 border-b border-gray-100 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e91e63] text-white">
+            <div className="p-4 bg-teal-50/60/50 border-b border-gray-100 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1D6474] text-white">
                 <User className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-xs text-gray-500 font-medium">
                   {language === "bn"
-                    ? `${headerConfig.logoText || "Blush & Budget"}-এ স্বাগতম`
-                    : `Welcome to ${headerConfig.logoText || "Blush & Budget"}`}
+                    ? `${headerConfig.logoText || "Azonno"}- `
+                    : `Welcome to ${headerConfig.logoText || "Azonno"}`}
                 </p>
                 <Link
                   href={user ? "/account" : "/login"}
-                  className="text-xs font-black text-[#e91e63] hover:underline"
+                  className="text-xs font-black text-[#1D6474] hover:underline"
                 >
                   {user ? t("header", "account") : `${t("header", "login")} / ${t("auth", "signUpBtn")}`}
                 </Link>
@@ -1023,14 +1023,14 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
               <Link
                 href="/wishlist"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-800 hover:border-[#e91e63] hover:text-[#e91e63] transition-colors shadow-2xs"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-800 hover:border-[#1D6474] hover:text-[#1D6474] transition-colors shadow-2xs"
               >
                 <div className="flex items-center gap-1.5">
-                  <Heart className="h-4 w-4 text-[#e91e63]" />
+                  <Heart className="h-4 w-4 text-[#1D6474]" />
                   <span>{t("header", "wishlist")}</span>
                 </div>
                 {wishlistCount > 0 && (
-                  <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-[#e91e63] px-1.5 text-[10px] font-black text-white">
+                  <span className="flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-[#1D6474] px-1.5 text-[10px] font-black text-white">
                     {toBn(wishlistCount)}
                   </span>
                 )}
@@ -1039,9 +1039,9 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
               <Link
                 href={config.routineFinderHref || "/quiz"}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-1.5 p-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-800 hover:border-[#e91e63] hover:text-[#e91e63] transition-colors shadow-2xs"
+                className="flex items-center gap-1.5 p-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-gray-800 hover:border-[#1D6474] hover:text-[#1D6474] transition-colors shadow-2xs"
               >
-                <Sparkles className="h-4 w-4 text-pink-500" />
+                <Sparkles className="h-4 w-4 text-[#1D6474]" />
                 <span className="truncate">{t("header", "routineFinder")}</span>
               </Link>
             </div>
@@ -1059,12 +1059,12 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                   <Link
                     href="/brands"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-xs font-black text-gray-900 hover:text-[#e91e63] flex items-center gap-2"
+                    className="text-xs font-black text-gray-900 hover:text-[#1D6474] flex items-center gap-2"
                   >
-                    <ShieldCheck className="h-4 w-4 text-[#e91e63]" />
-                    <span>{t("header", "brands")} ({isBn ? "সকল ব্র্যান্ড" : "All Brands"})</span>
+                    <ShieldCheck className="h-4 w-4 text-[#1D6474]" />
+                    <span>{t("header", "brands")} ({isBn ? "All Brand" : "All Brands"})</span>
                   </Link>
-                  <span className="text-[10px] font-extrabold text-[#e91e63] bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+                  <span className="text-[10px] font-extrabold text-[#1D6474] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200">
                     {toBn(headerBrands.length || 20)}+
                   </span>
                 </div>
@@ -1073,13 +1073,13 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                   <Link
                     href="/blog"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-xs font-black text-pink-600 hover:text-pink-700 flex items-center gap-2"
+                    className="text-xs font-black text-[#1D6474] hover:text-[#164E63] flex items-center gap-2"
                   >
-                    <BookOpen className="h-4 w-4 text-pink-500" />
+                    <BookOpen className="h-4 w-4 text-[#1D6474]" />
                     <span>{t("blog", "title")}</span>
                   </Link>
-                  <span className="text-[10px] font-extrabold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
-                    {language === "bn" ? "জার্নাল" : "Journal"}
+                  <span className="text-[10px] font-extrabold text-[#1D6474] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200">
+                    {language === "bn" ? "" : "Journal"}
                   </span>
                 </div>
               </div>
@@ -1093,7 +1093,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                     <div className="flex items-center justify-between px-4 py-3">
                       <Link
                         href={cat.href || `/products?category=${cat.slug}`}
-                        className="text-sm font-bold text-gray-900 hover:text-[#e91e63] transition-colors"
+                        className="text-sm font-bold text-gray-900 hover:text-[#1D6474] transition-colors"
                       >
                         {cat.name}
                       </Link>
@@ -1106,7 +1106,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                           <ChevronDown
                             className={cn(
                               "h-4 w-4 transition-transform duration-200",
-                              isExpanded ? "rotate-180 text-[#e91e63]" : ""
+                              isExpanded ? "rotate-180 text-[#1D6474]" : ""
                             )}
                           />
                         </button>
@@ -1120,7 +1120,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                           <Link
                             key={idx}
                             href={sub.href}
-                            className="block text-xs sm:text-[13px] font-semibold text-gray-700 hover:text-[#e91e63] py-1.5 pl-2 border-l-2 border-transparent hover:border-[#e91e63] transition-colors"
+                            className="block text-xs sm:text-[13px] font-semibold text-gray-700 hover:text-[#1D6474] py-1.5 pl-2 border-l-2 border-transparent hover:border-[#1D6474] transition-colors"
                           >
                             {sub.name}
                           </Link>
@@ -1143,7 +1143,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                       href={pill.href}
                       className={cn(
                         "rounded-xl text-white font-black text-[10px] uppercase p-2 text-center shadow-2xs",
-                        pill.bgClass || "bg-[#e91e63]"
+                        pill.bgClass || "bg-[#1D6474]"
                       )}
                     >
                       {pill.label}
@@ -1159,7 +1159,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                 <Link
                   href="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#e91e63] py-2.5 text-center text-xs font-black text-white shadow-md"
+                  className="flex items-center justify-center gap-1.5 w-full rounded-xl bg-[#1D6474] py-2.5 text-center text-xs font-black text-white shadow-md"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   <span>Admin Dashboard</span>
@@ -1179,7 +1179,7 @@ export function StorefrontHeader({ initialThemeSettings }: StorefrontHeaderProps
                 onClick={() => setMobileMenuOpen(false)}
                 className="block w-full rounded-xl bg-gray-900 py-2.5 text-center text-xs font-bold text-white shadow-md"
               >
-                {language === "bn" ? "সকল প্রোডাক্ট ব্রাউজ করুন" : "Browse All Products"}
+                {language === "bn" ? "All Products  " : "Browse All Products"}
               </Link>
             </div>
           </div>

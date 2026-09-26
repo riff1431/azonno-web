@@ -46,7 +46,7 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(isBn ? "আপনি কি এই প্রশ্নটি মুছে ফেলতে চান?" : "Are you sure you want to delete this question?")) {
+    if (!confirm(isBn ? "Are you sure you want to delete this question?" : "Are you sure you want to delete this question?")) {
       return;
     }
     setDeletingId(id);
@@ -60,7 +60,7 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
   const columns: Column<any>[] = [
     {
       key: "product",
-      header: isBn ? "পণ্য" : t("column_product"),
+      header: isBn ? "Products" : t("column_product"),
       sortable: true,
       cell: (row: any) => (
         <div className="max-w-50">
@@ -79,9 +79,9 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
             </span>
           )}
           <span className="text-[10px] text-text-muted block">
-            {isBn ? "প্রশ্নকারী:" : "by"}{" "}
+            {isBn ? "Question from:" : "by"}{" "}
             <strong className="text-gray-800 font-bold">
-              {row.profiles?.full_name || row.profiles?.email || (isBn ? "সম্মানিত ক্রেতা" : "Customer")}
+              {row.profiles?.full_name || row.profiles?.email || (isBn ? " " : "Customer")}
             </strong>
           </span>
         </div>
@@ -89,14 +89,14 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
     },
     {
       key: "question",
-      header: isBn ? "প্রশ্ন ও অফিসিয়াল উত্তর" : t("column_question"),
+      header: isBn ? "Question   Answer" : t("column_question"),
       cell: (row: any) => (
         <div className="max-w-85 text-xs space-y-1.5">
           <p className="font-semibold text-text">{row.question}</p>
           {row.answers && row.answers.length > 0 && (
             <div className="text-[11px] text-emerald-800 bg-emerald-50/90 p-2 rounded-xl border border-emerald-200 font-medium">
               <span className="font-black text-emerald-900 block mb-0.5">
-                {isBn ? "অফিসিয়াল উত্তর:" : "Official Reply:"}
+                {isBn ? " Answer:" : "Official Reply:"}
               </span>
               <span>&quot;{row.answers[0].answer}&quot;</span>
             </div>
@@ -106,7 +106,7 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
     },
     {
       key: "status",
-      header: isBn ? "স্ট্যাটাস" : t("column_status"),
+      header: isBn ? "Status" : t("column_status"),
       cell: (row: any) => (
         <span
           className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase border ${
@@ -116,14 +116,14 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
           }`}
         >
           {row.answers && row.answers.length > 0
-            ? (isBn ? "উত্তর দেওয়া হয়েছে" : t("question_answered"))
-            : (isBn ? "উত্তরের অপেক্ষায়" : t("question_unanswered"))}
+            ? (isBn ? "Answer  successfully" : t("question_answered"))
+            : (isBn ? "Answer " : t("question_unanswered"))}
         </span>
       ),
     },
     {
       key: "actions",
-      header: isBn ? "অ্যাকশন" : t("column_actions"),
+      header: isBn ? "Action" : t("column_actions"),
       cell: (row: any) => (
         <div className="flex items-center gap-1.5">
           <Button
@@ -137,14 +137,14 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
           >
             <MessageSquare className="h-3.5 w-3.5 mr-1 text-primary-600" />
             {row.answers && row.answers.length > 0
-              ? (isBn ? "উত্তর সম্পাদন" : t("action_edit"))
-              : (isBn ? "উত্তর দিন" : t("answer_question"))}
+              ? (isBn ? "Answer " : t("action_edit"))
+              : (isBn ? "Answer Enter" : t("answer_question"))}
           </Button>
 
           <button
             onClick={() => handleDelete(row.id)}
             disabled={deletingId === row.id}
-            title={isBn ? "মুছে ফেলুন" : "Delete Question"}
+            title={isBn ? " " : "Delete Question"}
             className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
           >
             {deletingId === row.id ? (
@@ -163,11 +163,11 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
       <div className="border-b border-border pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text">
-            {isBn ? "প্রশ্নোত্তর ব্যবস্থাপনা" : t("qa_management")}
+            {isBn ? "Q&A " : t("qa_management")}
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
             {isBn
-              ? "গ্রাহকদের জিজ্ঞাসা করা প্রশ্নের সরাসরি উত্তর দিন ও পরিচালনা করুন। উত্তর দিলে তা লাইভ প্রোডাক্ট পেজে দেখা যাবে।"
+              ? "   Question  Answer Enter   । Answer    Products   ।"
               : t("qa_desc")}
           </p>
         </div>
@@ -177,8 +177,8 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
         columns={columns}
         data={questions}
         searchKey="question"
-        searchPlaceholder={isBn ? "প্রশ্ন খুঁজুন..." : t("search_table")}
-        emptyMessage={isBn ? "কোনো প্রশ্ন পাওয়া যায়নি।" : t("no_data")}
+        searchPlaceholder={isBn ? "Question Search..." : t("search_table")}
+        emptyMessage={isBn ? " Question  Tracking।" : t("no_data")}
       />
 
       {/* Answer Modal */}
@@ -188,7 +188,7 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-primary-600" />
-                {isBn ? "অফিসিয়াল উত্তর প্রকাশ করুন" : "Post Official Answer"}
+                {isBn ? " Answer  " : "Post Official Answer"}
               </h3>
               <button
                 onClick={() => setActiveModalQ(null)}
@@ -204,22 +204,22 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
                 <strong>Q:</strong> &quot;{activeModalQ.question}&quot;
               </p>
               <span className="text-[10px] text-text-muted block mt-1">
-                {isBn ? "প্রশ্নকারী:" : "Asked by"}{" "}
-                {activeModalQ.profiles?.full_name || activeModalQ.profiles?.email || (isBn ? "ক্রেতা" : "Customer")}
+                {isBn ? "Question from:" : "Asked by"}{" "}
+                {activeModalQ.profiles?.full_name || activeModalQ.profiles?.email || (isBn ? "" : "Customer")}
               </span>
             </div>
 
             <form onSubmit={handleSendAnswer} className="space-y-3 text-xs">
               <div>
                 <label className="block font-bold text-text mb-1">
-                  {isBn ? "অফিসিয়াল স্টোর উত্তর" : "Official Store Answer"}
+                  {isBn ? "  Answer" : "Official Store Answer"}
                 </label>
                 <textarea
                   rows={4}
                   required
                   placeholder={
                     isBn
-                      ? "হ্যাঁ, এই পণ্যটি প্রতিদিন সকালে বা রাতে ব্যবহারের জন্য উপযুক্ত..."
+                      ? ",  Productsitems Enter   PM use for added..."
                       : "Yes, this product is gentle and suitable for everyday use..."
                   }
                   value={answerText}
@@ -230,11 +230,11 @@ export function QAListClient({ initialQuestions }: QAListClientProps) {
 
               <div className="pt-2 flex justify-end gap-2 border-t border-border">
                 <Button type="button" variant="ghost" onClick={() => setActiveModalQ(null)}>
-                  {isBn ? "বাতিল" : "Cancel"}
+                  {isBn ? "Cancel" : "Cancel"}
                 </Button>
                 <Button type="submit" disabled={loading} className="bg-primary-600 hover:bg-primary-700 font-bold">
                   {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Send className="h-3.5 w-3.5 mr-1" />}
-                  {isBn ? "উত্তর প্রকাশ করুন" : "Publish Official Answer"}
+                  {isBn ? "Answer  " : "Publish Official Answer"}
                 </Button>
               </div>
             </form>

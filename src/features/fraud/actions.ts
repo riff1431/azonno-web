@@ -544,8 +544,8 @@ export async function sendAbandonedRecoverySms(id: string) {
       recipientPhone: item.customer_phone,
       eventType: "abandoned_cart",
       variables: {
-        customer_name: item.customer_name || "সম্মানিত গ্রাহক",
-        store_name: "Blush & Budget",
+        customer_name: item.customer_name || "Dear Customer",
+        store_name: "Azonno",
         checkout_url: recoveryUrl,
         discount_code: "BLUSH5",
       },

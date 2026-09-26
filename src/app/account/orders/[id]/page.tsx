@@ -110,12 +110,12 @@ export default async function CustomerOrderDetailPage({
           )}
           <Link href={`/orders/${order.id}/invoice`} target="_blank">
             <Button variant="outline" size="sm" className="text-xs font-bold text-gray-800 hover:text-black">
-              <Printer className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
+              <Printer className="h-3.5 w-3.5 mr-1 text-[#1D6474]" />
               Print / Download Invoice
             </Button>
           </Link>
           <Link href={`/track-order`}>
-            <Button size="sm" className="text-xs font-bold bg-[#e91e63] hover:bg-sg-pink-hover text-white shadow-xs">
+            <Button size="sm" className="text-xs font-bold bg-[#1D6474] hover:bg-[#164E63] text-white shadow-xs">
               <Truck className="h-3.5 w-3.5 mr-1" />
               Live Tracking
             </Button>

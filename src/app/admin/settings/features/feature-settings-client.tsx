@@ -65,7 +65,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-pink-600" />
+            <Sparkles className="h-6 w-6 text-[#1D6474]" />
             <h1 className="text-2xl font-black text-text">Store Feature & UI/UX Controls</h1>
           </div>
           <p className="text-xs sm:text-sm text-text-secondary mt-1">
@@ -76,7 +76,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
         <Button
           type="submit"
           disabled={saving}
-          className="bg-pink-600 hover:bg-pink-700 text-white font-bold text-xs h-10 px-5 rounded-xl shadow-md transition-all active:scale-95"
+          className="bg-[#164E63] hover:bg-[#164E63] text-white font-bold text-xs h-10 px-5 rounded-xl shadow-md transition-all active:scale-95"
         >
           {saving ? (
             "Saving Configuration..."
@@ -108,7 +108,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
       {/* 1. Beauty Catalog & Multi-Dimensional Filters */}
       <div className="rounded-3xl border border-border bg-white p-6 shadow-xs space-y-5">
         <div className="flex items-center gap-3 border-b border-border/60 pb-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-100 text-pink-700">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-100/70 text-[#164E63]">
             <Layers className="h-5 w-5" />
           </div>
           <div>
@@ -137,7 +137,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_beauty_filters", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
 
@@ -156,7 +156,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_origin_badges", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
         </div>
@@ -194,7 +194,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_sticky_mobile_cta", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
 
@@ -213,7 +213,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_authenticity_verification", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
 
@@ -232,7 +232,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_combo_bundle_section", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
         </div>
@@ -270,7 +270,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_customer_reviews", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
 
@@ -289,7 +289,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_review_photo_uploads", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
 
@@ -308,7 +308,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("auto_approve_reviews", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
         </div>
@@ -346,7 +346,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_order_placed_sms", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
 
@@ -365,7 +365,7 @@ export function FeatureSettingsClient({ initialSettings }: FeatureSettingsClient
                 onChange={(e) => updateToggle("enable_order_shipped_sms", e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#164E63]"></div>
             </label>
           </div>
 

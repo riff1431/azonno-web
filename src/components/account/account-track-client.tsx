@@ -17,11 +17,11 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
   const isBn = language === "bn";
 
   const statusSteps = [
-    { key: "pending", label: isBn ? "অর্ডার গ্রহণ" : "Order Placed" },
-    { key: "confirmed", label: isBn ? "নিশ্চিত" : "Confirmed" },
-    { key: "processing", label: isBn ? "প্রসেসিং ও প্যাকেজিং" : "Processing & Packed" },
-    { key: "shipped", label: isBn ? "ডেলিভারির পথে" : "In Transit" },
-    { key: "delivered", label: isBn ? "ডেলিভার্ড" : "Delivered" },
+    { key: "pending", label: isBn ? "Order Placed" : "Order Placed" },
+    { key: "confirmed", label: isBn ? "Confirmed" : "Confirmed" },
+    { key: "processing", label: isBn ? "Processing & Packaging" : "Processing & Packed" },
+    { key: "shipped", label: isBn ? "Out for Delivery" : "In Transit" },
+    { key: "delivered", label: isBn ? "Delivered" : "Delivered" },
   ];
 
   function getStepIndex(status: string) {
@@ -60,16 +60,16 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
   const getStatusText = (status: string) => {
     if (!isBn) return status;
     const statusMap: Record<string, string> = {
-      pending: "পেন্ডিং",
-      confirmed: "নিশ্চিত",
-      processing: "প্রসেসিং",
-      packed: "প্যাকড",
-      shipped: "শিপড",
-      in_transit: "ট্রানজিটে আছে",
-      out_for_delivery: "ডেলিভারির জন্য বের হয়েছে",
-      delivered: "ডেলিভার্ড",
-      cancelled: "বাতিল",
-      returned: "ফেরত",
+      pending: "Pending",
+      confirmed: "Confirmed",
+      processing: "Processing",
+      packed: "Packed",
+      shipped: "Shipped",
+      in_transit: " ",
+      out_for_delivery: "Delivery for  successfully",
+      delivered: "Delivered",
+      cancelled: "Cancel",
+      returned: "",
     };
     return statusMap[status.toLowerCase()] || status;
   };
@@ -79,12 +79,12 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-100 pb-4">
         <div>
           <h1 className="text-xl font-black text-gray-900 flex items-center gap-2">
-            <Truck className="h-5 w-5 text-[#e91e63]" />
-            {isBn ? "ডেলিভারি ও পার্সেল ট্র্যাকিং" : "Track Deliveries & Consignments"}
+            <Truck className="h-5 w-5 text-[#1D6474]" />
+            {isBn ? "Delivery   Tracking" : "Track Deliveries & Consignments"}
           </h1>
           <p className="text-xs text-gray-500 mt-0.5">
             {isBn
-              ? "আপনার পার্সেল ও কুরিয়ার ডেলিভারির রিয়েল-টাইম তথ্য জানুন।"
+              ? "your   Courier Delivery -  ।"
               : "Real-time step-by-step dispatch and courier status of your parcels."}
           </p>
         </div>
@@ -94,7 +94,7 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
             <input
               type="text"
-              placeholder={isBn ? "অর্ডার নম্বর খুঁজুন..." : "Search Order Number..."}
+              placeholder={isBn ? "Order Number Search..." : "Search Order Number..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-8 pr-3 py-1.5 rounded-xl border text-xs text-gray-900 focus:outline-none"
@@ -105,20 +105,20 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
 
       {initialOrders.length === 0 ? (
         <div className="rounded-3xl border border-gray-200 bg-white p-8 sm:p-12 text-center space-y-4 shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-[#e91e63]">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50/60 text-[#1D6474]">
             <Truck className="h-7 w-7" />
           </div>
           <h2 className="text-base font-bold text-gray-900">
-            {isBn ? "কোনো সক্রিয় ডেলিভারি পাওয়া যায়নি" : "No active consignments found"}
+            {isBn ? " Active Delivery  Tracking" : "No active consignments found"}
           </h2>
           <p className="text-xs text-gray-500 max-w-sm mx-auto">
             {isBn
-              ? "আপনার বর্তমানে কোনো ডেলিভারি চলমান নেই। নতুন অর্ডার দিলে এখানে লাইভ ট্র্যাকিং দেখতে পাবেন।"
+              ? "your   Delivery  ।  Order    Tracking  ।"
               : "You don't have any recent deliveries in progress. When you place an order, live tracking will appear here."}
           </p>
           <Link href="/products" className="inline-block">
-            <Button className="bg-[#e91e63] hover:bg-[#d81557] text-white text-xs font-bold rounded-xl px-5">
-              {isBn ? "শপিং শুরু করুন" : "Start Shopping"}
+            <Button className="bg-[#1D6474] hover:bg-[#d81557] text-white text-xs font-bold rounded-xl px-5">
+              {isBn ? "  " : "Start Shopping"}
             </Button>
           </Link>
         </div>
@@ -130,24 +130,24 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-gray-100 pb-4">
                 <div>
                   <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                    {isBn ? "ট্র্যাকিং অর্ডার" : "Tracking Order"}
+                    {isBn ? "Tracking Order" : "Tracking Order"}
                   </span>
-                  <p className="text-base font-black font-mono text-[#e91e63]">
+                  <p className="text-base font-black font-mono text-[#1D6474]">
                     {activeOrder.order_number}
                   </p>
                   <p className="text-xs text-gray-500">
                     {isBn
-                      ? `অর্ডারের তারিখ: ${toBn(new Date(activeOrder.created_at).toLocaleDateString("en-GB"))}`
+                      ? `Order Date: ${toBn(new Date(activeOrder.created_at).toLocaleDateString("en-GB"))}`
                       : `Placed on ${new Date(activeOrder.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-pink-50 text-[#e91e63] border border-pink-200 px-3 py-1 text-xs font-black capitalize">
+                  <span className="rounded-full bg-teal-50/60 text-[#1D6474] border border-teal-200 px-3 py-1 text-xs font-black capitalize">
                     {getStatusText(activeOrder.status)}
                   </span>
                   <Link href={`/orders/${activeOrder.id}/confirmation`}>
                     <Button variant="outline" size="sm" className="text-xs font-bold border-gray-300">
-                      {isBn ? "ইনভয়েস" : "Invoice"} <ExternalLink className="h-3 w-3 ml-1" />
+                      {isBn ? "" : "Invoice"} <ExternalLink className="h-3 w-3 ml-1" />
                     </Button>
                   </Link>
                 </div>
@@ -159,7 +159,7 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
                   {/* Progress Line */}
                   <div className="absolute top-5 left-4 right-4 h-1 bg-gray-100 z-0">
                     <div
-                      className="h-full bg-[#e91e63] transition-all duration-500"
+                      className="h-full bg-[#1D6474] transition-all duration-500"
                       style={{
                         width: `${(currentStep / (statusSteps.length - 1)) * 100}%`,
                       }}
@@ -177,7 +177,7 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
                           <div
                             className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all ${
                               isCompleted
-                                ? "border-[#e91e63] bg-[#e91e63] text-white shadow-md shadow-pink-500/20"
+                                ? "border-[#1D6474] bg-[#1D6474] text-white shadow-md shadow-pink-500/20"
                                 : "border-gray-200 bg-white text-gray-400"
                             } ${isCurrent ? "ring-4 ring-pink-100 scale-110" : ""}`}
                           >
@@ -205,25 +205,25 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 rounded-2xl bg-gray-50/70 p-4 border border-gray-100 text-xs">
                 <div>
                   <span className="text-gray-400 font-medium block">
-                    {isBn ? "শিপিং মাধ্যম" : "Shipping Method"}
+                    {isBn ? "Shipping " : "Shipping Method"}
                   </span>
                   <span className="font-bold text-gray-800">
-                    {activeOrder.shipping_method || (isBn ? "স্ট্যান্ডার্ড কুরিয়ার (২৪-৭২ ঘণ্টা)" : "Standard Courier (24-72h)")}
+                    {activeOrder.shipping_method || (isBn ? " Courier (24-72 Hours)" : "Standard Courier (24-72h)")}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-400 font-medium block">
-                    {isBn ? "পেমেন্ট অবস্থা" : "Payment Status"}
+                    {isBn ? "Payment " : "Payment Status"}
                   </span>
                   <span className="font-bold text-emerald-700 capitalize">
                     {activeOrder.payment_status === "cash_on_delivery" || !activeOrder.payment_status
-                      ? (isBn ? "ক্যাশ অন ডেলিভারি" : "Cash on Delivery")
+                      ? (isBn ? "Cash  Delivery" : "Cash on Delivery")
                       : activeOrder.payment_status}
                   </span>
                 </div>
                 <div>
                   <span className="text-gray-400 font-medium block">
-                    {isBn ? "অর্ডার মোট মূল্য" : "Order Total"}
+                    {isBn ? "Order Total Price" : "Order Total"}
                   </span>
                   <span className="font-black text-gray-900 text-sm">
                     {isBn ? formatPriceBn(activeOrder.total) : formatPrice(activeOrder.total)}
@@ -236,7 +236,7 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
                 <div className="border-t border-gray-100 pt-4 space-y-2">
                   <span className="text-xs font-bold text-gray-700 block">
                     {isBn
-                      ? `পার্সেলের প্রোডাক্টসমূহ (${toBn(activeOrder.order_items.length)}টি আইটেম):`
+                      ? ` Products (${toBn(activeOrder.order_items.length)}Items):`
                       : `Package Contents (${activeOrder.order_items.length} items):`}
                   </span>
                   <div className="divide-y divide-gray-100">
@@ -247,7 +247,7 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
                         </span>
                         <span className="text-gray-500 font-bold shrink-0">
                           {isBn
-                            ? `পরিমাণ: ${toBn(it.quantity)} × ${formatPriceBn(it.unit_price)}`
+                            ? `Quantity: ${toBn(it.quantity)} × ${formatPriceBn(it.unit_price)}`
                             : `Qty: ${it.quantity} × ${formatPrice(it.unit_price)}`}
                         </span>
                       </div>
@@ -262,7 +262,7 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
           {initialOrders.length > 1 && (
             <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm space-y-3">
               <h3 className="text-xs font-black uppercase text-gray-700 tracking-wider">
-                {isBn ? "অন্য কোনো পার্সেল ট্র্যাক করুন" : "Select Another Consignment to Track"}
+                {isBn ? "    " : "Select Another Consignment to Track"}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {filteredOrders.map((o) => (
@@ -271,7 +271,7 @@ export default function AccountTrackClient({ initialOrders }: { initialOrders: a
                     onClick={() => setSelectedOrder(o)}
                     className={`p-3.5 rounded-2xl border text-left text-xs transition-all flex items-center justify-between ${
                       activeOrder?.id === o.id
-                        ? "border-[#e91e63] bg-pink-50/40 text-gray-900"
+                        ? "border-[#1D6474] bg-teal-50/60/40 text-gray-900"
                         : "border-gray-200 hover:bg-gray-50 text-gray-700"
                     }`}
                   >

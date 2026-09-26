@@ -23,10 +23,10 @@ export async function generateMetadata({
 
   if (!brand) return { title: "Brand Not Found" };
 
-  const title = brand.seo_title || `${brand.name} in Bangladesh — 100% Authentic | Blush & Budget`;
+  const title = brand.seo_title || `${brand.name} in Bangladesh — 100% Authentic | Azonno`;
   const description =
     brand.seo_description ||
-    `Shop 100% genuine ${brand.name} skincare and cosmetics in Bangladesh with fast nationwide doorstep delivery & cash on delivery from Blush & Budget.`;
+    `Shop 100% genuine ${brand.name} skincare and cosmetics in Bangladesh with fast nationwide doorstep delivery & cash on delivery from Azonno.`;
   const canonicalUrl = `${baseUrl}/brands/${slug}`;
 
   return {
@@ -39,7 +39,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: "Blush & Budget",
+      siteName: "Azonno",
       images: brand.logo_url ? [brand.logo_url] : [],
       type: "website",
     },
@@ -152,7 +152,7 @@ export default async function BrandDetailPage({
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
       <ItemListJsonLd
-        name={`${brand.name} Products — Blush & Budget`}
+        name={`${brand.name} Products — Azonno`}
         url={`${baseUrl}/brands/${brand.slug}`}
         items={itemList}
       />

@@ -22,7 +22,7 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
   const shipmentColumns: Column<any>[] = [
     {
       key: "consignment",
-      header: isBn ? "কনসাইনমেন্ট / ট্র্যাকিং" : "Consignment / Tracking",
+      header: isBn ? " / Tracking" : "Consignment / Tracking",
       sortable: true,
       cell: (row: any) => (
         <div>
@@ -37,7 +37,7 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
     },
     {
       key: "courier",
-      header: isBn ? "কুরিয়ার পার্টনার" : "Courier Partner",
+      header: isBn ? "Courier Partner" : "Courier Partner",
       sortable: true,
       cell: (row: any) => (
         <span className="text-xs font-semibold text-text flex items-center gap-1.5">
@@ -48,7 +48,7 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
     },
     {
       key: "order",
-      header: isBn ? "অর্ডার রেফারেন্স" : "Order Reference",
+      header: isBn ? "Order Reference" : "Order Reference",
       cell: (row: any) => (
         <span className="text-xs font-mono font-bold text-text">
           {row.order_number || row.orders?.order_number || "ORD-2026"}
@@ -57,7 +57,7 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
     },
     {
       key: "cod",
-      header: isBn ? "সিওডি বকেয়া" : "COD Receivable",
+      header: isBn ? "COD Due Amount" : "COD Receivable",
       sortable: true,
       cell: (row: any) => (
         <span className="text-xs font-extrabold text-text">
@@ -67,7 +67,7 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
     },
     {
       key: "status",
-      header: isBn ? "স্ট্যাটাস" : "Status",
+      header: isBn ? "Status" : "Status",
       cell: (row: any) => (
         <span className="rounded-full bg-blue-50 text-blue-700 px-2.5 py-0.5 text-[10px] font-bold uppercase border border-blue-200">
           {row.delivery_status}
@@ -76,7 +76,7 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
     },
     {
       key: "booked",
-      header: isBn ? "ডিসপ্যাচ সময়" : "Dispatched",
+      header: isBn ? "Dispatch Time" : "Dispatched",
       sortable: true,
       cell: (row: any) => (
         <span className="text-xs text-text-muted">
@@ -97,11 +97,11 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text">
-            {isBn ? "ডেলিভারি পার্টনার ও লজিস্টিকস" : "Delivery Partners & Logistics"}
+            {isBn ? "Delivery Partner  items" : "Delivery Partners & Logistics"}
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
             {isBn
-              ? "স্টিডফাস্ট, পাঠাও এবং রেডএক্স কুরিয়ার ইন্টিগ্রেশন পরিচালনা করুন এবং লাইভ পার্সেল মনিটর করুন।"
+              ? "items, Pathao and RedX Courier items   and    ।"
               : "Manage SteadFast, Pathao, and RedX courier integrations and monitor live consignments."}
           </p>
         </div>
@@ -136,13 +136,13 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
 
             <div className="grid grid-cols-2 gap-2 text-xs border-t border-border pt-3">
               <div>
-                <span className="text-text-muted block text-[11px]">{isBn ? "মোট পার্সেল" : "Total Shipments"}</span>
+                <span className="text-text-muted block text-[11px]">{isBn ? "Total " : "Total Shipments"}</span>
                 <strong className="text-text font-bold text-sm">
                   {courier.shipments_count ?? 0}
                 </strong>
               </div>
               <div>
-                <span className="text-text-muted block text-[11px]">{isBn ? "সফলতার হার" : "Success Rate"}</span>
+                <span className="text-text-muted block text-[11px]">{isBn ? " " : "Success Rate"}</span>
                 <strong className="text-emerald-700 font-bold text-sm">
                   {courier.success_rate || "N/A"}
                 </strong>
@@ -150,11 +150,11 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
             </div>
 
             <div className="pt-2 border-t border-dashed border-border flex items-center justify-between text-xs">
-              <span className="text-text-muted">{isBn ? "অটো-বুকিং:" : "Auto-Booking:"}</span>
+              <span className="text-text-muted">{isBn ? "-:" : "Auto-Booking:"}</span>
               <span className="font-semibold text-text">
                 {courier.config?.auto_booking
-                  ? (isBn ? "সক্রিয়" : "Enabled")
-                  : (isBn ? "ম্যানুয়াল ডিসপ্যাচ" : "Manual Dispatch")}
+                  ? (isBn ? "Active" : "Enabled")
+                  : (isBn ? " Dispatch" : "Manual Dispatch")}
               </span>
             </div>
           </div>
@@ -165,10 +165,10 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base sm:text-lg font-bold text-text">
-            {isBn ? "চলমান কুরিয়ার পার্সেল তালিকা" : "Active Courier Consignments"}
+            {isBn ? " Courier  " : "Active Courier Consignments"}
           </h2>
           <span className="text-xs text-text-muted font-semibold">
-            {isBn ? "রিয়েল-টাইম ডেলিভারি সিঙ্ক" : "Real-time delivery synchronization"}
+            {isBn ? "Real-time- Delivery " : "Real-time delivery synchronization"}
           </span>
         </div>
 
@@ -176,8 +176,8 @@ export function CourierListClient({ initialCouriers, initialShipments }: Courier
           columns={shipmentColumns}
           data={shipments}
           searchKey="consignment_id"
-          searchPlaceholder={isBn ? "কনসাইনমেন্ট আইডি খুঁজুন..." : "Search consignment ID..."}
-          emptyMessage={isBn ? "কোন সক্রিয় কুরিয়ার পার্সেল পাওয়া যায়নি।" : "No active courier shipments found."}
+          searchPlaceholder={isBn ? " ID Search..." : "Search consignment ID..."}
+          emptyMessage={isBn ? " Active Courier   ।" : "No active courier shipments found."}
         />
       </div>
     </div>

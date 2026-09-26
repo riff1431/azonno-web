@@ -81,7 +81,7 @@ export default function CheckoutPage() {
       }
     } catch {
       setCouponMsg({
-        text: language === "bn" ? "কুপন প্রয়োগ করতে সমস্যা হয়েছে" : "Failed to apply coupon",
+        text: language === "bn" ? "Coupon    successfully" : "Failed to apply coupon",
         isError: true,
       });
     } finally {
@@ -605,24 +605,24 @@ export default function CheckoutPage() {
     setErrorMsg(null);
 
     if (!formData.name.trim()) {
-      setErrorMsg(language === "bn" ? "অনুগ্রহ করে আপনার পুরো নাম লিখুন।" : "Please enter your Full Name.");
+      setErrorMsg(language === "bn" ? "Please  your  Name ।" : "Please enter your Full Name.");
       return;
     }
     if (!phoneValidation.isValid) {
       setErrorMsg(
         phoneValidation.errorMessage ||
           (language === "bn"
-            ? "অর্ডার সম্পন্ন করতে অনুগ্রহ করে একটি সঠিক ১১ ডিজিটের বাংলাদেশি মোবাইল নম্বর দিন।"
+            ? "Order   Please  items  11  English Mobile Number Enter।"
             : "Please enter a valid 11-digit Bangladeshi mobile number before placing your order.")
       );
       return;
     }
     if (!formData.address.trim()) {
-      setErrorMsg(language === "bn" ? "অনুগ্রহ করে আপনার সম্পূর্ণ ডেলিভারি ঠিকানা লিখুন।" : "Please enter your detailed delivery street address.");
+      setErrorMsg(language === "bn" ? "Please  your Complete Delivery Address ।" : "Please enter your detailed delivery street address.");
       return;
     }
     if (items.length === 0) {
-      setErrorMsg(language === "bn" ? "আপনার শপিং কার্ট খালি।" : "Your bag is empty.");
+      setErrorMsg(language === "bn" ? "your   ।" : "Your bag is empty.");
       return;
     }
 
@@ -637,7 +637,7 @@ export default function CheckoutPage() {
     });
 
     if (!fraudResult.allowed) {
-      setErrorMsg(fraudResult.riskReasons[0] || (language === "bn" ? "এই মুহূর্তে অর্ডার সম্পন্ন করা সম্ভব হচ্ছে না।" : "Order cannot be placed at this time."));
+      setErrorMsg(fraudResult.riskReasons[0] || (language === "bn" ? "  Order     ।" : "Order cannot be placed at this time."));
       setLoading(false);
       return;
     }
@@ -646,7 +646,7 @@ export default function CheckoutPage() {
     if (fraudResult.requiresOtp) {
       const otpRes = await generateCheckoutOtp(formData.phone);
       if (!otpRes.success) {
-        setErrorMsg(otpRes.message || (language === "bn" ? "ওটিপি পাঠাতে সমস্যা হয়েছে। অনুগ্রহ করে নম্বরটি সঠিক কিনা পরীক্ষা করুন।" : "Failed to send OTP."));
+        setErrorMsg(otpRes.message || (language === "bn" ? "items   successfully। Please  Numberitems    ।" : "Failed to send OTP."));
         setLoading(false);
         return;
       }
@@ -667,7 +667,7 @@ export default function CheckoutPage() {
 
     const res = await verifyCheckoutOtp(formData.phone, otpCode);
     if (!res.valid) {
-      setOtpError(res.error || (language === "bn" ? "ভুল ওটিপি কোড। অনুগ্রহ করে সঠিক কোড দিন।" : "Invalid OTP code."));
+      setOtpError(res.error || (language === "bn" ? "Invalid items Code। Please   Code Enter।" : "Invalid OTP code."));
       setOtpLoading(false);
       return;
     }
@@ -679,7 +679,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center space-y-4">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-pink-50 text-[#e91e63]">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-teal-50/60 text-[#1D6474]">
           <ShoppingBag className="h-8 w-8" />
         </div>
         <h1 className="text-xl font-bold text-gray-900">{t("cartPage", "emptyStateTitle")}</h1>
@@ -687,7 +687,7 @@ export default function CheckoutPage() {
           {t("cartPage", "emptyStateDesc")}
         </p>
         <Link href="/products">
-          <Button className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl mt-2">
+          <Button className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl mt-2">
             {t("cartPage", "continueShopping")}
           </Button>
         </Link>
@@ -702,7 +702,7 @@ export default function CheckoutPage() {
         <div className="flex items-center gap-2">
           <Link href="/cart" className="text-xs font-bold text-text-muted hover:text-text flex items-center gap-1">
             <ArrowLeft className="h-3.5 w-3.5" />
-            {language === "bn" ? "কার্ট-এ ফিরে যান" : "Back to Cart"}
+            {language === "bn" ? "-  " : "Back to Cart"}
           </Link>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
@@ -720,11 +720,11 @@ export default function CheckoutPage() {
               </div>
               <div className="space-y-0.5">
                 <h3 className="text-sm font-bold text-gray-900 font-bengali">
-                  {language === "bn" ? "কার্ট এবং তথ্য সফলভাবে লোড হয়েছে! 🌸" : "Cart & Details Restored! 🌸"}
+                  {language === "bn" ? " and  permanently  successfully! 🌸" : "Cart & Details Restored! 🌸"}
                 </h3>
                 <p className="text-xs text-gray-600 font-bengali">
                   {language === "bn"
-                    ? "আপনার পূর্বের সংরক্ষিত প্রোডাক্ট ও তথ্য প্রস্তুত রয়েছে। অনুগ্রহ করে নিচে ডেলিভারি ঠিকানা চেক করে অর্ডারটি সম্পন্ন করুন।"
+                    ? "your   Products    । Please   Delivery Address   Orderitems  ।"
                     : "Your previously selected products and contact info have been restored. Please review delivery details below to complete your order."}
                 </p>
               </div>
@@ -743,23 +743,23 @@ export default function CheckoutPage() {
 
       {/* Free Delivery Progress Meter (Controlled by Admin Settings) */}
       {settings.enable_free_shipping_meter && settings.free_shipping_threshold > 0 && (
-        <div className="rounded-2xl border border-pink-200 bg-pink-50/70 p-4 space-y-2">
+        <div className="rounded-2xl border border-teal-200 bg-teal-50/60/70 p-4 space-y-2">
           <div className="flex items-center justify-between text-xs font-bold">
             <span className="flex items-center gap-1.5 text-zinc-900">
-              <Truck className="h-4 w-4 text-[#e91e63]" />
+              <Truck className="h-4 w-4 text-[#1D6474]" />
               {isFreeShipping ? (
                 <span className="text-emerald-700 inline-flex items-center gap-1.5">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                   {language === "bn"
-                    ? "অভিনন্দন! আপনি সারা দেশে ফ্রি ডেলিভারি পেয়েছেন!"
+                    ? "Congratulations!    Free Delivery !"
                     : "Congratulations! You have unlocked Free Nationwide Delivery!"}
                 </span>
               ) : (
                 <span>
                   {language === "bn" ? (
-                    <>সারা দেশে <strong>ফ্রি ডেলিভারি</strong> পেতে আর মাত্র <span className="text-[#e91e63]">{formatPriceBn(amountToFreeShipping)}</span> এর কেনাকাটা করুন!</>
+                    <>  <strong>Free Delivery</strong>    <span className="text-[#1D6474]">{formatPriceBn(amountToFreeShipping)}</span>  :00 !</>
                   ) : (
-                    <>Add <span className="text-[#e91e63]">৳{amountToFreeShipping}</span> more to unlock <strong>Free Nationwide Delivery!</strong></>
+                    <>Add <span className="text-[#1D6474]">৳{amountToFreeShipping}</span> more to unlock <strong>Free Nationwide Delivery!</strong></>
                   )}
                 </span>
               )}
@@ -771,7 +771,7 @@ export default function CheckoutPage() {
 
           <div className="h-2 w-full rounded-full bg-pink-200 overflow-hidden">
             <div
-              className="h-full bg-[#e91e63] transition-all duration-500"
+              className="h-full bg-[#1D6474] transition-all duration-500"
               style={{
                 width: `${Math.min(100, (subtotal / settings.free_shipping_threshold) * 100)}%`,
               }}
@@ -801,7 +801,7 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md">
-                      {language === "bn" ? "সংরক্ষিত ডেলিভারি প্রোফাইল" : "Saved Delivery Profile"}
+                      {language === "bn" ? " Delivery Profile" : "Saved Delivery Profile"}
                     </span>
                     <h2 className="text-xs sm:text-sm font-black text-gray-900 mt-0.5">
                       {formData.name || customerAccountData.user.name || "Customer"}
@@ -812,10 +812,10 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => setIsEditingAddress(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-pink-300 bg-pink-50 hover:bg-pink-100 text-[#e91e63] font-bold text-xs transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-teal-300 bg-teal-50/60 hover:bg-teal-100/70 text-[#1D6474] font-bold text-xs transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   <Edit3 className="h-3.5 w-3.5" />
-                  <span>{language === "bn" ? "ঠিকানা পরিবর্তন / এডিট" : "Edit / Change Details"}</span>
+                  <span>{language === "bn" ? "Address  / " : "Edit / Change Details"}</span>
                 </button>
               </div>
 
@@ -823,13 +823,13 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="bg-white/80 p-3 rounded-2xl border border-emerald-100 space-y-1">
                   <span className="text-[10px] font-bold uppercase text-gray-400 block">
-                    {language === "bn" ? "মোবাইল ও যোগাযোগ" : "Contact Phone"}
+                    {language === "bn" ? "Mobile  AddAdd" : "Contact Phone"}
                   </span>
                   {formData.phone ? (
                     <div className="flex items-center gap-2 font-mono font-bold text-gray-900 text-sm">
                       <span>+88 {formData.phone}</span>
                       {phoneValidation.operatorName && (
-                        <span className="text-[9px] font-black uppercase text-[#e91e63] bg-pink-50 px-1.5 py-0.5 rounded border border-pink-200">
+                        <span className="text-[9px] font-black uppercase text-[#1D6474] bg-teal-50/60 px-1.5 py-0.5 rounded border border-teal-200">
                           {phoneValidation.operatorName}
                         </span>
                       )}
@@ -837,7 +837,7 @@ export default function CheckoutPage() {
                   ) : (
                     <div className="flex items-center gap-1.5 text-amber-700 bg-amber-50 p-2 rounded-xl border border-amber-200 text-xs font-bold">
                       <AlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
-                      <span>{language === "bn" ? "মোবাইল নম্বর যুক্ত নেই! এডিট বাটনে ক্লিক করে নম্বর দিন।" : "No phone number added! Please click edit to add your number."}</span>
+                      <span>{language === "bn" ? "Mobile Number added !     Number Enter।" : "No phone number added! Please click edit to add your number."}</span>
                     </div>
                   )}
                   {formData.email && (
@@ -848,16 +848,16 @@ export default function CheckoutPage() {
                 <div className="bg-white/80 p-3 rounded-2xl border border-emerald-100 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold uppercase text-gray-400 block">
-                      {language === "bn" ? "ডেলিভারি ঠিকানা ও জোন" : "Delivery Address & Zone"}
+                      {language === "bn" ? "Delivery Address  Zone" : "Delivery Address & Zone"}
                     </span>
-                    <span className="text-[10px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+                    <span className="text-[10px] font-bold text-[#164E63] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200">
                       {currentZone === "inside_dhaka"
-                        ? (language === "bn" ? "ঢাকার ভেতরে" : "Inside Dhaka")
-                        : (language === "bn" ? "ঢাকার বাইরে" : "Outside Dhaka")}
+                        ? (language === "bn" ? " " : "Inside Dhaka")
+                        : (language === "bn" ? " " : "Outside Dhaka")}
                     </span>
                   </div>
                   <p className="text-gray-900 font-semibold leading-relaxed">
-                    {formData.address || (language === "bn" ? "সম্পূর্ণ ঠিকানা লিখুন" : "Enter street address")}
+                    {formData.address || (language === "bn" ? "Complete Address " : "Enter street address")}
                   </p>
                   <p className="text-[11px] text-gray-500 font-medium">
                     {formData.thana}, {formData.district}, {formData.division}
@@ -869,7 +869,7 @@ export default function CheckoutPage() {
               <div>
                 <input
                   type="text"
-                  placeholder={language === "bn" ? "ডেলিভারি নোট বা স্পেশাল নির্দেশনা (ঐচ্ছিক)" : "Delivery note or special instruction (optional)"}
+                  placeholder={language === "bn" ? "Delivery     ()" : "Delivery note or special instruction (optional)"}
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   className="w-full rounded-xl border border-emerald-200/80 bg-white/90 px-3.5 py-2 text-xs text-text focus:outline-none focus:border-emerald-500 shadow-2xs"
@@ -880,17 +880,17 @@ export default function CheckoutPage() {
             <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
               <div className="flex items-center justify-between border-b border-border pb-3">
                 <h2 className="text-sm font-bold text-text flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-[#e91e63]" />
-                  {language === "bn" ? "১. ডেলিভারি তথ্য (বাংলাদেশ ঠিকানা)" : "1. Delivery Details (Bangladesh Address)"}
+                  <MapPin className="h-4 w-4 text-[#1D6474]" />
+                  {language === "bn" ? "1. Delivery  (English Address)" : "1. Delivery Details (Bangladesh Address)"}
                 </h2>
 
                 {customerAccountData?.isLoggedIn && formData.name && formData.phone.length === 11 && formData.address && (
                   <button
                     type="button"
                     onClick={() => setIsEditingAddress(false)}
-                    className="text-xs font-bold text-pink-700 bg-pink-50 hover:bg-pink-100 px-3 py-1 rounded-xl border border-pink-200 transition-colors cursor-pointer"
+                    className="text-xs font-bold text-[#164E63] bg-teal-50/60 hover:bg-teal-100/70 px-3 py-1 rounded-xl border border-teal-200 transition-colors cursor-pointer"
                   >
-                    {language === "bn" ? "সংক্ষেপ দেখুন" : "View Summary"}
+                    {language === "bn" ? " View" : "View Summary"}
                   </button>
                 )}
               </div>
@@ -904,7 +904,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       required
-                      placeholder={language === "bn" ? "যেমন: তানভীর আহমেদ" : "e.g. Tanvir Ahmed"}
+                      placeholder={language === "bn" ? "e.g.:  " : "e.g. Tanvir Ahmed"}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full rounded-xl border border-border px-3.5 py-2.5 text-xs text-text focus:outline-none focus:border-primary-500 font-medium"
@@ -917,7 +917,7 @@ export default function CheckoutPage() {
                         {t("checkout", "phone")} <span className="text-red-500">*</span>
                       </label>
                       {phoneValidation.operatorName && (
-                        <span className="text-[10px] font-black uppercase text-[#e91e63] bg-pink-50 px-2 py-0.5 rounded-md border border-pink-200 animate-in fade-in-0">
+                        <span className="text-[10px] font-black uppercase text-[#1D6474] bg-teal-50/60 px-2 py-0.5 rounded-md border border-teal-200 animate-in fade-in-0">
                           {phoneValidation.operatorName}
                         </span>
                       )}
@@ -995,11 +995,11 @@ export default function CheckoutPage() {
 
                 <div>
                   <label className="block font-bold text-text mb-1">
-                    {language === "bn" ? "ইমেইল অ্যাড্রেস (ঐচ্ছিক)" : "Email Address (Optional)"}
+                    {language === "bn" ? "Email  ()" : "Email Address (Optional)"}
                   </label>
                   <input
                     type="email"
-                    placeholder={language === "bn" ? "name@example.com (ইনভয়েস ও ট্র্যাকিং আপডেটের জন্য)" : "name@example.com (For invoice & shipping tracking)"}
+                    placeholder={language === "bn" ? "name@example.com (Invoice    for)" : "name@example.com (For invoice & shipping tracking)"}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full rounded-xl border border-border px-3.5 py-2.5 text-xs text-text focus:outline-none"
@@ -1010,12 +1010,12 @@ export default function CheckoutPage() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1.5">
-                      <Truck className="h-3.5 w-3.5 text-[#e91e63]" />
+                      <Truck className="h-3.5 w-3.5 text-[#1D6474]" />
                       {t("checkout", "shippingMethod")}:
                     </span>
                     {isFreeShipping && (
                       <span className="text-[10px] font-extrabold uppercase text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                        {language === "bn" ? "সারা দেশে ফ্রি ডেলিভারি প্রযোজ্য" : "Free Nationwide Delivery Applied"}
+                        {language === "bn" ? "  Free Delivery " : "Free Nationwide Delivery Applied"}
                       </span>
                     )}
                   </div>
@@ -1028,7 +1028,7 @@ export default function CheckoutPage() {
                       className={cn(
                         "flex items-center justify-between p-3 rounded-2xl border-2 text-left transition-all cursor-pointer shadow-2xs",
                         currentZone === "inside_dhaka"
-                          ? "border-[#e91e63] bg-pink-50/70 shadow-xs ring-1 ring-[#e91e63]/20"
+                          ? "border-[#1D6474] bg-teal-50/60/70 shadow-xs ring-1 ring-[#1D6474]/20"
                           : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
                       )}
                     >
@@ -1036,7 +1036,7 @@ export default function CheckoutPage() {
                         <span
                           className={cn(
                             "text-xs font-black uppercase tracking-wider block",
-                            currentZone === "inside_dhaka" ? "text-[#e91e63]" : "text-gray-800"
+                            currentZone === "inside_dhaka" ? "text-[#1D6474]" : "text-gray-800"
                           )}
                         >
                           {t("checkout", "insideDhaka")}
@@ -1044,7 +1044,7 @@ export default function CheckoutPage() {
                         <span className="text-[11px] font-extrabold text-gray-900 mt-0.5 block">
                           {isFreeShipping ? (
                             <span className="text-emerald-700 font-bold">
-                              {language === "bn" ? "ফ্রি" : "FREE"} <span className="line-through text-gray-400 font-normal text-[10px]">{formatPriceBn(settings.inside_dhaka_rate)}</span>
+                              {language === "bn" ? "" : "FREE"} <span className="line-through text-gray-400 font-normal text-[10px]">{formatPriceBn(settings.inside_dhaka_rate)}</span>
                             </span>
                           ) : (
                             formatPriceBn(settings.inside_dhaka_rate)
@@ -1055,7 +1055,7 @@ export default function CheckoutPage() {
                         className={cn(
                           "h-4 w-4 rounded-full border flex items-center justify-center shrink-0",
                           currentZone === "inside_dhaka"
-                            ? "border-[#e91e63] bg-[#e91e63] text-white"
+                            ? "border-[#1D6474] bg-[#1D6474] text-white"
                             : "border-gray-300 bg-white"
                         )}
                       >
@@ -1070,7 +1070,7 @@ export default function CheckoutPage() {
                       className={cn(
                         "flex items-center justify-between p-3 rounded-2xl border-2 text-left transition-all cursor-pointer shadow-2xs",
                         currentZone !== "inside_dhaka"
-                          ? "border-[#e91e63] bg-pink-50/70 shadow-xs ring-1 ring-[#e91e63]/20"
+                          ? "border-[#1D6474] bg-teal-50/60/70 shadow-xs ring-1 ring-[#1D6474]/20"
                           : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
                       )}
                     >
@@ -1078,7 +1078,7 @@ export default function CheckoutPage() {
                         <span
                           className={cn(
                             "text-xs font-black uppercase tracking-wider block",
-                            currentZone !== "inside_dhaka" ? "text-[#e91e63]" : "text-gray-800"
+                            currentZone !== "inside_dhaka" ? "text-[#1D6474]" : "text-gray-800"
                           )}
                         >
                           {t("checkout", "outsideDhaka")}
@@ -1086,7 +1086,7 @@ export default function CheckoutPage() {
                         <span className="text-[11px] font-extrabold text-gray-900 mt-0.5 block">
                           {isFreeShipping ? (
                             <span className="text-emerald-700 font-bold">
-                              {language === "bn" ? "ফ্রি" : "FREE"} <span className="line-through text-gray-400 font-normal text-[10px]">{formatPriceBn(settings.outside_dhaka_rate)}</span>
+                              {language === "bn" ? "" : "FREE"} <span className="line-through text-gray-400 font-normal text-[10px]">{formatPriceBn(settings.outside_dhaka_rate)}</span>
                             </span>
                           ) : (
                             formatPriceBn(settings.outside_dhaka_rate)
@@ -1097,7 +1097,7 @@ export default function CheckoutPage() {
                         className={cn(
                           "h-4 w-4 rounded-full border flex items-center justify-center shrink-0",
                           currentZone !== "inside_dhaka"
-                            ? "border-[#e91e63] bg-[#e91e63] text-white"
+                            ? "border-[#1D6474] bg-[#1D6474] text-white"
                             : "border-gray-300 bg-white"
                         )}
                       >
@@ -1167,7 +1167,7 @@ export default function CheckoutPage() {
                       ) : (
                         <input
                           type="text"
-                          placeholder={language === "bn" ? "যেমন: সদর" : "e.g. Sadar"}
+                          placeholder={language === "bn" ? "e.g.: " : "e.g. Sadar"}
                           value={formData.thana}
                           onChange={(e) => setFormData({ ...formData, thana: e.target.value })}
                           className="w-full rounded-xl border border-border px-3 py-2 text-xs text-text focus:outline-none"
@@ -1210,198 +1210,198 @@ export default function CheckoutPage() {
           {/* Payment Method Selector */}
           <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
             <h2 className="text-sm font-bold text-text flex items-center gap-2 border-b border-border pb-3">
-              <Lock className="h-4 w-4 text-[#e91e63]" />
-              {language === "bn" ? "২. পেমেন্ট পদ্ধতি" : "2. Payment Method"}
+              <Lock className="h-4 w-4 text-[#1D6474]" />
+              <span>2. Payment Method</span>
             </h2>
 
             <div className="space-y-3">
               {/* Cash on Delivery Option */}
-              {settings.is_cod_enabled !== false && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedPaymentMethod("cod")}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedPaymentMethod("cod");
-                    }
-                  }}
-                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
-                    selectedPaymentMethod === "cod"
-                      ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
-                      : "border-border hover:bg-surface-secondary/50 bg-white"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    id="payment_method_cod"
-                    name="payment_method"
-                    value="cod"
-                    checked={selectedPaymentMethod === "cod"}
-                    onChange={() => setSelectedPaymentMethod("cod")}
-                    className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
-                  />
-                  <label htmlFor="payment_method_cod" className="flex-1 text-xs cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-text text-sm block">{t("checkout", "cod")}</span>
-                      {selectedPaymentMethod === "cod" && (
-                        <span className="text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                          {language === "bn" ? "সিলেক্টেড" : "Selected"}
-                        </span>
-                      )}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedPaymentMethod("cod")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedPaymentMethod("cod");
+                  }
+                }}
+                className={`flex items-start gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+                  selectedPaymentMethod === "cod"
+                    ? "border-[#1D6474] bg-teal-50/60/70 ring-2 ring-[#1D6474]/30 shadow-xs"
+                    : "border-border hover:bg-slate-50 bg-white"
+                }`}
+              >
+                <input
+                  type="radio"
+                  id="payment_method_cod"
+                  name="payment_method"
+                  value="cod"
+                  checked={selectedPaymentMethod === "cod"}
+                  onChange={() => setSelectedPaymentMethod("cod")}
+                  className="mt-1 h-4 w-4 text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474] shrink-0"
+                />
+                <label htmlFor="payment_method_cod" className="flex-1 text-xs cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-slate-900 text-sm block">Cash on Delivery (COD)</span>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        Popular
+                      </span>
                     </div>
-                    <span className="text-text-secondary mt-0.5 block leading-relaxed">
-                      {t("checkout", "codDesc")}
-                    </span>
-                  </label>
-                </div>
-              )}
+                    {selectedPaymentMethod === "cod" && (
+                      <span className="text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-slate-600 mt-1 block leading-relaxed">
+                    Pay with cash when your parcel is delivered to your doorstep. Available across all 64 districts in Bangladesh.
+                  </span>
+                </label>
+              </div>
 
               {/* bKash Payment Option */}
-              {settings.is_bkash_enabled !== false && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedPaymentMethod("bkash")}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedPaymentMethod("bkash");
-                    }
-                  }}
-                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
-                    selectedPaymentMethod === "bkash"
-                      ? "border-[#e91e63] bg-pink-50/60 ring-2 ring-[#e91e63]/40 shadow-xs"
-                      : "border-border hover:bg-surface-secondary/50 bg-white"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    id="payment_method_bkash"
-                    name="payment_method"
-                    value="bkash"
-                    checked={selectedPaymentMethod === "bkash"}
-                    onChange={() => setSelectedPaymentMethod("bkash")}
-                    className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
-                  />
-                  <label htmlFor="payment_method_bkash" className="flex-1 text-xs cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-[#e91e63] text-sm">{t("checkout", "bkash")}</span>
-                        <span className="text-[10px] font-bold text-white bg-[#e91e63] px-2 py-0.5 rounded-full shadow-2xs">
-                          {language === "bn" ? "ইনস্ট্যান্ট পেমেন্ট" : "Instant Pay"}
-                        </span>
-                      </div>
-                      {selectedPaymentMethod === "bkash" && (
-                        <span className="text-[10px] font-black uppercase text-[#e91e63] bg-pink-100 px-2 py-0.5 rounded-full border border-pink-300">
-                          {language === "bn" ? "সিলেক্টেড" : "Selected"}
-                        </span>
-                      )}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedPaymentMethod("bkash")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedPaymentMethod("bkash");
+                  }
+                }}
+                className={`flex items-start gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+                  selectedPaymentMethod === "bkash"
+                    ? "border-[#1D6474] bg-teal-50/60/70 ring-2 ring-[#1D6474]/40 shadow-xs"
+                    : "border-border hover:bg-slate-50 bg-white"
+                }`}
+              >
+                <input
+                  type="radio"
+                  id="payment_method_bkash"
+                  name="payment_method"
+                  value="bkash"
+                  checked={selectedPaymentMethod === "bkash"}
+                  onChange={() => setSelectedPaymentMethod("bkash")}
+                  className="mt-1 h-4 w-4 text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474] shrink-0"
+                />
+                <label htmlFor="payment_method_bkash" className="flex-1 text-xs cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-[#1D6474] text-sm">bKash Online Payment</span>
+                      <span className="text-[10px] font-bold text-white bg-[#1D6474] px-2 py-0.5 rounded-full shadow-2xs">
+                        Instant Pay
+                      </span>
                     </div>
-                    <span className="text-text-secondary mt-0.5 block leading-relaxed">
-                      {t("checkout", "bkashDesc")}
-                    </span>
-                  </label>
-                </div>
-              )}
+                    {selectedPaymentMethod === "bkash" && (
+                      <span className="text-[10px] font-black uppercase text-[#1D6474] bg-teal-100/70 px-2.5 py-0.5 rounded-full border border-teal-300">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-slate-600 mt-1 block leading-relaxed">
+                    Fast and automated payment via official bKash gateway. Pay with bKash app or PIN.
+                  </span>
+                </label>
+              </div>
 
               {/* Nagad Payment Option */}
-              {!!settings.is_nagad_enabled && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedPaymentMethod("nagad")}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedPaymentMethod("nagad");
-                    }
-                  }}
-                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
-                    selectedPaymentMethod === "nagad"
-                      ? "border-orange-500 bg-orange-50/60 ring-2 ring-orange-500/40 shadow-xs"
-                      : "border-border hover:bg-surface-secondary/50 bg-white"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    id="payment_method_nagad"
-                    name="payment_method"
-                    value="nagad"
-                    checked={selectedPaymentMethod === "nagad"}
-                    onChange={() => setSelectedPaymentMethod("nagad")}
-                    className="mt-1 h-4 w-4 text-orange-600 focus:ring-orange-600 accent-orange-600 shrink-0"
-                  />
-                  <label htmlFor="payment_method_nagad" className="flex-1 text-xs cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-orange-600 text-sm">
-                          {language === "bn" ? "নগদ পেমেন্ট" : "Nagad MFS"}
-                        </span>
-                        <span className="text-[10px] font-bold text-white bg-orange-600 px-2 py-0.5 rounded-full shadow-2xs">
-                          {language === "bn" ? "ইনস্ট্যান্ট পেমেন্ট" : "Instant Pay"}
-                        </span>
-                      </div>
-                      {selectedPaymentMethod === "nagad" && (
-                        <span className="text-[10px] font-black uppercase text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full border border-orange-300">
-                          {language === "bn" ? "সিলেক্টেড" : "Selected"}
-                        </span>
-                      )}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedPaymentMethod("nagad")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedPaymentMethod("nagad");
+                  }
+                }}
+                className={`flex items-start gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+                  selectedPaymentMethod === "nagad"
+                    ? "border-orange-500 bg-orange-50/60 ring-2 ring-orange-500/40 shadow-xs"
+                    : "border-border hover:bg-slate-50 bg-white"
+                }`}
+              >
+                <input
+                  type="radio"
+                  id="payment_method_nagad"
+                  name="payment_method"
+                  value="nagad"
+                  checked={selectedPaymentMethod === "nagad"}
+                  onChange={() => setSelectedPaymentMethod("nagad")}
+                  className="mt-1 h-4 w-4 text-orange-600 focus:ring-orange-600 accent-orange-600 shrink-0"
+                />
+                <label htmlFor="payment_method_nagad" className="flex-1 text-xs cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-orange-600 text-sm">
+                        Nagad Digital Payment
+                      </span>
+                      <span className="text-[10px] font-bold text-white bg-orange-600 px-2 py-0.5 rounded-full shadow-2xs">
+                        Instant Pay
+                      </span>
                     </div>
-                    <span className="text-text-secondary mt-0.5 block leading-relaxed">
-                      {language === "bn"
-                        ? "নগদের মাধ্যমে সরাসরি ইনস্ট্যান্ট ও সুরক্ষিত পেমেন্ট করুন।"
-                        : "Fast and secure online payments via Nagad mobile wallet."}
-                    </span>
-                  </label>
-                </div>
-              )}
+                    {selectedPaymentMethod === "nagad" && (
+                      <span className="text-[10px] font-black uppercase text-orange-700 bg-orange-100 px-2.5 py-0.5 rounded-full border border-orange-300">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-slate-600 mt-1 block leading-relaxed">
+                    Pay securely using your Nagad wallet account with zero transaction charge.
+                  </span>
+                </label>
+              </div>
 
-              {/* SSLCommerz Payment Option */}
-              {settings.is_sslcommerz_enabled !== false && (
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedPaymentMethod("sslcommerz")}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedPaymentMethod("sslcommerz");
-                    }
-                  }}
-                  className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
-                    selectedPaymentMethod === "sslcommerz"
-                      ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/30 shadow-xs"
-                      : "border-border hover:bg-surface-secondary/50 bg-white"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    id="payment_method_sslcommerz"
-                    name="payment_method"
-                    value="sslcommerz"
-                    checked={selectedPaymentMethod === "sslcommerz"}
-                    onChange={() => setSelectedPaymentMethod("sslcommerz")}
-                    className="mt-1 h-4 w-4 text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63] shrink-0"
-                  />
-                  <label htmlFor="payment_method_sslcommerz" className="flex-1 text-xs cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-text text-sm">
-                        {language === "bn" ? "অনলাইন পেমেন্ট (কার্ড ও নেট ব্যাংকিং)" : "SSLCommerz (Cards & Net Banking)"}
+              {/* Cards & Net Banking (SSLCommerz) */}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedPaymentMethod("sslcommerz")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedPaymentMethod("sslcommerz");
+                  }
+                }}
+                className={`flex items-start gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all select-none ${
+                  selectedPaymentMethod === "sslcommerz"
+                    ? "border-[#1D6474] bg-teal-50/60/70 ring-2 ring-[#1D6474]/30 shadow-xs"
+                    : "border-border hover:bg-slate-50 bg-white"
+                }`}
+              >
+                <input
+                  type="radio"
+                  id="payment_method_sslcommerz"
+                  name="payment_method"
+                  value="sslcommerz"
+                  checked={selectedPaymentMethod === "sslcommerz"}
+                  onChange={() => setSelectedPaymentMethod("sslcommerz")}
+                  className="mt-1 h-4 w-4 text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474] shrink-0"
+                />
+                <label htmlFor="payment_method_sslcommerz" className="flex-1 text-xs cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-slate-900 text-sm">
+                        Debit / Credit Cards & Net Banking
                       </span>
                       <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                         Visa / MC / Amex
                       </span>
                     </div>
-                    <span className="text-text-secondary mt-0.5 block leading-relaxed">
-                      {language === "bn"
-                        ? "ভিসা, মাস্টারকার্ড, অ্যামেক্স, ব্র্যাক, সিটিটাস, ডাচ-বাংলা অথবা যেকোনো ব্যাংক কার্ড দিয়ে অনলাইনে নিরাপদে পেমেন্ট করুন।"
-                        : "Pay securely with Visa, MasterCard, Amex, Internet Banking, or Mobile Wallet via SSLCommerz."}
-                    </span>
-                  </label>
-                </div>
-              )}
+                    {selectedPaymentMethod === "sslcommerz" && (
+                      <span className="text-[10px] font-black uppercase text-[#1D6474] bg-teal-100/70 px-2.5 py-0.5 rounded-full border border-teal-300">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-slate-600 mt-1 block leading-relaxed">
+                    Pay securely with any Bangladeshi or International Visa, MasterCard, Amex, or Internet Banking.
+                  </span>
+                </label>
+              </div>
 
               {/* Stripe Payment Option */}
               {!!settings.is_stripe_enabled && (
@@ -1433,7 +1433,7 @@ export default function CheckoutPage() {
                   <label htmlFor="payment_method_stripe" className="flex-1 text-xs cursor-pointer">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-indigo-950 text-sm">
-                        {language === "bn" ? "স্ট্রাইপ ইন্টারন্যাশনাল কার্ড" : "Stripe International Cards"}
+                        {language === "bn" ? " :00 " : "Stripe International Cards"}
                       </span>
                       <span className="text-[10px] font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full border border-indigo-200">
                         Global Cards
@@ -1441,7 +1441,7 @@ export default function CheckoutPage() {
                     </div>
                     <span className="text-text-secondary mt-0.5 block leading-relaxed">
                       {language === "bn"
-                        ? "আন্তর্জাতিক ক্রেডিট বা ডেবিট কার্ড (USD / Global Currencies) দিয়ে নিরাপদে পেমেন্ট করুন।"
+                        ? "Premium     (USD / Global Currencies)   Payment ।"
                         : "Pay seamlessly with international Visa, MasterCard, American Express, or Apple Pay."}
                     </span>
                   </label>
@@ -1478,7 +1478,7 @@ export default function CheckoutPage() {
                   <label htmlFor="payment_method_paypal" className="flex-1 text-xs cursor-pointer">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-sky-950 text-sm">
-                        {language === "bn" ? "পেপ্যাল এক্সপ্রেস" : "PayPal Express Checkout"}
+                        {language === "bn" ? " " : "PayPal Express Checkout"}
                       </span>
                       <span className="text-[10px] font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full border border-sky-200">
                         PayPal
@@ -1486,7 +1486,7 @@ export default function CheckoutPage() {
                     </div>
                     <span className="text-text-secondary mt-0.5 block leading-relaxed">
                       {language === "bn"
-                        ? "আপনার পেপ্যাল অ্যাকাউন্ট ব্যালেন্স অথবা লিঙ্কড কার্ড দিয়ে পেমেন্ট সম্পন্ন করুন।"
+                        ? "your    or    Payment  ।"
                         : "Fast & secure checkout using your PayPal balance or linked accounts."}
                     </span>
                   </label>
@@ -1523,7 +1523,7 @@ export default function CheckoutPage() {
                   <label htmlFor="payment_method_bank_transfer" className="flex-1 text-xs cursor-pointer">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-purple-950 text-sm">
-                        {language === "bn" ? "ম্যানুয়াল ব্যাংক ট্রান্সফার" : "Direct Bank Transfer"}
+                        {language === "bn" ? "  " : "Direct Bank Transfer"}
                       </span>
                       <span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-200">
                         Bank Wire
@@ -1531,7 +1531,7 @@ export default function CheckoutPage() {
                     </div>
                     <span className="text-text-secondary mt-0.5 block leading-relaxed">
                       {language === "bn"
-                        ? "আমাদের অফিসিয়াল ব্যাংক অ্যাকাউন্টে সরাসরি ট্রান্সফার করুন। অর্ডার প্লেসের পর অ্যাকাউন্ট নম্বর ও ভেরিফিকেশন তথ্য প্রদান করা হবে।"
+                        ? "      । Order    Number      ।"
                         : "Make your payment directly into our official bank account. Details provided upon order placement."}
                     </span>
                   </label>
@@ -1548,7 +1548,7 @@ export default function CheckoutPage() {
                 !settings.is_bank_transfer_enabled && (
                   <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold text-center">
                     {language === "bn"
-                      ? "বর্তমানে কোনো পেমেন্ট পদ্ধতি সক্রিয় নেই। অনুগ্রহ করে কিছু সময় পর চেষ্টা করুন।"
+                      ? "  Payment  Active । Please   Time  :00 ।"
                       : "No payment methods are currently active. Please contact support."}
                   </div>
                 )}
@@ -1562,7 +1562,7 @@ export default function CheckoutPage() {
             <h2 className="text-sm font-bold text-text flex items-center justify-between border-b border-border pb-3">
               <span>{t("checkout", "orderSummary")}</span>
               <span className="text-xs text-text-muted font-normal">
-                {toBn(items.length)} {language === "bn" ? "টি পণ্য" : "items"}
+                {toBn(items.length)} {language === "bn" ? "items Products" : "items"}
               </span>
             </h2>
 
@@ -1578,7 +1578,7 @@ export default function CheckoutPage() {
                   <div className="min-w-0 flex-1">
                     <h4 className="text-xs font-bold text-text truncate">{item.name}</h4>
                     <span className="text-[11px] text-text-muted">
-                      {language === "bn" ? "পরিমাণ:" : "Qty:"} {toBn(item.quantity)}
+                      {language === "bn" ? "Quantity:" : "Qty:"} {toBn(item.quantity)}
                     </span>
                   </div>
                   <span className="text-xs font-bold text-text font-mono shrink-0">
@@ -1605,13 +1605,13 @@ export default function CheckoutPage() {
                           {coupon.type === "percentage"
                             ? `${coupon.value}% OFF`
                             : coupon.type === "free_shipping"
-                            ? (language === "bn" ? "ফ্রি ডেলিভারি" : "FREE SHIPPING")
+                            ? (language === "bn" ? "Free Delivery" : "FREE SHIPPING")
                             : `৳${coupon.value} OFF`}
                         </span>
                       </div>
                       <p className="text-[10px] text-emerald-700 font-semibold truncate mt-0.5 flex items-center gap-1">
                         <Check className="h-3 w-3 text-emerald-600" />
-                        {language === "bn" ? "কুপন কার্যকর হয়েছে" : "Coupon code applied"}
+                        {language === "bn" ? "Coupon  successfully" : "Coupon code applied"}
                       </p>
                     </div>
                   </div>
@@ -1622,7 +1622,7 @@ export default function CheckoutPage() {
                       setCouponMsg(null);
                     }}
                     className="p-1.5 rounded-lg text-emerald-800 hover:text-red-600 hover:bg-emerald-100/80 transition-colors shrink-0 cursor-pointer"
-                    title={language === "bn" ? "কুপন বাতিল করুন" : "Remove coupon"}
+                    title={language === "bn" ? "Coupon Cancel " : "Remove coupon"}
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -1630,14 +1630,14 @@ export default function CheckoutPage() {
               ) : (
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-text flex items-center gap-1.5">
-                    <Tag className="h-3.5 w-3.5 text-[#e91e63]" />
-                    <span>{language === "bn" ? "ডিসকাউন্ট কুপন" : "Promo / Coupon Code"}</span>
+                    <Tag className="h-3.5 w-3.5 text-[#1D6474]" />
+                    <span>{language === "bn" ? "Discount Coupon" : "Promo / Coupon Code"}</span>
                   </label>
 
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      placeholder={language === "bn" ? "কুপন কোড লিখুন" : "Enter coupon code"}
+                      placeholder={language === "bn" ? "Coupon Code " : "Enter coupon code"}
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       onKeyDown={(e) => {
@@ -1646,7 +1646,7 @@ export default function CheckoutPage() {
                           handleApplyCoupon();
                         }
                       }}
-                      className="flex-1 pl-3 pr-3 py-2 rounded-xl border border-border text-xs font-mono uppercase text-text placeholder:normal-case placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-[#e91e63]/20 focus:border-[#e91e63] bg-surface-secondary/30 font-bold"
+                      className="flex-1 pl-3 pr-3 py-2 rounded-xl border border-border text-xs font-mono uppercase text-text placeholder:normal-case placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-[#1D6474]/20 focus:border-[#1D6474] bg-surface-secondary/30 font-bold"
                     />
                     <Button
                       type="button"
@@ -1656,14 +1656,14 @@ export default function CheckoutPage() {
                       className={cn(
                         "rounded-xl text-xs font-bold px-4 h-9 shrink-0 transition-all",
                         couponCode.trim()
-                          ? "bg-[#e91e63] hover:bg-sg-pink-hover text-white cursor-pointer shadow-xs"
+                          ? "bg-[#1D6474] hover:bg-[#164E63] text-white cursor-pointer shadow-xs"
                           : "bg-gray-200 text-gray-400 cursor-not-allowed"
                       )}
                     >
                       {isApplyingCoupon ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
-                        language === "bn" ? "প্রয়োগ" : "Apply"
+                        language === "bn" ? "" : "Apply"
                       )}
                     </Button>
                   </div>
@@ -1708,7 +1708,7 @@ export default function CheckoutPage() {
                 </span>
                 <span className="font-mono font-bold">
                   {isFreeShipping ? (
-                    <span className="text-emerald-700">{language === "bn" ? "ফ্রি" : "FREE"}</span>
+                    <span className="text-emerald-700">{language === "bn" ? "" : "FREE"}</span>
                   ) : (
                     formatPriceBn(shippingFee)
                   )}
@@ -1717,7 +1717,7 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between text-sm font-black text-text pt-2 border-t border-border">
                 <span>{t("checkout", "totalPayable")}</span>
-                <span className="font-mono text-base text-[#e91e63]">{formatPriceBn(finalTotal)}</span>
+                <span className="font-mono text-base text-[#1D6474]">{formatPriceBn(finalTotal)}</span>
               </div>
             </div>
 
@@ -1728,7 +1728,7 @@ export default function CheckoutPage() {
               className={cn(
                 "w-full h-12 rounded-2xl text-white font-black text-sm shadow-md transition-all active:scale-98",
                 phoneValidation.isValid && !loading
-                  ? "bg-[#e91e63] hover:bg-sg-pink-hover cursor-pointer"
+                  ? "bg-[#1D6474] hover:bg-[#164E63] cursor-pointer"
                   : "bg-gray-400 cursor-not-allowed opacity-75"
               )}
             >
@@ -1737,34 +1737,34 @@ export default function CheckoutPage() {
                   <Loader2 className="h-4 w-4 animate-spin mr-2" /> {t("checkout", "placingOrder")}
                 </>
               ) : !phoneValidation.isValid ? (
-                language === "bn" ? "সঠিক মোবাইল নম্বর দিন" : "Enter Valid Phone Number"
+                language === "bn" ? " Mobile Number Enter" : "Enter Valid Phone Number"
               ) : selectedPaymentMethod === "bkash" ? (
                 language === "bn"
-                  ? `বিকাশে পেমেন্ট করুন — ${formatPriceBn(finalTotal)}`
+                  ? ` Payment  — ${formatPriceBn(finalTotal)}`
                   : `Pay with bKash — ${formatPriceBn(finalTotal)}`
               ) : selectedPaymentMethod === "nagad" ? (
                 language === "bn"
-                  ? `নগদে পেমেন্ট করুন — ${formatPriceBn(finalTotal)}`
+                  ? ` Payment  — ${formatPriceBn(finalTotal)}`
                   : `Pay with Nagad — ${formatPriceBn(finalTotal)}`
               ) : selectedPaymentMethod === "sslcommerz" ? (
                 language === "bn"
-                  ? `অনলাইনে পেমেন্ট করুন — ${formatPriceBn(finalTotal)}`
+                  ? ` Payment  — ${formatPriceBn(finalTotal)}`
                   : `Pay Online (SSLCommerz) — ${formatPriceBn(finalTotal)}`
               ) : selectedPaymentMethod === "stripe" ? (
                 language === "bn"
-                  ? `কার্ডে পেমেন্ট করুন (Stripe) — ${formatPriceBn(finalTotal)}`
+                  ? ` Payment  (Stripe) — ${formatPriceBn(finalTotal)}`
                   : `Pay with Card (Stripe) — ${formatPriceBn(finalTotal)}`
               ) : selectedPaymentMethod === "paypal" ? (
                 language === "bn"
-                  ? `পেপ্যালে পেমেন্ট করুন — ${formatPriceBn(finalTotal)}`
+                  ? ` Payment  — ${formatPriceBn(finalTotal)}`
                   : `Pay with PayPal — ${formatPriceBn(finalTotal)}`
               ) : selectedPaymentMethod === "bank_transfer" ? (
                 language === "bn"
-                  ? `অর্ডার নিশ্চিত করুন (ব্যাংক ট্রান্সফার) — ${formatPriceBn(finalTotal)}`
+                  ? `Order Confirmed  ( ) — ${formatPriceBn(finalTotal)}`
                   : `Place Order (Bank Transfer) — ${formatPriceBn(finalTotal)}`
               ) : (
                 language === "bn"
-                  ? `অর্ডার নিশ্চিত করুন (ক্যাশ অন ডেলিভারি) — ${formatPriceBn(finalTotal)}`
+                  ? `Order Confirmed  (Cash  Delivery) — ${formatPriceBn(finalTotal)}`
                   : `Place Order (Cash on Delivery) — ${formatPriceBn(finalTotal)}`
               )}
             </Button>
@@ -1774,7 +1774,7 @@ export default function CheckoutPage() {
                 <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                 <span>
                   {language === "bn"
-                    ? "সঠিক ১১ ডিজিটের সচল মোবাইল নম্বর ছাড়া অর্ডার সম্পন্ন করা যাবে না।"
+                    ? " 11   Mobile Number OFF Order    ।"
                     : "Order cannot be placed without a valid 11-digit mobile number."}
                 </span>
               </p>
@@ -1798,13 +1798,13 @@ export default function CheckoutPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0">
           <div className="w-full max-w-md rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-border space-y-5 animate-in zoom-in-95">
             <div className="text-center space-y-2">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-[#e91e63] border border-pink-200">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50/60 text-[#1D6474] border border-teal-200">
                 <KeyRound className="h-7 w-7" />
               </div>
               <h3 className="text-lg font-black text-text">{t("checkout", "otpTitle")}</h3>
               <p className="text-xs text-text-secondary">
                 {language === "bn" ? (
-                  <>অর্ডার নিশ্চিত করতে আপনার নম্বরে পাঠানো ৪ সংখ্যার এসএমএস ভেরিফিকেশন কোডটি লিখুন: <strong className="text-text font-mono">+88 {formData.phone}</strong></>
+                  <>Order Confirmed  your Number  4  SMS  Codeitems : <strong className="text-text font-mono">+88 {formData.phone}</strong></>
                 ) : (
                   <>To prevent spam orders, we sent a 4-digit SMS verification code to <strong className="text-text font-mono">+88 {formData.phone}</strong>.</>
                 )}
@@ -1830,14 +1830,14 @@ export default function CheckoutPage() {
                   placeholder="• • • •"
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
-                  className="w-full text-center text-2xl font-mono tracking-widest font-black py-3 rounded-xl border border-border focus:outline-none focus:border-[#e91e63]"
+                  className="w-full text-center text-2xl font-mono tracking-widest font-black py-3 rounded-xl border border-border focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
 
               <Button
                 type="submit"
                 disabled={otpLoading || otpCode.length < 4}
-                className="w-full h-11 rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs shadow-md"
+                className="w-full h-11 rounded-xl bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs shadow-md"
               >
                 {otpLoading ? t("checkout", "otpVerifying") : t("checkout", "verifyOtp")}
               </Button>
@@ -1847,7 +1847,7 @@ export default function CheckoutPage() {
                 onClick={() => setShowOtpModal(false)}
                 className="w-full text-center text-xs text-text-muted hover:text-text font-bold"
               >
-                {language === "bn" ? "বাতিল ও তথ্য সংশোধন করুন" : "Cancel & Edit Details"}
+                {language === "bn" ? "Cancel    " : "Cancel & Edit Details"}
               </button>
             </form>
           </div>

@@ -183,7 +183,7 @@ export default function AdminBkashPage() {
                 onChange={(e) => setIsEnabled(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#e91e63]"></div>
+              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1D6474]"></div>
             </label>
           </div>
 
@@ -208,7 +208,7 @@ export default function AdminBkashPage() {
         <button
           type="button"
           onClick={handleFillSandbox}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e91e63] hover:text-sg-pink-hover hover:underline transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D6474] hover:text-sg-pink-hover hover:underline transition-colors"
         >
           <Sparkles className="h-3.5 w-3.5" />
           Auto-Fill Sandbox Simulator Keys
@@ -343,26 +343,26 @@ export default function AdminBkashPage() {
               </div>
 
               {formData.environment === "sandbox" && (
-                <div className="rounded-xl border border-pink-200 bg-pink-50/60 p-4 space-y-2 mt-4 text-[11px] text-pink-950">
-                  <div className="font-bold flex items-center gap-1.5 text-xs text-[#e91e63]">
+                <div className="rounded-xl border border-teal-200 bg-teal-50/60/60 p-4 space-y-2 mt-4 text-[11px] text-pink-950">
+                  <div className="font-bold flex items-center gap-1.5 text-xs text-[#1D6474]">
                     <Sparkles className="h-4 w-4 shrink-0" />
                     Official bKash Developer Portal Sandbox Testing Credentials
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
-                    <div className="bg-white/90 rounded-lg p-2.5 border border-pink-200/80 shadow-2xs">
+                    <div className="bg-white/90 rounded-lg p-2.5 border border-teal-200/80 shadow-2xs">
                       <span className="text-gray-500 block text-[10px] uppercase font-sans font-semibold">Test Wallet No</span>
                       <span className="font-bold text-gray-900 tracking-wider">01770618575</span>
                     </div>
-                    <div className="bg-white/90 rounded-lg p-2.5 border border-pink-200/80 shadow-2xs">
+                    <div className="bg-white/90 rounded-lg p-2.5 border border-teal-200/80 shadow-2xs">
                       <span className="text-gray-500 block text-[10px] uppercase font-sans font-semibold">Test OTP</span>
                       <span className="font-bold text-gray-900 tracking-wider">123456</span>
                     </div>
-                    <div className="bg-white/90 rounded-lg p-2.5 border border-pink-200/80 shadow-2xs">
+                    <div className="bg-white/90 rounded-lg p-2.5 border border-teal-200/80 shadow-2xs">
                       <span className="text-gray-500 block text-[10px] uppercase font-sans font-semibold">Test PIN</span>
                       <span className="font-bold text-gray-900 tracking-wider">12121</span>
                     </div>
                   </div>
-                  <p className="text-[10px] text-pink-800 font-sans mt-1">
+                  <p className="text-[10px] text-[#164E63] font-sans mt-1">
                     API Standard: Tokenized Checkout (v1.2.0-beta). Handshake communicates directly with bKash Sandbox PGW without deducting actual customer funds.
                   </p>
                 </div>
@@ -415,7 +415,7 @@ export default function AdminBkashPage() {
               type="button"
               onClick={handleRunSimulation}
               disabled={simulating || (!formData.app_key && !formData.username)}
-              className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl shadow-xs"
+              className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shadow-xs"
             >
               <Zap className={`h-3.5 w-3.5 mr-1.5 ${simulating ? "animate-spin" : ""}`} />
               {simulating ? "Verifying Transaction..." : `Execute Double-Check Verification (৳${simAmount})`}
@@ -507,7 +507,7 @@ export default function AdminBkashPage() {
             type="submit"
             disabled={saving}
             size="sm"
-            className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs font-bold rounded-xl shadow-xs px-5"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold rounded-xl shadow-xs px-5"
           >
             <Save className="h-3.5 w-3.5 mr-1.5" />
             {saving ? "Saving Changes..." : "Save bKash Settings"}

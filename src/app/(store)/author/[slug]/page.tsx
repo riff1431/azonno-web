@@ -14,7 +14,7 @@ export async function generateMetadata({
   if (!author) return { title: "Author Not Found" };
 
   return {
-    title: `${author.name} — ${author.job_title} | Blush & Budget Beauty Journal`,
+    title: `${author.name} — ${author.job_title} | Azonno Beauty Journal`,
     description: author.bio,
     openGraph: {
       title: author.name,

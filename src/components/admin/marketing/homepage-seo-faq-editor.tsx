@@ -61,11 +61,11 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
     faqs: rawSection?.faqs?.length ? rawSection.faqs : defaultConfig.faqs,
     showWhatsappCard: rawSection?.showWhatsappCard ?? defaultConfig.showWhatsappCard ?? true,
     whatsappTitle: rawSection?.whatsappTitle ?? defaultConfig.whatsappTitle ?? "Need help choosing the right beauty products?",
-    whatsappTitleBn: rawSection?.whatsappTitleBn ?? defaultConfig.whatsappTitleBn ?? "সঠিক প্রোডাক্ট নির্বাচনে সাহায্য প্রয়োজন?",
+    whatsappTitleBn: rawSection?.whatsappTitleBn ?? defaultConfig.whatsappTitleBn ?? "Need help finding the right fit or size??",
     whatsappSubtitle: rawSection?.whatsappSubtitle ?? defaultConfig.whatsappSubtitle ?? "Chat directly with our certified beauty advisors on WhatsApp daily 10 AM to 10 PM.",
-    whatsappSubtitleBn: rawSection?.whatsappSubtitleBn ?? defaultConfig.whatsappSubtitleBn ?? "আমাদের বিউটি এক্সপার্টরা প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত হোয়াটসঅ্যাপে সক্রিয় আছেন।",
+    whatsappSubtitleBn: rawSection?.whatsappSubtitleBn ?? defaultConfig.whatsappSubtitleBn ?? "Our customer support team is available every day 10:00 from PM 10:00 till  Active ।",
     whatsappButtonText: rawSection?.whatsappButtonText ?? defaultConfig.whatsappButtonText ?? "Chat on WhatsApp",
-    whatsappButtonTextBn: rawSection?.whatsappButtonTextBn ?? defaultConfig.whatsappButtonTextBn ?? "হোয়াটসঅ্যাপে ফ্রি পরামর্শ নিন",
+    whatsappButtonTextBn: rawSection?.whatsappButtonTextBn ?? defaultConfig.whatsappButtonTextBn ?? "   ",
     whatsappNumber: rawSection?.whatsappNumber ?? defaultConfig.whatsappNumber ?? "+880 1700-000000",
   };
 
@@ -90,9 +90,9 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
       id: `faq-${Date.now()}`,
       category: "Authenticity & Quality",
       question: "New Frequently Asked Question",
-      questionBn: "নতুন সাধারণ জিজ্ঞাসা",
+      questionBn: "  ",
       answer: "Provide a helpful, humanized, and transparent answer here.",
-      answerBn: "এখানে স্পষ্ট ও আন্তরিক ভাষায় উত্তরটি লিখুন।",
+      answerBn: "    Language Answeritems ।",
     };
     updateSection("faqs", [...(faqSection.faqs || []), newItem]);
   };
@@ -141,10 +141,10 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-              <HelpCircle className="h-5 w-5 text-[#e91e63]" />
+              <HelpCircle className="h-5 w-5 text-[#1D6474]" />
               SEO & Humanized FAQ Section (Beauty Booth / Ogerio Style)
             </h2>
-            <span className="rounded-full bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-0.5">
+            <span className="rounded-full bg-teal-100/70 text-[#164E63] text-[10px] font-bold px-2 py-0.5">
               Google Schema.org Ready
             </span>
             <span className="rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 flex items-center gap-1">
@@ -163,7 +163,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
             onChange={(e) => updateSection("enabled", e.target.checked)}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e91e63]"></div>
+          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1D6474]"></div>
           <span className="ml-3 text-xs font-bold text-gray-800">
             {faqSection.enabled !== false ? "Section Active" : "Section Disabled"}
           </span>
@@ -186,19 +186,19 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               type="text"
               value={faqSection.heading}
               onChange={(e) => updateSection("heading", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
           <div>
             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-              Heading (বাংলা)
+              Heading (English)
             </label>
             <input
               type="text"
               value={faqSection.headingBn || ""}
               onChange={(e) => updateSection("headingBn", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -210,27 +210,27 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               type="text"
               value={faqSection.subtitle}
               onChange={(e) => updateSection("subtitle", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
           <div>
             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-              Subtitle (বাংলা)
+              Subtitle (English)
             </label>
             <input
               type="text"
               value={faqSection.subtitleBn || ""}
               onChange={(e) => updateSection("subtitleBn", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
         </div>
       </div>
 
       {/* 3. WhatsApp Advisory Banner & Quick Contact Card (100% Controllable) */}
-      <div className="rounded-2xl border-2 border-pink-200/80 bg-linear-to-br from-pink-50/40 via-white to-white p-6 shadow-xs space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-pink-100 pb-4">
+      <div className="rounded-2xl border-2 border-teal-200/80 bg-linear-to-br from-pink-50/40 via-white to-white p-6 shadow-xs space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-teal-100 pb-4">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-xs">
               <MessageCircle className="h-5 w-5" />
@@ -312,20 +312,20 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                   value={faqSection.whatsappTitle || ""}
                   onChange={(e) => updateSection("whatsappTitle", e.target.value)}
                   placeholder="Need help choosing the right beauty products?"
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                  Card Title (বাংলা)
+                  Card Title (English)
                 </label>
                 <input
                   type="text"
                   value={faqSection.whatsappTitleBn || ""}
                   onChange={(e) => updateSection("whatsappTitleBn", e.target.value)}
-                  placeholder="সঠিক প্রোডাক্ট নির্বাচনে সাহায্য প্রয়োজন?"
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  placeholder="Need help finding the right fit or size??"
+                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
 
@@ -338,20 +338,20 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                   value={faqSection.whatsappSubtitle || ""}
                   onChange={(e) => updateSection("whatsappSubtitle", e.target.value)}
                   placeholder="Chat directly with our certified beauty advisors on WhatsApp daily 10 AM to 10 PM."
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                  Subtitle / Advisor Availability (বাংলা)
+                  Subtitle / Advisor Availability (English)
                 </label>
                 <textarea
                   rows={2}
                   value={faqSection.whatsappSubtitleBn || ""}
                   onChange={(e) => updateSection("whatsappSubtitleBn", e.target.value)}
-                  placeholder="আমাদের বিউটি এক্সপার্টরা প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত হোয়াটসঅ্যাপে সক্রিয় আছেন।"
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  placeholder="Our customer support team is available every day 10:00 from PM 10:00 till  Active ।"
+                  className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
 
@@ -364,20 +364,20 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                   value={faqSection.whatsappButtonText || ""}
                   onChange={(e) => updateSection("whatsappButtonText", e.target.value)}
                   placeholder="Chat on WhatsApp"
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                  Button Text (বাংলা)
+                  Button Text (English)
                 </label>
                 <input
                   type="text"
                   value={faqSection.whatsappButtonTextBn || ""}
                   onChange={(e) => updateSection("whatsappButtonTextBn", e.target.value)}
-                  placeholder="হোয়াটসঅ্যাপে ফ্রি পরামর্শ নিন"
-                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                  placeholder="   "
+                  className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                 />
               </div>
             </div>
@@ -386,7 +386,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
             <div className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-gray-700">
-                  <Eye className="h-3.5 w-3.5 text-[#e91e63]" />
+                  <Eye className="h-3.5 w-3.5 text-[#1D6474]" />
                   <span>Live Storefront Preview</span>
                 </div>
                 <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-gray-200">
@@ -394,16 +394,16 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                     type="button"
                     onClick={() => setPreviewLang("bn")}
                     className={`px-2 py-0.5 text-[10px] font-bold rounded ${
-                      previewLang === "bn" ? "bg-[#e91e63] text-white" : "text-gray-600 hover:text-gray-900"
+                      previewLang === "bn" ? "bg-[#1D6474] text-white" : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
-                    বাংলা
+                    English
                   </button>
                   <button
                     type="button"
                     onClick={() => setPreviewLang("en")}
                     className={`px-2 py-0.5 text-[10px] font-bold rounded ${
-                      previewLang === "en" ? "bg-[#e91e63] text-white" : "text-gray-600 hover:text-gray-900"
+                      previewLang === "en" ? "bg-[#1D6474] text-white" : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
                     EN
@@ -414,7 +414,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               {/* Dark Card Preview Replicating Mobile/Desktop Storefront */}
               <div className="rounded-2xl bg-zinc-900 text-white p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
                 <div className="flex items-center gap-3 text-left w-full sm:w-auto">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#e91e63] text-white shadow-xs">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1D6474] text-white shadow-xs">
                     <PhoneCall className="h-5 w-5" />
                   </div>
                   <div>
@@ -435,7 +435,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                   href={formatWhatsAppUrl(faqSection.whatsappNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto shrink-0 justify-center rounded-xl bg-[#e91e63] px-5 py-2.5 text-xs font-black text-white hover:bg-pink-700 transition-colors shadow-md flex items-center gap-2 text-center"
+                  className="w-full sm:w-auto shrink-0 justify-center rounded-xl bg-[#1D6474] px-5 py-2.5 text-xs font-black text-white hover:bg-[#164E63] transition-colors shadow-md flex items-center gap-2 text-center"
                 >
                   <span>
                     {previewLang === "bn"
@@ -475,7 +475,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               rows={12}
               value={faqSection.seoDescriptionHtml || ""}
               onChange={(e) => updateSection("seoDescriptionHtml", e.target.value)}
-              className="w-full rounded-xl border p-3 text-xs text-gray-800 focus:outline-none focus:border-[#e91e63] font-mono leading-relaxed"
+              className="w-full rounded-xl border p-3 text-xs text-gray-800 focus:outline-none focus:border-[#1D6474] font-mono leading-relaxed"
               placeholder="<p>Finding a trustworthy cosmetics shop...</p>"
             />
           </div>
@@ -483,7 +483,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-[11px] font-bold text-gray-700">
-                SEO Editorial Guide (বাংলা HTML)
+                SEO Editorial Guide (English HTML)
               </label>
               <span className="text-[10px] text-gray-400 font-mono">HTML Supported</span>
             </div>
@@ -491,8 +491,8 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               rows={12}
               value={faqSection.seoDescriptionHtmlBn || ""}
               onChange={(e) => updateSection("seoDescriptionHtmlBn", e.target.value)}
-              className="w-full rounded-xl border p-3 text-xs text-gray-800 focus:outline-none focus:border-[#e91e63] font-mono leading-relaxed"
-              placeholder="<p>বাংলাদেশে একটি নির্ভরযোগ্য অনলাইন কসমেটিকস শপ...</p>"
+              className="w-full rounded-xl border p-3 text-xs text-gray-800 focus:outline-none focus:border-[#1D6474] font-mono leading-relaxed"
+              placeholder="<p>English items Add  items ...</p>"
             />
           </div>
         </div>
@@ -527,7 +527,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               type="button"
               onClick={addFaq}
               size="sm"
-              className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold"
+              className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold"
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               Add FAQ Question
@@ -546,7 +546,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search among FAQs by question, answer, or category..."
-              className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-4 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-4 py-2 text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
         )}
@@ -564,7 +564,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
               >
                 <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-pink-50 text-xs font-bold text-[#e91e63]">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-50/60 text-xs font-bold text-[#1D6474]">
                       {idx + 1}
                     </span>
                     <span className="text-xs font-black uppercase text-gray-800">
@@ -616,7 +616,7 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                     value={faq.category || ""}
                     onChange={(e) => updateFaq(idx, "category", e.target.value)}
                     placeholder="e.g. Authenticity & Quality, Product Safety, Delivery, Returns"
-                    className="w-full sm:w-80 rounded-xl border px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                    className="w-full sm:w-80 rounded-xl border px-3 py-1.5 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
                   />
                 </div>
 
@@ -629,19 +629,19 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                       type="text"
                       value={faq.question}
                       onChange={(e) => updateFaq(idx, "question", e.target.value)}
-                      className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                      className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                      Question (বাংলা)
+                      Question (English)
                     </label>
                     <input
                       type="text"
                       value={faq.questionBn || ""}
                       onChange={(e) => updateFaq(idx, "questionBn", e.target.value)}
-                      className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                      className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                     />
                   </div>
                 </div>
@@ -655,19 +655,19 @@ export function HomepageSeoFaqEditor({ config, onChange }: HomepageSeoFaqEditorP
                       rows={4}
                       value={faq.answer}
                       onChange={(e) => updateFaq(idx, "answer", e.target.value)}
-                      className="w-full rounded-xl border p-2.5 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#e91e63]"
+                      className="w-full rounded-xl border p-2.5 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#1D6474]"
                     />
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                      Answer (বাংলা)
+                      Answer (English)
                     </label>
                     <textarea
                       rows={4}
                       value={faq.answerBn || ""}
                       onChange={(e) => updateFaq(idx, "answerBn", e.target.value)}
-                      className="w-full rounded-xl border p-2.5 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#e91e63]"
+                      className="w-full rounded-xl border p-2.5 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#1D6474]"
                     />
                   </div>
                 </div>

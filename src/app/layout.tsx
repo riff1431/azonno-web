@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Inter, Hind_Siliguri } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { StorefrontAnalytics } from "@/components/analytics/storefront-analytics";
 import { CookieTracker } from "@/components/analytics/cookie-tracker";
@@ -12,17 +12,11 @@ import { getBaseUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-const inter = Inter({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
   variable: "--font-sans",
-});
-
-const hindSiliguri = Hind_Siliguri({
-  subsets: ["bengali"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-bengali",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -37,16 +31,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const proto = headerList?.get("x-forwarded-proto") || (host.includes("localhost") || host.includes("127.0.0.1") ? "http" : "https");
   const requestUrl = host ? `${proto}://${host}` : undefined;
   const siteUrl = seo?.canonical_url || store?.store_url || requestUrl || getBaseUrl();
-  const storeName = store?.store_name || "Blush & Budget";
-  const title = seo?.meta_title || `${storeName} | 100% Authentic Cosmetics & Skincare in Bangladesh`;
+  const storeName = store?.store_name || "Azonno";
+  const title = seo?.meta_title || `${storeName} — Everything within Reach | Bangladeshi Clothing Brand`;
   const description =
     seo?.meta_description ||
-    "Shop 100% authentic Korean skincare, makeup, and beauty products from trusted global brands in Bangladesh. Best prices, fast nationwide doorstep delivery & Cash on Delivery.";
+    "Discover premium men's casual shirts, festive panjabis, polo t-shirts, and contemporary fashion in Bangladesh. 100% combed cotton, 7-day size exchange & nationwide Cash on Delivery.";
   const ogImage = seo?.og_image_url || undefined;
 
   const otherMeta: Record<string, string> = {
     "og:category": "shopping.retail",
-    "product:retailer_category": "Cosmetics & Beauty",
+    "product:retailer_category": "Apparel & Accessories > Clothing",
   };
 
   if (customScripts.is_enabled) {
@@ -135,11 +129,11 @@ export default async function RootLayout({
     ga4_measurement_id: process.env.NEXT_PUBLIC_GA4_ID || "",
   };
 
-  let storeName = "Blush & Budget";
+  let storeName = "Azonno";
   let storeDesc = "Premier retail e-commerce shop for 100% authentic cosmetics, skincare, and makeup products in Bangladesh.";
   let storeCurrency = "BDT";
   let dynamicSiteUrl = getBaseUrl();
-  let storeEmail = "support@blushbudget.com";
+  let storeEmail = "support@azonno.com";
   let storePhone = "+880 1700-000000";
 
   let customScripts: CustomScriptsSettings = {
@@ -234,7 +228,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="bn" className={`${inter.variable} ${hindSiliguri.variable} lang-bn`} suppressHydrationWarning>
+    <html lang="en" className={`${plusJakartaSans.variable} font-sans`} suppressHydrationWarning>
       <head>
         {/* Dynamic Favicon & Mobile App Icons */}
         {seoSettings?.favicon_url ? (

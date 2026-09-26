@@ -55,32 +55,32 @@ interface ProductsListingClientProps {
 }
 
 const TYPE_NAME_MAP: Record<string, { en: string; bn: string }> = {
-  lotion: { en: "Lotion & Creams", bn: "লোশন ও ক্রিম" },
-  moisturizer: { en: "Moisturizer & Hydration", bn: "ময়েশ্চারাইজার" },
-  cleanser: { en: "Cleanser & Facewash", bn: "ক্লিনজার ও ফেসওয়াশ" },
-  wash: { en: "Body Wash & Shower Gel", bn: "বডি ওয়াশ ও শাওয়ার জেল" },
-  serum: { en: "Serum & Essence", bn: "সিরাম ও এসেন্স" },
-  sunscreen: { en: "Sunscreen & SPF", bn: "সানস্ক্রিন (SPF)" },
-  toner: { en: "Toner & Mist", bn: "ট্যোনার ও মিস্ট" },
-  oil: { en: "Hair Oil & Serum", bn: "হেয়ার অয়েল" },
-  shampoo: { en: "Shampoo & Scalp Care", bn: "শ্যাম্পু" },
-  conditioner: { en: "Conditioner & Mask", bn: "কন্ডিশনার" },
-  scalp: { en: "Scalp Scrub", bn: "স্ক্যাল্প স্ক্রাব" },
-  styling: { en: "Hair Styling", bn: "হেয়ার স্টাইলিং" },
-  scrub: { en: "Body Scrub", bn: "বডি স্ক্রাব" },
-  "hand-foot": { en: "Hand & Foot Care", bn: "হ্যান্ড ও ফুট কেয়ার" },
-  diaper: { en: "Diaper Care", bn: "ডায়াপার কেয়ার" },
-  maternity: { en: "Mom Care", bn: "মম কেয়ার" },
-  foundation: { en: "Foundation & BB Cream", bn: "ফাউন্ডেশন" },
-  lipstick: { en: "Lipstick & Lip Tint", bn: "লিপস্টিক" },
-  eyeliner: { en: "Eyeliner & Kajal", bn: "আইলাইনার" },
-  eyes: { en: "Eyeshadow & Mascara", bn: "আইশ্যাডো ও মাশকারা" },
-  powder: { en: "Setting Powder & Spray", bn: "পাউডার ও স্প্রে" },
-  blush: { en: "Blush & Highlighter", bn: "ব্লাশ ও হাইলাইটার" },
-  women: { en: "Women's Fragrance", bn: "পারফিউম" },
-  men: { en: "Men's Cologne", bn: "মেনস কোলন" },
-  mist: { en: "Body Mist", bn: "বডি মিস্ট" },
-  attar: { en: "Attar & Perfume Oil", bn: "আতর ও অয়েল" },
+  lotion: { en: "Lotion & Creams", bn: "  " },
+  moisturizer: { en: "Moisturizer & Hydration", bn: "" },
+  cleanser: { en: "Cleanser & Facewash", bn: "  " },
+  wash: { en: "Body Wash & Shower Gel", bn: "    " },
+  serum: { en: "Serum & Essence", bn: "Oxford Shirt  " },
+  sunscreen: { en: "Sunscreen & SPF", bn: "Panjabi (SPF)" },
+  toner: { en: "Toner & Mist", bn: "  " },
+  oil: { en: "Hair Oil & Serum", bn: " " },
+  shampoo: { en: "Shampoo & Scalp Care", bn: "" },
+  conditioner: { en: "Conditioner & Mask", bn: "" },
+  scalp: { en: "Scalp Scrub", bn: " " },
+  styling: { en: "Hair Styling", bn: " :00" },
+  scrub: { en: "Body Scrub", bn: " " },
+  "hand-foot": { en: "Hand & Foot Care", bn: "   " },
+  diaper: { en: "Diaper Care", bn: " " },
+  maternity: { en: "Mom Care", bn: " " },
+  foundation: { en: "Foundation & BB Cream", bn: "" },
+  lipstick: { en: "Lipstick & Lip Tint", bn: "items" },
+  eyeliner: { en: "Eyeliner & Kajal", bn: "" },
+  eyes: { en: "Eyeshadow & Mascara", bn: "  " },
+  powder: { en: "Setting Powder & Spray", bn: "  " },
+  blush: { en: "Blush & Highlighter", bn: "  :00" },
+  women: { en: "Women's Fragrance", bn: "" },
+  men: { en: "Men's Cologne", bn: " " },
+  mist: { en: "Body Mist", bn: " " },
+  attar: { en: "Attar & Perfume Oil", bn: "  " },
 };
 
 const PRICE_PRESETS = [
@@ -104,26 +104,26 @@ const SKIN_CONCERNS = [
 ];
 
 const SKIN_CONCERN_MAP: Record<string, { en: string; bn: string }> = {
-  "Clear Skin & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
-  "Acne & Blemishes": { en: "Clear Skin & Blemishes", bn: "পরিষ্কার ত্বক ও দাগহীন ভাব" },
-  "Brightening & Even Tone": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
-  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "উজ্জ্বলতা ও সমান স্কিন টোন" },
-  "Smoothing & Firming Care": { en: "Smoothing & Firming Care", bn: "কোমল ও টানটান অনুভূতি" },
-  "Smooth Lines & Firmness": { en: "Smoothing & Firming Care", bn: "কোমল ও টানটান অনুভূতি" },
-  "Anti-Aging & Wrinkles": { en: "Smoothing & Firming Care", bn: "কোমল ও টানটান অনুভূতি" },
-  "Hydration & Moisture": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
-  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "আর্দ্রতা ও হাইড্রেশন" },
-  "Pore & Oil Care": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
-  "Pore Minimizing": { en: "Pore & Oil Care", bn: "পোর ও অতিরিক্ত তেল নিয়ন্ত্রণ" },
-  "Redness & Soothing": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
-  "Redness & Rosacea": { en: "Redness & Soothing", bn: "লালচে ভাব ও প্রশান্তিদায়ক যত্ন" },
-  "Sun Protection": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (Sun Protection / SPF)" },
-  "Sun Protection (SPF)": { en: "Sun Protection (SPF)", bn: "রোদে সুরক্ষা (Sun Protection / SPF)" },
-  "Oil Control": { en: "Oil Balance & Freshness", bn: "তেল নিয়ন্ত্রণ ও ফ্রেশ লুক" },
-  "Oil Balance & Freshness": { en: "Oil Balance & Freshness", bn: "তেল নিয়ন্ত্রণ ও ফ্রেশ লুক" },
-  "Barrier Care & Comfort": { en: "Barrier Care & Comfort", bn: "স্কিন ব্যারিয়ার কেয়ার ও স্বস্তি" },
-  "Barrier Repair": { en: "Barrier Care & Comfort", bn: "স্কিন ব্যারিয়ার কেয়ার ও স্বস্তি" },
-  "Barrier Care": { en: "Barrier Care & Comfort", bn: "স্কিন ব্যারিয়ার কেয়ার ও স্বস্তি" },
+  "Clear Skin & Blemishes": { en: "Clear Skin & Blemishes", bn: "Clean Cotton   " },
+  "Acne & Blemishes": { en: "Clear Skin & Blemishes", bn: "Clean Cotton   " },
+  "Brightening & Even Tone": { en: "Brightening & Even Tone", bn: "    " },
+  "Brightening & Pigmentation": { en: "Brightening & Even Tone", bn: "    " },
+  "Smoothing & Firming Care": { en: "Smoothing & Firming Care", bn: "  :00:00 " },
+  "Smooth Lines & Firmness": { en: "Smoothing & Firming Care", bn: "  :00:00 " },
+  "Anti-Aging & Wrinkles": { en: "Smoothing & Firming Care", bn: "  :00:00 " },
+  "Hydration & Moisture": { en: "Hydration & Moisture", bn: "  " },
+  "Dryness & Hydration": { en: "Hydration & Moisture", bn: "  " },
+  "Pore & Oil Care": { en: "Pore & Oil Care", bn: "    " },
+  "Pore Minimizing": { en: "Pore & Oil Care", bn: "    " },
+  "Redness & Soothing": { en: "Redness & Soothing", bn: "    " },
+  "Redness & Rosacea": { en: "Redness & Soothing", bn: "    " },
+  "Sun Protection": { en: "Sun Protection (SPF)", bn: "  (Sun Protection / SPF)" },
+  "Sun Protection (SPF)": { en: "Sun Protection (SPF)", bn: "  (Sun Protection / SPF)" },
+  "Oil Control": { en: "Oil Balance & Freshness", bn: "    " },
+  "Oil Balance & Freshness": { en: "Oil Balance & Freshness", bn: "    " },
+  "Barrier Care & Comfort": { en: "Barrier Care & Comfort", bn: "    " },
+  "Barrier Repair": { en: "Barrier Care & Comfort", bn: "    " },
+  "Barrier Care": { en: "Barrier Care & Comfort", bn: "    " },
 };
 
 const SKIN_TYPES = [
@@ -136,12 +136,12 @@ const SKIN_TYPES = [
 ];
 
 const SKIN_TYPE_MAP: Record<string, { en: string; bn: string }> = {
-  "Oily": { en: "Oily", bn: "তৈলাক্ত ত্বক" },
-  "Dry": { en: "Dry", bn: "শুষ্ক ত্বক" },
-  "Combination": { en: "Combination", bn: "কম্বিনেশন / মিশ্র ত্বক" },
-  "Sensitive": { en: "Sensitive", bn: "সেনসিটিভ ত্বক" },
-  "Normal": { en: "Normal", bn: "স্বাভাবিক ত্বক" },
-  "All Skin Types": { en: "All Skin Types", bn: "সকল ধরণের ত্বক" },
+  "Oily": { en: "Oily", bn: "Cotton Twill" },
+  "Dry": { en: "Dry", bn: "Linen Blend" },
+  "Combination": { en: "Combination", bn: "Premium Oxford /  Cotton" },
+  "Sensitive": { en: "Sensitive", bn: "items Cotton" },
+  "Normal": { en: "Normal", bn: " Cotton" },
+  "All Skin Types": { en: "All Skin Types", bn: "All Sizes (S to XXL)" },
 };
 
 const KEY_ACTIVES = [
@@ -159,17 +159,17 @@ const KEY_ACTIVES = [
 ];
 
 const ORIGINS = [
-  { value: "South Korea", flag: "🇰🇷", en: "South Korea (K-Beauty)", bn: "দক্ষিণ কোরিয়া (কে-বিউটি)" },
-  { value: "Japan", flag: "🇯🇵", en: "Japan (J-Beauty)", bn: "জাপান (জে-বিউটি)" },
-  { value: "United Kingdom", flag: "🇬🇧", en: "United Kingdom (UK)", bn: "যুক্তরাজ্য (UK)" },
-  { value: "United States", flag: "🇺🇸", en: "United States (USA)", bn: "যুক্তরাষ্ট্র (USA)" },
-  { value: "France", flag: "🇫🇷", en: "France (French Beauty)", bn: "ফ্রান্স (France)" },
-  { value: "Germany", flag: "🇩🇪", en: "Germany", bn: "জার্মানি (Germany)" },
-  { value: "Canada", flag: "🇨🇦", en: "Canada", bn: "কানাডা (Canada)" },
-  { value: "Thailand", flag: "🇹🇭", en: "Thailand", bn: "থাইল্যান্ড (Thailand)" },
-  { value: "Italy", flag: "🇮🇹", en: "Italy", bn: "ইতালি (Italy)" },
-  { value: "Bangladesh", flag: "🇧🇩", en: "Bangladesh", bn: "বাংলাদেশ (Bangladesh)" },
-  { value: "India", flag: "🇮🇳", en: "India", bn: "ভারত (India)" },
+  { value: "South Korea", flag: "🇰🇷", en: "South Korea (K-Beauty)", bn: "  (-items)" },
+  { value: "Japan", flag: "🇯🇵", en: "Japan (J-Beauty)", bn: " (-items)" },
+  { value: "United Kingdom", flag: "🇬🇧", en: "United Kingdom (UK)", bn: "added (UK)" },
+  { value: "United States", flag: "🇺🇸", en: "United States (USA)", bn: "added (USA)" },
+  { value: "France", flag: "🇫🇷", en: "France (French Beauty)", bn: " (France)" },
+  { value: "Germany", flag: "🇩🇪", en: "Germany", bn: " (Germany)" },
+  { value: "Canada", flag: "🇨🇦", en: "Canada", bn: " (Canada)" },
+  { value: "Thailand", flag: "🇹🇭", en: "Thailand", bn: " (Thailand)" },
+  { value: "Italy", flag: "🇮🇹", en: "Italy", bn: " (Italy)" },
+  { value: "Bangladesh", flag: "🇧🇩", en: "Bangladesh", bn: "English (Bangladesh)" },
+  { value: "India", flag: "🇮🇳", en: "India", bn: " (India)" },
 ];
 
 export function ProductsListingClient({
@@ -321,10 +321,10 @@ export function ProductsListingClient({
 
   const pricePresets = [
     { label: t("catalog", "allPrices"), min: null, max: null },
-    { label: language === "bn" ? "৫০০ টাকার নিচে" : "Under ৳500", min: null, max: "500" },
-    { label: language === "bn" ? "৳৫০০ - ৳১,০০০" : "৳500 - ৳1,000", min: "500", max: "1000" },
-    { label: language === "bn" ? "৳১,০০০ - ৳২,০০০" : "৳1,000 - ৳2,000", min: "1000", max: "2000" },
-    { label: language === "bn" ? "২,০০০ টাকার উপরে" : "Above ৳2,000", min: "2000", max: null },
+    { label: language === "bn" ? "500 :00 " : "Under ৳500", min: null, max: "500" },
+    { label: language === "bn" ? "৳500 - ৳1,000" : "৳500 - ৳1,000", min: "500", max: "1000" },
+    { label: language === "bn" ? "৳1,000 - ৳2,000" : "৳1,000 - ৳2,000", min: "1000", max: "2000" },
+    { label: language === "bn" ? "2,000 :00 " : "Above ৳2,000", min: "2000", max: null },
   ];
 
   // Filter content component reused in both desktop sidebar & mobile drawer
@@ -381,7 +381,7 @@ export function ProductsListingClient({
         <div className="space-y-3 pt-5 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
-              <Droplets className="h-3.5 w-3.5 text-pink-600" /> {t("catalog", "skinType")}
+              <Droplets className="h-3.5 w-3.5 text-[#1D6474]" /> {t("catalog", "skinType")}
             </span>
             {currentSkinType && (
               <button
@@ -409,7 +409,7 @@ export function ProductsListingClient({
                   className={cn(
                     "rounded-full px-2.5 py-1 text-[11px] font-bold transition-all border",
                     isSelected
-                      ? "bg-pink-600 text-white border-pink-600 shadow-2xs"
+                      ? "bg-[#164E63] text-white border-pink-600 shadow-2xs"
                       : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-100"
                   )}
                 >
@@ -520,7 +520,7 @@ export function ProductsListingClient({
       <div className="space-y-3 pt-5 border-t border-gray-100">
         <div className="flex items-center justify-between">
           <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
-            <span className="text-[#e91e63]">৳</span> {t("catalog", "priceRange")}
+            <span className="text-[#1D6474]">৳</span> {t("catalog", "priceRange")}
           </span>
           {(currentMinPrice || currentMaxPrice) && (
             <button
@@ -528,7 +528,7 @@ export function ProductsListingClient({
               onClick={() => updatePriceRange(null, null)}
               className="text-[10px] font-bold text-red-600 hover:underline"
             >
-              {language === "bn" ? "প্রাইস রিসেট" : "Reset Price"}
+              {language === "bn" ? " Reset" : "Reset Price"}
             </button>
           )}
         </div>
@@ -551,12 +551,12 @@ export function ProductsListingClient({
                 className={cn(
                   "flex items-center justify-between rounded-xl px-3 py-2 text-xs font-bold transition-all text-left",
                   isSelected
-                    ? "bg-pink-50 text-[#e91e63] border border-pink-200 shadow-2xs"
+                    ? "bg-teal-50/60 text-[#1D6474] border border-teal-200 shadow-2xs"
                     : "text-gray-700 bg-gray-50/70 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
                 <span>{preset.label}</span>
-                {isSelected && <Check className="h-3.5 w-3.5 text-[#e91e63]" />}
+                {isSelected && <Check className="h-3.5 w-3.5 text-[#1D6474]" />}
               </button>
             );
           })}
@@ -569,7 +569,7 @@ export function ProductsListingClient({
               <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">৳</span>
               <input
                 type="number"
-                placeholder={language === "bn" ? "সর্বনিম্ন" : "Min"}
+                placeholder={language === "bn" ? "" : "Min"}
                 value={customMin}
                 onChange={(e) => setCustomMin(e.target.value)}
                 className="w-full rounded-xl border pl-6 pr-2 py-1.5 text-xs font-bold focus:outline-none"
@@ -580,7 +580,7 @@ export function ProductsListingClient({
               <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">৳</span>
               <input
                 type="number"
-                placeholder={language === "bn" ? "সর্বোচ্চ" : "Max"}
+                placeholder={language === "bn" ? "" : "Max"}
                 value={customMax}
                 onChange={(e) => setCustomMax(e.target.value)}
                 className="w-full rounded-xl border pl-6 pr-2 py-1.5 text-xs font-bold focus:outline-none"
@@ -589,9 +589,9 @@ export function ProductsListingClient({
           </div>
           <button
             type="submit"
-            className="w-full rounded-xl bg-gray-900 py-1.5 text-[11px] font-bold text-white hover:bg-[#e91e63] transition-colors"
+            className="w-full rounded-xl bg-gray-900 py-1.5 text-[11px] font-bold text-white hover:bg-[#1D6474] transition-colors"
           >
-            {language === "bn" ? "প্রাইস ফিল্টার প্রয়োগ করুন" : "Apply Price Filter"}
+            {language === "bn" ? " :00  " : "Apply Price Filter"}
           </button>
         </form>
       </div>
@@ -618,7 +618,7 @@ export function ProductsListingClient({
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
           <input
             type="text"
-            placeholder={language === "bn" ? "ব্র্যান্ড খুঁজুন..." : "Search brands..."}
+            placeholder={language === "bn" ? "Brand Search..." : "Search brands..."}
             value={brandSearchTerm}
             onChange={(e) => setBrandSearchTerm(e.target.value)}
             className="w-full rounded-lg border pl-7 pr-2 py-1 text-[11px] focus:outline-none"
@@ -635,12 +635,12 @@ export function ProductsListingClient({
             className={cn(
               "flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors text-left",
               !currentBrand
-                ? "bg-pink-50 text-[#e91e63] font-bold border border-pink-200 shadow-2xs"
+                ? "bg-teal-50/60 text-[#1D6474] font-bold border border-teal-200 shadow-2xs"
                 : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             )}
           >
-            <span>{language === "bn" ? "সকল ব্র্যান্ড" : "All Brands"}</span>
-            {!currentBrand && <Check className="h-3.5 w-3.5 text-[#e91e63]" />}
+            <span>{language === "bn" ? "All Brand" : "All Brands"}</span>
+            {!currentBrand && <Check className="h-3.5 w-3.5 text-[#1D6474]" />}
           </button>
 
           {filteredBrands.map((b) => {
@@ -656,12 +656,12 @@ export function ProductsListingClient({
                 className={cn(
                   "flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors text-left",
                   isSelected
-                    ? "bg-pink-50 text-[#e91e63] font-bold border border-pink-200 shadow-2xs"
+                    ? "bg-teal-50/60 text-[#1D6474] font-bold border border-teal-200 shadow-2xs"
                     : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
                 <span>{b.name}</span>
-                {isSelected && <Check className="h-3.5 w-3.5 text-[#e91e63]" />}
+                {isSelected && <Check className="h-3.5 w-3.5 text-[#1D6474]" />}
               </button>
             );
           })}
@@ -690,7 +690,7 @@ export function ProductsListingClient({
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
             <input
               type="text"
-              placeholder={language === "bn" ? "ক্যাটাগরি খুঁজুন..." : "Search categories..."}
+              placeholder={language === "bn" ? "Category Search..." : "Search categories..."}
               value={catSearchTerm}
               onChange={(e) => setCatSearchTerm(e.target.value)}
               className="w-full rounded-lg border pl-7 pr-2 py-1 text-[11px] focus:outline-none"
@@ -708,12 +708,12 @@ export function ProductsListingClient({
             className={cn(
               "flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors text-left",
               !currentCategory
-                ? "bg-pink-50 text-[#e91e63] font-bold border border-pink-200 shadow-2xs"
+                ? "bg-teal-50/60 text-[#1D6474] font-bold border border-teal-200 shadow-2xs"
                 : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             )}
           >
-            <span>{language === "bn" ? "সকল ক্যাটাগরি" : "All Categories"}</span>
-            {!currentCategory && <Check className="h-3.5 w-3.5 text-[#e91e63]" />}
+            <span>{language === "bn" ? "All Category" : "All Categories"}</span>
+            {!currentCategory && <Check className="h-3.5 w-3.5 text-[#1D6474]" />}
           </button>
 
           {filteredCategories.map((c) => {
@@ -729,12 +729,12 @@ export function ProductsListingClient({
                 className={cn(
                   "flex w-full items-center justify-between rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors text-left",
                   isSelected
-                    ? "bg-pink-50 text-[#e91e63] font-bold border border-pink-200 shadow-2xs"
+                    ? "bg-teal-50/60 text-[#1D6474] font-bold border border-teal-200 shadow-2xs"
                     : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                 )}
               >
                 <span>{c.name}</span>
-                {isSelected && <Check className="h-3.5 w-3.5 text-[#e91e63]" />}
+                {isSelected && <Check className="h-3.5 w-3.5 text-[#1D6474]" />}
               </button>
             );
           })}
@@ -746,7 +746,7 @@ export function ProductsListingClient({
         <div className="space-y-3 pt-5 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <span className="text-xs font-black uppercase tracking-wider text-gray-900 flex items-center gap-1.5">
-              <Tag className="h-3.5 w-3.5 text-[#e91e63]" /> {language === "bn" ? "ট্যাগস" : "Tags"}
+              <Tag className="h-3.5 w-3.5 text-[#1D6474]" /> {language === "bn" ? "" : "Tags"}
             </span>
             {currentTag && (
               <button
@@ -764,7 +764,7 @@ export function ProductsListingClient({
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
               <input
                 type="text"
-                placeholder={language === "bn" ? "ট্যাগ খুঁজুন..." : "Search tags..."}
+                placeholder={language === "bn" ? " Search..." : "Search tags..."}
                 value={tagSearchTerm}
                 onChange={(e) => setTagSearchTerm(e.target.value)}
                 className="w-full rounded-lg border pl-7 pr-2 py-1 text-[11px] focus:outline-none"
@@ -786,7 +786,7 @@ export function ProductsListingClient({
                   className={cn(
                     "rounded-full px-2.5 py-1 text-[11px] font-bold transition-all border text-left",
                     isSelected
-                      ? "bg-[#e91e63] text-white border-[#e91e63] shadow-2xs"
+                      ? "bg-[#1D6474] text-white border-[#1D6474] shadow-2xs"
                       : "bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-100"
                   )}
                 >
@@ -810,9 +810,9 @@ export function ProductsListingClient({
           variant="outline"
           size="sm"
           onClick={() => setMobileFilterOpen(true)}
-          className="flex-1 rounded-xl text-xs font-extrabold border-gray-200 hover:bg-pink-50 hover:text-[#e91e63] hover:border-pink-200"
+          className="flex-1 rounded-xl text-xs font-extrabold border-gray-200 hover:bg-teal-50/60 hover:text-[#1D6474] hover:border-teal-200"
         >
-          <Filter className="h-3.5 w-3.5 mr-1.5 text-[#e91e63]" />
+          <Filter className="h-3.5 w-3.5 mr-1.5 text-[#1D6474]" />
           {t("catalog", "filterBy")} {activeFiltersCount > 0 && `(${toBn(activeFiltersCount)})`}
         </Button>
 
@@ -836,13 +836,13 @@ export function ProductsListingClient({
         <aside className="hidden lg:block lg:col-span-1 rounded-3xl border border-gray-200 bg-white p-6 shadow-xs sticky top-24 max-h-[85vh] overflow-y-auto no-scrollbar">
           <div className="flex items-center justify-between pb-4 border-b border-gray-100">
             <h3 className="font-black text-sm uppercase tracking-wider text-gray-900 flex items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4 text-[#e91e63]" /> {t("catalog", "filterBy")}
+              <SlidersHorizontal className="h-4 w-4 text-[#1D6474]" /> {t("catalog", "filterBy")}
             </h3>
             {activeFiltersCount > 0 && (
               <button
                 type="button"
                 onClick={clearAllFilters}
-                className="text-[11px] font-bold text-[#e91e63] hover:underline"
+                className="text-[11px] font-bold text-[#1D6474] hover:underline"
               >
                 {t("catalog", "resetFilters")} ({toBn(activeFiltersCount)})
               </button>
@@ -860,7 +860,7 @@ export function ProductsListingClient({
           <div className="hidden lg:flex items-center justify-between pb-2">
             <div className="text-xs font-bold text-gray-500">
               {language === "bn" ? (
-                <>মোট <span className="font-extrabold text-gray-900">{toBn(products.length)}</span> টি প্রোডাক্ট পাওয়া গেছে</>
+                <>Total <span className="font-extrabold text-gray-900">{toBn(products.length)}</span> items Products  </>
               ) : (
                 <>Showing <span className="font-extrabold text-gray-900">{products.length}</span> authentic products</>
               )}
@@ -885,12 +885,12 @@ export function ProductsListingClient({
 
           {/* Active Filter Chips Bar */}
           {activeFiltersCount > 0 && (
-            <div className="flex flex-wrap items-center gap-2 bg-pink-50/50 border border-pink-100 p-2.5 rounded-2xl">
+            <div className="flex flex-wrap items-center gap-2 bg-teal-50/60/50 border border-teal-100 p-2.5 rounded-2xl">
               <span className="text-[11px] font-bold text-pink-950">
-                {language === "bn" ? "সক্রিয় ফিল্টারসমূহ:" : "Active Filters:"}
+                {language === "bn" ? "Active :00:" : "Active Filters:"}
               </span>
               {currentCategory && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-teal-200 px-2.5 py-0.5 text-xs font-bold text-[#164E63] shadow-2xs">
                   {t("catalog", "categories")}: {categories.find((c) => c.slug === currentCategory)?.name || currentCategory}
                   <button onClick={() => updateParam("category", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
@@ -899,7 +899,7 @@ export function ProductsListingClient({
               )}
               {(currentType || currentSubcategory) && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-purple-200 px-2.5 py-0.5 text-xs font-bold text-purple-700 shadow-2xs">
-                  {language === "bn" ? "ধরণ:" : "Type:"}{" "}
+                  {language === "bn" ? ":" : "Type:"}{" "}
                   {currentType
                     ? (language === "bn" ? (TYPE_NAME_MAP[currentType]?.bn || currentType) : (TYPE_NAME_MAP[currentType]?.en || currentType))
                     : currentSubcategory}
@@ -918,7 +918,7 @@ export function ProductsListingClient({
               )}
               {currentDiscount && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-rose-200 px-2.5 py-0.5 text-xs font-bold text-rose-700 shadow-2xs">
-                  {language === "bn" ? "অফার: সেল ও ডিসকাউন্ট" : "Offer: Deals & Discounts"}
+                  {language === "bn" ? ":   Discount" : "Offer: Deals & Discounts"}
                   <button onClick={() => updateParam("discount", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
                   </button>
@@ -926,14 +926,14 @@ export function ProductsListingClient({
               )}
               {currentSearch && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white border border-indigo-200 px-2.5 py-0.5 text-xs font-bold text-indigo-700 shadow-2xs">
-                  {language === "bn" ? "অনুসন্ধান:" : "Search:"} &ldquo;{currentSearch}&rdquo;
+                  {language === "bn" ? ":" : "Search:"} &ldquo;{currentSearch}&rdquo;
                   <button onClick={() => updateParam("search", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
                   </button>
                 </span>
               )}
               {currentBrand && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-teal-200 px-2.5 py-0.5 text-xs font-bold text-[#164E63] shadow-2xs">
                   {t("catalog", "brands")}: {brands.find((b) => b.slug === currentBrand)?.name || currentBrand}
                   <button onClick={() => updateParam("brand", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
@@ -941,8 +941,8 @@ export function ProductsListingClient({
                 </span>
               )}
               {currentTag && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
-                  {language === "bn" ? "ট্যাগ:" : "Tag:"} #{tags.find((t) => t.slug === currentTag || t.name === currentTag)?.name || currentTag}
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-teal-200 px-2.5 py-0.5 text-xs font-bold text-[#164E63] shadow-2xs">
+                  {language === "bn" ? ":" : "Tag:"} #{tags.find((t) => t.slug === currentTag || t.name === currentTag)?.name || currentTag}
                   <button onClick={() => updateParam("tag", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
                   </button>
@@ -957,7 +957,7 @@ export function ProductsListingClient({
                 </span>
               )}
               {currentSkinType && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-teal-200 px-2.5 py-0.5 text-xs font-bold text-[#164E63] shadow-2xs">
                   {t("catalog", "skinType")}: {language === "bn" ? (SKIN_TYPE_MAP[currentSkinType]?.bn || currentSkinType) : (SKIN_TYPE_MAP[currentSkinType]?.en || currentSkinType)}
                   <button onClick={() => updateParam("skin_type", null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
@@ -981,8 +981,8 @@ export function ProductsListingClient({
                 </span>
               )}
               {(currentMinPrice || currentMaxPrice) && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-pink-200 px-2.5 py-0.5 text-xs font-bold text-pink-700 shadow-2xs">
-                  {t("catalog", "priceRange")}: {currentMinPrice ? formatPriceBn(Number(currentMinPrice)) : (language === "bn" ? "যেকোনো" : "0")} – {currentMaxPrice ? formatPriceBn(Number(currentMaxPrice)) : (language === "bn" ? "সর্বোচ্চ" : "Any")}
+                <span className="inline-flex items-center gap-1 rounded-full bg-white border border-teal-200 px-2.5 py-0.5 text-xs font-bold text-[#164E63] shadow-2xs">
+                  {t("catalog", "priceRange")}: {currentMinPrice ? formatPriceBn(Number(currentMinPrice)) : (language === "bn" ? "" : "0")} – {currentMaxPrice ? formatPriceBn(Number(currentMaxPrice)) : (language === "bn" ? "" : "Any")}
                   <button onClick={() => updatePriceRange(null, null)} className="hover:text-red-500">
                     <X className="h-3 w-3" />
                   </button>
@@ -1000,11 +1000,11 @@ export function ProductsListingClient({
 
           {/* Fallback Notice */}
           {isFallbackApplied && products.length > 0 && (
-            <div className="flex items-center gap-2 rounded-2xl bg-pink-50/70 border border-pink-200 p-3 text-xs text-pink-900 font-bold">
-              <Sparkles className="h-4 w-4 text-[#e91e63] shrink-0" />
+            <div className="flex items-center gap-2 rounded-2xl bg-teal-50/60/70 border border-teal-200 p-3 text-xs text-pink-900 font-bold">
+              <Sparkles className="h-4 w-4 text-[#1D6474] shrink-0" />
               <span>
                 {language === "bn"
-                  ? `এই ক্যাটাগরির সমস্ত অথেনটিক প্রোডাক্টসমূহ (${toBn(products.length)} টি আইটেম)`
+                  ? ` Category  items Products (${toBn(products.length)} items )`
                   : `Showing all available authentic products in this category (${products.length} items)`}
               </span>
             </div>
@@ -1014,20 +1014,20 @@ export function ProductsListingClient({
           {products.length === 0 ? (
             <div className="space-y-6">
               <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-gray-200 bg-white p-8 sm:p-12 text-center space-y-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-pink-50 text-[#e91e63]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50/60 text-[#1D6474]">
                   <ShoppingBag className="h-8 w-8 stroke-1" />
                 </div>
                 <div className="space-y-1">
                   <h3 className="text-base font-black text-gray-900">{t("catalog", "noProductsFound")}</h3>
                   <p className="text-xs text-gray-500 max-w-sm">
                     {language === "bn"
-                      ? "এই মুহূর্তে এই ফিল্টারে সরাসরি কোনো প্রোডাক্ট নেই। অন্য ফিল্টার চেষ্টা করুন অথবা আমাদের জনপ্রিয় অথেনটিক কালেকশন দেখুন।"
+                      ? "   :00   Products ।  :00 :00  or  Popular items  View।"
                       : "No products currently found for this exact filter. Try removing some filters or explore our authentic bestsellers below."}
                   </p>
                 </div>
                 <Button
                   onClick={clearAllFilters}
-                  className="rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold text-xs shadow-xs"
+                  className="rounded-xl bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold text-xs shadow-xs"
                 >
                   {t("catalog", "resetFilters")}
                 </Button>
@@ -1036,9 +1036,9 @@ export function ProductsListingClient({
               {fallbackProducts && fallbackProducts.length > 0 && (
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#e91e63]" />
+                    <Sparkles className="h-4 w-4 text-[#1D6474]" />
                     <h3 className="text-sm sm:text-base font-black text-gray-900">
-                      {language === "bn" ? "আমাদের জনপ্রিয় অথেনটিক প্রোডাক্টসমূহ:" : "Explore Our Authentic Bestsellers:"}
+                      {language === "bn" ? " Popular items Products:" : "Explore Our Authentic Bestsellers:"}
                     </h3>
                   </div>
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3">
@@ -1072,7 +1072,7 @@ export function ProductsListingClient({
           <div className="relative ml-auto flex h-full w-full max-w-xs flex-col bg-white p-6 shadow-2xl animate-in slide-in-from-right duration-200">
             <div className="flex items-center justify-between border-b border-gray-100 pb-4">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="h-4 w-4 text-[#e91e63]" />
+                <SlidersHorizontal className="h-4 w-4 text-[#1D6474]" />
                 <h3 className="font-black text-sm uppercase tracking-wider text-gray-900">
                   {t("catalog", "filterBy")}
                 </h3>
@@ -1093,10 +1093,10 @@ export function ProductsListingClient({
             <div className="border-t border-gray-100 pt-4 space-y-2">
               <Button
                 onClick={() => setMobileFilterOpen(false)}
-                className="w-full rounded-xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold text-xs"
+                className="w-full rounded-xl bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold text-xs"
               >
                 {language === "bn"
-                  ? `${toBn(products.length)} টি প্রোডাক্ট দেখুন`
+                  ? `${toBn(products.length)} items Products View`
                   : `View ${products.length} Results`}
               </Button>
               {activeFiltersCount > 0 && (

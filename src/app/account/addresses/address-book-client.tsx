@@ -99,7 +99,7 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(isBn ? "আপনি কি নিশ্চিত এই ঠিকানাটি মুছে ফেলতে চান?" : "Are you sure you want to delete this address?")) return;
+    if (!confirm(isBn ? "  Confirmed  Addressitems want to delete?" : "Are you sure you want to delete this address?")) return;
     const res = await deleteCustomerAddress(id);
     if (res.success) {
       setAddresses(addresses.filter((a) => a.id !== id));
@@ -111,35 +111,35 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border pb-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-text">
-            {isBn ? "সংরক্ষিত ঠিকানা" : "Saved Addresses"}
+            {isBn ? " Address" : "Saved Addresses"}
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
             {isBn
-              ? "দ্রুত ও সহজ চেকআউটের জন্য আপনার ডেলিভারি ঠিকানা ম্যানেজ করুন।"
+              ? "    for your Delivery Address  ।"
               : "Manage your delivery destinations for instant 1-click checkout."}
           </p>
         </div>
-        <Button onClick={openAddModal} size="sm" className="bg-[#e91e63] hover:bg-[#d81557] text-white font-bold rounded-xl">
+        <Button onClick={openAddModal} size="sm" className="bg-[#1D6474] hover:bg-[#d81557] text-white font-bold rounded-xl">
           <Plus className="h-4 w-4 mr-1.5" />
-          {isBn ? "নতুন ঠিকানা যোগ করুন" : "Add New Address"}
+          {isBn ? " Address Add to Cart" : "Add New Address"}
         </Button>
       </div>
 
       {addresses.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border bg-white p-8 sm:p-12 text-center space-y-3">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-[#e91e63]">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50/60 text-[#1D6474]">
             <MapPin className="h-7 w-7" />
           </div>
           <h2 className="text-base font-bold text-text">
-            {isBn ? "কোনো ডেলিভারি ঠিকানা সংরক্ষিত নেই" : "No delivery addresses saved"}
+            {isBn ? " Delivery Address  " : "No delivery addresses saved"}
           </h2>
           <p className="text-xs text-text-secondary max-w-sm mx-auto">
             {isBn
-              ? "অর্ডার প্রক্রিয়া দ্রুত করতে আপনার বাসা বা অফিসের ঠিকানা সংরক্ষণ করুন।"
+              ? "Order    your    Address Save।"
               : "Save your home or office address to speed up your checkout process."}
           </p>
-          <Button onClick={openAddModal} size="sm" className="bg-[#e91e63] hover:bg-[#d81557] text-white font-bold rounded-xl px-5">
-            {isBn ? "এখনই ঠিকানা যোগ করুন" : "Add Address Now"}
+          <Button onClick={openAddModal} size="sm" className="bg-[#1D6474] hover:bg-[#d81557] text-white font-bold rounded-xl px-5">
+            {isBn ? " Address Add to Cart" : "Add Address Now"}
           </Button>
         </div>
       ) : (
@@ -154,7 +154,7 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
               {addr.is_default && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-primary-50 text-primary-700 px-2.5 py-0.5 text-[10px] font-bold border border-primary-200">
                   <CheckCircle2 className="h-3 w-3" />
-                  {isBn ? "ডিফল্ট ঠিকানা" : "Default Address"}
+                  {isBn ? " Address" : "Default Address"}
                 </span>
               )}
 
@@ -174,14 +174,14 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
                   className="flex items-center gap-1 text-xs font-semibold text-primary-600 hover:underline"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
-                  {isBn ? "এডিট" : "Edit"}
+                  {isBn ? "" : "Edit"}
                 </button>
                 <button
                   onClick={() => handleDelete(addr.id)}
                   className="flex items-center gap-1 text-xs font-semibold text-red-600 hover:underline"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  {isBn ? "মুছে ফেলুন" : "Delete"}
+                  {isBn ? " " : "Delete"}
                 </button>
               </div>
             </div>
@@ -197,8 +197,8 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-primary-600" />
                 {editingId
-                  ? (isBn ? "ঠিকানা সংশোধন করুন" : "Edit Address")
-                  : (isBn ? "নতুন ডেলিভারি ঠিকানা যোগ করুন" : "Add New Delivery Address")}
+                  ? (isBn ? "Address  " : "Edit Address")
+                  : (isBn ? " Delivery Address Add to Cart" : "Add New Delivery Address")}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -212,7 +212,7 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-text mb-1">
-                    {isBn ? "আপনার পুরো নাম" : "Full Name"}
+                    {isBn ? "your  Name" : "Full Name"}
                   </label>
                   <input
                     type="text"
@@ -224,7 +224,7 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
                 </div>
                 <div>
                   <label className="block font-semibold text-text mb-1">
-                    {isBn ? "মোবাইল নম্বর" : "Phone Number"}
+                    {isBn ? "Mobile Number" : "Phone Number"}
                   </label>
                   <input
                     type="tel"
@@ -239,7 +239,7 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-text mb-1">
-                    {isBn ? "বিভাগ" : "Division"}
+                    {isBn ? "" : "Division"}
                   </label>
                   <select
                     value={form.division}
@@ -255,7 +255,7 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
                 </div>
                 <div>
                   <label className="block font-semibold text-text mb-1">
-                    {isBn ? "জেলা" : "District"}
+                    {isBn ? "" : "District"}
                   </label>
                   <input
                     type="text"
@@ -270,12 +270,12 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-text mb-1">
-                    {isBn ? "এলাকা / থানা" : "Area / Thana"}
+                    {isBn ? " / " : "Area / Thana"}
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder={isBn ? "যেমন: গুলশান-১ / ধানমন্ডি" : "e.g. Gulshan-1 / Dhanmondi"}
+                    placeholder={isBn ? "e.g.: -1 / " : "e.g. Gulshan-1 / Dhanmondi"}
                     value={form.area}
                     onChange={(e) => setForm({ ...form, area: e.target.value })}
                     className="w-full rounded-xl border border-border px-3 py-2 text-xs focus:outline-none"
@@ -283,7 +283,7 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
                 </div>
                 <div>
                   <label className="block font-semibold text-text mb-1">
-                    {isBn ? "পোস্টাল কোড (ঐচ্ছিক)" : "Postal Code (Optional)"}
+                    {isBn ? ":00 Code ()" : "Postal Code (Optional)"}
                   </label>
                   <input
                     type="text"
@@ -296,12 +296,12 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
 
               <div>
                 <label className="block font-semibold text-text mb-1">
-                  {isBn ? "বিস্তারিত ঠিকানা (বাড়ি, রোড, ফ্ল্যাট নম্বর)" : "Detailed Street Address"}
+                  {isBn ? " Address (, ,  Number)" : "Detailed Street Address"}
                 </label>
                 <textarea
                   rows={2}
                   required
-                  placeholder={isBn ? "বাড়ি নম্বর, রোড নম্বর, ফ্ল্যাট, ল্যান্ডমার্ক..." : "House, Road, Flat, Landmark..."}
+                  placeholder={isBn ? " Number,  Number, , ..." : "House, Road, Flat, Landmark..."}
                   value={form.address_line}
                   onChange={(e) => setForm({ ...form, address_line: e.target.value })}
                   className="w-full rounded-xl border border-border p-3 text-xs focus:outline-none"
@@ -313,20 +313,20 @@ export function AddressBookClient({ initialAddresses }: AddressBookClientProps) 
                   type="checkbox"
                   checked={form.is_default}
                   onChange={(e) => setForm({ ...form, is_default: e.target.checked })}
-                  className="h-4 w-4 rounded text-[#e91e63]"
+                  className="h-4 w-4 rounded text-[#1D6474]"
                 />
                 <span className="text-xs font-semibold text-text">
-                  {isBn ? "ডিফল্ট ডেলিভারি ঠিকানা হিসেবে সেট করুন" : "Set as default delivery address"}
+                  {isBn ? " Delivery Address   " : "Set as default delivery address"}
                 </span>
               </label>
 
               <div className="pt-2 flex justify-end gap-2 border-t border-border">
                 <Button type="button" variant="ghost" onClick={() => setShowModal(false)}>
-                  {isBn ? "বাতিল" : "Cancel"}
+                  {isBn ? "Cancel" : "Cancel"}
                 </Button>
-                <Button type="submit" disabled={loading} className="bg-[#e91e63] hover:bg-[#d81557] text-white">
+                <Button type="submit" disabled={loading} className="bg-[#1D6474] hover:bg-[#d81557] text-white">
                   {loading ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : null}
-                  {isBn ? "সংরক্ষণ করুন" : "Save Address"}
+                  {isBn ? "Save" : "Save Address"}
                 </Button>
               </div>
             </form>

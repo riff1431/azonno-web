@@ -103,23 +103,23 @@ export function ShoppableArticleProducts({
   };
 
   return (
-    <div className="rounded-3xl border border-pink-200 bg-linear-to-br from-pink-50/50 via-white to-pink-50/30 p-6 sm:p-8 space-y-6 shadow-card">
+    <div className="rounded-3xl border border-teal-200 bg-linear-to-br from-pink-50/50 via-white to-pink-50/30 p-6 sm:p-8 space-y-6 shadow-card">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-pink-100 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-teal-100 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[#e91e63] animate-pulse" />
-            <span className="text-[11px] font-black uppercase tracking-wider text-[#e91e63]">
-              {language === "bn" ? "কেনাকাটার রুটিন" : "Shoppable Routine"}
+            <span className="h-2 w-2 rounded-full bg-[#1D6474] animate-pulse" />
+            <span className="text-[11px] font-black uppercase tracking-wider text-[#1D6474]">
+              {language === "bn" ? "Style Guide" : "Shoppable Routine"}
             </span>
           </div>
           <h3 className="text-lg sm:text-xl font-black text-gray-900 mt-0.5 flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5 text-[#e91e63]" />
+            <ShoppingBag className="h-5 w-5 text-[#1D6474]" />
             {t("blog", "shoppableProducts")}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">
             {language === "bn"
-              ? "এই আর্টিকেলে আলোচিত ১০০% আসল ও নির্ভরযোগ্য বিউটি পণ্য।"
+              ? "Featured in this article 100% Authentic Premium Clothing Products।"
               : "100% authentic beauty and skincare products mentioned in this guide."}
           </p>
         </div>
@@ -129,12 +129,12 @@ export function ShoppableArticleProducts({
             type="button"
             onClick={handleAddAllToCart}
             disabled={addingAll}
-            className="bg-[#e91e63] hover:bg-pink-600 text-white text-xs font-black rounded-xl shadow-md shrink-0 h-9"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-black rounded-xl shadow-md shrink-0 h-9"
           >
             <Sparkles className="h-3.5 w-3.5 mr-1.5" />
             {addingAll
-              ? (language === "bn" ? "যুক্ত করা হচ্ছে..." : "Adding All...")
-              : (language === "bn" ? `সম্পূর্ণ রুটিন যোগ করুন (${toBn(products.length)})` : `Add Complete Routine (${products.length})`)}
+              ? (language === "bn" ? "added  ..." : "Adding All...")
+              : (language === "bn" ? `Complete items Add to Cart (${toBn(products.length)})` : `Add Complete Routine (${products.length})`)}
           </Button>
         )}
       </div>
@@ -157,7 +157,7 @@ export function ShoppableArticleProducts({
           return (
             <div
               key={product.id}
-              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-xs hover:border-[#e91e63] hover:shadow-md transition-all flex flex-col justify-between space-y-3"
+              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-xs hover:border-[#1D6474] hover:shadow-md transition-all flex flex-col justify-between space-y-3"
             >
               <div className="flex items-start gap-3">
                 <Link
@@ -170,7 +170,7 @@ export function ShoppableArticleProducts({
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {hasDiscount && (
-                    <span className="absolute top-1 left-1 rounded bg-[#e91e63] px-1.5 py-0.5 text-[9px] font-black text-white">
+                    <span className="absolute top-1 left-1 rounded bg-[#1D6474] px-1.5 py-0.5 text-[9px] font-black text-white">
                       -{toBn(discountPercent)}%
                     </span>
                   )}
@@ -184,20 +184,20 @@ export function ShoppableArticleProducts({
                   )}
                   <Link
                     href={`/products/${product.slug}`}
-                    className="text-xs font-bold text-gray-900 line-clamp-2 hover:text-[#e91e63] transition-colors"
+                    className="text-xs font-bold text-gray-900 line-clamp-2 hover:text-[#1D6474] transition-colors"
                   >
                     {product.name}
                   </Link>
 
                   {product.callout_note && (
-                    <p className="text-[11px] text-[#e91e63] font-semibold italic">
+                    <p className="text-[11px] text-[#1D6474] font-semibold italic">
                       “{product.callout_note}”
                     </p>
                   )}
 
                   {/* Price */}
                   <div className="flex items-baseline gap-2 pt-0.5">
-                    <span className="text-sm font-black text-[#e91e63]">
+                    <span className="text-sm font-black text-[#1D6474]">
                       {formatPriceBn(currentPrice)}
                     </span>
                     {hasDiscount && (
@@ -229,7 +229,7 @@ export function ShoppableArticleProducts({
                   className={`flex-1 text-xs font-black rounded-xl h-8 shadow-2xs transition-all ${
                     isAdded
                       ? "bg-emerald-600 text-white"
-                      : "bg-[#e91e63] hover:bg-pink-600 text-white"
+                      : "bg-[#1D6474] hover:bg-[#164E63] text-white"
                   }`}
                 >
                   {isAdded ? (

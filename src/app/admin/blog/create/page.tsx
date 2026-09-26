@@ -158,7 +158,7 @@ function BlogCreateForm() {
           <Button
             onClick={handleSubmit}
             disabled={saving}
-            className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
           >
             <Save className="h-3.5 w-3.5 mr-1.5" />
             {saving ? "Saving..." : form.id ? "Update Article" : "Publish Article"}
@@ -186,7 +186,7 @@ function BlogCreateForm() {
               placeholder="e.g. 5 Best Sunscreens for Oily Skin in Bangladesh Humidity"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="w-full rounded-xl border border-border px-3.5 py-2.5 text-xs text-text placeholder:text-text-muted focus:outline-none focus:border-[#e91e63] font-bold"
+              className="w-full rounded-xl border border-border px-3.5 py-2.5 text-xs text-text placeholder:text-text-muted focus:outline-none focus:border-[#1D6474] font-bold"
             />
           </div>
 
@@ -221,7 +221,7 @@ function BlogCreateForm() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-bold text-text flex items-center gap-1">
-                  <User className="h-3.5 w-3.5 text-[#e91e63]" /> Author (E-E-A-T)
+                  <User className="h-3.5 w-3.5 text-[#1D6474]" /> Author (E-E-A-T)
                 </label>
                 <Link
                   href="/admin/blog/authors"
@@ -247,7 +247,7 @@ function BlogCreateForm() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-bold text-text flex items-center gap-1">
-                  <FolderTree className="h-3.5 w-3.5 text-[#e91e63]" /> Category
+                  <FolderTree className="h-3.5 w-3.5 text-[#1D6474]" /> Category
                 </label>
                 <Link
                   href="/admin/blog/categories"
@@ -321,7 +321,7 @@ function BlogCreateForm() {
           <div>
             <label className="text-xs font-bold text-text mb-1.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-[#e91e63]" />
+                <Sparkles className="h-3.5 w-3.5 text-[#1D6474]" />
                 Article Content (Visual Rich Text, Headings, Lists, Images &amp; HTML)
                 <span className="text-red-500">*</span>
               </span>
@@ -341,7 +341,7 @@ function BlogCreateForm() {
         {/* SEO Metadata Box */}
         <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
           <h3 className="text-sm font-bold text-text flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-[#e91e63]" />
+            <Sparkles className="h-4 w-4 text-[#1D6474]" />
             Search Engine Optimization (SEO) Metadata
           </h3>
 

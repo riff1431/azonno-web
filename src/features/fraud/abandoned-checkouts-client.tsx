@@ -117,8 +117,8 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
         recipientPhone: item.customer_phone,
         eventType: "abandoned_cart",
         variables: {
-          customer_name: item.customer_name || "সম্মানিত গ্রাহক",
-          store_name: "Blush & Budget",
+          customer_name: item.customer_name || "Dear Customer",
+          store_name: "Azonno",
           checkout_url: `${origin}/r/${item.id}`,
           discount_code: "BLUSH5",
         },
@@ -138,7 +138,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
   const columns: Column<any>[] = [
     {
       key: "customer",
-      header: isBn ? "কাস্টমার যোগাযোগ" : "Lead Contact",
+      header: isBn ? "Customers AddAdd" : "Lead Contact",
       sortable: true,
       cell: (row) => {
         const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
@@ -186,11 +186,11 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "location",
-      header: isBn ? "ঠিকানা ও জেলা" : "Location",
+      header: isBn ? "Address  District" : "Location",
       cell: (row) => (
         <div className="text-xs space-y-0.5">
           <span className="font-bold text-gray-900 flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5 text-[#e91e63]" /> {row.district || "Dhaka City"}
+            <MapPin className="h-3.5 w-3.5 text-[#1D6474]" /> {row.district || "Dhaka City"}
           </span>
           <span className="text-gray-500 text-[11px] block truncate max-w-50" title={row.address}>
             {row.address || "Address captured"}
@@ -200,7 +200,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "cart",
-      header: isBn ? "কার্টের পণ্য ও মূল্য" : "Products in Cart & Price",
+      header: isBn ? " Products  Price" : "Products in Cart & Price",
       cell: (row) => (
         <div className="text-xs space-y-1.5">
           <div className="flex items-center gap-2">
@@ -231,7 +231,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "status",
-      header: isBn ? "স্ট্যাটাস" : "Status",
+      header: isBn ? "Status" : "Status",
       cell: (row) => (
         <span
           className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase border ${
@@ -248,7 +248,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
     },
     {
       key: "actions",
-      header: isBn ? "রিকভারি ও অ্যাকশন" : "Recovery & Actions",
+      header: isBn ? "  Action" : "Recovery & Actions",
       cell: (row) => {
         const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : (process.env.NEXT_PUBLIC_APP_URL || "");
         const whatsappUrl = generateWhatsAppAbandonedMessage(row, origin, waTemplates);
@@ -259,7 +259,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
               size="sm"
               onClick={() => handleConvertToOrder(row)}
               disabled={convertingId === row.id}
-              className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-[11px] font-black rounded-xl h-7 px-2.5 shadow-xs"
+              className="bg-[#1D6474] hover:bg-[#164E63] text-white text-[11px] font-black rounded-xl h-7 px-2.5 shadow-xs"
               title="Convert Incomplete Lead into a Confirmed Order"
             >
               {convertingId === row.id ? (
@@ -267,7 +267,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
               ) : (
                 <Zap className="h-3 w-3 mr-1" />
               )}
-              {isBn ? "অর্ডারে কনভার্ট" : "Create Order"}
+              {isBn ? "Order " : "Create Order"}
             </Button>
 
             <a
@@ -304,17 +304,17 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 sm:p-6 rounded-3xl border border-gray-200 shadow-xs">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
-            <span className="text-[11px] font-bold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200 uppercase">
-              {isBn ? "লাইভ লিড ক্যাপচার" : "Instant Live Lead Capture"}
+            <span className="h-2.5 w-2.5 rounded-full bg-[#1D6474] animate-pulse" />
+            <span className="text-[11px] font-bold text-[#164E63] bg-teal-50/60 px-2 py-0.5 rounded-full border border-teal-200 uppercase">
+              {isBn ? "  " : "Instant Live Lead Capture"}
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-gray-900 mt-1">
-            {isBn ? "অসম্পূর্ণ ও পরিত্যক্ত চেকআউট" : "Abandoned & Incomplete Checkouts"}
+            {isBn ? "Complete   " : "Abandoned & Incomplete Checkouts"}
           </h1>
           <p className="text-xs text-gray-500 mt-0.5">
             {isBn
-              ? "গ্রাহক চেকআউটে ফোন, নাম বা ঠিকানা দেওয়ার পর ড্রপ করলে কার্টের সম্পূর্ণ আইটেম সহ রিয়েল-টাইম সংগৃহীত লিড।"
+              ? "  Phone, Name  Address      Complete   -  ।"
               : "Auto-captured customer leads who typed their phone, name, email, or address on the checkout page with their exact cart products and prices."}
           </p>
         </div>
@@ -327,7 +327,7 @@ export function AbandonedCheckoutsClient({ initialCheckouts }: AbandonedCheckout
           className="text-xs font-bold rounded-xl shrink-0"
         >
           <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
-          {refreshing ? (isBn ? "রিফ্রেশ হচ্ছে..." : "Refreshing...") : (isBn ? "লিড রিফ্রেশ করুন" : "Refresh Leads")}
+          {refreshing ? (isBn ? " ..." : "Refreshing...") : (isBn ? "  " : "Refresh Leads")}
         </Button>
       </div>
 

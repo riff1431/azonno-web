@@ -227,12 +227,12 @@ export interface HomepageFullConfig {
 export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
   // 0. Header & Mega-Menu Configuration
   headerConfig: {
-    logoText: "Blush & Budget",
+    logoText: "Azonno",
     logoImageUrl: "",
     logoLink: "/",
-    mobileLogoText: "Blush & Budget",
+    mobileLogoText: "Azonno",
     mobileLogoImageUrl: "",
-    drawerLogoText: "Blush & Budget",
+    drawerLogoText: "Azonno",
     drawerLogoImageUrl: "",
     adminLogoImageUrl: "",
     searchPlaceholders: [
@@ -576,18 +576,18 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
   faqSection: {
     enabled: true,
     heading: "Authentic Cosmetics Shop in Bangladesh: Your Beauty Destination",
-    headingBn: "বাংলাদেশে আসল কসমেটিকস ও স্কিনকেয়ারের বিশ্বস্ত গন্তব্য",
+    headingBn: "EnglishPremium Men's & Women's Clothing in Bangladesh Trusted Destination",
     subtitle:
       "Shop 100% genuine skincare, makeup, and hair care with nationwide Cash on Delivery, doorstep parcel inspection, and friendly support.",
     subtitleBn:
-      "১০০% আসল আন্তর্জাতিক স্কিনকেয়ার ও মেকআপ কালেকশন — সারা দেশে ক্যাশ অন ডেলিভারি, পার্সেল চেক করার সুবিধা ও সার্বক্ষণিক কাস্টমার সাপোর্ট।",
+      "100% Authentic Premium Casual Wear  Apparel  —   Cash  Delivery,       Customers ।",
     seoDescriptionHtml: `<div class="space-y-4 text-zinc-700 leading-relaxed text-sm sm:text-base">
   <p>
     Finding a trustworthy <strong>cosmetics shop in Bangladesh</strong> should be simple and reliable. At <strong>Blush &amp; Budget</strong>, we bring you 100% genuine skincare, makeup, and hair care directly from authorized distributors in South Korea, the UK, the US, and Japan. We believe shopping for beauty should feel easy, honest, and comfortable.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
     100% Authentic Products with Verified Batch Codes
   </h3>
   <p>
@@ -595,31 +595,31 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
     Skincare Made for Everyday Humid Weather
   </h3>
   <p>
-    In warm and humid weather, heavy creams can feel uncomfortable. We focus on lightweight, non-sticky essentials that feel fresh on the skin. Explore our <a href="/products?category=skin-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Skincare Collection</a> to find gentle cleansers, hydrating toners, lightweight serums, and daily sunscreens that blend easily without leaving a white cast.
+    In warm and humid weather, heavy creams can feel uncomfortable. We focus on lightweight, non-sticky essentials that feel fresh on the skin. Explore our <a href="/products?category=skin-care" class="text-[#1D6474] font-semibold underline decoration-pink-300 underline-offset-2 hover:text-[#164E63]">Skincare Collection</a> to find gentle cleansers, hydrating toners, lightweight serums, and daily sunscreens that blend easily without leaving a white cast.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
     Everyday Makeup for Work, Study &amp; Events
   </h3>
   <p>
-    Whether you like a natural everyday look or a festive makeup finish, our <a href="/products?category=makeup" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Makeup Collection</a> is curated for long-lasting comfort. From smooth lip tints and cushion compacts to smudge-proof eyeliners and lightweight powders, find shades that suit you best.
+    Whether you like a natural everyday look or a festive makeup finish, our <a href="/products?category=makeup" class="text-[#1D6474] font-semibold underline decoration-pink-300 underline-offset-2 hover:text-[#164E63]">Makeup Collection</a> is curated for long-lasting comfort. From smooth lip tints and cushion compacts to smudge-proof eyeliners and lightweight powders, find shades that suit you best.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
     Korean &amp; Global Beauty Favorites
   </h3>
   <p>
-    K-Beauty is loved around the world for its focus on gentle hydration and natural glow. Ingredients like snail mucin, centella, rice water, and hyaluronic acid help keep skin feeling soft and refreshed. Browse our <a href="/brands" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">Brand Directory</a> to explore top authentic names like COSRX, The Ordinary, CeraVe, and Beauty of Joseon.
+    K-Beauty is loved around the world for its focus on gentle hydration and natural glow. Ingredients like snail mucin, centella, rice water, and hyaluronic acid help keep skin feeling soft and refreshed. Browse our <a href="/brands" class="text-[#1D6474] font-semibold underline decoration-pink-300 underline-offset-2 hover:text-[#164E63]">Brand Directory</a> to explore top authentic names like COSRX, The Ordinary, CeraVe, and Beauty of Joseon.
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
     Nationwide Cash on Delivery with Doorstep Inspection
   </h3>
   <p>
@@ -628,161 +628,161 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
 </div>`,
     seoDescriptionHtmlBn: `<div class="space-y-4 text-zinc-700 leading-relaxed text-sm sm:text-base">
   <p>
-    বাংলাদেশে একটি নির্ভরযোগ্য <strong>অনলাইন কসমেটিকস শপ</strong> থেকে পছন্দের পণ্য কেনা এখন আরও সহজ। <strong>Blush &amp; Budget (ব্লাশ অ্যান্ড বাজেট)</strong>-এ আমরা দিচ্ছি দক্ষিণ কোরিয়া, যুক্তরাজ্য, যুক্তরাষ্ট্র ও জাপানের ১০০% আসল স্কিনকেয়ার, মেকআপ ও হেয়ার কেয়ার সামগ্রী।
+    English items Add <strong> items </strong> from desired Products   more । <strong>Blush &amp; Budget (  )</strong>- We   , added, added   100% Authentic , Apparel    ।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    ১০০% আসল পণ্য ও অথেনটিক সোর্সিং
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
+    100% Authentic Products  items 
   </h3>
   <p>
-    আমরা কোনো অনির্ভরযোগ্য মাধ্যম থেকে পণ্য নিই না। আমাদের প্রতিটি পণ্য সরাসরি অফিশিয়াল ব্র্যান্ড ও অনুমোদিত ডিস্ট্রিবিউটর থেকে সংগৃহীত। প্রতিটি পণ্যে রয়েছে আসল ম্যানুফ্যাকচারার ব্যাচ কোড ও ইনট্যাক্ট সিল।
+    We  Add  from Products  ।  items Products   Brand    from । items Products  Authentic   Code   ।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    আমাদের আবহাওয়ার উপযোগী হালকা স্কিনকেয়ার
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
+      Add  
   </h3>
   <p>
-    গরম ও আর্দ্র আবহাওয়ায় ভারী ক্রিমের চেয়ে হালকা ও আরামদায়ক প্রোডাক্ট ব্যবহার করা ভালো। আমাদের <a href="/products?category=skin-care" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">স্কিনকেয়ার কালেকশন</a>-এ রয়েছে জেন্টল ফেসওয়াশ, হাইড্রেটিং টোনার, লাইটওয়েট সিরাম ও নন-গ্রিসি সানস্ক্রিন যা ত্বককে রাখে সতেজ ও সুরক্ষিত।
+              Products use  ।  <a href="/products?category=skin-care" class="text-[#1D6474] font-semibold underline decoration-pink-300 underline-offset-2 hover:text-[#164E63]"> </a>-   , items ,  Oxford Shirt  - Panjabi  Cotton    ।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    দৈনন্দিন ও উৎসবের মেকআপ কালেকশন
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
+    Enter   Apparel 
   </h3>
   <p>
-    অফিস বা ভার্সিটির সাধারণ সাজ হোক কিংবা উৎসবের জমকালো মেকআপ—আমাদের <a href="/products?category=makeup" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">মেকআপ কালেকশন</a> সাজানো হয়েছে আরামদায়ক ও সহজে ব্যবহার উপযোগী পণ্য দিয়ে। লিপ টিন্ট, কুশন ফাউন্ডেশন ও আইলাইনার পাবেন নিশ্চিত কোয়ালিটিতে।
+      items       Apparel— <a href="/products?category=makeup" class="text-[#1D6474] font-semibold underline decoration-pink-300 underline-offset-2 hover:text-[#164E63]">Apparel </a>  successfully    use Add Products ।  items,      Confirmed items।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    কোরিয়ান ও গ্লোবাল সেরা ব্র্যান্ড
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
+        Brand
   </h3>
   <p>
-    স্নেল মিউসিন, সেন্টেলা ও হায়ালুরোনিক অ্যাসিডের মতো উপাদান ত্বককে রাখে নরম ও হাইড্রেটেড। বিশ্বের জনপ্রিয় ব্র্যান্ডগুলোর পণ্য দেখতে ভিজিট করুন আমাদের <a href="/brands" class="text-pink-600 font-semibold underline decoration-pink-300 underline-offset-2 hover:text-pink-700">টপ ব্র্যান্ডস পেজ</a>।
+     ,       Cotton    ।  Popular Brand Products     <a href="/brands" class="text-[#1D6474] font-semibold underline decoration-pink-300 underline-offset-2 hover:text-[#164E63]"> Brand </a>।
   </p>
 
   <h3 class="text-base sm:text-lg font-bold text-zinc-900 mt-5 mb-1.5 flex items-center gap-2">
-    <span class="h-2 w-2 rounded-full bg-pink-500 inline-block"></span>
-    ৬৪ জেলায় ক্যাশ অন ডেলিভারি ও পার্সেল চেক করার সুবিধা
+    <span class="h-2 w-2 rounded-full bg-[#1D6474] inline-block"></span>
+    64 District Cash  Delivery     
   </h3>
   <p>
-    বাংলাদেশের ৬৪টি জেলাতেই রয়েছে ক্যাশ অন ডেলিভারি সুবিধা। পার্সেল হাতে পেয়ে <strong>ডেলিভারিম্যানের সামনে দেখে</strong> মূল্য পরিশোধ করতে পারবেন। সাথে ৭ দিনের সহজ রিটার্ন পলিসি ও কাস্টমার সাপোর্ট।
+    English 64items District  Cash  Delivery ।    <strong>Delivery  </strong> Price   ।  7-Day Easy Return Policy  Customers ।
   </p>
 </div>`,
     faqs: [
       {
         id: "faq-1",
         category: "Authenticity & Sourcing",
-        question: "How do I know the products on Blush & Budget are 100% genuine?",
-        questionBn: "আপনাদের প্রোডাক্টগুলো যে ১০০% আসল ও অরিজিনাল, তা কীভাবে নিশ্চিত হব?",
+        question: "How do I know the products on Azonno are 100% genuine?",
+        questionBn: " Products  100% Authentic  Original,  permanently Confirmed ?",
         answer:
-          "Every product on Blush & Budget is imported directly from official brand partners or authorized distribution hubs in South Korea, the UK, the US, and Japan. Each item comes with its original manufacturer batch code and packaging seal.",
+          "Every product on Azonno is imported directly from official brand partners or authorized distribution hubs in South Korea, the UK, the US, and Japan. Each item comes with its original manufacturer batch code and packaging seal.",
         answerBn:
-          "Blush & Budget-এর প্রতিটি প্রোডাক্ট সরাসরি সিউল, লন্ডন, টোকিও ও ইউএসএ-এর অনুমোদিত ডিস্ট্রিবিউশন হাব থেকে সরাসরি আনা হয়। প্রতিটি পণ্যে আসল ব্যাচ কোড ও সিল থাকে।",
+          "Azonno- items Products  , ,   -    from   । items Products Authentic  Code   ।",
       },
       {
         id: "faq-2",
         category: "Doorstep Inspection",
         question: "Can I check the parcel before paying the delivery rider?",
-        questionBn: "ডেলিভারিম্যানের সামনে পার্সেলটি কি খুলে চেক করে নেওয়া যাবে?",
+        questionBn: "Delivery  items      ?",
         answer:
           "Yes. We encourage you to check the outer packaging and product condition in front of the delivery rider before completing your payment.",
         answerBn:
-          "হ্যাঁ, অবশ্যই। ডেলিভারিম্যানের সামনে পার্সেলটি দেখে সিল ও পণ্যের অবস্থা নিশ্চিত হয়ে মূল্য পরিশোধ করতে পারবেন।",
+          ", । Delivery  items    Products  Confirmed  Price   ।",
       },
       {
         id: "faq-3",
         category: "Delivery & Courier",
         question: "How long does delivery take across Bangladesh?",
-        questionBn: "ডেলিভারি পেতে কত দিন সময় লাগে এবং সারা দেশে কি ক্যাশ অন ডেলিভারি আছে?",
+        questionBn: "Delivery   Enter   and    Cash  Delivery ?",
         answer:
           "Delivery within Dhaka City takes 24 to 48 hours. Deliveries outside Dhaka typically arrive within 2 to 4 business days. We provide nationwide Cash on Delivery via Steadfast and Pathao Courier.",
         answerBn:
-          "ঢাকা সিটির মধ্যে ২৪ থেকে ৪৮ ঘণ্টার মধ্যে এবং ঢাকার বাইরে ২ থেকে ৪ কার্যদিবসের মধ্যে ডেলিভারি পৌঁছে দেওয়া হয়। সারা দেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে।",
+          " items  24 from 48 Hours  and   2 from 4   Delivery   ।   Cash  Delivery  ।",
       },
       {
         id: "faq-4",
         category: "Skincare Routines",
         question: "How do I choose products for hot and humid weather?",
-        questionBn: "আমাদের দেশের গরম ও আর্দ্র আবহাওয়ায় কেমন পণ্য বেছে নেওয়া উচিত?",
+        questionBn: "       Products   ?",
         answer:
           "In humid weather, lightweight products work best. We recommend a gentle cleanser, a light hydrating toner or serum, an oil-free moisturizer, and a non-greasy daily sunscreen.",
         answerBn:
-          "গরম ও আর্দ্র আবহাওয়ায় হালকা ও ওয়াটার-বেসড প্রোডাক্ট ব্যবহার করা ভালো। মাইল্ড ফেসওয়াশ, হালকা টোনার বা সিরাম, জেল ময়েশ্চারাইজার এবং নন-গ্রিসি সানস্ক্রিন বেছে নিন।",
+          "      :00- Products use  ।  ,    Oxford Shirt,   and - Panjabi  ।",
       },
       {
         id: "faq-5",
         category: "Returns & Exchanges",
         question: "What is your return policy if an item arrives damaged or incorrect?",
-        questionBn: "প্রোডাক্টে কোনো সমস্যা বা ভুল হলে রিটার্ন বা পরিবর্তনের নিয়ম কী?",
+        questionBn: "Products    Invalid  Return    ?",
         answer:
           "We offer a 7-day replacement policy. If an item arrives damaged or incorrect, contact our customer care within 7 days with your order ID and a photo/unboxing video. We will arrange a free courier pickup from your address and send a replacement.",
         answerBn:
-          "আমাদের রয়েছে ৭ দিনের সহজ রিপ্লেসমেন্ট সুবিধা। কোনো কারণে ভুল বা ক্ষতিগ্রস্ত পণ্য পৌঁছালে ৭ দিনের মধ্যে ছবি বা ভিডিও সহ আমাদের জানান। আমরা ঠিকানা থেকে পার্সেলটি সংগ্রহ করে নতুন পণ্য পাঠিয়ে দেব।",
+          "  7 Enter   ।   Invalid   Products  7 Enter       । We Address from items    Products  ।",
       },
       {
         id: "faq-6",
         category: "Skincare Advisory",
         question: "Can I get help choosing the right products before ordering?",
-        questionBn: "অর্ডার করার আগে কি প্রোডাক্ট বেছে নিতে সাহায্য পেতে পারি?",
+        questionBn: "Order    Products     ?",
         answer:
           "Yes! If you need help choosing the right cleanser, serum, or moisturizer for your everyday routine, message us on WhatsApp daily from 10 AM to 10 PM.",
         answerBn:
-          "অবশ্যই! আপনার রুটিনের জন্য উপযুক্ত পণ্য বেছে নিতে প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত আমাদের হোয়াটসঅ্যাপে মেসেজ দিয়ে সহায়তা নিতে পারেন।",
+          "! your items for added Products   Enter  10:00 from PM 10:00 till       ।",
       },
       {
         id: "faq-7",
         category: "Payment & Pricing",
         question: "Do I need to pay any advance for Cash on Delivery orders?",
-        questionBn: "ক্যাশ অন ডেলিভারিতে অর্ডার করতে কি কোনো অগ্রিম টাকা দিতে হয়?",
+        questionBn: "Cash  Delivery Order     :00  ?",
         answer:
           "For regular orders, you pay the full amount directly to the courier rider upon delivery. No advance payment is needed.",
         answerBn:
-          "সাধারণ অর্ডারের ক্ষেত্রে কোনো অগ্রিম ছাড়াই সম্পূর্ণ মূল্য পণ্য হাতে পেয়ে ডেলিভারিম্যানের কাছে পরিশোধ করতে পারবেন।",
+          " Order    OFF Complete Price Products   Delivery    ।",
       },
       {
         id: "faq-8",
         category: "Product Safety",
         question: "Are your beauty products safe and authentic?",
-        questionBn: "আপনাদের পণ্যগুলো কি নিরাপদ ও আসল?",
+        questionBn: " Products    Authentic?",
         answer:
           "Yes. We only carry genuine products from reputable international brands that follow strict safety and quality standards.",
         answerBn:
-          "হ্যাঁ। আমরা কেবল আন্তর্জাতিক মানসম্পন্ন আসল ব্র্যান্ডের নিরাপদ রূপচর্চা সামগ্রী সরবরাহ করি।",
+          "। We  Premium Completed Authentic Brand     ।",
       },
     ],
     showWhatsappCard: true,
     whatsappTitle: "Need help choosing the right beauty products?",
-    whatsappTitleBn: "সঠিক প্রোডাক্ট নির্বাচনে সাহায্য প্রয়োজন?",
+    whatsappTitleBn: "Need help finding the right fit or size??",
     whatsappSubtitle:
       "Chat directly with our team on WhatsApp daily 10 AM to 10 PM.",
     whatsappSubtitleBn:
-      "আমাদের কাস্টমার সাপোর্ট প্রতিদিন সকাল ১০টা থেকে রাত ১০টা পর্যন্ত হোয়াটসঅ্যাপে প্রস্তুত আছে।",
+      " Customers  Enter  10:00 from PM 10:00 till   ।",
     whatsappButtonText: "Chat on WhatsApp",
-    whatsappButtonTextBn: "হোয়াটসঅ্যাপে মেসেজ দিন",
+    whatsappButtonTextBn: "  Enter",
     whatsappNumber: "+880 1700-000000",
   },
 
   // 10. Footer Comprehensive Configuration
   footerConfig: {
-    brandText: "Blush & Budget",
+    brandText: "Azonno",
     logoImageUrl: "",
     aboutText:
       "Your trusted beauty store in Bangladesh for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.",
     aboutTextBn:
-      "বাংলাদেশের নির্ভরযোগ্য বিউটি শপ। ১০০% আসল আন্তর্জাতিক স্কিনকেয়ার, মেকআপ ও হেয়ার কেয়ার সামগ্রী সারা দেশে ক্যাশ অন ডেলিভারিতে দ্রুত পৌঁছে দেওয়া হয়।",
-    copyrightText: "© 2026 Blush & Budget. All rights reserved. 100% Authentic Products.",
+      "EnglishBangladesh's Premier Clothing Brand। 100% Authentic Premium Casual Wear, Apparel       Cash  Delivery    ।",
+    copyrightText: "© 2026 Azonno. All rights reserved. 100% Authentic Products.",
     supportPhone: "+880 1700-000000",
     supportEmail: "support@example.com",
     supportAddress: "Gulshan, Dhaka, Bangladesh",
-    supportAddressBn: "গুলশান, ঢাকা, বাংলাদেশ",
+    supportAddressBn: ", , English",
     supportWhatsapp: "+880 1700-000000",
     newsletterTitle: "Get Special Offers & Beauty Tips",
-    newsletterTitleBn: "বিশেষ অফার ও বিউটি টিপস পান",
+    newsletterTitleBn: "   items items ",
     newsletterSubtitle: "Subscribe for new arrivals, discounts, and simple skincare guides.",
-    newsletterSubtitleBn: "নতুন পণ্য, ডিসকাউন্ট ও সহজ স্কিনকেয়ার গাইডের আপডেট পেতে সাবস্ক্রাইব করুন।",
+    newsletterSubtitleBn: " Products, Discount   Casual Wear     ।",
     showTrustPillars: true,
     showNewsletter: true,
     showPaymentBadges: true,
@@ -813,29 +813,29 @@ export const DEFAULT_HOMEPAGE_CONFIG: HomepageFullConfig = {
     },
     customPaymentBadges: [],
     categoryLinks: [
-      { label: "Skin Care", labelBn: "স্কিন কেয়ার", href: "/products?category=skin-care" },
-      { label: "Hair Care", labelBn: "হেয়ার কেয়ার", href: "/products?category=hair-care" },
-      { label: "Makeup", labelBn: "মেকআপ", href: "/products?category=makeup" },
-      { label: "Body Care", labelBn: "বডি কেয়ার", href: "/products?category=body-care" },
-      { label: "Top Brands", labelBn: "শীর্ষ ব্র্যান্ডসমূহ", href: "/brands" },
-      { label: "Beauty Journal & Guides", labelBn: "বিউটি জার্নাল ও গাইড", href: "/blog", isHighlight: true },
-      { label: "Special Offers", labelBn: "স্পেশাল অফার", href: "/products?discount=true", isHighlight: true },
+      { label: "Skin Care", labelBn: " ", href: "/products?category=skin-care" },
+      { label: "Hair Care", labelBn: " ", href: "/products?category=hair-care" },
+      { label: "Makeup", labelBn: "Apparel", href: "/products?category=makeup" },
+      { label: "Body Care", labelBn: " ", href: "/products?category=body-care" },
+      { label: "Top Brands", labelBn: " Brand", href: "/brands" },
+      { label: "Beauty Journal & Guides", labelBn: "items   ", href: "/blog", isHighlight: true },
+      { label: "Special Offers", labelBn: " ", href: "/products?discount=true", isHighlight: true },
     ],
     customerCareLinks: [
-      { label: "My Account", labelBn: "আমার অ্যাকাউন্ট", href: "/account" },
-      { label: "Track Order", labelBn: "অর্ডার ট্র্যাক", href: "/track-order", isHighlight: true },
-      { label: "Routine Finder (Quiz)", labelBn: "রুটিন ফাইন্ডার (কুইজ)", href: "/quiz", isHighlight: true },
-      { label: "Wishlist", labelBn: "উইশলিস্ট", href: "/wishlist" },
-      { label: "Return Policy", labelBn: "রিটার্ন পলিসি", href: "/page/returns" },
-      { label: "Terms & Conditions", labelBn: "শর্তাবলী ও নিয়মাবলী", href: "/page/terms" },
-      { label: "Privacy Policy", labelBn: "গোপনীয়তা নীতি", href: "/page/privacy" },
-      { label: "FAQ & Help Center", labelBn: "প্রশ্নোত্তর ও হেল্প সেন্টার", href: "/page/faq" },
+      { label: "My Account", labelBn: " ", href: "/account" },
+      { label: "Track Order", labelBn: "Order ", href: "/track-order", isHighlight: true },
+      { label: "Routine Finder (Quiz)", labelBn: "items  ()", href: "/quiz", isHighlight: true },
+      { label: "Wishlist", labelBn: "", href: "/wishlist" },
+      { label: "Return Policy", labelBn: "Return Policy", href: "/page/returns" },
+      { label: "Terms & Conditions", labelBn: "  Rules", href: "/page/terms" },
+      { label: "Privacy Policy", labelBn: " ", href: "/page/privacy" },
+      { label: "FAQ & Help Center", labelBn: "Q&A   :00", href: "/page/faq" },
     ],
   },
 
-  footerBrandText: "Blush & Budget",
+  footerBrandText: "Azonno",
   footerLogoImageUrl: "",
   footerAboutText:
     "Your trusted beauty store in Bangladesh for 100% authentic international skincare, hair care, and cosmetics with nationwide Cash on Delivery.",
-  footerCopyright: "© 2026 Blush & Budget. All rights reserved. 100% Authentic Products.",
+  footerCopyright: "© 2026 Azonno. All rights reserved. 100% Authentic Products.",
 };

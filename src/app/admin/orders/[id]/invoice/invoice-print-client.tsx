@@ -72,12 +72,12 @@ export default function InvoicePrintClient({
   const brandName =
     invoiceSettings?.invoice_brand_name ||
     config?.headerConfig?.logoText ||
-    "Blush & Budget";
+    "Azonno";
   const logoSrc =
     invoiceSettings?.invoice_logo_url ||
     config?.headerConfig?.logoImageUrl ||
-    "/images/blush-logo.png";
-  const accentColor = invoiceSettings?.invoice_accent_color || "#e91e63";
+    "/images/azonno-logo.png";
+  const accentColor = invoiceSettings?.invoice_accent_color || "#1D6474";
 
   const totalQuantity = items.reduce((sum: number, it: any) => sum + (it.quantity || 1), 0);
   const hasAssignedCourier = Boolean(order.courier_name);
@@ -118,7 +118,7 @@ export default function InvoicePrintClient({
   // Bengali Numeral Converter helper
   const toBn = (val: string | number) => {
     if (lang === "en") return String(val);
-    const bnNums = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+    const bnNums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
     return String(val).replace(/[0-9]/g, (w) => bnNums[+w]);
   };
 
@@ -705,49 +705,49 @@ export default function InvoicePrintClient({
       invoiceTitle:
         invoiceSettings?.invoice_title &&
         invoiceSettings.invoice_title !== "TAX INVOICE" &&
-        invoiceSettings.invoice_title !== "ট্যাক্স ইনভয়েস"
+        invoiceSettings.invoice_title !== " Invoice"
           ? invoiceSettings.invoice_title
-          : "ইনভয়েস",
-      invoiceTo: "প্রাপক / কাস্টমার:",
-      date: "তারিখ:",
-      invoiceNo: "ইনভয়েস নং:",
-      courier: "কুরিয়ার:",
-      totalDue: "সর্বমোট প্রদেয় :",
-      description: "পণ্যের বিবরণ",
-      qty: "পরিমাণ",
-      price: "একক মূল্য",
-      total: "মোট",
-      subtotal: "সাবটোটাল",
-      discount: "ডিসকাউন্ট",
-      deliveryCharge: "ডেলিভারি চার্জ",
-      grandTotal: "সর্বমোট বিল",
-      paymentMethod: "পেমেন্ট মাধ্যম:",
-      mode: "মাধ্যম:",
-      status: "স্ট্যাটাস:",
+          : "Invoice",
+      invoiceTo: " / Customers:",
+      date: "Date:",
+      invoiceNo: "Invoice :",
+      courier: ":",
+      totalDue: "Total  :",
+      description: "Products Description",
+      qty: "Quantity",
+      price: " Price",
+      total: "Total",
+      subtotal: "Subtotal",
+      discount: "Discount",
+      deliveryCharge: "Delivery ",
+      grandTotal: "Total ",
+      paymentMethod: "Payment :",
+      mode: ":",
+      status: "Status:",
       doorstepNotice:
         invoiceSettings?.invoice_footer_notes ||
-        "* অনুগ্রহ করে ডেলিভারি রাইডারের সামনে পার্সেলটি চেক করে মূল্য পরিশোধ করুন।",
-      contactSupport: "কাস্টমার সাপোর্ট:",
-      authSignature: invoiceSettings?.invoice_authorized_signatory_text || "কর্তৃপক্ষের স্বাক্ষর",
-      tagline: invoiceSettings?.invoice_tagline || "১০০% অথেনটিক স্কিনকেয়ার ও বিউটি ইম্পোর্টস",
+        "* Please  Delivery   items   Price  ।",
+      contactSupport: "Customers :",
+      authSignature: invoiceSettings?.invoice_authorized_signatory_text || " ",
+      tagline: invoiceSettings?.invoice_tagline || "100% items Casual Wear  items ",
       addressText:
-        invoiceSettings?.invoice_address || "হাউজ ৪২, রোড ১১, বনানী, ঢাকা-১২১৩, বাংলাদেশ",
-      free: "ফ্রি (০৳)",
-      thermalTrackingNo: "ট্র্যাকিং নম্বর:",
-      thermalDeliverTo: "ডেলিভারি ঠিকানা (প্রাপক):",
-      thermalSender: "প্রেরক (শপ / স্টোর):",
-      weight: "ওজন:",
-      totalItems: "মোট পণ্য:",
-      routing: "কুরিয়ার রাউটিং ও শর্টিং",
-      doNotShip: "সাবধানে হ্যান্ডেল করুন • ডেলিভারির সময় চেক করুন",
-      scanToTrack: "পার্সেল ট্র্যাক করতে স্ক্যান করুন",
-      orderDate: "অর্ডার তারিখ:",
-      tabA4: "A4 ইনভয়েস",
-      tabThermal: "৪×৬ থার্মাল লেবেল",
-      downloadPdf: "পিডিএফ ডাউনলোড",
-      printA4Btn: "ইনভয়েস প্রিন্ট",
-      printThermalBtn: "লেবেল প্রিন্ট",
-      closeWindow: "উইন্ডো বন্ধ করুন",
+        invoiceSettings?.invoice_address || " 42,  11, , -1213, English",
+      free: " (0৳)",
+      thermalTrackingNo: " Number:",
+      thermalDeliverTo: "Delivery Address ():",
+      thermalSender: " ( / ):",
+      weight: ":",
+      totalItems: "Total Products:",
+      routing: " items  items",
+      doNotShip: "   • Delivery Time  ",
+      scanToTrack: "    ",
+      orderDate: "Order Date:",
+      tabA4: "A4 Invoice",
+      tabThermal: "4×6  ",
+      downloadPdf: " ",
+      printA4Btn: "Invoice ",
+      printThermalBtn: " ",
+      closeWindow: "  ",
     },
   }[lang];
 
@@ -852,18 +852,18 @@ export default function InvoicePrintClient({
           <div className="flex items-center justify-end gap-3 text-right">
             <div>
               <span className="font-bold text-[10px] uppercase text-gray-500 tracking-wider block">
-                {isPaidOnline ? (lang === "bn" ? "পেমেন্ট স্ট্যাটাস:" : "PAYMENT STATUS:") : t.totalDue}
+                {isPaidOnline ? (lang === "bn" ? "Payment Status:" : "PAYMENT STATUS:") : t.totalDue}
               </span>
               <span
                 className={`text-xl font-black font-mono ${isPaidOnline ? "text-emerald-700" : ""}`}
                 style={!isPaidOnline ? { color: accentColor } : undefined}
               >
-                {isPaidOnline ? (lang === "bn" ? "পরিশোধিত (৳০ বকেয়া)" : "PAID (৳0 DUE)") : formatCurrency(dueAmount)}
+                {isPaidOnline ? (lang === "bn" ? " (৳0 Due)" : "PAID (৳0 DUE)") : formatCurrency(dueAmount)}
               </span>
             </div>
             {isPaidOnline ? (
               <div className="border-2 border-emerald-600 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1 shrink-0">
-                <span>✓ {lang === "bn" ? "বিকাশে পরিশোধিত" : "PAID ONLINE"}</span>
+                <span>✓ {lang === "bn" ? " " : "PAID ONLINE"}</span>
               </div>
             ) : invoiceSettings?.invoice_show_qr_code !== false && qrCodeDataUrl ? (
               <img
@@ -937,9 +937,9 @@ export default function InvoicePrintClient({
                 <span className="uppercase font-black" style={{ color: isPaidOnline ? "#059669" : accentColor }}>
                   {isPaidOnline
                     ? (isBkash
-                        ? (lang === "bn" ? "বিকাশ ইনস্ট্যান্ট পেমেন্ট (পরিশোধিত)" : "bKash Online Payment (PAID)")
-                        : (lang === "bn" ? "অনলাইন পেমেন্ট (পরিশোধিত)" : "Online Payment (PAID)"))
-                    : (lang === "bn" ? "ক্যাশ অন ডেলিভারি (বকেয়া)" : "Cash on Delivery (COD)")}
+                        ? (lang === "bn" ? "  Payment ()" : "bKash Online Payment (PAID)")
+                        : (lang === "bn" ? " Payment ()" : "Online Payment (PAID)"))
+                    : (lang === "bn" ? "Cash  Delivery ()" : "Cash on Delivery (COD)")}
                 </span>
               </p>
               {trxId && (
@@ -950,13 +950,13 @@ export default function InvoicePrintClient({
               <p className="text-gray-500 text-[10px]">
                 {t.status}{" "}
                 <strong className={`uppercase font-black ${isPaidOnline ? "text-emerald-700" : "text-amber-700"}`}>
-                  {isPaidOnline ? (lang === "bn" ? "পরিশোধিত (PAID ONLINE)" : "PAID ONLINE") : order.payment_status}
+                  {isPaidOnline ? (lang === "bn" ? " (PAID ONLINE)" : "PAID ONLINE") : order.payment_status}
                 </strong>
               </p>
               <p className="text-gray-400 text-[10px] italic leading-tight">
                 {isPaidOnline
                   ? (lang === "bn"
-                      ? "* এই অর্ডারের সম্পূর্ণ মূল্য অনলাইনে বিকাশ এর মাধ্যমে পরিশোধ করা হয়েছে। ডেলিভারিতে কোন টাকা নেয়া যাবে না।"
+                      ? "*  Order Complete Price   via   successfully। Delivery  :00   ।"
                       : "* This order is fully paid online. Do not collect any money upon delivery.")
                   : t.doorstepNotice}
               </p>
@@ -999,7 +999,7 @@ export default function InvoicePrintClient({
 
             {Number(order.advance_paid) > 0 && (
               <div className="flex justify-between py-1 border-b border-gray-100 text-emerald-600 font-bold">
-                <span>{lang === "bn" ? "পরিশোধিত অগ্রিম:" : "Advance Paid:"}</span>
+                <span>{lang === "bn" ? " :" : "Advance Paid:"}</span>
                 <span className="font-mono">-{formatCurrency(order.advance_paid)}</span>
               </div>
             )}
@@ -1013,14 +1013,14 @@ export default function InvoicePrintClient({
             >
               <span className="uppercase tracking-wider">
                 {isPaidOnline
-                  ? (lang === "bn" ? "ডেলিভারিতে প্রদেয় (COD বিল)" : "Due at Delivery (COD)")
+                  ? (lang === "bn" ? "Delivery  (COD )" : "Due at Delivery (COD)")
                   : Number(order.advance_paid) > 0
-                  ? (lang === "bn" ? "বকেয়া / COD বিল" : "Net COD Due")
+                  ? (lang === "bn" ? "Due / COD " : "Net COD Due")
                   : t.grandTotal}
               </span>
               <span className="text-base font-mono font-black">
                 {isPaidOnline
-                  ? (lang === "bn" ? "০৳ (পরিশোধিত)" : "৳0 (PAID)")
+                  ? (lang === "bn" ? "0৳ ()" : "৳0 (PAID)")
                   : formatCurrency(dueAmount)}
               </span>
             </div>
@@ -1116,7 +1116,7 @@ export default function InvoicePrintClient({
             >
               {isPaidOnline
                 ? lang === "bn"
-                  ? "★ পেইড (৳০ প্রদেয়) • টাকা নিবেন না ★"
+                  ? "★  (৳0 ) • :00   ★"
                   : "★ NON-COD (PAID ৳0) • DO NOT COLLECT ★"
                 : `COD : ${formatCurrency(dueAmount)}`}
             </span>
@@ -1294,7 +1294,7 @@ export default function InvoicePrintClient({
               <span className={`text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold whitespace-nowrap ${
                 isPaidOnline
                   ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                  : "bg-pink-100 text-sg-pink"
+                  : "bg-teal-100/70 text-sg-pink"
               }`}>
                 {isPaidOnline ? (isBkash ? "bKash Online (PAID)" : "Online Paid") : "Cash on Delivery"}
               </span>
@@ -1343,7 +1343,7 @@ export default function InvoicePrintClient({
             title="Toggle Bangla / English"
           >
             <Languages className="h-3.5 w-3.5 text-sg-pink" />
-            <span>{lang === "en" ? "বাংলা" : "English"}</span>
+            <span>{lang === "en" ? "English" : "English"}</span>
           </button>
 
           {/* 1-Click Direct PDF Download Button */}

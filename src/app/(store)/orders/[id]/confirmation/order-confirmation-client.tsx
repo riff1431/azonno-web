@@ -37,13 +37,13 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
   const getStatusStepTitle = (step: string) => {
     switch (step) {
       case "placed":
-        return language === "bn" ? "অর্ডার হয়েছে" : "Placed";
+        return language === "bn" ? "Order successfully" : "Placed";
       case "confirmed":
-        return language === "bn" ? "নিশ্চিত হয়েছে" : "Confirmed";
+        return language === "bn" ? "Confirmed successfully" : "Confirmed";
       case "shipped":
-        return language === "bn" ? "শিপড হয়েছে" : "Shipped";
+        return language === "bn" ? "Shipped successfully" : "Shipped";
       case "delivered":
-        return language === "bn" ? "ডেলিভারি হয়েছে" : "Delivered";
+        return language === "bn" ? "Delivery successfully" : "Delivered";
       default:
         return step;
     }
@@ -63,24 +63,24 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
   const getPaymentMethodLabel = (method: string) => {
     if (isPaid) {
       if (method === "bkash" || isBkash) {
-        return language === "bn" ? "বিকাশ ইনস্ট্যান্ট পেমেন্ট (পরিশোধিত)" : "bKash Online Payment (PAID)";
+        return language === "bn" ? "  Payment ()" : "bKash Online Payment (PAID)";
       }
       if (method === "sslcommerz") {
-        return language === "bn" ? "অনলাইন কার্ড ও নেট ব্যাংকিং (পরিশোধিত)" : "Online Payment (PAID)";
+        return language === "bn" ? "     ()" : "Online Payment (PAID)";
       }
-      return language === "bn" ? "অনলাইন পেমেন্ট (পরিশোধিত)" : "Paid Online";
+      return language === "bn" ? " Payment ()" : "Paid Online";
     }
 
     if (method === "cod") {
-      return language === "bn" ? "ক্যাশ অন ডেলিভারি (বকেয়া)" : "Cash on Delivery (Pay on Delivery)";
+      return language === "bn" ? "Cash  Delivery ()" : "Cash on Delivery (Pay on Delivery)";
     }
     if (method === "bkash") {
-      return language === "bn" ? "বিকাশ অনলাইন পেমেন্ট" : "bKash Online Payment";
+      return language === "bn" ? "  Payment" : "bKash Online Payment";
     }
     if (method === "sslcommerz") {
-      return language === "bn" ? "অনলাইন কার্ড ও নেট ব্যাংকিং" : "Online Cards & Net Banking";
+      return language === "bn" ? "    " : "Online Cards & Net Banking";
     }
-    return method || (language === "bn" ? "ক্যাশ অন ডেলিভারি" : "Cash on Delivery");
+    return method || (language === "bn" ? "Cash  Delivery" : "Cash on Delivery");
   };
 
   return (
@@ -97,9 +97,9 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
               {t("orders", "confirmationTitle")}
             </span>
             {isPaid && (
-              <span className="rounded-full bg-pink-100 text-[#e91e63] border border-pink-200 px-3 py-1 text-xs font-black uppercase tracking-wider flex items-center gap-1">
+              <span className="rounded-full bg-teal-100/70 text-[#1D6474] border border-teal-200 px-3 py-1 text-xs font-black uppercase tracking-wider flex items-center gap-1">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                {language === "bn" ? "বিকাশ পেমেন্ট সম্পন্ন" : "bKash Paid Online"}
+                {language === "bn" ? " Payment " : "bKash Paid Online"}
               </span>
             )}
           </div>
@@ -109,7 +109,7 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
           <p className="mt-1 text-xs sm:text-sm text-text-secondary max-w-md mx-auto">
             {isPaid
               ? (language === "bn"
-                  ? "আপনার পেমেন্ট সফলভাবে গৃহীত হয়েছে। পার্সেল ডেলিভারির সময় আপনাকে কোন অতিরিক্ত টাকা দিতে হবে না।"
+                  ? "your Payment permanently  successfully।  Delivery     :00   ।"
                   : "Your payment has been successfully confirmed. You do NOT need to pay any amount upon delivery.")
               : t("orders", "receivedMsg")}
           </p>
@@ -118,20 +118,20 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
         <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
           <div className="inline-flex items-center gap-2 rounded-xl bg-white border border-border px-4 py-2 shadow-xs text-xs font-bold text-text">
             <span>{t("orders", "orderNumber")}:</span>
-            <span className="text-[#e91e63] text-sm font-extrabold font-mono">
+            <span className="text-[#1D6474] text-sm font-extrabold font-mono">
               {order.order_number}
             </span>
           </div>
 
           {trxId && (
-            <div className="inline-flex items-center gap-1.5 rounded-xl bg-pink-50 border border-pink-200 px-3 py-2 text-xs font-bold text-pink-700">
+            <div className="inline-flex items-center gap-1.5 rounded-xl bg-teal-50/60 border border-teal-200 px-3 py-2 text-xs font-bold text-[#164E63]">
               <span>TrxID:</span>
               <span className="font-mono font-black">{trxId}</span>
             </div>
           )}
 
           <Link href={`/orders/${order.id}/invoice`} target="_blank">
-            <Button className="bg-[#e91e63] hover:bg-pink-600 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-md cursor-pointer">
+            <Button className="bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-md cursor-pointer">
               <Printer className="h-4 w-4 mr-1.5" />
               {t("orders", "downloadInvoice")}
             </Button>
@@ -143,7 +143,7 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
       <div className="rounded-2xl border border-border bg-white p-6 shadow-card space-y-4">
         <h2 className="text-sm font-bold text-text flex items-center gap-2">
           <Truck className="h-4 w-4 text-primary-600" />
-          {language === "bn" ? "ডেলিভারি ট্র্যাকার" : "Delivery Status Tracker"}
+          {language === "bn" ? "Delivery " : "Delivery Status Tracker"}
         </h2>
 
         <div className="grid grid-cols-4 gap-2 pt-2 text-center text-xs">
@@ -227,11 +227,11 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
             <div className="flex justify-between">
               <span>{t("checkout", "deliveryFee")} ({order.shipping_method})</span>
               <span className="font-semibold text-text">
-                {order.shipping_amount === 0 ? (language === "bn" ? "ফ্রি" : "FREE") : formatPriceBn(order.shipping_amount)}
+                {order.shipping_amount === 0 ? (language === "bn" ? "" : "FREE") : formatPriceBn(order.shipping_amount)}
               </span>
             </div>
             <div className="border-t border-border pt-2 flex justify-between items-baseline text-xs font-bold text-text">
-              <span>{language === "bn" ? "মোট অর্ডার মূল্য" : "Total Order Amount"}</span>
+              <span>{language === "bn" ? "Total Order Price" : "Total Order Amount"}</span>
               <span className="text-gray-800 font-mono text-sm">{formatPriceBn(order.total)}</span>
             </div>
 
@@ -240,21 +240,21 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
                 <div className="flex justify-between items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5" />
-                    {language === "bn" ? "অনলাইনে পরিশোধিত" : "Paid Online (bKash)"}
+                    {language === "bn" ? " " : "Paid Online (bKash)"}
                   </span>
                   <span className="font-mono">-{formatPriceBn(order.total)}</span>
                 </div>
                 <div className="border-t-2 border-emerald-400 pt-2 flex justify-between items-baseline text-sm font-extrabold text-emerald-800">
-                  <span>{language === "bn" ? "ডেলিভারিতে প্রদেয় (Due)" : "Payable on Delivery"}</span>
+                  <span>{language === "bn" ? "Delivery  (Due)" : "Payable on Delivery"}</span>
                   <span className="text-base text-emerald-700 font-black">
-                    {language === "bn" ? "৳০ (পরিশোধিত)" : "৳0 (PAID)"}
+                    {language === "bn" ? "৳0 ()" : "৳0 (PAID)"}
                   </span>
                 </div>
               </>
             ) : (
               <div className="border-t border-border pt-2 flex justify-between items-baseline text-sm font-extrabold text-text">
                 <span>{t("checkout", "totalPayable")}</span>
-                <span className="text-[#e91e63] text-base">{formatPriceBn(order.total)}</span>
+                <span className="text-[#1D6474] text-base">{formatPriceBn(order.total)}</span>
               </div>
             )}
           </div>
@@ -275,7 +275,7 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
               <div>
                 <p className="font-semibold text-text">{item.product_name_snapshot}</p>
                 <p className="text-text-muted mt-0.5">
-                  {language === "bn" ? "পরিমাণ: " : "Qty: "}
+                  {language === "bn" ? "Quantity: " : "Qty: "}
                   {toBn(item.quantity)} × {formatPriceBn(item.unit_price)}
                 </p>
               </div>
@@ -291,17 +291,17 @@ export function OrderConfirmationClient({ order }: OrderConfirmationClientProps)
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <Link href={`/orders/${order.id}/invoice`} target="_blank">
           <Button variant="outline" size="lg" className="px-6 font-bold text-xs border-gray-300 hover:bg-gray-50">
-            <Printer className="h-4 w-4 mr-2 text-[#e91e63]" />
+            <Printer className="h-4 w-4 mr-2 text-[#1D6474]" />
             {t("orders", "downloadInvoice")}
           </Button>
         </Link>
         <Link href="/account">
-          <Button variant="outline" size="lg" className="px-6 font-bold text-xs border-pink-200 bg-pink-50 hover:bg-pink-100 text-[#e91e63]">
-            {language === "bn" ? "আমার অ্যাকাউন্ট ও অর্ডারসমূহ" : "My Account & Orders"}
+          <Button variant="outline" size="lg" className="px-6 font-bold text-xs border-teal-200 bg-teal-50/60 hover:bg-teal-100/70 text-[#1D6474]">
+            {language === "bn" ? "   Order" : "My Account & Orders"}
           </Button>
         </Link>
         <Link href="/products">
-          <Button size="lg" className="px-8 shadow-md bg-[#e91e63] hover:bg-pink-600 text-white font-bold">
+          <Button size="lg" className="px-8 shadow-md bg-[#1D6474] hover:bg-[#164E63] text-white font-bold">
             {t("cartPage", "continueShopping")}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>

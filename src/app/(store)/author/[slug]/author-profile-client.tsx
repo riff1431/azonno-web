@@ -25,11 +25,11 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
       {/* Breadcrumb Bar */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-text-muted">
         <Link href="/" className="hover:text-text transition-colors">
-          {isBn ? "হোম" : "Home"}
+          {isBn ? "" : "Home"}
         </Link>
         <ChevronRight className="h-3 w-3 text-zinc-400" />
         <Link href="/blog" className="hover:text-text transition-colors">
-          {isBn ? "বিউটি জার্নাল" : "Editorial Journal"}
+          {isBn ? "items " : "Editorial Journal"}
         </Link>
         <ChevronRight className="h-3 w-3 text-zinc-400" />
         <span className="text-text font-bold">{author.name}</span>
@@ -55,12 +55,12 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
             {author.is_verified_expert && (
               <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-blue-200">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                {isBn ? "ভেরিফায়েড বিউটি বিশেষজ্ঞ" : "Verified Beauty Expert"}
+                {isBn ? " items " : "Verified Beauty Expert"}
               </span>
             )}
           </div>
 
-          <p className="text-sm sm:text-base font-semibold text-[#e91e63]">{author.job_title}</p>
+          <p className="text-sm sm:text-base font-semibold text-[#1D6474]">{author.job_title}</p>
 
           <p className="text-sm sm:text-base md:text-[17px] text-text-secondary leading-relaxed max-w-2xl">
             {author.bio}
@@ -74,7 +74,7 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
                   href={socialLinks.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full bg-pink-50 text-[#e91e63] flex items-center justify-center hover:bg-pink-100 transition-colors font-bold text-xs"
+                  className="h-9 w-9 rounded-full bg-teal-50/60 text-[#1D6474] flex items-center justify-center hover:bg-teal-100/70 transition-colors font-bold text-xs"
                   aria-label="Instagram"
                 >
                   <span>IG</span>
@@ -111,7 +111,7 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg sm:text-xl font-bold text-text">
-            {isBn ? `${author.name}-এর প্রকাশিত আর্টিকেল (${toBn(authorPosts.length)})` : `Articles by ${author.name} (${authorPosts.length})`}
+            {isBn ? `${author.name}-  items (${toBn(authorPosts.length)})` : `Articles by ${author.name} (${authorPosts.length})`}
           </h2>
         </div>
 
@@ -143,7 +143,7 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-xs text-text-muted">
                     <Clock className="h-3.5 w-3.5" />
-                    <span>{isBn ? `${toBn(post.reading_time_minutes)} মিনিট পাঠ` : `${post.reading_time_minutes} min read`}</span>
+                    <span>{isBn ? `${toBn(post.reading_time_minutes)}  ` : `${post.reading_time_minutes} min read`}</span>
                   </div>
 
                   <Link href={`/blog/${post.slug}`}>
@@ -159,9 +159,9 @@ export function AuthorProfileClient({ author, authorPosts }: AuthorProfileClient
 
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#e91e63] pt-2"
+                  className="inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[#1D6474] pt-2"
                 >
-                  {isBn ? "আর্টিকেলটি পড়ুন" : "Read Article"} <ArrowRight className="h-4 w-4" />
+                  {isBn ? "itemsitems " : "Read Article"} <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </article>

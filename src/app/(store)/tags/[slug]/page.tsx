@@ -16,11 +16,11 @@ export async function generateMetadata({
     .eq("slug", slug)
     .maybeSingle();
 
-  if (!tag) return { title: "Tag Not Found — Blush & Budget" };
+  if (!tag) return { title: "Tag Not Found — Azonno" };
 
   return {
-    title: `${tag.name} Skincare & Beauty Products — Blush & Budget Bangladesh`,
-    description: `Shop genuine beauty & skincare products tagged #${tag.name} in Bangladesh with Cash on Delivery from Blush & Budget.`,
+    title: `${tag.name} Skincare & Beauty Products — Azonno Bangladesh`,
+    description: `Shop genuine beauty & skincare products tagged #${tag.name} in Bangladesh with Cash on Delivery from Azonno.`,
   };
 }
 

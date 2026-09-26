@@ -28,46 +28,46 @@ const POLICY_NAV_LINKS = [
     slug: "returns",
     href: "/page/returns",
     labelEn: "Return Policy",
-    labelBn: "রিটার্ন পলিসি",
+    labelBn: ":00 Policy",
     icon: RotateCcw,
     badge: "7 Days",
-    badgeBn: "৭ দিন",
+    badgeBn: "7 Enter",
   },
   {
     slug: "terms",
     href: "/page/terms",
     labelEn: "Terms & Conditions",
-    labelBn: "শর্তাবলী ও নিয়মাবলী",
+    labelBn: "  Rules",
     icon: ShieldCheck,
     badge: "Official",
-    badgeBn: "অফিসিয়াল",
+    badgeBn: "",
   },
   {
     slug: "privacy",
     href: "/page/privacy",
     labelEn: "Privacy Policy",
-    labelBn: "গোপনীয়তা নীতি",
+    labelBn: " ",
     icon: ShieldCheck,
     badge: "100% Safe",
-    badgeBn: "১০০% নিরাপদ",
+    badgeBn: "100% ",
   },
   {
     slug: "faq",
     href: "/page/faq",
     labelEn: "FAQ & Help",
-    labelBn: "প্রশ্নোত্তর ও হেল্প",
+    labelBn: "Q&A  ",
     icon: MessageCircle,
     badge: "24/7 Support",
-    badgeBn: "সহায়তা",
+    badgeBn: "",
   },
   {
     slug: "about",
     href: "/page/about",
     labelEn: "About Us",
-    labelBn: "আমাদের সম্পর্কে",
+    labelBn: " ",
     icon: Sparkles,
     badge: "Authentic",
-    badgeBn: "আমাদের গল্প",
+    badgeBn: " ",
   },
 ];
 
@@ -94,12 +94,12 @@ export function CmsPageClient({
               className="text-xs sm:text-sm text-zinc-600 hover:text-zinc-900 -ml-2 rounded-xl transition-all"
             >
               <ArrowLeft className="h-4 w-4 mr-1.5" />
-              {language === "bn" ? "হোমে ফিরে যান" : "Back to Home"}
+              {language === "bn" ? "  " : "Back to Home"}
             </Button>
           </Link>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-3 py-1 rounded-full shadow-2xs">
             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-            <span>{language === "bn" ? "ভেরিফাইড অফিসিয়াল পলিসি" : "Verified Official Policy"}</span>
+            <span>{language === "bn" ? "  Policy" : "Verified Official Policy"}</span>
           </div>
         </div>
 
@@ -138,9 +138,9 @@ export function CmsPageClient({
           <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-pink-500/10 via-purple-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
           
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-pink-50 text-pink-700 px-3 py-1 text-xs font-bold uppercase border border-pink-200">
-              <Sparkles className="h-3 w-3 text-pink-600" />
-              {language === "bn" ? "Blush & Budget অফিসিয়াল পলিসি" : "Blush & Budget Policy"}
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-50/60 text-[#164E63] px-3 py-1 text-xs font-bold uppercase border border-teal-200">
+              <Sparkles className="h-3 w-3 text-[#1D6474]" />
+              {language === "bn" ? "Azonno  Policy" : "Azonno Policy"}
             </span>
           </div>
 
@@ -154,12 +154,12 @@ export function CmsPageClient({
           <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-zinc-500 pt-3 border-t border-zinc-100">
             <div className="flex items-center gap-1.5 font-medium">
               <Clock className="h-4 w-4 text-zinc-400" />
-              <span>{language === "bn" ? "সর্বশেষ সংস্করণ: " : "Last reviewed: "}{lastUpdated}</span>
+              <span>{language === "bn" ? " : " : "Last reviewed: "}{lastUpdated}</span>
             </div>
             <div className="hidden sm:block h-3.5 w-px bg-zinc-200" />
             <div className="flex items-center gap-1.5 text-zinc-600 font-medium">
               <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span>{language === "bn" ? "১০০% আসল পণ্যের নিশ্চয়তা" : "100% Genuine Guaranteed"}</span>
+              <span>{language === "bn" ? "100% Authentic Products " : "100% Genuine Guaranteed"}</span>
             </div>
           </div>
         </div>
@@ -167,39 +167,39 @@ export function CmsPageClient({
         {/* Trust Badges Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-3.5 text-center space-y-1 shadow-2xs">
-            <ShieldCheck className="h-5 w-5 text-pink-600 mx-auto" />
+            <ShieldCheck className="h-5 w-5 text-[#1D6474] mx-auto" />
             <div className="text-xs font-bold text-zinc-900">
-              {language === "bn" ? "১০০% আসল পণ্য" : "100% Authentic"}
+              {language === "bn" ? "100% Authentic Products" : "100% Authentic"}
             </div>
             <div className="text-[11px] text-zinc-500">
-              {language === "bn" ? "অফিসিয়াল সোর্সিং" : "Direct Import"}
+              {language === "bn" ? " " : "Direct Import"}
             </div>
           </div>
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-3.5 text-center space-y-1 shadow-2xs">
             <Truck className="h-5 w-5 text-blue-600 mx-auto" />
             <div className="text-xs font-bold text-zinc-900">
-              {language === "bn" ? "ক্যাশ অন ডেলিভারি" : "Cash on Delivery"}
+              {language === "bn" ? "Cash  Delivery" : "Cash on Delivery"}
             </div>
             <div className="text-[11px] text-zinc-500">
-              {language === "bn" ? "সারা দেশে হোম ডেলিভারি" : "Nationwide Delivery"}
+              {language === "bn" ? "   Delivery" : "Nationwide Delivery"}
             </div>
           </div>
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-3.5 text-center space-y-1 shadow-2xs">
             <RotateCcw className="h-5 w-5 text-purple-600 mx-auto" />
             <div className="text-xs font-bold text-zinc-900">
-              {language === "bn" ? "৭ দিনের রিটার্ন" : "7 Days Return"}
+              {language === "bn" ? "7 Enter :00" : "7 Days Return"}
             </div>
             <div className="text-[11px] text-zinc-500">
-              {language === "bn" ? "ডোরস্টেপ রিপ্লেসমেন্ট" : "Hassle-free Pickup"}
+              {language === "bn" ? " " : "Hassle-free Pickup"}
             </div>
           </div>
           <div className="rounded-2xl border border-zinc-200/80 bg-white p-3.5 text-center space-y-1 shadow-2xs">
             <MessageCircle className="h-5 w-5 text-emerald-600 mx-auto" />
             <div className="text-xs font-bold text-zinc-900">
-              {language === "bn" ? "সরাসরি সহায়তা" : "Friendly Support"}
+              {language === "bn" ? " " : "Friendly Support"}
             </div>
             <div className="text-[11px] text-zinc-500">
-              {language === "bn" ? "প্রতিদিন ১০টা - ১০টা" : "10 AM - 10 PM"}
+              {language === "bn" ? "Enter 10:00 - 10:00" : "10 AM - 10 PM"}
             </div>
           </div>
         </div>

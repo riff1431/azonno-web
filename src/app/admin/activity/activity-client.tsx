@@ -44,14 +44,14 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
   const getCategoryLabel = (cat: string) => {
     if (!isBn) return cat;
     switch (cat) {
-      case "All": return "সকল";
-      case "Orders": return "অর্ডার";
-      case "Logistics": return "লজিস্টিকস ও কুরিয়ার";
-      case "Security": return "নিরাপত্তা ও অ্যাক্সেস";
-      case "Social Proof": return "সোশ্যাল প্রুফ ও রিভিউ";
-      case "Marketing": return "মার্কেটিং";
-      case "Catalog": return "ক্যাটালগ";
-      case "Settings": return "সেটিংস";
+      case "All": return "All";
+      case "Orders": return "Order";
+      case "Logistics": return "items  Courier";
+      case "Security": return "Security  ";
+      case "Social Proof": return "   Reviews";
+      case "Marketing": return "Marketing";
+      case "Catalog": return "Catalog";
+      case "Settings": return "Settings";
       default: return cat;
     }
   };
@@ -59,7 +59,7 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
   const handleAddLog = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!action.trim() || !details.trim()) {
-      setError(isBn ? "অনুগ্রহ করে অ্যাকশন এবং বিবরণ উভয়ই পূরণ করুন" : "Please fill out both action and description");
+      setError(isBn ? "Please  Action and Description   " : "Please fill out both action and description");
       return;
     }
 
@@ -74,7 +74,7 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
             action: action.toUpperCase(),
             details,
             user: "Admin",
-            time: isBn ? "এইমাত্র" : "Just now",
+            time: isBn ? "" : "Just now",
             category,
             createdAt: new Date().toISOString(),
           },
@@ -84,7 +84,7 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
         setAction("");
         setDetails("");
       } else {
-        setError(res.error || (isBn ? "লগ সংরক্ষণ করতে ব্যর্থ হয়েছে" : "Failed to save log"));
+        setError(res.error || (isBn ? " Save  Failed successfully" : "Failed to save log"));
       }
     } finally {
       setSubmitting(false);
@@ -96,18 +96,18 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-4">
         <div>
           <h1 className="text-2xl font-bold text-text">
-            {isBn ? "প্রশাসনিক অ্যাক্টিভিটি ও অডিট ট্রেল" : "Administrative Activity & Audit Trail"}
+            {isBn ? " itemsitems   " : "Administrative Activity & Audit Trail"}
           </h1>
           <p className="text-sm text-text-secondary mt-0.5">
             {isBn
-              ? "স্টাফ অপারেশন, কুরিয়ার বুকিং, ফ্রড ব্লকলিস্টিং, ক্যাটালগ আপডেট এবং অর্ডার ইভেন্টের স্থায়ী বিবরণ।"
+              ? ":00 , Courier ,  items, Catalog  and Order   Description।"
               : "Immutable chronicle of staff operations, courier bookings, fraud blacklisting, catalog updates, and order events."}
           </p>
         </div>
 
         <Button onClick={() => setShowModal(true)} size="sm" className="shrink-0 text-xs">
           <Plus className="h-4 w-4 mr-1.5" />
-          {isBn ? "অডিট নোট লিখুন" : "Log Audit Note"}
+          {isBn ? "  " : "Log Audit Note"}
         </Button>
       </div>
 
@@ -133,17 +133,17 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
         <div className="flex items-center justify-between border-b border-border pb-3">
           <h2 className="text-base font-bold text-text flex items-center gap-2">
             <Activity className="h-4 w-4 text-primary-600" />
-            {isBn ? "লাইভ ইভেন্ট ফিড" : "Live Event Feed"}
+            {isBn ? "  " : "Live Event Feed"}
           </h2>
           <span className="text-xs text-text-muted">
-            {filteredLogs.length} {isBn ? "টি ইভেন্ট" : "events"}
+            {filteredLogs.length} {isBn ? "items " : "events"}
           </span>
         </div>
 
         <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
           {filteredLogs.length === 0 ? (
             <p className="text-text-muted text-xs py-4 text-center">
-              {isBn ? "এই ফিল্টারে কোনো অডিট লগ পাওয়া যায়নি।" : "No audit logs found for this filter."}
+              {isBn ? " :00     Tracking।" : "No audit logs found for this filter."}
             </p>
           ) : (
             filteredLogs.map((log) => {
@@ -174,7 +174,7 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
                     <div className="flex items-center gap-1.5 text-[11px] text-text-muted">
                       <ShieldCheck className="h-3 w-3 text-emerald-600" />
                       <span>
-                        {isBn ? "সম্পাদনকারী:" : "Actor:"}{" "}
+                        {isBn ? ":" : "Actor:"}{" "}
                         <strong className="text-text">{log.user}</strong>
                       </span>
                     </div>
@@ -193,7 +193,7 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-text flex items-center gap-2">
                 <Activity className="h-4 w-4 text-primary-600" />
-                {isBn ? "সিকিউরিটি বা অপারেশনাল অডিট নোট যোগ করুন" : "Record Security or Operational Audit Note"}
+                {isBn ? "Security     Add to Cart" : "Record Security or Operational Audit Note"}
               </h3>
               <button
                 onClick={() => setShowModal(false)}
@@ -212,27 +212,27 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
 
             <form onSubmit={handleAddLog} className="space-y-4 text-xs">
               <div className="space-y-1.5">
-                <Label htmlFor="log-cat">{isBn ? "ক্যাটাগরি" : "Category"}</Label>
+                <Label htmlFor="log-cat">{isBn ? "Category" : "Category"}</Label>
                 <select
                   id="log-cat"
                   value={category}
                   onChange={(e) => setCategory(e.target.value as any)}
                   className="w-full rounded-xl border border-border bg-white px-3 py-2 text-xs text-text focus:border-primary-500 focus:outline-none"
                 >
-                  <option value="Security">{isBn ? "নিরাপত্তা ও অ্যাক্সেস" : "Security & Access"}</option>
-                  <option value="Logistics">{isBn ? "লজিস্টিকস ও কুরিয়ার" : "Logistics & Courier"}</option>
-                  <option value="Orders">{isBn ? "অর্ডার ও বিলিং" : "Orders & Billing"}</option>
-                  <option value="Social Proof">{isBn ? "সোশ্যাল প্রুফ ও মডারেশন" : "Social Proof & Moderation"}</option>
-                  <option value="Marketing">{isBn ? "মার্কেটিং ও বার্তা" : "Marketing & Communication"}</option>
-                  <option value="Settings">{isBn ? "সেটিংস ও সিস্টেম" : "Settings & System"}</option>
+                  <option value="Security">{isBn ? "Security  " : "Security & Access"}</option>
+                  <option value="Logistics">{isBn ? "items  Courier" : "Logistics & Courier"}</option>
+                  <option value="Orders">{isBn ? "Order  " : "Orders & Billing"}</option>
+                  <option value="Social Proof">{isBn ? "   Moderation" : "Social Proof & Moderation"}</option>
+                  <option value="Marketing">{isBn ? "Marketing  " : "Marketing & Communication"}</option>
+                  <option value="Settings">{isBn ? "Settings  " : "Settings & System"}</option>
                 </select>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="log-act">{isBn ? "অ্যাকশন শিরোনাম" : "Action Title"}</Label>
+                <Label htmlFor="log-act">{isBn ? "Action Name" : "Action Title"}</Label>
                 <Input
                   id="log-act"
-                  placeholder={isBn ? "যেমন: স্টক যাচাইকরণ অথবা ব্লক যোগ" : "e.g. Manual Fraud Blacklist or Stock Verification"}
+                  placeholder={isBn ? "e.g.: Stock Verification or  Add" : "e.g. Manual Fraud Blacklist or Stock Verification"}
                   value={action}
                   onChange={(e) => setAction(e.target.value)}
                   required
@@ -240,11 +240,11 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="log-desc">{isBn ? "বিস্তারিত বিবরণ" : "Detailed Description"}</Label>
+                <Label htmlFor="log-desc">{isBn ? " Description" : "Detailed Description"}</Label>
                 <textarea
                   id="log-desc"
                   rows={3}
-                  placeholder={isBn ? "যেমন: ঢাকা ওয়্যারহাউজের স্টক সরেজমিনে পরিদর্শন ও হালনাগাদ..." : "e.g. Manually inspected and cleared Dhaka warehouse inventory..."}
+                  placeholder={isBn ? "e.g.:   Stock    ..." : "e.g. Manually inspected and cleared Dhaka warehouse inventory..."}
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
                   className="w-full rounded-xl border border-border bg-white p-2.5 text-xs text-text focus:border-primary-500 focus:outline-none resize-none"
@@ -259,12 +259,12 @@ export function ActivityClient({ initialLogs }: ActivityClientProps) {
                   size="sm"
                   onClick={() => setShowModal(false)}
                 >
-                  {isBn ? "বাতিল" : "Cancel"}
+                  {isBn ? "Cancel" : "Cancel"}
                 </Button>
                 <Button type="submit" size="sm" disabled={submitting}>
                   {submitting
-                    ? (isBn ? "সংরক্ষণ হচ্ছে..." : "Logging...")
-                    : (isBn ? "অডিট ইভেন্ট সংরক্ষণ করুন" : "Record Audit Event")}
+                    ? (isBn ? "Save ..." : "Logging...")
+                    : (isBn ? "  Save" : "Record Audit Event")}
                 </Button>
               </div>
             </form>

@@ -34,7 +34,7 @@ export default function LoginForm() {
   }, []);
 
   const logoImg = config.headerConfig?.logoImageUrl;
-  const brandName = config.headerConfig?.logoText || "Blush & Budget";
+  const brandName = config.headerConfig?.logoText || "Azonno";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ export default function LoginForm() {
       if (authError) {
         setError(
           authError.message === "Invalid login credentials"
-            ? (language === "bn" ? "ভুল মোবাইল নম্বর/ইমেইল বা পাসওয়ার্ড। অনুগ্রহ করে পুনরায় চেষ্টা করুন।" : "Invalid mobile number/email or password. Please check your credentials and try again.")
+            ? (language === "bn" ? "Invalid Mobile Number/Email  Password। Please  again :00 ।" : "Invalid mobile number/email or password. Please check your credentials and try again.")
             : authError.message
         );
         setLoading(false);
@@ -76,14 +76,14 @@ export default function LoginForm() {
 
       setSuccessMsg(
         destination === "/admin"
-          ? (language === "bn" ? "এডমিন হিসেবে লগইন সফল হয়েছে! ড্যাশবোর্ডে নিয়ে যাওয়া হচ্ছে..." : "Signed in as Administrator! Opening Admin Dashboard...")
-          : (language === "bn" ? "সফলভাবে লগইন হয়েছে! আপনার অ্যাকাউন্টে নিয়ে যাওয়া হচ্ছে..." : "Signed in successfully! Redirecting to your account...")
+          ? (language === "bn" ? "  Login  successfully! Dashboard with  ..." : "Signed in as Administrator! Opening Admin Dashboard...")
+          : (language === "bn" ? "permanently Login successfully! your  with  ..." : "Signed in successfully! Redirecting to your account...")
       );
       setTimeout(() => {
         window.location.href = destination;
       }, 700);
     } catch {
-      setError(language === "bn" ? "একটি অপ্রত্যাশিত সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।" : "An unexpected error occurred. Please try again.");
+      setError(language === "bn" ? "items   successfully। Please   :00 ।" : "An unexpected error occurred. Please try again.");
       setLoading(false);
     }
   };
@@ -133,14 +133,14 @@ export default function LoginForm() {
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="login-email" className="text-xs font-bold text-gray-800">
-              {language === "bn" ? "মোবাইল নম্বর বা ইমেইল অ্যাড্রেস" : "Mobile Number or Email Address"}
+              {language === "bn" ? "Mobile Number  Email " : "Mobile Number or Email Address"}
             </Label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 id="login-email"
                 type="text"
-                placeholder={language === "bn" ? "০১XXXXXXXXX বা name@example.com" : "01XXXXXXXXX or name@example.com"}
+                placeholder={language === "bn" ? "01XXXXXXXXX  name@example.com" : "01XXXXXXXXX or name@example.com"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -158,7 +158,7 @@ export default function LoginForm() {
               </Label>
               <Link
                 href="/forgot-password"
-                className="text-xs font-bold text-[#e91e63] hover:underline"
+                className="text-xs font-bold text-[#1D6474] hover:underline"
               >
                 {t("auth", "forgotPassword")}
               </Link>
@@ -168,7 +168,7 @@ export default function LoginForm() {
               <Input
                 id="login-password"
                 type={showPassword ? "text" : "password"}
-                placeholder={language === "bn" ? "আপনার পাসওয়ার্ড লিখুন" : "Enter your password"}
+                placeholder={language === "bn" ? "your Password " : "Enter your password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -189,11 +189,11 @@ export default function LoginForm() {
             id="login-submit-btn"
             type="submit"
             disabled={loading}
-            className="w-full h-11 rounded-xl bg-[#e91e63] hover:bg-pink-600 text-white font-extrabold text-sm shadow-md transition-all active:scale-95 mt-2"
+            className="w-full h-11 rounded-xl bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold text-sm shadow-md transition-all active:scale-95 mt-2"
           >
             {loading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {language === "bn" ? "লগইন হচ্ছে..." : "Signing In..."}
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {language === "bn" ? "Login ..." : "Signing In..."}
               </>
             ) : (
               <>
@@ -208,7 +208,7 @@ export default function LoginForm() {
           <span>{t("auth", "noAccount")} </span>
           <Link
             href={redirectTo !== "/account" ? `/register?redirect=${encodeURIComponent(redirectTo)}` : "/register"}
-            className="font-bold text-[#e91e63] hover:underline"
+            className="font-bold text-[#1D6474] hover:underline"
           >
             {t("auth", "createAccount")}
           </Link>

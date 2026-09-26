@@ -59,7 +59,7 @@ export function ClearDataSection() {
       if (res.success) {
         setResultMessage({
           success: true,
-          message: res.message || "ডেটা সফলভাবে মুছে ফেলা হয়েছে।",
+          message: res.message || "Data successfully cleared।",
           timestamp: res.timestamp,
         });
         setTimeout(() => {
@@ -70,13 +70,13 @@ export function ClearDataSection() {
       } else {
         setResultMessage({
           success: false,
-          message: res.error || "ডেটা মুছতে ব্যর্থ হয়েছে।",
+          message: res.error || "Failed to clear data।",
         });
       }
     } catch (err: any) {
       setResultMessage({
         success: false,
-        message: err.message || "সার্ভার এরর হয়েছে।",
+        message: err.message || "Server Error successfully।",
       });
     } finally {
       setLoading(false);
@@ -93,14 +93,14 @@ export function ClearDataSection() {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-text">
-                ডেটা রিসেট ও পার্মানেন্ট ক্লিয়ার (Selective Data Wiper)
+                :00 Reset    (Selective Data Wiper)
               </h2>
               <span className="text-[10px] font-black uppercase text-red-700 bg-red-100 px-2 py-0.5 rounded-full border border-red-300">
                 Admin Control
               </span>
             </div>
             <p className="text-xs text-text-secondary mt-0.5">
-              যেকোনো ফিচারের ডেটা (যেমন: পিক্সেল ট্র্যাকিং, লিডস, অর্ডার হিস্ট্রি, রিভিউ) নিরাপদ ২-ধাপে ওয়েবসাইট থেকে সম্পূর্ণ মুছুন।
+                :00 (e.g.: Pixel Tracking, , Order , Reviews)  2-  from Complete Delete।
             </p>
           </div>
         </div>
@@ -127,7 +127,7 @@ export function ClearDataSection() {
           <div className="flex-1">
             <p>{resultMessage.message}</p>
             {resultMessage.timestamp && (
-              <span className="text-[10px] text-emerald-700 font-mono">সময়: {resultMessage.timestamp}</span>
+              <span className="text-[10px] text-emerald-700 font-mono">Time: {resultMessage.timestamp}</span>
             )}
           </div>
         </div>
@@ -137,7 +137,7 @@ export function ClearDataSection() {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
         <div className="md:col-span-8 space-y-1.5">
           <label className="block text-xs font-bold text-gray-800">
-            কোন ফিচারের ডেটা মুছতে চান সিলেক্ট করুন:
+              :00    :
           </label>
           <select
             value={selectedFeatureId}
@@ -162,7 +162,7 @@ export function ClearDataSection() {
             className="w-full h-10 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs gap-2 shadow-xs transition-all cursor-pointer active:scale-98"
           >
             <Trash2 className="h-4 w-4" />
-            <span>ডেটা ক্লিয়ার করুন</span>
+            <span>:00  </span>
           </Button>
         </div>
       </div>
@@ -194,7 +194,7 @@ export function ClearDataSection() {
 
         <div className="flex items-center gap-1.5 text-[11px] font-bold text-red-700 bg-red-50/80 p-2 rounded-xl border border-red-200">
           <AlertTriangle className="h-3.5 w-3.5 text-red-600 shrink-0" />
-          <span>প্রভাব: {currentFeature.impactWarning}</span>
+          <span>: {currentFeature.impactWarning}</span>
         </div>
       </div>
 
@@ -213,7 +213,7 @@ export function ClearDataSection() {
                     Step 2 of 2: Safety Verification
                   </span>
                   <h3 className="text-base font-black text-gray-900 mt-0.5">
-                    আপনি কি নিশ্চিতভাবে এই ডেটা মুছে ফেলতে চান?
+                    Are you sure you want to Confirmedpermanently  :00 want to delete?
                   </h3>
                 </div>
               </div>
@@ -231,7 +231,7 @@ export function ClearDataSection() {
             {/* Target Item Highlight */}
             <div className="bg-red-50 p-3.5 rounded-2xl border border-red-200 space-y-1 text-xs">
               <span className="text-[10px] font-bold uppercase text-red-500 block">
-                টার্গেট ফিচার:
+                :00 :
               </span>
               <p className="font-extrabold text-red-950 text-sm">
                 {currentFeature.nameBn}
@@ -252,14 +252,14 @@ export function ClearDataSection() {
                   className="mt-0.5 h-4 w-4 rounded text-red-600 focus:ring-red-500 accent-red-600 shrink-0"
                 />
                 <span className="font-bold text-gray-800 leading-snug">
-                  আমি বুঝে শুনে নিশ্চিত করছি যে এই ডেটাটি স্থায়ীভাবে মুছে যাবে এবং পরবর্তীতে পুনরুদ্ধার করা যাবে না।
+                     Confirmed    :00items permanently   and     ।
                 </span>
               </label>
 
               {/* Text Confirmation Input */}
               <div className="space-y-1.5">
                 <label className="block font-bold text-gray-700">
-                  নিরাপত্তা নিশ্চিত করতে নিচের ঘরে <span className="font-mono text-red-600 font-extrabold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">DELETE</span> লিখুন:
+                  Security Confirmed    <span className="font-mono text-red-600 font-extrabold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">DELETE</span> :
                 </label>
                 <Input
                   type="text"
@@ -281,7 +281,7 @@ export function ClearDataSection() {
                   disabled={loading}
                   className="text-xs h-9 font-semibold cursor-pointer"
                 >
-                  বাতিল করুন (Cancel)
+                  Cancel  (Cancel)
                 </Button>
 
                 <Button
@@ -296,12 +296,12 @@ export function ClearDataSection() {
                   {loading ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>মুছে ফেলা হচ্ছে...</span>
+                      <span>  ...</span>
                     </>
                   ) : (
                     <>
                       <Trash2 className="h-4 w-4" />
-                      <span>স্থায়ীভাবে মুছুন (Permanent Delete)</span>
+                      <span>permanently Delete (Permanent Delete)</span>
                     </>
                   )}
                 </Button>

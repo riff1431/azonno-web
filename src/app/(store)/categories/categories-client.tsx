@@ -16,57 +16,57 @@ export function CategoriesClient() {
 
   const categories = [
     {
-      name: language === "bn" ? "স্কিন কেয়ার" : "Skin Care",
+      name: language === "bn" ? " " : "Skin Care",
       slug: "skin-care",
-      desc: language === "bn" ? "ক্লিনজার, টোনার, সিরাম, ময়েশ্চারাইজার ও সানস্ক্রিন" : "Cleansers, Toners, Serums, Moisturizers & SPF",
+      desc: language === "bn" ? ", , Oxford Shirt,   Panjabi" : "Cleansers, Toners, Serums, Moisturizers & SPF",
       icon: Droplets,
       color: "from-pink-500 to-rose-600",
       subcategories: [
-        { name: language === "bn" ? "ক্লিনজার ও ফেসওয়াশ" : "Cleansers & Facewash", slug: "skin-care?type=cleanser" },
-        { name: language === "bn" ? "টোনার ও মিস্ট" : "Toners & Mists", slug: "skin-care?type=toner" },
-        { name: language === "bn" ? "সিরাম ও অ্যাম্পুল" : "Serums & Ampoules", slug: "skin-care?type=serum" },
-        { name: language === "bn" ? "ময়েশ্চারাইজার ও ক্রিম" : "Moisturizers & Creams", slug: "skin-care?type=moisturizer" },
-        { name: language === "bn" ? "সানস্ক্রিন ও সানব্লক" : "Sunscreen & SPF 50", slug: "skin-care?type=sunscreen" },
-        { name: language === "bn" ? "আই ও লিপ কেয়ার" : "Eye & Lip Care", slug: "skin-care?type=eye-lip" },
+        { name: language === "bn" ? "  " : "Cleansers & Facewash", slug: "skin-care?type=cleanser" },
+        { name: language === "bn" ? "  " : "Toners & Mists", slug: "skin-care?type=toner" },
+        { name: language === "bn" ? "Oxford Shirt  " : "Serums & Ampoules", slug: "skin-care?type=serum" },
+        { name: language === "bn" ? "  " : "Moisturizers & Creams", slug: "skin-care?type=moisturizer" },
+        { name: language === "bn" ? "Panjabi  " : "Sunscreen & SPF 50", slug: "skin-care?type=sunscreen" },
+        { name: language === "bn" ? "   " : "Eye & Lip Care", slug: "skin-care?type=eye-lip" },
       ],
     },
     {
-      name: language === "bn" ? "হেয়ার কেয়ার" : "Hair Care",
+      name: language === "bn" ? " " : "Hair Care",
       slug: "hair-care",
-      desc: language === "bn" ? "শ্যাম্পু, কন্ডিশনার, হেয়ার অয়েল ও স্ক্যাল্প কেয়ার" : "Shampoos, Conditioners, Hair Oils & Scalp Care",
+      desc: language === "bn" ? ", ,     " : "Shampoos, Conditioners, Hair Oils & Scalp Care",
       icon: Sparkles,
       color: "from-amber-500 to-orange-600",
       subcategories: [
-        { name: language === "bn" ? "শ্যাম্পু ও ক্লিনজার" : "Shampoos & Cleansers", slug: "hair-care?type=shampoo" },
-        { name: language === "bn" ? "কন্ডিশনার ও হেয়ার মাস্ক" : "Conditioners & Hair Masks", slug: "hair-care?type=conditioner" },
-        { name: language === "bn" ? "হেয়ার অয়েল ও সিরাম" : "Hair Oils & Serums", slug: "hair-care?type=oil" },
-        { name: language === "bn" ? "অ্যান্টি-ড্যান্ড্রাফ কেয়ার" : "Anti-Dandruff & Scalp Care", slug: "hair-care?type=scalp" },
+        { name: language === "bn" ? "  " : "Shampoos & Cleansers", slug: "hair-care?type=shampoo" },
+        { name: language === "bn" ? "   " : "Conditioners & Hair Masks", slug: "hair-care?type=conditioner" },
+        { name: language === "bn" ? "   Oxford Shirt" : "Hair Oils & Serums", slug: "hair-care?type=oil" },
+        { name: language === "bn" ? "items- " : "Anti-Dandruff & Scalp Care", slug: "hair-care?type=scalp" },
       ],
     },
     {
-      name: language === "bn" ? "মেকআপ" : "Makeup",
+      name: language === "bn" ? "Apparel" : "Makeup",
       slug: "makeup",
-      desc: language === "bn" ? "ফাউন্ডেশন, লিপস্টিক, আইলাইনার ও সেটিং পাউডার" : "Foundations, Lipsticks, Eyeliners & Setting Powders",
+      desc: language === "bn" ? ", items,   items " : "Foundations, Lipsticks, Eyeliners & Setting Powders",
       icon: Star,
       color: "from-purple-500 to-indigo-600",
       subcategories: [
-        { name: language === "bn" ? "ফাউন্ডেশন ও বিবি ক্রিম" : "Foundations & BB Creams", slug: "makeup?type=foundation" },
-        { name: language === "bn" ? "লিপস্টিক, লিপটিন্ট ও গ্লস" : "Lipsticks, Tints & Glosses", slug: "makeup?type=lip" },
-        { name: language === "bn" ? "আইশ্যাডো ও মাশকারা" : "Eyeshadows & Mascaras", slug: "makeup?type=eyes" },
-        { name: language === "bn" ? "সেটিং স্প্রে ও পাউডার" : "Setting Sprays & Powders", slug: "makeup?type=setting" },
+        { name: language === "bn" ? "   " : "Foundations & BB Creams", slug: "makeup?type=foundation" },
+        { name: language === "bn" ? "items, items  " : "Lipsticks, Tints & Glosses", slug: "makeup?type=lip" },
+        { name: language === "bn" ? "  " : "Eyeshadows & Mascaras", slug: "makeup?type=eyes" },
+        { name: language === "bn" ? "items   " : "Setting Sprays & Powders", slug: "makeup?type=setting" },
       ],
     },
     {
-      name: language === "bn" ? "বডি কেয়ার" : "Body Care",
+      name: language === "bn" ? " " : "Body Care",
       slug: "body-care",
-      desc: language === "bn" ? "বডি লোশন, স্ক্রাব, বডিওয়াশ ও হ্যান্ড ক্রিম" : "Body Lotions, Scrubs, Washes & Hand Creams",
+      desc: language === "bn" ? " , ,    " : "Body Lotions, Scrubs, Washes & Hand Creams",
       icon: Shield,
       color: "from-teal-500 to-emerald-600",
       subcategories: [
-        { name: language === "bn" ? "বডি লোশন ও বাটার" : "Body Lotions & Butters", slug: "body-care?type=lotion" },
-        { name: language === "bn" ? "বডি ওয়াশ ও শাওয়ার জেল" : "Body Washes & Shower Gels", slug: "body-care?type=wash" },
-        { name: language === "bn" ? "বডি স্ক্রাব ও এক্সফোলিয়েটর" : "Scrubs & Exfoliators", slug: "body-care?type=scrub" },
-        { name: language === "bn" ? "হ্যান্ড ও ফুট কেয়ার" : "Hand & Foot Care", slug: "body-care?type=hand-foot" },
+        { name: language === "bn" ? "   :00" : "Body Lotions & Butters", slug: "body-care?type=lotion" },
+        { name: language === "bn" ? "    " : "Body Washes & Shower Gels", slug: "body-care?type=wash" },
+        { name: language === "bn" ? "   " : "Scrubs & Exfoliators", slug: "body-care?type=scrub" },
+        { name: language === "bn" ? "   " : "Hand & Foot Care", slug: "body-care?type=hand-foot" },
       ],
     },
   ];
@@ -75,9 +75,9 @@ export function CategoriesClient() {
     <div className="container-main py-6 sm:py-10 space-y-8">
       {/* Header */}
       <div className="border-b border-gray-200 pb-4">
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#e91e63]">
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1D6474]">
           <LayoutGrid className="h-4 w-4" />
-          {language === "bn" ? "ক্যাটালগ ডিরেক্টরি" : "Catalog Directory"}
+          {language === "bn" ? "Catalog " : "Catalog Directory"}
         </div>
         <h1 className="mt-1 text-2xl sm:text-3xl font-black text-gray-900">
           {t("brandsAndCategories", "allCategories")}
@@ -94,7 +94,7 @@ export function CategoriesClient() {
           return (
             <div
               key={cat.name}
-              className="rounded-3xl border border-gray-200 bg-white p-5 sm:p-6 shadow-xs space-y-4 hover:border-pink-200 transition-colors"
+              className="rounded-3xl border border-gray-200 bg-white p-5 sm:p-6 shadow-xs space-y-4 hover:border-teal-200 transition-colors"
             >
               {/* Category Header */}
               <div className="flex items-center justify-between">
@@ -110,9 +110,9 @@ export function CategoriesClient() {
 
                 <Link
                   href={`/products?category=${cat.slug}`}
-                  className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-0.5"
+                  className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-0.5"
                 >
-                  {language === "bn" ? "সব দেখুন →" : "View All →"}
+                  {language === "bn" ? " View →" : "View All →"}
                 </Link>
               </div>
 
@@ -122,7 +122,7 @@ export function CategoriesClient() {
                   <Link
                     key={sub.name}
                     href={`/products?category=${sub.slug}`}
-                    className="flex items-center justify-between rounded-xl bg-gray-50 p-3 text-xs font-semibold text-gray-800 hover:bg-pink-50 hover:text-[#e91e63] transition-colors"
+                    className="flex items-center justify-between rounded-xl bg-gray-50 p-3 text-xs font-semibold text-gray-800 hover:bg-teal-50/60 hover:text-[#1D6474] transition-colors"
                   >
                     <span className="truncate">{sub.name}</span>
                     <ChevronRight className="h-3.5 w-3.5 text-gray-400 shrink-0" />

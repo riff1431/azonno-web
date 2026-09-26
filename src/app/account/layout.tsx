@@ -12,7 +12,7 @@ import { getLocalizationSettings } from "@/features/settings/actions";
 export const metadata: Metadata = {
   title: {
     default: "My Account",
-    template: "%s | My Account — Blush & Budget",
+    template: "%s | My Account — Azonno",
   },
   robots: { index: false, follow: false },
 };

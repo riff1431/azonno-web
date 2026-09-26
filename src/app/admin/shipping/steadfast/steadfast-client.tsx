@@ -24,10 +24,10 @@ export function SteadfastClient({ initialSettings }: SteadfastClientProps) {
   const [successMsg, setSuccessMsg] = useState(false);
 
   const tabs = [
-    { id: "general", label: isBn ? "সাধারণ ও সেবা" : "General & Service" },
-    { id: "credentials", label: isBn ? "এপিআই ক্রেডেনশিয়াল" : "API Credentials" },
-    { id: "automation", label: isBn ? "অটোমেশন নিয়ম" : "Automation Rules" },
-    { id: "webhook", label: isBn ? "স্ট্যাটাস ওয়েবহুক" : "Status Webhook" },
+    { id: "general", label: isBn ? "General & Services" : "General & Service" },
+    { id: "credentials", label: isBn ? "API Credentials" : "API Credentials" },
+    { id: "automation", label: isBn ? "Automation Rules" : "Automation Rules" },
+    { id: "webhook", label: isBn ? "Status Webhook" : "Status Webhook" },
   ];
 
   const handleSave = async (e: React.FormEvent) => {
@@ -59,10 +59,10 @@ export function SteadfastClient({ initialSettings }: SteadfastClientProps) {
   return (
     <div className="space-y-6 max-w-4xl">
       <ModuleHeader
-        title={isBn ? "স্টিডফাস্ট কুরিয়ার ইন্টিগ্রেশন" : "SteadFast Courier Integration"}
+        title={isBn ? "items Courier items" : "SteadFast Courier Integration"}
         description={
           isBn
-            ? "বাংলাদেশজুড়ে স্বয়ংক্রিয় পার্সেল বুকিং, ক্যাশ অন ডেলিভারি রেমিট্যান্স এবং ট্র্যাকিং কোড তৈরি পরিচালনা করুন।"
+            ? "English   , Cash  Delivery  and Tracking Code   ।"
             : "Automated consignment dispatch, Cash on Delivery remittance reconciliation, and tracking barcode generation across Bangladesh."
         }
         icon={Truck}

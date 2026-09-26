@@ -64,31 +64,31 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
       case "pending_pickup":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-700 border border-amber-200">
-            <Clock className="h-3 w-3" /> {isBn ? "পিকআপ অপেক্ষারত" : "Pickup Pending"}
+            <Clock className="h-3 w-3" /> {isBn ? "Pickup Pending" : "Pickup Pending"}
           </span>
         );
       case "in_transit":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700 border border-blue-200">
-            <Truck className="h-3 w-3" /> {isBn ? "পথে রয়েছে" : "In Transit"}
+            <Truck className="h-3 w-3" /> {isBn ? "In Transit" : "In Transit"}
           </span>
         );
       case "out_for_delivery":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 px-2.5 py-0.5 text-[11px] font-semibold text-purple-700 border border-purple-200">
-            <MapPin className="h-3 w-3" /> {isBn ? "ডেলিভারির জন্য বের হয়েছে" : "Out for Delivery"}
+            <MapPin className="h-3 w-3" /> {isBn ? "Delivery for  successfully" : "Out for Delivery"}
           </span>
         );
       case "delivered":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200">
-            <CheckCircle2 className="h-3 w-3" /> {isBn ? "ডেলিভারি সম্পন্ন" : "Delivered"}
+            <CheckCircle2 className="h-3 w-3" /> {isBn ? "Delivered" : "Delivered"}
           </span>
         );
       case "returned":
         return (
           <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-semibold text-red-700 border border-red-200">
-            <AlertTriangle className="h-3 w-3" /> {isBn ? "রিটার্ন / বাতিল" : "Returned / Cancelled"}
+            <AlertTriangle className="h-3 w-3" /> {isBn ? ":00 / Cancel" : "Returned / Cancelled"}
           </span>
         );
       default:
@@ -100,16 +100,16 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
     <div className="space-y-6 max-w-7xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <ModuleHeader
-          title={isBn ? "লজিস্টিকস ও অর্ডার ট্র্যাকিং হাব" : "Logistics & Order Tracking Hub"}
+          title={isBn ? "items  Order  " : "Logistics & Order Tracking Hub"}
           description={
             isBn
-              ? "স্টিডফাস্ট, পাঠাও এবং ইন-হাউস ডেলিভারি ফ্লিটের লাইভ পার্সেল ট্র্যাকিং ও টেলিমেট্রি।"
+              ? "items, Pathao and - Delivery      ।"
               : "Live dispatch tracking across SteadFast, Pathao, and in-house delivery fleets with milestone telemetry."
           }
           icon={Truck}
           badgeLabel={
             isBn
-              ? `${filteredShipments.length} টি সক্রিয় শিপমেন্ট`
+              ? `${filteredShipments.length} items Active `
               : `${filteredShipments.length} Active Shipments`
           }
         />
@@ -122,8 +122,8 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
         >
           <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
           {refreshing
-            ? (isBn ? "সিঙ্ক হচ্ছে..." : "Syncing APIs...")
-            : (isBn ? "কুরিয়ার ডাটা সিঙ্ক করুন" : "Sync Couriers Now")}
+            ? (isBn ? " ..." : "Syncing APIs...")
+            : (isBn ? "Courier :00  " : "Sync Couriers Now")}
         </Button>
       </div>
 
@@ -139,7 +139,7 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
                 type="text"
                 placeholder={
                   isBn
-                    ? "অর্ডার নম্বর, কনসাইনমেন্ট কোড, ফোন অথবা নাম দিয়ে খুঁজুন..."
+                    ? "Order Number,  Code, Phone or Name  Search..."
                     : "Search by Order #, Consignment Code, Phone, or Name..."
                 }
                 value={searchQuery}
@@ -161,7 +161,7 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
                         : "bg-surface-secondary text-text-secondary hover:bg-surface-tertiary"
                     }`}
                   >
-                    {c === "all" ? (isBn ? "সকল কুরিয়ার" : "All") : c}
+                    {c === "all" ? (isBn ? "All Courier" : "All") : c}
                   </button>
                 ))}
               </div>
@@ -169,10 +169,10 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
               {/* Status filter */}
               <div className="flex flex-wrap items-center gap-1.5">
                 {[
-                  { key: "all", label: isBn ? "সকল স্ট্যাটাস" : "All" },
-                  { key: "out_for_delivery", label: isBn ? "ডেলিভারির জন্য বের হয়েছে" : "Out for delivery" },
-                  { key: "in_transit", label: isBn ? "পথে রয়েছে" : "In transit" },
-                  { key: "delivered", label: isBn ? "ডেলিভারি সম্পন্ন" : "Delivered" },
+                  { key: "all", label: isBn ? "All Status" : "All" },
+                  { key: "out_for_delivery", label: isBn ? "Delivery for  successfully" : "Out for delivery" },
+                  { key: "in_transit", label: isBn ? "In Transit" : "In transit" },
+                  { key: "delivered", label: isBn ? "Delivered" : "Delivered" },
                 ].map((st) => (
                   <button
                     key={st.key}
@@ -220,7 +220,7 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
                     <div className="text-right space-y-1">
                       {getStatusBadge(shipment.status)}
                       <p className="text-[11px] font-mono text-text-muted">
-                        {isBn ? "কোড" : "Code"}: {shipment.tracking_code}
+                        {isBn ? "Code" : "Code"}: {shipment.tracking_code}
                       </p>
                     </div>
                   </div>
@@ -228,11 +228,11 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
                   <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-text-muted">
                     <span className="flex items-center gap-1 font-semibold text-text">
                       <Truck className="h-3.5 w-3.5 text-primary-600" />
-                      {shipment.courier_name} ({isBn ? "ক্যাশ অন ডেলিভারি" : "COD"}: ৳{shipment.cod_amount.toLocaleString()})
+                      {shipment.courier_name} ({isBn ? "Cash  Delivery" : "COD"}: ৳{shipment.cod_amount.toLocaleString()})
                     </span>
 
                     <span className="text-[11px] text-primary-600 font-semibold flex items-center gap-0.5">
-                      {isBn ? "টাইমলাইন দেখুন" : "View Timeline"} <ChevronRight className="h-3.5 w-3.5" />
+                      {isBn ? " View" : "View Timeline"} <ChevronRight className="h-3.5 w-3.5" />
                     </span>
                   </div>
                 </div>
@@ -243,11 +243,11 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
               <div className="p-12 text-center bg-white rounded-2xl border border-border space-y-2">
                 <Truck className="h-8 w-8 text-text-muted mx-auto" />
                 <h3 className="text-sm font-bold text-text">
-                  {isBn ? "কোনো শিপমেন্ট পাওয়া যায়নি" : "No active shipments matching criteria"}
+                  {isBn ? "   Tracking" : "No active shipments matching criteria"}
                 </h3>
                 <p className="text-xs text-text-secondary">
                   {isBn
-                    ? "ভিন্ন কনসাইনমেন্ট কোড দিয়ে অনুসন্ধান করুন অথবা ফিল্টার পরিবর্তন করুন।"
+                    ? "  Code    or :00  ।"
                     : "Try searching for another consignment code or resetting filters."}
                 </p>
               </div>
@@ -262,11 +262,11 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
               <div className="flex items-start justify-between border-b border-border pb-4">
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-primary-600">
-                    {selectedShipment.courier_name} {isBn ? "ডেসপ্যাচ" : "Dispatch"}
+                    {selectedShipment.courier_name} {isBn ? "" : "Dispatch"}
                   </span>
                   <h3 className="text-base font-bold text-text mt-0.5">{selectedShipment.order_number}</h3>
                   <p className="text-xs font-mono text-text-muted">
-                    {isBn ? "কনসাইনমেন্ট" : "Consignment"}: {selectedShipment.consignment_id}
+                    {isBn ? "" : "Consignment"}: {selectedShipment.consignment_id}
                   </p>
                 </div>
                 {getStatusBadge(selectedShipment.status)}
@@ -285,7 +285,7 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
                 </div>
                 <p className="text-text-secondary leading-relaxed">{selectedShipment.delivery_address}</p>
                 <div className="pt-2 border-t border-border flex justify-between font-semibold">
-                  <span className="text-text-muted">{isBn ? "সংগ্রহযোগ্য সিওডি:" : "Collectible COD:"}</span>
+                  <span className="text-text-muted">{isBn ? "Add :" : "Collectible COD:"}</span>
                   <span className="text-emerald-700 font-bold">৳{selectedShipment.cod_amount.toLocaleString()}</span>
                 </div>
               </div>
@@ -293,7 +293,7 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
               {/* Timeline checkpoints */}
               <div className="space-y-3">
                 <h4 className="text-xs font-bold text-text uppercase tracking-wider">
-                  {isBn ? "মাইইলস্টোন টেলিমেট্রি" : "Milestone Telemetry"}
+                  {isBn ? " " : "Milestone Telemetry"}
                 </h4>
                 <div className="space-y-4 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
                   {selectedShipment.timeline.map((step, idx) => (
@@ -330,7 +330,7 @@ export function TrackingClient({ initialShipments }: TrackingClientProps) {
           ) : (
             <div className="bg-white rounded-3xl border border-border p-12 text-center text-text-muted text-xs">
               {isBn
-                ? "বাম পাশ থেকে বিস্তারিত ট্র্যাকিং দেখতে একটি শিপমেন্ট নির্বাচন করুন।"
+                ? "  from    items   ।"
                 : "Select a shipment on the left to view detailed tracking telemetry."}
             </div>
           )}

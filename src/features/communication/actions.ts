@@ -117,7 +117,7 @@ export async function getEmailProviderConfig() {
     port: settings.port ? Number(settings.port) : 465,
     username: settings.username || "resend",
     password: settings.password || (process.env.SMTP_PASSWORD ? "••••••••" : ""),
-    from_name: settings.from_name || "Blush & Budget Orders",
+    from_name: settings.from_name || "Azonno Orders",
     from_email: settings.from_email || "orders@blushbudget.com",
     encryption: settings.encryption || "ssl",
   };

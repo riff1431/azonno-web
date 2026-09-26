@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My Wishlist | Blush & Budget",
+  title: "My Wishlist | Azonno",
   description: "View and save your favorite skincare and cosmetics items.",
   robots: {
     index: false,

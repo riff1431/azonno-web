@@ -27,7 +27,7 @@ export default function AccountReviewsPage() {
       rating: 5,
       date: "02 Jan 2026",
       title: "No white cast, leaves zero grease",
-      comment: "Super lightweight sun cream, perfect under makeup. Blush & Budget never disappoints with authenticity.",
+      comment: "Super lightweight sun cream, perfect under makeup. Azonno never disappoints with authenticity.",
       verified: true,
       helpful: 8,
     },
@@ -107,16 +107,16 @@ export default function AccountReviewsPage() {
 
               <div className="flex items-center justify-between text-[11px] text-gray-400 pt-1">
                 <span className="flex items-center gap-1 text-gray-500">
-                  <ThumbsUp className="h-3.5 w-3.5 text-[#e91e63]" /> {rev.helpful} people found this helpful
+                  <ThumbsUp className="h-3.5 w-3.5 text-[#1D6474]" /> {rev.helpful} people found this helpful
                 </span>
-                <span className="text-[#e91e63] font-bold">Public Review</span>
+                <span className="text-[#1D6474] font-bold">Public Review</span>
               </div>
             </div>
           ))}
         </div>
       ) : (
         <div className="rounded-3xl border border-gray-200 bg-white p-12 text-center space-y-4 shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-[#e91e63]">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-50/60 text-[#1D6474]">
             <MessageSquare className="h-7 w-7" />
           </div>
           <h2 className="text-base font-bold text-gray-900">No items pending review</h2>
@@ -124,7 +124,7 @@ export default function AccountReviewsPage() {
             Once your latest orders are delivered, you can write reviews and earn bonus loyalty points.
           </p>
           <Link href="/products" className="inline-block">
-            <Button className="bg-[#e91e63] hover:bg-sg-pink-hover text-white text-xs">Explore New Arrivals</Button>
+            <Button className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs">Explore New Arrivals</Button>
           </Link>
         </div>
       )}

@@ -678,7 +678,7 @@ const DEFAULT_CUSTOM_METHODS: CustomPaymentMethodItem[] = [
   {
     id: "pm-1",
     name: "Direct Bank Wire Transfer (EFTN / BEFTN)",
-    accountName: "Blush & Budget Ltd.",
+    accountName: "Azonno Ltd.",
     accountNumber: "2050 1829 0192 0001",
     bankName: "City Bank PLC (Gulshan Branch)",
     routingNumber: "225272341",
@@ -689,7 +689,7 @@ const DEFAULT_CUSTOM_METHODS: CustomPaymentMethodItem[] = [
   {
     id: "pm-2",
     name: "Manual bKash Send Money / Merchant QR",
-    accountName: "Blush & Budget Official",
+    accountName: "Azonno Official",
     accountNumber: "01700-000000",
     bankName: "bKash Personal / Agent",
     instructions: "Send money to our official number and input the TrxID during confirmation.",

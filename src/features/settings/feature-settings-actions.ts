@@ -55,7 +55,7 @@ const DEFAULT_FEATURE_SETTINGS: StoreFeatureSettings = {
   enable_return_portal: true,
   return_window_days: 7,
   enable_reverse_courier_booking: true,
-  default_return_warehouse_address: "Blush & Budget Fulfilment Hub, House 14, Road 11, Block D, Banani, Dhaka-1213",
+  default_return_warehouse_address: "Azonno Fulfilment Hub, House 14, Road 11, Block D, Banani, Dhaka-1213",
 };
 
 /**

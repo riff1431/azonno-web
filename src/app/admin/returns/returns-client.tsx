@@ -62,7 +62,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
     enable_reverse_courier_booking: initialSettings?.enable_reverse_courier_booking ?? true,
     default_return_warehouse_address:
       initialSettings?.default_return_warehouse_address ||
-      "Blush & Budget Fulfilment Hub, House 14, Road 11, Block D, Banani, Dhaka-1213",
+      "Azonno Fulfilment Hub, House 14, Road 11, Block D, Banani, Dhaka-1213",
   });
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -160,7 +160,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
     const cleanPhone = phone.replace(/[^0-9]/g, "");
     const intlPhone = cleanPhone.startsWith("88") ? cleanPhone : `88${cleanPhone}`;
     const name = item.customer?.full_name || "Customer";
-    const msg = `আসসালামু আলাইকুম ${name}! Blush & Budget থেকে আপনার রিটার্ন রিকোয়েস্ট (${item.return_number}) রিসিভ করা হয়েছে। অর্ডার: #${item.order?.order_number || ""}. আমরা পার্সেলটি পিকআপ ও রিফান্ড প্রসেস করার জন্য আপনাকে সহায়তা করছি।`;
+    const msg = `Hello ${name}! Azonno regarding your return request Request (${item.return_number}) Received  successfully। Order: #${item.order?.order_number || ""}. We items Pickup  Refund   for   ।`;
     window.open(`https://wa.me/${intlPhone}?text=${encodeURIComponent(msg)}`, "_blank");
   };
 
@@ -225,7 +225,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
             variant="outline"
             size="sm"
             onClick={() => setShowSettingsModal(true)}
-            className="gap-2 text-xs font-bold border-border hover:border-[#e91e63] hover:text-[#e91e63] bg-white rounded-xl shadow-xs py-2.5 px-4 h-auto"
+            className="gap-2 text-xs font-bold border-border hover:border-[#1D6474] hover:text-[#1D6474] bg-white rounded-xl shadow-xs py-2.5 px-4 h-auto"
           >
             <Settings className="h-4 w-4" />
             {t("return_policy")}
@@ -587,13 +587,13 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
             <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-[#e91e63] animate-ping" />
-                  <span className="text-[10px] font-bold text-pink-700 uppercase tracking-wider">
+                  <span className="h-2 w-2 rounded-full bg-[#1D6474] animate-ping" />
+                  <span className="text-[10px] font-bold text-[#164E63] uppercase tracking-wider">
                     Reverse Logistics Dispatcher
                   </span>
                 </div>
                 <h3 className="text-base font-extrabold text-gray-900 mt-1 flex items-center gap-2">
-                  <Truck className="h-5 w-5 text-[#e91e63]" />
+                  <Truck className="h-5 w-5 text-[#1D6474]" />
                   Book Reverse Courier Pickup
                 </h3>
                 <p className="text-xs text-gray-500">
@@ -620,7 +620,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                   onClick={() => setReverseCourier("steadfast")}
                   className={`p-3 rounded-2xl border text-left transition-all ${
                     reverseCourier === "steadfast"
-                      ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/20"
+                      ? "border-[#1D6474] bg-teal-50/60/50 ring-2 ring-[#1D6474]/20"
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
                 >
@@ -633,7 +633,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                   onClick={() => setReverseCourier("pathao")}
                   className={`p-3 rounded-2xl border text-left transition-all ${
                     reverseCourier === "pathao"
-                      ? "border-[#e91e63] bg-pink-50/50 ring-2 ring-[#e91e63]/20"
+                      ? "border-[#1D6474] bg-teal-50/60/50 ring-2 ring-[#1D6474]/20"
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
                 >
@@ -653,7 +653,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                   type="text"
                   value={reversePickupPhone}
                   onChange={(e) => setReversePickupPhone(e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-[#e91e63]"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-[#1D6474]"
                 />
               </div>
 
@@ -665,7 +665,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                   value={reversePickupAddress}
                   onChange={(e) => setReversePickupAddress(e.target.value)}
                   rows={3}
-                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#e91e63]"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#1D6474]"
                 />
               </div>
             </div>
@@ -684,7 +684,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                 size="sm"
                 onClick={handleDispatchReverse}
                 disabled={dispatchingReverse || !reversePickupPhone || !reversePickupAddress}
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Truck className={`h-3.5 w-3.5 mr-1.5 ${dispatchingReverse ? "animate-spin" : ""}`} />
                 {dispatchingReverse ? "Booking Reverse Pickup..." : "Confirm Reverse Dispatch"}
@@ -701,8 +701,8 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
             <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
                 <div className="flex items-center gap-1.5">
-                  <Settings className="h-4 w-4 text-[#e91e63]" />
-                  <span className="text-[10px] font-bold text-pink-700 uppercase tracking-wider">
+                  <Settings className="h-4 w-4 text-[#1D6474]" />
+                  <span className="text-[10px] font-bold text-[#164E63] uppercase tracking-wider">
                     RMA & Logistics Admin Controls
                   </span>
                 </div>
@@ -740,7 +740,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-10 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#e91e63]"></div>
+                  <div className="w-10 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1D6474]"></div>
                 </label>
               </div>
 
@@ -764,7 +764,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                     }
                     className="sr-only peer"
                   />
-                  <div className="w-10 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#e91e63]"></div>
+                  <div className="w-10 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#1D6474]"></div>
                 </label>
               </div>
 
@@ -781,7 +781,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                       onClick={() => setSettings((prev) => ({ ...prev, return_window_days: days }))}
                       className={`py-2 px-3 rounded-xl border font-bold text-xs transition-all ${
                         settings.return_window_days === days
-                          ? "border-[#e91e63] bg-pink-50 text-[#e91e63] ring-1 ring-[#e91e63]"
+                          ? "border-[#1D6474] bg-teal-50/60 text-[#1D6474] ring-1 ring-[#1D6474]"
                           : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
                       }`}
                     >
@@ -806,7 +806,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                   }
                   rows={3}
                   placeholder="Enter central warehouse address for return parcel drop..."
-                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#e91e63]"
+                  className="w-full rounded-xl border border-gray-300 px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#1D6474]"
                 />
               </div>
             </div>
@@ -825,7 +825,7 @@ export function ReturnsClient({ initialReturns, initialSettings }: ReturnsClient
                 size="sm"
                 onClick={handleSaveSettings}
                 disabled={savingSettings}
-                className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs"
+                className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs"
               >
                 <Save className={`h-3.5 w-3.5 mr-1.5 ${savingSettings ? "animate-spin" : ""}`} />
                 {savingSettings ? "Saving Settings..." : "Save Policy"}

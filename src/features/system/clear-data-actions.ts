@@ -11,7 +11,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
   if (confirmationWord.trim().toUpperCase() !== "DELETE" && confirmationWord.trim().toUpperCase() !== "CONFIRM") {
     return {
       success: false,
-      error: "নিরাপত্তা নিশ্চিত করতে 'DELETE' শব্দটি সঠিকভাবে লিখুন।",
+      error: "Security Confirmed  'DELETE' Type the confirmation word exactly।",
     };
   }
 
@@ -35,7 +35,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
           .in("group", ["marketing_meta", "marketing_tiktok", "marketing_google", "custom_scripts"]);
 
         clearedCount += 6;
-        message = "সব মেটা পিক্সেল, টিকটক পিক্সেল এবং কনভার্সন API টোকেন সফলভাবে মুছে ফেলা হয়েছে।";
+        message = "All Meta Pixel, items Pixel and  API  permanently   successfully।";
         break;
       }
 
@@ -46,7 +46,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
           .in("module_key", ["meta_pixel", "tiktok_pixel", "meta_capi", "tiktok_events_api", "marketing", "gtm"]);
 
         clearedCount = count || 1;
-        message = "সব মার্কেটিং ও পিক্সেল ইভেন্ট লগ সম্পূর্ণ মুছে ফেলা হয়েছে।";
+        message = " Marketing  Pixel   Complete   successfully।";
         break;
       }
 
@@ -60,7 +60,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
         } catch {}
 
         clearedCount = 1;
-        message = "সব অসম্পূর্ণ চেকআউট ও লিড রেকর্ড মুছে দেওয়া হয়েছে।";
+        message = " Complete       successfully।";
         break;
       }
 
@@ -75,7 +75,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
         const { count } = await supabase.from("orders").delete().neq("id", "00000000-0000-0000-0000-000000000000");
 
         clearedCount = count || 0;
-        message = "সব অর্ডার ও পেমেন্ট হিস্ট্রি সম্পূর্ণ মুছে দেওয়া হয়েছে।";
+        message = " Order  Payment  Complete   successfully।";
         break;
       }
 
@@ -86,7 +86,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
         } catch {}
 
         clearedCount = 1;
-        message = "সব কাস্টমার রিভিউ ও প্রশ্ন-উত্তর মুছে ফেলা হয়েছে।";
+        message = " Customers Reviews  Question-Answer   successfully।";
         break;
       }
 
@@ -95,7 +95,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
         const { count } = await supabase.from("coupons").delete().neq("id", "00000000-0000-0000-0000-000000000000");
 
         clearedCount = count || 0;
-        message = "সব কুপন কোড ও ডিসকাউন্ট হিস্ট্রি মুছে ফেলা হয়েছে।";
+        message = " Coupon Code  Discount    successfully।";
         break;
       }
 
@@ -105,19 +105,19 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
           dues: [],
         });
         clearedCount = 2;
-        message = "রেকর্ডকৃত সব অপারেশনাল খরচ ও বকেয়া খাতা রিসেট করা হয়েছে।";
+        message = "       Reset  successfully।";
         break;
       }
 
       case "system_cache": {
         invalidateSettingsCache();
         clearedCount = 1;
-        message = "সিস্টেমের সব ইন-মেমোরি ক্যাশ সম্পূর্ণ রিফ্রেশ করা হয়েছে।";
+        message = "  - Cash Complete   successfully।";
         break;
       }
 
       default:
-        return { success: false, error: "অপরিচিত ফিচার সিলেক্ট করা হয়েছে।" };
+        return { success: false, error: "    successfully।" };
     }
 
     // Log the data clear event in audit log
@@ -152,7 +152,7 @@ export async function clearFeatureData(featureId: string, confirmationWord: stri
     console.error("Data clear error:", err);
     return {
       success: false,
-      error: err.message || "ডেটা মুছতে গিয়ে ত্রুটি হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+      error: err.message || ":00   Error successfully। Please   :00 ।",
     };
   }
 }

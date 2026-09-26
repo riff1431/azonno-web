@@ -41,14 +41,14 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
   const [activeTab, setActiveTab] = useState<"icons" | "meta" | "social" | "robots" | "previews">("icons");
 
   const [formData, setFormData] = useState<SeoSettingsPayload>({
-    meta_title: initialSettings.meta_title || "Blush & Budget — Premium Authentic Cosmetics & Skincare in Bangladesh",
+    meta_title: initialSettings.meta_title || "Azonno — Premium Authentic Cosmetics & Skincare in Bangladesh",
     meta_description:
       initialSettings.meta_description ||
       "Shop 100% authentic Korean skincare, makeup, and beauty products from trusted global brands in Bangladesh. Best prices & fast nationwide delivery.",
     meta_keywords:
       initialSettings.meta_keywords ||
       "Korean skincare Bangladesh, authentic makeup BD, sunscreen, serum, cleanser, Blush and Budget",
-    site_author: initialSettings.site_author || "Blush & Budget",
+    site_author: initialSettings.site_author || "Azonno",
     canonical_url:
       initialSettings.canonical_url ||
       (typeof window !== "undefined" && window.location?.origin ? window.location.origin : getBaseUrl()),
@@ -96,7 +96,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-3xl border border-gray-200/80 shadow-xs">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="p-2 bg-pink-50 text-[#e91e63] rounded-xl">
+            <span className="p-2 bg-teal-50/60 text-[#1D6474] rounded-xl">
               <Globe className="h-5 w-5" />
             </span>
             <h1 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">
@@ -113,7 +113,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
             type="button"
             onClick={() => handleSubmit()}
             disabled={saving}
-            className="bg-[#e91e63] hover:bg-pink-700 text-white font-bold rounded-2xl px-6 py-2.5 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold rounded-2xl px-6 py-2.5 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
           >
             {saving ? (
               <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -150,7 +150,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
             className={cn(
               "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
               activeTab === "icons"
-                ? "bg-white text-[#e91e63] shadow-xs"
+                ? "bg-white text-[#1D6474] shadow-xs"
                 : "text-gray-600 hover:text-gray-900"
             )}
           >
@@ -164,7 +164,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
             className={cn(
               "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
               activeTab === "meta"
-                ? "bg-white text-[#e91e63] shadow-xs"
+                ? "bg-white text-[#1D6474] shadow-xs"
                 : "text-gray-600 hover:text-gray-900"
             )}
           >
@@ -178,7 +178,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
             className={cn(
               "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
               activeTab === "social"
-                ? "bg-white text-[#e91e63] shadow-xs"
+                ? "bg-white text-[#1D6474] shadow-xs"
                 : "text-gray-600 hover:text-gray-900"
             )}
           >
@@ -192,7 +192,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
             className={cn(
               "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer",
               activeTab === "robots"
-                ? "bg-white text-[#e91e63] shadow-xs"
+                ? "bg-white text-[#1D6474] shadow-xs"
                 : "text-gray-600 hover:text-gray-900"
             )}
           >
@@ -218,14 +218,14 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
         {/* TAB 1: FAVICON & APP ICONS */}
         {activeTab === "icons" && (
           <div className="space-y-6 pt-2">
-            <div className="p-4 rounded-2xl bg-linear-to-r from-pink-50/70 to-purple-50/70 border border-pink-100 flex items-start gap-3">
-              <Sparkles className="h-5 w-5 text-[#e91e63] shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-linear-to-r from-pink-50/70 to-purple-50/70 border border-teal-100 flex items-start gap-3">
+              <Sparkles className="h-5 w-5 text-[#1D6474] shrink-0 mt-0.5" />
               <div className="text-xs space-y-1">
                 <span className="font-bold text-gray-900">
                   Favicon & Mobile Bookmark Icons:
                 </span>
                 <p className="text-gray-600 leading-relaxed">
-                  Upload your website icon below. The system automatically creates <code className="bg-white px-1.5 py-0.5 rounded text-pink-700 font-mono text-[11px]">&lt;link rel=&quot;icon&quot;&gt;</code> and <code className="bg-white px-1.5 py-0.5 rounded text-pink-700 font-mono text-[11px]">&lt;link rel=&quot;apple-touch-icon&quot;&gt;</code> tags for all browsers, iPhones, and Android devices.
+                  Upload your website icon below. The system automatically creates <code className="bg-white px-1.5 py-0.5 rounded text-[#164E63] font-mono text-[11px]">&lt;link rel=&quot;icon&quot;&gt;</code> and <code className="bg-white px-1.5 py-0.5 rounded text-[#164E63] font-mono text-[11px]">&lt;link rel=&quot;apple-touch-icon&quot;&gt;</code> tags for all browsers, iPhones, and Android devices.
                 </p>
               </div>
             </div>
@@ -248,7 +248,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                   <Globe className="h-4 w-4 text-gray-400 shrink-0" />
                 )}
                 <span className="text-xs font-semibold text-gray-800 truncate">
-                  {formData.meta_title.split("—")[0].trim() || "Blush & Budget"}
+                  {formData.meta_title.split("—")[0].trim() || "Azonno"}
                 </span>
                 <span className="ml-auto text-gray-400 text-xs">×</span>
               </div>
@@ -259,7 +259,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
               <div className="p-5 rounded-3xl bg-white border border-gray-200 shadow-xs space-y-3">
                 <div>
                   <h3 className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-                    <Globe className="h-4 w-4 text-[#e91e63]" />
+                    <Globe className="h-4 w-4 text-[#1D6474]" />
                     Main Favicon (.ico / .png)
                   </h3>
                   <p className="text-[11px] text-gray-500">
@@ -344,8 +344,8 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                   required
                   value={formData.meta_title}
                   onChange={(e) => setFormData({ ...formData, meta_title: e.target.value })}
-                  placeholder="e.g. Blush & Budget — 100% Authentic Cosmetics & Skincare"
-                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden font-medium"
+                  placeholder="e.g. Azonno — 100% Authentic Cosmetics & Skincare"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden font-medium"
                 />
               </div>
 
@@ -369,7 +369,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                   value={formData.meta_description}
                   onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
                   placeholder="Write a compelling summary describing your store and offers..."
-                  className="w-full rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden leading-relaxed font-medium"
+                  className="w-full rounded-xl border border-gray-200 bg-white p-3 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden leading-relaxed font-medium"
                 />
               </div>
 
@@ -383,7 +383,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                     value={formData.meta_keywords || ""}
                     onChange={(e) => setFormData({ ...formData, meta_keywords: e.target.value })}
                     placeholder="e.g. skincare, makeup, serum, cosmetics BD"
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden font-medium"
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden font-medium"
                   />
                 </div>
 
@@ -395,8 +395,8 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                     type="text"
                     value={formData.site_author || ""}
                     onChange={(e) => setFormData({ ...formData, site_author: e.target.value })}
-                    placeholder="e.g. Blush & Budget Limited"
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden font-medium"
+                    placeholder="e.g. Azonno Limited"
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden font-medium"
                   />
                 </div>
               </div>
@@ -414,7 +414,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                   type="url"
                   value={formData.canonical_url}
                   onChange={(e) => setFormData({ ...formData, canonical_url: e.target.value })}
-                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden font-medium"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden font-medium"
                 />
               </div>
 
@@ -425,7 +425,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                   value={formData.twitter_handle}
                   onChange={(e) => setFormData({ ...formData, twitter_handle: e.target.value })}
                   placeholder="@blushbudget"
-                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden font-medium"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden font-medium"
                 />
               </div>
 
@@ -434,7 +434,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                 <select
                   value={formData.twitter_card || "summary_large_image"}
                   onChange={(e) => setFormData({ ...formData, twitter_card: e.target.value as any })}
-                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden font-medium"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden font-medium"
                 >
                   <option value="summary_large_image">Summary with Large Image (Recommended)</option>
                   <option value="summary">Small Thumbnail Summary</option>
@@ -448,7 +448,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                   value={formData.facebook_app_id || ""}
                   onChange={(e) => setFormData({ ...formData, facebook_app_id: e.target.value })}
                   placeholder="e.g. 123456789012345"
-                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden font-medium"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden font-medium"
                 />
               </div>
 
@@ -509,7 +509,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-bold text-gray-900 flex items-center gap-1.5">
-                    <Bot className="h-4 w-4 text-[#e91e63]" />
+                    <Bot className="h-4 w-4 text-[#1D6474]" />
                     Robots.txt Configuration
                   </h4>
                   <p className="text-[11px] text-gray-500">
@@ -520,7 +520,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                   href="/sitemap.xml"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-xs font-bold text-[#e91e63] hover:underline flex items-center gap-1"
+                  className="text-xs font-bold text-[#1D6474] hover:underline flex items-center gap-1"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   View XML Sitemap (/sitemap.xml)
@@ -531,7 +531,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
                 rows={7}
                 value={formData.custom_robots_txt || ""}
                 onChange={(e) => setFormData({ ...formData, custom_robots_txt: e.target.value })}
-                className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#e91e63] focus:ring-1 focus:ring-[#e91e63] outline-hidden leading-relaxed shadow-inner"
+                className="w-full font-mono text-xs p-4 rounded-2xl bg-gray-900 text-gray-100 border border-gray-700 focus:border-[#1D6474] focus:ring-1 focus:ring-[#1D6474] outline-hidden leading-relaxed shadow-inner"
                 spellCheck={false}
               />
             </div>
@@ -550,11 +550,11 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
 
               <div className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 space-y-1.5 font-sans">
                 <div className="flex items-center gap-2 text-xs text-gray-600">
-                  <div className="h-5 w-5 rounded-full bg-pink-100 text-[#e91e63] flex items-center justify-center font-bold text-[10px]">
+                  <div className="h-5 w-5 rounded-full bg-teal-100/70 text-[#1D6474] flex items-center justify-center font-bold text-[10px]">
                     B
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-gray-800">Blush & Budget</span>
+                    <span className="text-xs font-semibold text-gray-800">Azonno</span>
                     <span className="text-[11px] text-gray-500 truncate max-w-sm">{formData.canonical_url}</span>
                   </div>
                 </div>
@@ -572,7 +572,7 @@ export function SeoSettingsClient({ initialSettings }: SeoSettingsClientProps) {
             {/* Social Share Card (Facebook / WhatsApp) */}
             <div className="p-5 rounded-3xl bg-white border border-gray-200 shadow-xs space-y-3">
               <h3 className="text-xs font-black text-gray-900 flex items-center gap-2">
-                <Share2 className="h-4 w-4 text-[#e91e63]" />
+                <Share2 className="h-4 w-4 text-[#1D6474]" />
                 WhatsApp & Facebook Link Share Simulator
               </h3>
 

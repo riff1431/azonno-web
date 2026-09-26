@@ -116,7 +116,7 @@ export default function CartPage() {
           </h1>
           <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
             {language === "bn"
-              ? `${toBn(itemCount)} টি পণ্য সিলেক্ট করা হয়েছে`
+              ? `${toBn(itemCount)} items Products   successfully`
               : `${itemCount} genuine item${itemCount === 1 ? "" : "s"} selected for checkout.`}
           </p>
         </div>
@@ -163,7 +163,7 @@ export default function CartPage() {
                   {amountNeeded > 0 ? (
                     <span>
                       {language === "bn" ? (
-                        <>ফ্রি ডেলিভারির জন্য আরও <strong>{formatPriceBn(amountNeeded)}</strong> এর পণ্য যোগ করুন!</>
+                        <>Free Delivery for more <strong>{formatPriceBn(amountNeeded)}</strong>  Products Add to Cart!</>
                       ) : (
                         <>Add <strong>{formatPrice(amountNeeded)}</strong> more to get <strong>FREE Delivery</strong> inside Dhaka!</>
                       )}
@@ -172,7 +172,7 @@ export default function CartPage() {
                     <span className="text-emerald-700 flex items-center gap-1">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                       {language === "bn"
-                        ? "অভিনন্দন! আপনি ফ্রি ডেলিভারি আনলক করেছেন!"
+                        ? "Congratulations!  Free Delivery  !"
                         : "Congratulations! You unlocked FREE Delivery inside Dhaka!"}
                     </span>
                   )}
@@ -301,7 +301,7 @@ export default function CartPage() {
               <div className="space-y-2.5 text-xs text-text-secondary border-t border-border pt-4">
                 <div className="flex justify-between">
                   <span>
-                    {t("cart", "subtotal")} ({toBn(itemCount)} {language === "bn" ? "টি পণ্য" : "items"})
+                    {t("cart", "subtotal")} ({toBn(itemCount)} {language === "bn" ? "items Products" : "items"})
                   </span>
                   <span className="font-bold text-text">{formatPriceBn(subtotal)}</span>
                 </div>
@@ -317,8 +317,8 @@ export default function CartPage() {
                   <span>{t("cartPage", "estimatedDelivery")}</span>
                   <span>
                     {amountNeeded === 0
-                      ? (language === "bn" ? "ফ্রি" : "FREE")
-                      : (language === "bn" ? "চেকআউটে নির্ধারিত হবে" : "Calculated at checkout")}
+                      ? (language === "bn" ? "" : "FREE")
+                      : (language === "bn" ? "  " : "Calculated at checkout")}
                   </span>
                 </div>
 

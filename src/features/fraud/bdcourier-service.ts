@@ -420,7 +420,7 @@ export async function fetchBDCourierReport(
     success_ratio: 100,
     risk_level: "safe",
     color: "zinc",
-    badge_text: "নতুন ক্রেতা (0)",
+    badge_text: "New Customer (0)",
     risk_verdict: settings.apiKey
       ? "No delivery records found on BDCourier or store history for this phone number."
       : "BDCourier API Key not configured. Please add your API key in Fraud Settings for nationwide multi-courier checking.",

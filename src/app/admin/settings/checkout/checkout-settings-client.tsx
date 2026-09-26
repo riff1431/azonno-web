@@ -130,16 +130,16 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
         <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
           <div className="border-b border-border pb-2 flex items-center justify-between">
             <h2 className="text-sm font-bold text-text flex items-center gap-2">
-              <Truck className="h-4 w-4 text-[#e91e63]" />
+              <Truck className="h-4 w-4 text-[#1D6474]" />
               Bangladesh Dynamic Delivery Charges (BDT)
             </h2>
-            <span className="text-[11px] font-bold text-[#e91e63] bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200">
+            <span className="text-[11px] font-bold text-[#1D6474] bg-teal-50/60 px-2.5 py-0.5 rounded-full border border-teal-200">
               Location Auto-Calculated
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 rounded-2xl border-2 border-pink-200 bg-pink-50/30 space-y-1.5">
+            <div className="p-4 rounded-2xl border-2 border-teal-200 bg-teal-50/60/30 space-y-1.5">
               <label className="block font-bold text-text text-xs">
                 Inside Dhaka Rate (৳)
               </label>
@@ -157,7 +157,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
               </span>
             </div>
 
-            <div className="p-4 rounded-2xl border-2 border-pink-200 bg-pink-50/30 space-y-1.5">
+            <div className="p-4 rounded-2xl border-2 border-teal-200 bg-teal-50/60/30 space-y-1.5">
               <label className="block font-bold text-text text-xs">
                 Outside Dhaka / Nationwide Rate (৳)
               </label>
@@ -203,7 +203,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                   onChange={(e) =>
                     setFormData({ ...formData, enable_free_shipping_meter: e.target.checked })
                   }
-                  className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                  className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
                 />
                 <div>
                   <span className="font-bold text-text block">
@@ -222,7 +222,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
         <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
           <div className="border-b border-border pb-2 flex items-center justify-between">
             <h2 className="text-sm font-bold text-text flex items-center gap-2">
-              <ShieldAlert className="h-4 w-4 text-[#e91e63]" />
+              <ShieldAlert className="h-4 w-4 text-[#1D6474]" />
               Anti-Fraud &amp; COD Verification Shield
             </h2>
             <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 uppercase">
@@ -247,7 +247,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, require_otp_all_orders: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
 
@@ -267,7 +267,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, enable_courier_ratio_otp: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
 
@@ -308,7 +308,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, enable_cod_otp: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
 
@@ -355,7 +355,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, enable_duplicate_blocker: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
           </div>
@@ -365,7 +365,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
         <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
           <div className="border-b border-border pb-2 flex items-center justify-between">
             <h2 className="text-sm font-bold text-text flex items-center gap-2">
-              <Clock className="h-4 w-4 text-[#e91e63]" />
+              <Clock className="h-4 w-4 text-[#1D6474]" />
               Real-Time Abandoned Cart Capture &amp; Recovery
             </h2>
             <span className="text-[10px] font-bold text-purple-800 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200 uppercase">
@@ -389,7 +389,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, enable_abandoned_cart_capture: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
 
@@ -434,7 +434,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
         {/* 4. Customer Access & Login Requirements */}
         <div className="rounded-3xl border border-border bg-white p-6 shadow-card space-y-4">
           <h2 className="text-sm font-bold text-text border-b border-border pb-2 flex items-center gap-2">
-            <UserCheck className="h-4 w-4 text-[#e91e63]" />
+            <UserCheck className="h-4 w-4 text-[#1D6474]" />
             Customer Account &amp; Order Permissions
           </h2>
 
@@ -454,7 +454,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, guest_checkout_enabled: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
 
@@ -473,15 +473,15 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, require_email: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
 
             <label className="flex items-center justify-between p-3.5 rounded-2xl border border-border hover:bg-surface-secondary/40 cursor-pointer transition-colors">
               <div>
                 <span className="font-bold text-text text-xs sm:text-sm block flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-[#e91e63]" />
-                  Show Division, District &amp; Thana (বিভাগ, জেলা, থানা) Selectors
+                  <MapPin className="h-4 w-4 text-[#1D6474]" />
+                  Show Division, District &amp; Thana (Division, District, Thana / Upazila) Selectors
                 </span>
                 <span className="text-text-muted text-[11px]">
                   When enabled, customers pick Division, District, and Thana from dropdown lists during checkout. When disabled, customers only choose Inside/Outside Dhaka and enter their complete street address.
@@ -493,7 +493,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
                 onChange={(e) =>
                   setFormData({ ...formData, show_location_hierarchy: e.target.checked })
                 }
-                className="h-5 w-5 rounded border-border text-[#e91e63] focus:ring-[#e91e63] accent-[#e91e63]"
+                className="h-5 w-5 rounded border-border text-[#1D6474] focus:ring-[#1D6474] accent-[#1D6474]"
               />
             </label>
           </div>
@@ -503,7 +503,7 @@ export function CheckoutSettingsClient({ initialSettings }: CheckoutSettingsClie
           <Button
             type="submit"
             disabled={saving}
-            className="rounded-2xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold px-8 py-3 text-xs shadow-lg transition-all active:scale-95"
+            className="rounded-2xl bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold px-8 py-3 text-xs shadow-lg transition-all active:scale-95"
           >
             <Save className="h-4 w-4 mr-1.5" />
             {saving ? t("saving_changes_btn") : t("save_checkout_btn")}

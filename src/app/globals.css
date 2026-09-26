@@ -1,71 +1,81 @@
 @import "tailwindcss";
 
 /* ============================================================
-   ecomXbangladesh Storefront Design System & Human Micro-Interactions
+   Azonno Clothing E-Commerce Design System & Azonno Card Architecture
    ============================================================ */
 
 @theme {
-  /* --- Shajgoj Brand Palette --- */
-  --color-sg-pink: #e91e63;
-  --color-sg-pink-hover: #d81b60;
-  --color-sg-pink-light: #fdf2f8;
-  --color-sg-pink-border: #f472b6;
-  --color-sg-black: #111827;
-  --color-sg-gray: #f4f5f7;
+  /* --- Azonno Signature Brand Palette (Deep Teal & Petrol Blue) --- */
+  --color-azonno-teal: #1D6474;
+  --color-azonno-teal-dark: #164E63;
+  --color-azonno-teal-hover: #15515E;
+  --color-azonno-teal-light: #F0FDFA;
+  --color-azonno-teal-border: #99F6E4;
+  --color-azonno-gold: #D97706;
+  --color-azonno-slate: #0F172A;
 
-  /* Primary Theme mapped to Shajgoj Pink */
-  --color-primary-50: #fdf2f8;
-  --color-primary-100: #fce7f3;
-  --color-primary-200: #fbcfe8;
-  --color-primary-300: #f472b6;
-  --color-primary-400: #ec4899;
-  --color-primary-500: #f43f5e;
-  --color-primary-600: #e91e63;
-  --color-primary-700: #be123c;
-  --color-primary-800: #9f1239;
-  --color-primary-900: #881337;
+  /* Legacy & Universal Primary Mapping */
+  --color-sg-pink: #1D6474;
+  --color-sg-pink-hover: #164E63;
+  --color-sg-pink-light: #F0FDFA;
+  --color-sg-pink-border: #5EEAD4;
+  --color-sg-black: #0F172A;
+  --color-sg-gray: #F8FAFC;
 
-  --color-accent-50: #fff7ed;
-  --color-accent-100: #ffedd5;
-  --color-accent-200: #fed7aa;
-  --color-accent-300: #fdba74;
-  --color-accent-400: #fb923c;
-  --color-accent-500: #f97316;
-  --color-accent-600: #ea580c;
-  --color-accent-700: #c2410c;
+  /* Primary Palette (Azonno Deep Teal) */
+  --color-primary-50: #F0FDFA;
+  --color-primary-100: #CCFBF1;
+  --color-primary-200: #99F6E4;
+  --color-primary-300: #5EEAD4;
+  --color-primary-400: #2DD4BF;
+  --color-primary-500: #14B8A6;
+  --color-primary-600: #0D9488;
+  --color-primary-700: #1D6474;
+  --color-primary-800: #164E63;
+  --color-primary-900: #083344;
+  --color-primary-950: #041B24;
 
-  --color-success-50: #f0fdf4;
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
-  --color-success-700: #15803d;
+  --color-accent-50: #FFFBEB;
+  --color-accent-100: #FEF3C7;
+  --color-accent-200: #FDE68A;
+  --color-accent-300: #FCD34D;
+  --color-accent-400: #FBBF24;
+  --color-accent-500: #F59E0B;
+  --color-accent-600: #D97706;
+  --color-accent-700: #B45309;
 
-  --color-warning-50: #fefce8;
-  --color-warning-500: #eab308;
-  --color-warning-600: #ca8a04;
+  --color-success-50: #F0FDF4;
+  --color-success-500: #22C55E;
+  --color-success-600: #16A34A;
+  --color-success-700: #15803D;
 
-  --color-danger-50: #fef2f2;
-  --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
+  --color-warning-50: #FEFCE8;
+  --color-warning-500: #EAB308;
+  --color-warning-600: #CA8A04;
 
-  --color-surface: #ffffff;
-  --color-surface-secondary: #f8fafc;
-  --color-surface-tertiary: #f1f5f9;
-  --color-border: #e2e8f0;
-  --color-border-strong: #cbd5e1;
-  --color-text: #0f172a;
+  --color-danger-50: #FEF2F2;
+  --color-danger-500: #EF4444;
+  --color-danger-600: #DC2626;
+
+  --color-surface: #FFFFFF;
+  --color-surface-secondary: #F8FAFC;
+  --color-surface-tertiary: #F1F5F9;
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  --color-text: #0F172A;
   --color-text-secondary: #475569;
-  --color-text-muted: #94a3b8;
+  --color-text-muted: #94A3B8;
 
   /* Admin panel dark sidebar */
-  --color-admin-sidebar: #0f172a;
-  --color-admin-sidebar-hover: #1e293b;
-  --color-admin-sidebar-active: #1d4ed8;
-  --color-admin-sidebar-text: #cbd5e1;
-  --color-admin-sidebar-text-active: #ffffff;
+  --color-admin-sidebar: #0F172A;
+  --color-admin-sidebar-hover: #1E293B;
+  --color-admin-sidebar-active: #1D6474;
+  --color-admin-sidebar-text: #CBD5E1;
+  --color-admin-sidebar-text-active: #FFFFFF;
 
   /* --- Typography --- */
-  --font-sans: var(--font-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --font-bengali: var(--font-bengali), "Hind Siliguri", -apple-system, sans-serif;
+  --font-sans: var(--font-sans), "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-bengali: var(--font-bengali), "Hind Siliguri", -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* --- Radius Scale --- */
   --radius-xs: 0.25rem;
@@ -79,29 +89,29 @@
 
   /* --- Subtle Shadows --- */
   --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-  --shadow-card-hover: 0 12px 28px -6px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+  --shadow-card-hover: 0 12px 28px -6px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.03);
   --shadow-dropdown: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
   --shadow-modal: 0 25px 50px -12px rgb(0 0 0 / 0.2);
   --shadow-sticky: 0 -4px 16px 0 rgb(0 0 0 / 0.06);
-  --shadow-pink-glow: 0 10px 25px -5px rgba(233, 30, 99, 0.35);
+  --shadow-teal-glow: 0 10px 25px -5px rgba(29, 100, 116, 0.3);
 }
 
-/* --- Dynamic Theme Variations (Admin Controllable) --- */
-:root, [data-theme="rose"] {
-  --color-sg-pink: #e91e63;
-  --color-sg-pink-hover: #d81b60;
-  --color-sg-pink-light: #fdf2f8;
-  --color-sg-pink-border: #f472b6;
-  --color-primary-50: #fdf2f8;
-  --color-primary-100: #fce7f3;
-  --color-primary-200: #fbcfe8;
-  --color-primary-300: #f472b6;
-  --color-primary-400: #ec4899;
-  --color-primary-500: #f43f5e;
-  --color-primary-600: #e91e63;
-  --color-primary-700: #be123c;
-  --color-primary-800: #9f1239;
-  --color-primary-900: #881337;
+/* --- Dynamic Theme Variations --- */
+:root, [data-theme="teal"] {
+  --color-sg-pink: #1D6474;
+  --color-sg-pink-hover: #164E63;
+  --color-sg-pink-light: #F0FDFA;
+  --color-sg-pink-border: #5EEAD4;
+  --color-primary-50: #F0FDFA;
+  --color-primary-100: #CCFBF1;
+  --color-primary-200: #99F6E4;
+  --color-primary-300: #5EEAD4;
+  --color-primary-400: #2DD4BF;
+  --color-primary-500: #14B8A6;
+  --color-primary-600: #0D9488;
+  --color-primary-700: #1D6474;
+  --color-primary-800: #164E63;
+  --color-primary-900: #083344;
 }
 
 [data-theme="emerald"] {
@@ -237,99 +247,77 @@ html, body {
   line-height: 1.6;
 }
 
-/* Authentic Bengali Typography: Applies Hind Siliguri exclusively when Bangla is active */
-html[lang="bn"],
-html.lang-bn {
-  --font-sans: var(--font-bengali), "Hind Siliguri", -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 100%;
-  line-height: 1.65;
+/* Universal English Typography: Strictly Plus Jakarta Sans / Inter / Standard Sans */
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-sans), "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
-html[lang="bn"] body,
-html.lang-bn body,
-html[lang="bn"] button,
-html[lang="bn"] input,
-html[lang="bn"] select,
-html[lang="bn"] textarea,
-html[lang="bn"] optgroup,
-html.lang-bn button,
-html.lang-bn input,
-html.lang-bn select,
-html.lang-bn textarea,
-html.lang-bn optgroup {
-  font-family: var(--font-bengali), var(--font-sans), -apple-system, BlinkMacSystemFont, sans-serif !important;
-}
-
-/* English Typography: Strictly Inter / Standard Sans (Never Hind Siliguri) */
-html[lang="en"],
-html.lang-en {
-  --font-sans: var(--font-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  font-size: 100%;
+html {
+  font-size: 106.25%; /* 17px base root font */
   line-height: 1.6;
 }
 
-html[lang="en"],
-html.lang-en,
-html[lang="en"] body,
-html.lang-en body,
-html[lang="en"] button,
-html[lang="en"] input,
-html[lang="en"] select,
-html[lang="en"] textarea,
-html.lang-en button,
-html.lang-en input,
-html.lang-en select,
-html.lang-en textarea {
-  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+body {
+  font-size: 1.0625rem; /* ~17px-18px body font */
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Prevent tracking utilities from fragmenting Bengali conjuncts and matras */
-html[lang="bn"] [class*="tracking-"],
-html.lang-bn [class*="tracking-"] {
-  letter-spacing: 0.01em !important;
-}
-
-/* Optical scale protection: ensure text never looks tiny or cramped in either English or Bangla */
+/* Standardized, Elevated Optical Scale Protection across all devices */
 .text-xs {
-  font-size: 0.8125rem !important; /* ~13px minimum legible size */
+  font-size: 0.9375rem !important; /* ~15px standard legible size */
   line-height: 1.45 !important;
 }
 
 .text-sm {
-  font-size: 0.90625rem !important; /* ~14.5px comfortable size */
+  font-size: 1.0625rem !important; /* ~17px comfortable size */
   line-height: 1.5 !important;
 }
 
 .text-base {
-  font-size: 1rem !important; /* 16px standard body */
+  font-size: 1.1875rem !important; /* ~19px standard body */
   line-height: 1.6 !important;
 }
 
 .text-lg {
-  font-size: 1.125rem !important; /* 18px */
+  font-size: 1.3125rem !important; /* ~21px */
   line-height: 1.5 !important;
 }
 
 .text-xl {
-  font-size: 1.25rem !important; /* 20px */
+  font-size: 1.5rem !important; /* ~24px */
   line-height: 1.4 !important;
 }
 
 .text-2xl {
-  font-size: 1.5rem !important; /* 24px */
+  font-size: 1.75rem !important; /* ~28px */
   line-height: 1.35 !important;
 }
 
 .text-3xl {
-  font-size: 1.875rem !important; /* 30px */
-  line-height: 1.3 !important;
+  font-size: 2.25rem !important; /* ~36px */
+  line-height: 1.25 !important;
+}
+
+.text-4xl {
+  font-size: 2.75rem !important; /* ~44px */
+  line-height: 1.2 !important;
 }
 
 /* Minimum font clamp: prevent micro text clipping across all mobile devices */
 [class*="text-[9px]"],
-[class*="text-[10px]"] {
-  font-size: 0.75rem !important; /* ~12px optical minimum */
-  line-height: 1.35 !important;
+[class*="text-[10px]"],
+[class*="text-[11px]"],
+[class*="text-[12px]"] {
+  font-size: 0.875rem !important; /* ~14px optical minimum */
+  line-height: 1.4 !important;
 }
 
 html[lang="bn"] h1, html.lang-bn h1 { font-weight: 800; line-height: 1.3; }
@@ -487,19 +475,19 @@ button, a, input, select, textarea {
 }
 
 /* ============================================================
-   6. DYNAMIC INDIVIDUAL BUTTON HOVER STYLES
+   6. DYNAMIC INDIVIDUAL BUTTON HOVER STYLES (Azonno Petrol Teal Palette)
    ============================================================ */
 .btn-add-to-cart-action {
-  background-color: #e91e63;
+  background-color: #1D6474;
   color: #ffffff;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 12px -2px rgba(233, 30, 99, 0.35);
+  box-shadow: 0 4px 12px -2px rgba(29, 100, 116, 0.35);
 }
 
 .btn-add-to-cart-action:hover:not(:disabled) {
-  background-color: #111827; /* Shifts into sleek Midnight Noir on hover */
+  background-color: #164E63; /* Shifts into deep teal on hover */
   color: #ffffff;
-  box-shadow: 0 8px 20px -2px rgba(233, 30, 99, 0.45);
+  box-shadow: 0 8px 20px -2px rgba(29, 100, 116, 0.45);
   transform: translateY(-2px) scale(1.02);
 }
 
@@ -508,7 +496,7 @@ button, a, input, select, textarea {
 }
 
 .btn-order-now-action {
-  background-color: #111827;
+  background-color: #0F172A;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -516,10 +504,10 @@ button, a, input, select, textarea {
 }
 
 .btn-order-now-action:hover:not(:disabled) {
-  background-color: #e91e63; /* Shifts into Signature Radiant Pink on hover */
-  border-color: #e91e63;
+  background-color: #1D6474; /* Shifts into Azonno Teal on hover */
+  border-color: #1D6474;
   color: #ffffff;
-  box-shadow: 0 8px 22px -2px rgba(233, 30, 99, 0.55);
+  box-shadow: 0 8px 22px -2px rgba(29, 100, 116, 0.55);
   transform: translateY(-2px) scale(1.02);
 }
 

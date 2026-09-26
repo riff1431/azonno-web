@@ -12,13 +12,13 @@ export default async function AdminBlogListPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4 bg-white p-6 rounded-3xl shadow-card">
         <div>
           <div className="flex items-center gap-2">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#e91e63] animate-pulse" />
-            <span className="text-[11px] font-bold text-pink-700 bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200 uppercase">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#1D6474] animate-pulse" />
+            <span className="text-[11px] font-bold text-[#164E63] bg-teal-50/60 px-2.5 py-0.5 rounded-full border border-teal-200 uppercase">
               Content &amp; E-E-A-T Engine
             </span>
           </div>
           <h1 className="text-2xl font-bold text-text mt-1 flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-[#e91e63]" />
+            <BookOpen className="h-6 w-6 text-[#1D6474]" />
             Blog Articles &amp; Skincare Guides
           </h1>
           <p className="text-xs text-text-secondary mt-0.5">
@@ -33,7 +33,7 @@ export default async function AdminBlogListPage() {
             </Button>
           </Link>
           <Link href="/admin/blog/create">
-            <Button size="sm" className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-bold text-xs rounded-xl shadow-xs">
+            <Button size="sm" className="bg-[#1D6474] hover:bg-[#164E63] text-white font-bold text-xs rounded-xl shadow-xs">
               <Plus className="h-3.5 w-3.5 mr-1.5" /> Write New Article
             </Button>
           </Link>

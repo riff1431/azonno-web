@@ -42,11 +42,11 @@ export function BrandDetailClient({
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-text-muted">
         <Link href="/" className="hover:text-text transition-colors">
-          {isBn ? "হোম" : "Home"}
+          {isBn ? "" : "Home"}
         </Link>
         <ChevronRight className="h-3 w-3 text-zinc-400" />
         <Link href="/products" className="hover:text-text transition-colors">
-          {isBn ? "ব্র্যান্ডস" : "Brands"}
+          {isBn ? "Brand" : "Brands"}
         </Link>
         <ChevronRight className="h-3 w-3 text-zinc-400" />
         <span className="text-text font-bold">{brand.name}</span>
@@ -75,14 +75,14 @@ export function BrandDetailClient({
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200">
               <ShieldCheck className="h-3.5 w-3.5" />
-              {isBn ? "১০০% অনুমোদিত ও খাঁটি পণ্য" : "100% Authorized & Authentic"}
+              {isBn ? "100%   items Products" : "100% Authorized & Authentic"}
             </span>
           </div>
 
           <p className="text-xs sm:text-sm text-text-secondary leading-relaxed max-w-2xl">
             {brand.description ||
               (isBn
-                ? `বাংলাদেশে ${brand.name}-এর আসল ও সার্টিফাইড পণ্য কিনুন সরাসরি ক্যাশ অন ডেলিভারি সুবিধাসহ।`
+                ? `English ${brand.name}- Authentic  items Products   Cash  Delivery ।`
                 : `Browse genuine ${brand.name} skincare and cosmetics with certified authenticity and nationwide Cash on Delivery.`)}
           </p>
         </div>
@@ -92,11 +92,11 @@ export function BrandDetailClient({
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-border pb-3">
           <h2 className="text-base sm:text-lg font-black text-text">
-            {isBn ? `${brand.name}-এর সকল পণ্য` : `Products from ${brand.name}`}
+            {isBn ? `${brand.name}- All Products` : `Products from ${brand.name}`}
           </h2>
           <span className="text-xs font-semibold text-text-muted">
             {isBn
-              ? `${toBn(productCards.length)}টি পণ্য`
+              ? `${toBn(productCards.length)}items Products`
               : `${productCards.length} product${productCards.length === 1 ? "" : "s"}`}
           </span>
         </div>
@@ -105,14 +105,14 @@ export function BrandDetailClient({
           <div className="rounded-3xl border border-dashed border-border bg-white p-16 text-center text-text-muted space-y-2">
             <p className="text-sm font-bold text-text">
               {isBn
-                ? "এই ব্র্যান্ডের কোনো পণ্য বর্তমানে স্টকে নেই।"
+                ? " Brand  Products  Stock ।"
                 : "No products available from this brand currently."}
             </p>
             <Link
               href="/products"
               className="text-xs font-bold text-primary-600 hover:underline inline-block"
             >
-              {isBn ? "অন্যান্য ব্র্যান্ড ব্রাউজ করুন →" : "Browse Other Brands →"}
+              {isBn ? " Brand   →" : "Browse Other Brands →"}
             </Link>
           </div>
         ) : (

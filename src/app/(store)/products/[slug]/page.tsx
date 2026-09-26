@@ -28,10 +28,10 @@ export async function generateMetadata({
   if (!product) return { title: "Product Not Found" };
 
   const brandName = (Array.isArray(product.brands) ? product.brands[0] : product.brands) as { name: string } | null;
-  const title = product.seo_title || `${product.name} — 100% Authentic | Blush & Budget`;
+  const title = product.seo_title || `${product.name} — 100% Authentic | Azonno`;
   const description =
     product.seo_description ||
-    `Buy 100% genuine ${product.name}${brandName?.name ? ` by ${brandName.name}` : ""} in Bangladesh at best price with cash on delivery from Blush & Budget.`;
+    `Buy 100% genuine ${product.name}${brandName?.name ? ` by ${brandName.name}` : ""} in Bangladesh at best price with cash on delivery from Azonno.`;
   const canonicalUrl = `${baseUrl}/products/${slug}`;
   const ogImage = product.og_image_url ? [product.og_image_url] : [];
 
@@ -45,7 +45,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      siteName: "Blush & Budget",
+      siteName: "Azonno",
       images: ogImage,
       type: "website",
     },

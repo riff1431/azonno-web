@@ -59,7 +59,7 @@ export function cleanBdPhoneNumber(rawPhone: string): string {
 /**
  * Validates a Bangladeshi phone number in real-time.
  */
-export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = "bn"): BdPhoneValidationResult {
+export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = "en"): BdPhoneValidationResult {
   const clean = cleanBdPhoneNumber(rawPhone);
 
   if (!clean) {
@@ -67,10 +67,7 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
       isValid: false,
       status: "empty",
       cleanPhone: "",
-      errorMessage:
-        language === "bn"
-          ? "১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017XXXXXXXX)"
-          : "Enter 11-digit mobile number (e.g. 017XXXXXXXX)",
+      errorMessage: "Enter 11-digit mobile number (e.g. 017XXXXXXXX)",
     };
   }
 
@@ -80,10 +77,7 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
       isValid: false,
       status: "invalid",
       cleanPhone: clean,
-      errorMessage:
-        language === "bn"
-          ? "ভুল নম্বর! নম্বর অবশ্যই '০১' দিয়ে শুরু হতে হবে।"
-          : "Invalid number! Must start with '01'.",
+      errorMessage: "Invalid number! Must start with '01'.",
     };
   }
 
@@ -96,10 +90,7 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
         isValid: false,
         status: "invalid",
         cleanPhone: clean,
-        errorMessage:
-          language === "bn"
-            ? `ভুল অপারেটর প্রিফিক্স (${prefix})! সঠিক অপারেটর: 013, 014, 015, 016, 017, 018, 019.`
-            : `Invalid operator prefix (${prefix})! Valid prefixes: 013-019.`,
+        errorMessage: `Invalid operator prefix (${prefix})! Valid prefixes: 013-019.`,
       };
     }
   }
@@ -113,10 +104,7 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
       status: "typing",
       cleanPhone: clean,
       operatorName: operator,
-      errorMessage:
-        language === "bn"
-          ? `${clean.length}/১১ ডিজিট — আরও ${remaining}টি ডিজিট লিখুন`
-          : `${clean.length}/11 digits — ${remaining} more needed`,
+      errorMessage: `${clean.length}/11 digits — ${remaining} more needed`,
     };
   }
 
@@ -126,10 +114,7 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
       isValid: false,
       status: "invalid",
       cleanPhone: clean,
-      errorMessage:
-        language === "bn"
-          ? "মোবাইল নম্বর ১১ ডিজিটের বেশি হতে পারবে না।"
-          : "Mobile number cannot exceed 11 digits.",
+      errorMessage: "Mobile number cannot exceed 11 digits.",
     };
   }
 
@@ -142,10 +127,7 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
       isValid: false,
       status: "invalid",
       cleanPhone: clean,
-      errorMessage:
-        language === "bn"
-          ? "ভুল মোবাইল নম্বর — অকার্যকর অপারেটর।"
-          : "Invalid mobile number — unsupported operator.",
+      errorMessage: "Invalid mobile number — unsupported operator.",
     };
   }
 
@@ -158,10 +140,7 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
       status: "invalid",
       cleanPhone: clean,
       operatorName,
-      errorMessage:
-        language === "bn"
-          ? "ভুল বা ডামি নম্বর শনাক্ত হয়েছে! দয়া করে আপনার সক্রিয় নম্বর লিখুন।"
-          : "Fake/dummy repeating number detected! Please enter your real number.",
+      errorMessage: "Fake/dummy repeating number detected! Please enter your real number.",
     };
   }
 
@@ -171,9 +150,6 @@ export function validateBdPhoneNumber(rawPhone: string, language: "en" | "bn" = 
     status: "valid",
     cleanPhone: clean,
     operatorName,
-    successMessage:
-      language === "bn"
-        ? `✓ সঠিক ও সক্রিয় নম্বর (${operatorName})`
-        : `✓ Valid & Active Number (${operatorName})`,
+    successMessage: `✓ Valid & Active Number (${operatorName})`,
   };
 }

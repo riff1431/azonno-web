@@ -90,7 +90,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
   const [saving, setSaving] = useState(false);
   const [testPhone, setTestPhone] = useState("01712345678");
   const [testMessage, setTestMessage] = useState(
-    isBn ? "ecomXbd অ্যাডমিন গেটওয়ে থেকে টেস্ট এসএমএস।" : "Test SMS alert from Blush & Budget admin gateway."
+    isBn ? "ecomXbd   from  SMS।" : "Test SMS alert from Azonno admin gateway."
   );
   const [sendingTest, setSendingTest] = useState(false);
   const [testResult, setTestResult] = useState<{
@@ -165,10 +165,10 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
   return (
     <div className="space-y-6 max-w-5xl">
       <ModuleHeader
-        title={isBn ? "এসএমএস গেটওয়ে ও বাল্ক প্রেরণ প্রভাইডার" : "SMS Gateway & Bulk Dispatch Providers"}
+        title={isBn ? "SMS     " : "SMS Gateway & Bulk Dispatch Providers"}
         description={
           isBn
-            ? "তাত্ক্ষণিক ওটিপি, অর্ডার নিশ্চিতকরণ ও ডেসপ্যাচ সতর্কবার্তার জন্য বাল্কএসএমএসবিডি, মিম এসএমএস V2, গ্রীনওয়েব বা টুইলিও সংযোগ করুন।"
+            ? " items, Order Confirmed    for SMS,  SMS V2,    Add to Cart।"
             : "Configure dynamic HTTP/REST SMS providers (BulkSMSBD, MiMSMS V2, Greenweb, Twilio, Onnorokom, Custom) for instant OTP, order confirmations, and dispatch alerts."
         }
         icon={MessageSquare}
@@ -179,7 +179,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
       {successMsg && (
         <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-xs font-semibold text-emerald-800 animate-in fade-in">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>{isBn ? "এসএমএস গেটওয়ে সেটিংস সফলভাবে সংরক্ষিত হয়েছে!" : "SMS Gateway credentials saved and updated!"}</span>
+          <span>{isBn ? "SMS  Settings permanently  successfully!" : "SMS Gateway credentials saved and updated!"}</span>
         </div>
       )}
 
@@ -188,7 +188,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
         <div className="rounded-2xl border border-border bg-white p-4 shadow-sm flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[11px] font-medium text-text-muted">
-              {isBn ? "বর্তমান অ্যাক্টিভ গেটওয়ে" : "Active Gateway"}
+              {isBn ? " items " : "Active Gateway"}
             </span>
             <div className="flex items-center gap-1.5 font-bold text-sm text-text">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
@@ -196,7 +196,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
             </div>
           </div>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary-50 text-primary-700 border border-primary-100">
-            {formData.is_active !== false ? (isBn ? "সক্রিয়" : "Active") : (isBn ? "নিষ্ক্রিয়" : "Disabled")}
+            {formData.is_active !== false ? (isBn ? "Active" : "Active") : (isBn ? "" : "Disabled")}
           </span>
         </div>
 
@@ -207,7 +207,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
             </div>
             <div>
               <div className="text-[11px] font-medium text-text-muted">
-                {isBn ? "লাইভ এসএমএস ব্যালেন্স / ক্রেডিট" : "Live SMS Account Balance"}
+                {isBn ? " SMS  / " : "Live SMS Account Balance"}
               </div>
               <div className="text-sm font-bold text-text">
                 {balanceResult?.balance !== undefined ? (
@@ -218,7 +218,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                   </span>
                 ) : (
                   <span className="text-text-muted text-xs font-normal">
-                    {isBn ? "ব্যালেন্স জানতে বাটনে ক্লিক করুন" : "Click to check remaining balance"}
+                    {isBn ? "    " : "Click to check remaining balance"}
                   </span>
                 )}
               </div>
@@ -234,7 +234,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
             className="text-xs shrink-0"
           >
             <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${checkingBalance ? "animate-spin text-primary-600" : ""}`} />
-            {checkingBalance ? (isBn ? "চেক হচ্ছে..." : "Checking...") : (isBn ? "ব্যালেন্স চেক" : "Check Balance")}
+            {checkingBalance ? (isBn ? " ..." : "Checking...") : (isBn ? " " : "Check Balance")}
           </Button>
         </div>
       </div>
@@ -246,32 +246,32 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
             <div className="border-b border-border pb-3 flex items-center justify-between">
               <h2 className="text-sm font-bold text-text flex items-center gap-2">
                 <Server className="h-4 w-4 text-primary-600" />
-                {isBn ? "প্রধান এসএমএস গেটওয়ে কনফিগারেশন" : "Primary SMS Gateway Configuration"}
+                {isBn ? " SMS  " : "Primary SMS Gateway Configuration"}
               </h2>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block font-semibold text-text mb-1">
-                  {isBn ? "প্রভাইডারের নাম" : "Provider Name"}
+                  {isBn ? " Name" : "Provider Name"}
                 </label>
                 <select
                   value={formData.provider_name}
                   onChange={(e) => handleProviderChange(e.target.value)}
                   className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs text-text focus:outline-none focus:ring-1 focus:ring-primary-500"
                 >
-                  <option value="BulkSMSBD">BulkSMSBD ({isBn ? "বাংলাদেশীদের জন্য সেরা" : "Recommended Bangladesh"})</option>
+                  <option value="BulkSMSBD">BulkSMSBD ({isBn ? "EnglishBangladeshi for " : "Recommended Bangladesh"})</option>
                   <option value="MIMSMS">MiMSMS (Official V2 REST API)</option>
                   <option value="Greenweb">Greenweb BD (Token API)</option>
                   <option value="Twilio">Twilio Global REST API</option>
                   <option value="Onnorokom">Onnorokom SMS</option>
-                  <option value="Custom">{isBn ? "কাস্টম এইচটিটিপি গেটওয়ে" : "Custom HTTP Gateway"}</option>
+                  <option value="Custom">{isBn ? " itemsitems " : "Custom HTTP Gateway"}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block font-semibold text-text mb-1">
-                  {isBn ? "এপিআই এন্ডপয়েন্ট ইউআরএল" : "API Endpoint URL"}
+                  {isBn ? "  " : "API Endpoint URL"}
                 </label>
                 <input
                   type="url"
@@ -298,7 +298,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                   {currentProvider === "MIMSMS" && (
                     <p className="text-[10px] text-text-muted mt-1">
                       {isBn
-                        ? "আপনার sms.mimsms.com প্যানেলে লগইন করার ইমেইল অ্যাড্রেসটি দিন।"
+                        ? "your sms.mimsms.com  Login  Email items Enter।"
                         : "Enter your registered login email for the MiMSMS panel."}
                     </p>
                   )}
@@ -308,8 +308,8 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
               <div>
                 <label className="block font-semibold text-text mb-1">
                   {currentProvider === "Twilio"
-                    ? (isBn ? "টুইলিও ফোন নম্বর / সেন্ডার আইডি" : "Twilio Phone Number / Sender ID")
-                    : (isBn ? "অনুমোদিত সেন্ডার আইডি / মাস্কিং" : "Approved Sender ID / Masking")}
+                    ? (isBn ? " Phone Number /  ID" : "Twilio Phone Number / Sender ID")
+                    : (isBn ? "  ID / " : "Approved Sender ID / Masking")}
                 </label>
                 <input
                   type="text"
@@ -322,10 +322,10 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 <p className="text-[10px] text-text-muted mt-1">
                   {currentProvider === "MIMSMS"
                     ? (isBn
-                        ? "sms.mimsms.com এর Utility → Sender ID অপশনে লিস্টে থাকা সঠিক Sender ID দিন।"
+                        ? "sms.mimsms.com  Utility → Sender ID     Sender ID Enter।"
                         : "Enter the approved Sender ID from sms.mimsms.com → Utility → Sender ID.")
                     : (isBn
-                        ? "নন-মাস্কিং এর ক্ষেত্রে ৮৮০৯৬... বা অনুমোদিত আলফানিউমেরিক ব্র্যান্ড নাম।"
+                        ? "-   88096...    Brand Name।"
                         : "For non-masking, use your 88096... virtual number or approved alphanumeric brand name.")}
                 </p>
               </div>
@@ -343,17 +343,17 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 <div className="rounded-xl bg-amber-50/80 border border-amber-200/80 p-3 text-[11px] text-amber-900 space-y-1">
                   <div className="font-bold flex items-center gap-1.5 text-amber-900">
                     <ShieldCheck className="h-4 w-4 text-amber-600 shrink-0" />
-                    <span>{isBn ? "MiMSMS V2 গুরুত্বপূর্ণ নির্দেশিকা:" : "MiMSMS V2 Important Prerequisites:"}</span>
+                    <span>{isBn ? "MiMSMS V2  :" : "MiMSMS V2 Important Prerequisites:"}</span>
                   </div>
                   <ul className="list-disc list-inside space-y-0.5 text-[10px] text-amber-800 pt-1">
                     <li>
                       {isBn
-                        ? "sms.mimsms.com এর Utility → Developer থেকে আপনার API Key অবশ্যই 'Activate' করতে হবে।"
+                        ? "sms.mimsms.com  Utility → Developer from your API Key  'Activate'  ।"
                         : "Your API Key must be Activated under Utility → Developer."}
                     </li>
                     <li>
                       {isBn
-                        ? "আপনার সার্ভার আইপি (বা লোকালহোস্ট আইপি) এবং ডোমেন Utility → Developer-এ Whitelist করা থাকতে হবে।"
+                        ? "your   (  ) and  Utility → Developer- Whitelist   ।"
                         : "Your server/hosting IP address and domain must be whitelisted under Utility → Developer."}
                     </li>
                   </ul>
@@ -364,14 +364,14 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 <div className="rounded-xl bg-zinc-50 border border-border p-3 text-[11px] text-text-secondary space-y-1">
                   <div className="font-bold flex items-center gap-1 text-text">
                     <Info className="h-3.5 w-3.5 text-primary-600" />
-                    <span>{isBn ? "ডায়নামিক টোকেন ব্যবহারের নিয়ম:" : "Supported dynamic placeholders in URL:"}</span>
+                    <span>{isBn ? "Name  use Rules:" : "Supported dynamic placeholders in URL:"}</span>
                   </div>
                   <div className="font-mono text-[10px] space-y-0.5 pt-1">
-                    <div><code>&#123;apiKey&#125;</code>: {isBn ? "এসএমএস এপিআই কি" : "API Key token"}</div>
-                    <div><code>&#123;phone&#125;</code>: {isBn ? "প্রাপক নম্বর (8801XXXXXXXXX)" : "Recipient phone (8801XXXXXXXXX)"}</div>
-                    <div><code>&#123;mobile&#125;</code>: {isBn ? "প্রাপক নম্বর (01XXXXXXXXX)" : "Local mobile (01XXXXXXXXX)"}</div>
-                    <div><code>&#123;message&#125;</code>: {isBn ? "ইউআরএল এনকোডেড বার্তা" : "URL encoded message text"}</div>
-                    <div><code>&#123;senderId&#125;</code>: {isBn ? "সেন্ডার আইডি" : "Sender ID / Masking"}</div>
+                    <div><code>&#123;apiKey&#125;</code>: {isBn ? "SMS  " : "API Key token"}</div>
+                    <div><code>&#123;phone&#125;</code>: {isBn ? " Number (8801XXXXXXXXX)" : "Recipient phone (8801XXXXXXXXX)"}</div>
+                    <div><code>&#123;mobile&#125;</code>: {isBn ? " Number (01XXXXXXXXX)" : "Local mobile (01XXXXXXXXX)"}</div>
+                    <div><code>&#123;message&#125;</code>: {isBn ? " Code " : "URL encoded message text"}</div>
+                    <div><code>&#123;senderId&#125;</code>: {isBn ? " ID" : "Sender ID / Masking"}</div>
                   </div>
                 </div>
               )}
@@ -384,14 +384,14 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                     className="h-4 w-4 rounded border-border text-primary-600 focus:ring-primary-500"
                   />
-                  <span>{isBn ? "এসএমএস সার্ভিস চালু রাখুন" : "Enable SMS Gateway Service"}</span>
+                  <span>{isBn ? "SMS   " : "Enable SMS Gateway Service"}</span>
                 </label>
 
                 <Button type="submit" disabled={saving} size="sm" className="text-xs">
                   <Save className="h-3.5 w-3.5 mr-1.5" />
                   {saving
-                    ? (isBn ? "সংরক্ষণ হচ্ছে..." : "Saving...")
-                    : (isBn ? "প্রভাইডার সেটিংস সংরক্ষণ করুন" : "Save Provider Settings")}
+                    ? (isBn ? "Save ..." : "Saving...")
+                    : (isBn ? " Settings Save" : "Save Provider Settings")}
                 </Button>
               </div>
             </div>
@@ -404,7 +404,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
             <div className="border-b border-border pb-3 flex items-center justify-between">
               <h2 className="text-sm font-bold text-text flex items-center gap-2">
                 <Send className="h-4 w-4 text-primary-600" />
-                {isBn ? "লাইভ টেস্ট এসএমএস প্রেরণ" : "Live Test SMS Dispatch"}
+                {isBn ? "  SMS " : "Live Test SMS Dispatch"}
               </h2>
               <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                 Live Gateway
@@ -437,7 +437,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
 
             <div>
               <label className="block font-semibold text-text mb-1">
-                {isBn ? "প্রাপকের মোবাইল নম্বর (বাংলাদেশ)" : "Recipient Mobile (Bangladesh)"}
+                {isBn ? " Mobile Number (English)" : "Recipient Mobile (Bangladesh)"}
               </label>
               <input
                 type="text"
@@ -448,13 +448,13 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
                 className="w-full rounded-xl border border-border bg-white px-3.5 py-2 text-xs font-mono text-text focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
               <span className="text-[10px] text-text-muted mt-0.5 block">
-                {isBn ? "স্বয়ংক্রিয়ভাবে 8801... বা 01... ফরম্যাটে সাজানো হবে" : "Auto-normalized to required gateway format (8801... / 01...)"}
+                {isBn ? "permanently 8801...  01...   " : "Auto-normalized to required gateway format (8801... / 01...)"}
               </span>
             </div>
 
             <div>
               <label className="block font-semibold text-text mb-1">
-                {isBn ? "নমুনা এসএমএস বার্তা" : "Sample SMS Message"}
+                {isBn ? " SMS " : "Sample SMS Message"}
               </label>
               <textarea
                 rows={3}
@@ -465,7 +465,7 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
               />
               <div className="flex items-center justify-between text-[10px] text-text-muted mt-1">
                 <span>
-                  {testMessage.length} {isBn ? "টি অক্ষর" : "characters"}
+                  {testMessage.length} {isBn ? "items " : "characters"}
                 </span>
                 <span>
                   {testMessage.length <= 160 ? "1 Credit (English/Unicode)" : "Multi-part SMS"}
@@ -482,8 +482,8 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
             >
               <Send className={`h-3.5 w-3.5 mr-1.5 ${sendingTest ? "animate-spin" : ""}`} />
               {sendingTest
-                ? (isBn ? "এসএমএস পাঠানো হচ্ছে..." : "Dispatching Test SMS...")
-                : (isBn ? "টেস্ট এসএমএস পাঠান" : "Send Test SMS Now")}
+                ? (isBn ? "SMS  ..." : "Dispatching Test SMS...")
+                : (isBn ? " SMS " : "Send Test SMS Now")}
             </Button>
           </form>
 
@@ -491,11 +491,11 @@ export function SmsClient({ initialSettings }: SmsClientProps) {
           <div className="rounded-2xl border border-border bg-surface-secondary/40 p-4 text-[11px] text-text-secondary space-y-2">
             <h3 className="font-bold text-text text-xs flex items-center gap-1.5">
               <Info className="h-3.5 w-3.5 text-primary-600" />
-              {isBn ? "এসএমএস নোটিফিকেশন সিস্টেম তথ্য" : "Automated SMS System Info"}
+              {isBn ? "SMS Notification  " : "Automated SMS System Info"}
             </h3>
             <p className="leading-relaxed">
               {isBn
-                ? "এখানে কনফিগার করা গেটওয়ে দিয়েই সকল ওটিপি, অর্ডার প্লেসড, কুরিয়ারে হস্তান্তর ও ট্র্যাকিং এসএমএস স্বয়ংক্রিয়ভাবে গ্রাহকদের কাছে পৌঁছে যাবে।"
+                ? "     All items, Order ,     SMS permanently    ।"
                 : "All transactional SMS (OTP, order confirmations, courier dispatch tracking links, and abandoned cart recovery) are automatically dispatched using this connected gateway."}
             </p>
           </div>

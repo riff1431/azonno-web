@@ -200,30 +200,30 @@ export function RichArticleRenderer({ content }: RichArticleRendererProps) {
           case "h1":
           case "h2": {
             const isSummary =
-              token.text.includes("এক নজরে") ||
+              token.text.includes(" ") ||
               token.text.includes("Quick Summary") ||
-              token.text.includes("মূল পয়েন্টসমূহ") ||
-              token.text.includes("মূল বিষয়সমূহ") ||
+              token.text.includes(" ") ||
+              token.text.includes(" ") ||
               token.text.includes("Key Highlights");
             const isFaq =
-              token.text.includes("বহুল জিজ্ঞাসিত প্রশ্ন") ||
+              token.text.includes("  Question") ||
               token.text.includes("FAQ") ||
-              token.text.includes("প্রশ্নোত্তর") ||
-              token.text.includes("হেল্প সেন্টার");
+              token.text.includes("Q&A") ||
+              token.text.includes(" :00");
 
             return (
               <div key={idx} className="mt-8 sm:mt-11 mb-3.5 sm:mb-5 pt-2">
                 <h2
                   className={cn(
                     "text-xl sm:text-2xl md:text-3xl lg:text-[32px] font-black text-text tracking-tight flex items-center gap-3 sm:gap-3.5 break-words leading-tight sm:leading-snug",
-                    isSummary && "text-pink-700",
+                    isSummary && "text-[#164E63]",
                     isFaq && "text-blue-700"
                   )}
                 >
                   <span
                     className={cn(
                       "h-5 sm:h-7 w-1.5 sm:w-2 rounded-full shrink-0",
-                      isSummary ? "bg-pink-600" : isFaq ? "bg-blue-600" : "bg-primary-600"
+                      isSummary ? "bg-[#164E63]" : isFaq ? "bg-blue-600" : "bg-primary-600"
                     )}
                   />
                   <span>{renderInlineFormatting(token.text)}</span>
@@ -254,7 +254,7 @@ export function RichArticleRenderer({ content }: RichArticleRendererProps) {
                 key={idx}
                 className="text-lg sm:text-xl md:text-2xl font-bold text-text mt-7 sm:mt-9 mb-2.5 sm:mb-3 flex items-center gap-2.5 break-words"
               >
-                <span className="h-2.5 w-2.5 rounded-full bg-pink-500 shrink-0" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#1D6474] shrink-0" />
                 <span>{renderInlineFormatting(token.text)}</span>
               </h3>
             );
@@ -278,13 +278,13 @@ export function RichArticleRenderer({ content }: RichArticleRendererProps) {
             return (
               <div
                 key={idx}
-                className="my-6 sm:my-7 rounded-2xl border border-pink-200 bg-linear-to-br from-pink-50/90 via-rose-50/50 to-pink-50/80 p-4 sm:p-5.5 shadow-xs max-w-full overflow-hidden"
+                className="my-6 sm:my-7 rounded-2xl border border-teal-200 bg-linear-to-br from-pink-50/90 via-rose-50/50 to-pink-50/80 p-4 sm:p-5.5 shadow-xs max-w-full overflow-hidden"
               >
-                <div className="flex items-center gap-2 mb-2.5 text-xs sm:text-sm font-bold text-pink-700 uppercase tracking-wider">
+                <div className="flex items-center gap-2 mb-2.5 text-xs sm:text-sm font-bold text-[#164E63] uppercase tracking-wider">
                   <Sparkles className="h-4 w-4 shrink-0" />
-                  <span>ধাপভিত্তিক রুটিন ফ্লো (Routine Steps)</span>
+                  <span> items  (Routine Steps)</span>
                 </div>
-                <div className="font-mono font-bold text-xs sm:text-[15px] text-text bg-white/95 border border-pink-100/80 p-3.5 sm:p-4.5 rounded-xl shadow-2xs overflow-x-auto whitespace-nowrap sm:whitespace-normal scrollbar-thin leading-relaxed">
+                <div className="font-mono font-bold text-xs sm:text-[15px] text-text bg-white/95 border border-teal-100/80 p-3.5 sm:p-4.5 rounded-xl shadow-2xs overflow-x-auto whitespace-nowrap sm:whitespace-normal scrollbar-thin leading-relaxed">
                   {token.text}
                 </div>
               </div>
@@ -294,7 +294,7 @@ export function RichArticleRenderer({ content }: RichArticleRendererProps) {
             return (
               <div
                 key={idx}
-                className="my-5 sm:my-6 rounded-2xl border-l-4 border-pink-500 bg-pink-50/60 p-4 sm:p-6 italic text-[15px] sm:text-[17px] md:text-lg text-text-secondary leading-[1.8] break-words shadow-2xs"
+                className="my-5 sm:my-6 rounded-2xl border-l-4 border-[#1D6474] bg-teal-50/60/60 p-4 sm:p-6 italic text-[15px] sm:text-[17px] md:text-lg text-text-secondary leading-[1.8] break-words shadow-2xs"
               >
                 {renderInlineFormatting(token.text)}
               </div>
@@ -306,11 +306,11 @@ export function RichArticleRenderer({ content }: RichArticleRendererProps) {
                 {token.items.map((item, lIdx) => (
                   <div key={lIdx} className="flex items-start gap-3 sm:gap-3.5">
                     {item.isNumbered && item.number ? (
-                      <span className="flex h-6 w-6 shrink-0 rounded-full bg-pink-100 text-pink-700 text-xs font-bold items-center justify-center mt-0.5 shadow-2xs">
+                      <span className="flex h-6 w-6 shrink-0 rounded-full bg-teal-100/70 text-[#164E63] text-xs font-bold items-center justify-center mt-0.5 shadow-2xs">
                         {item.number}
                       </span>
                     ) : (
-                      <CheckCircle2 className="h-5 w-5 shrink-0 text-pink-600 mt-1" />
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-[#1D6474] mt-1" />
                     )}
                     <div className="text-[15px] sm:text-[17px] md:text-lg text-text-secondary leading-[1.8] flex-1 break-words">
                       {renderInlineFormatting(item.text)}
@@ -339,7 +339,7 @@ export function RichArticleRenderer({ content }: RichArticleRendererProps) {
                     </thead>
                     <tbody className="divide-y divide-border/70">
                       {token.rows.map((row, rIdx) => (
-                        <tr key={rIdx} className="hover:bg-pink-50/20 transition-colors">
+                        <tr key={rIdx} className="hover:bg-teal-50/60/20 transition-colors">
                           {row.map((cell, cIdx) => (
                             <td
                               key={cIdx}
@@ -354,7 +354,7 @@ export function RichArticleRenderer({ content }: RichArticleRendererProps) {
                   </table>
                 </div>
                 <p className="text-[11px] text-text-muted text-right sm:hidden">
-                  ← সম্পূর্ণ টেবিলটি দেখতে ডানে-বামে স্ক্রোল করুন →
+                  ← Complete items  -   →
                 </p>
               </div>
             );
@@ -397,7 +397,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
           <Link
             key={idx}
             href={href}
-            className="font-bold text-[#e91e63] underline decoration-pink-300 underline-offset-3 hover:text-pink-800 transition-colors inline-flex items-center gap-0.5 break-words"
+            className="font-bold text-[#1D6474] underline decoration-pink-300 underline-offset-3 hover:text-[#164E63] transition-colors inline-flex items-center gap-0.5 break-words"
           >
             <span>{label}</span>
           </Link>
@@ -419,7 +419,7 @@ function renderInlineFormatting(text: string): React.ReactNode {
     if (part.startsWith("`") && part.endsWith("`") && part.length >= 2) {
       const codeContent = part.slice(1, -1);
       return (
-        <code key={idx} className="px-1.5 py-0.5 rounded bg-surface-secondary text-pink-700 font-mono text-[11px] sm:text-xs font-semibold border border-border">
+        <code key={idx} className="px-1.5 py-0.5 rounded bg-surface-secondary text-[#164E63] font-mono text-[11px] sm:text-xs font-semibold border border-border">
           {codeContent}
         </code>
       );

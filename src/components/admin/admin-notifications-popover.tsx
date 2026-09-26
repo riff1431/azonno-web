@@ -569,10 +569,10 @@ export function AdminNotificationsPopover() {
               ) : (
                 <button
                   onClick={requestDesktopPermission}
-                  className="text-[10px] text-pink-700 bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 hover:bg-pink-100 transition-colors cursor-pointer"
+                  className="text-[10px] text-[#164E63] bg-teal-50/60 border border-teal-200 px-2 py-0.5 rounded-md font-bold flex items-center gap-1 hover:bg-teal-100/70 transition-colors cursor-pointer"
                   title="Click to allow Windows / Mac desktop notifications"
                 >
-                  <Laptop className="h-3 w-3 text-[#e91e63]" />
+                  <Laptop className="h-3 w-3 text-[#1D6474]" />
                   {t("enable_pc_alerts")}
                 </button>
               )}
@@ -745,13 +745,13 @@ export function AdminNotificationsPopover() {
       )}
       {/* Floating Live In-App Toast for Instant New Orders */}
       {liveToast && (
-        <div className="fixed bottom-6 right-6 z-9999 max-w-sm w-full bg-white border border-pink-200 rounded-2xl shadow-2xl p-4 animate-in slide-in-from-bottom-5 fade-in duration-200 flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e91e63]/10 text-[#e91e63]">
+        <div className="fixed bottom-6 right-6 z-9999 max-w-sm w-full bg-white border border-teal-200 rounded-2xl shadow-2xl p-4 animate-in slide-in-from-bottom-5 fade-in duration-200 flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10 text-[#1D6474]">
             <ShoppingBag className="h-5 w-5" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-[#e91e63] flex items-center gap-1">
+              <span className="text-[11px] font-bold text-[#1D6474] flex items-center gap-1">
                 <Sparkles className="h-3 w-3" /> {t("realtime_alert")}
               </span>
               <button
@@ -767,7 +767,7 @@ export function AdminNotificationsPopover() {
               <Link
                 href={liveToast.link || "/admin/orders"}
                 onClick={() => setLiveToast(null)}
-                className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#e91e63] hover:bg-sg-pink-hover px-3 py-1.5 rounded-lg shadow-sm transition-all"
+                className="inline-flex items-center gap-1 text-xs font-bold text-white bg-[#1D6474] hover:bg-[#164E63] px-3 py-1.5 rounded-lg shadow-sm transition-all"
               >
                 {t("view_order")} <ChevronRight className="h-3 w-3" />
               </Link>
@@ -791,7 +791,7 @@ export function AdminNotificationsPopover() {
           </div>
           <button
             onClick={requestDesktopPermission}
-            className="text-[11px] font-bold bg-[#e91e63] hover:bg-sg-pink-hover text-white px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+            className="text-[11px] font-bold bg-[#1D6474] hover:bg-[#164E63] text-white px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
           >
             {t("enable_now")}
           </button>

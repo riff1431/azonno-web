@@ -184,7 +184,7 @@ export default function AdminHomepageManagerPage() {
   if (loading || !config) {
     return (
       <div className="flex h-96 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#e91e63]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#1D6474]" />
       </div>
     );
   }
@@ -203,7 +203,7 @@ export default function AdminHomepageManagerPage() {
         <div className="flex items-center gap-2 shrink-0">
           <a href="/" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" size="sm" className="text-xs font-bold rounded-xl">
-              <ExternalLink className="h-3.5 w-3.5 mr-1 text-[#e91e63]" />
+              <ExternalLink className="h-3.5 w-3.5 mr-1 text-[#1D6474]" />
               View Live Site
             </Button>
           </a>
@@ -211,7 +211,7 @@ export default function AdminHomepageManagerPage() {
             onClick={handleSave}
             disabled={saving}
             size="sm"
-            className="bg-[#e91e63] hover:bg-sg-pink-hover text-white font-black text-xs rounded-xl shadow-md"
+            className="bg-[#1D6474] hover:bg-[#164E63] text-white font-black text-xs rounded-xl shadow-md"
           >
             {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" /> : <Save className="h-3.5 w-3.5 mr-1" />}
             {saving ? "Publishing..." : "Publish to Live Site"}
@@ -251,7 +251,7 @@ export default function AdminHomepageManagerPage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
                 activeTab === tab.id
-                  ? "bg-[#e91e63] text-white shadow-xs scale-102"
+                  ? "bg-[#1D6474] text-white shadow-xs scale-102"
                   : "bg-gray-50 text-gray-700 hover:text-gray-900 hover:bg-gray-100 border border-gray-200/60"
               }`}
             >
@@ -280,7 +280,7 @@ export default function AdminHomepageManagerPage() {
                 onClick={() => addBannerItem("dealsYouCannotMiss")}
                 size="sm"
                 variant="outline"
-                className="text-xs font-bold border-[#e91e63] text-[#e91e63] hover:bg-pink-50"
+                className="text-xs font-bold border-[#1D6474] text-[#1D6474] hover:bg-teal-50/60"
               >
                 <Plus className="h-3.5 w-3.5 mr-1" />
                 Add Deal Banner
@@ -291,7 +291,7 @@ export default function AdminHomepageManagerPage() {
               {config.dealsYouCannotMiss?.map((deal, idx) => (
                 <div key={deal.id || idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <span className="text-xs font-black uppercase text-[#e91e63]">Deal Card #{idx + 1}</span>
+                    <span className="text-xs font-black uppercase text-[#1D6474]">Deal Card #{idx + 1}</span>
                     <button type="button" onClick={() => removeBannerItem("dealsYouCannotMiss", idx)} className="text-gray-400 hover:text-red-600 p-1">
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -348,7 +348,7 @@ export default function AdminHomepageManagerPage() {
                 onClick={() => addBannerItem("topBrandsAndOffers")}
                 size="sm"
                 variant="outline"
-                className="text-xs font-bold border-[#e91e63] text-[#e91e63] hover:bg-pink-50"
+                className="text-xs font-bold border-[#1D6474] text-[#1D6474] hover:bg-teal-50/60"
               >
                 <Plus className="h-3.5 w-3.5 mr-1" />
                 Add Brand Promo
@@ -359,7 +359,7 @@ export default function AdminHomepageManagerPage() {
               {config.topBrandsAndOffers?.map((brand, idx) => (
                 <div key={brand.id || idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <span className="text-xs font-black uppercase text-[#e91e63]">Brand Promo #{idx + 1}</span>
+                    <span className="text-xs font-black uppercase text-[#1D6474]">Brand Promo #{idx + 1}</span>
                     <button type="button" onClick={() => removeBannerItem("topBrandsAndOffers", idx)} className="text-gray-400 hover:text-red-600 p-1">
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -416,7 +416,7 @@ export default function AdminHomepageManagerPage() {
                 onClick={() => addBannerItem("heroSlides")}
                 size="sm"
                 variant="outline"
-                className="text-xs font-bold border-[#e91e63] text-[#e91e63] hover:bg-pink-50"
+                className="text-xs font-bold border-[#1D6474] text-[#1D6474] hover:bg-teal-50/60"
               >
                 <Plus className="h-3.5 w-3.5 mr-1" />
                 Add Hero Slide
@@ -427,7 +427,7 @@ export default function AdminHomepageManagerPage() {
               {config.heroSlides?.map((slide, idx) => (
                 <div key={slide.id || idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs space-y-3">
                   <div className="flex items-center justify-between border-b border-gray-100 pb-2">
-                    <span className="text-xs font-black uppercase text-[#e91e63]">Hero Slide #{idx + 1}</span>
+                    <span className="text-xs font-black uppercase text-[#1D6474]">Hero Slide #{idx + 1}</span>
                     <button type="button" onClick={() => removeBannerItem("heroSlides", idx)} className="text-gray-400 hover:text-red-600 p-1">
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -517,7 +517,7 @@ export default function AdminHomepageManagerPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {config.limitedTimeOffers?.map((card, idx) => (
                 <div key={card.id || idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs space-y-3">
-                  <span className="text-xs font-black uppercase text-[#e91e63]">Offer Card #{idx + 1}: {card.mainText}</span>
+                  <span className="text-xs font-black uppercase text-[#1D6474]">Offer Card #{idx + 1}: {card.mainText}</span>
                   <div>
                     <label className="block text-[11px] font-bold text-gray-700 mb-1">Top Ribbon Text</label>
                     <input
@@ -541,7 +541,7 @@ export default function AdminHomepageManagerPage() {
                         list[idx] = { ...list[idx], mainText: e.target.value };
                         setConfig({ ...config, limitedTimeOffers: list });
                       }}
-                      className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#e91e63] focus:outline-none"
+                      className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#1D6474] focus:outline-none"
                     />
                   </div>
                   <div>
@@ -570,7 +570,7 @@ export default function AdminHomepageManagerPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-6 gap-4">
               {config.shopByCategories?.map((cat, idx) => (
                 <div key={cat.id || idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs space-y-3">
-                  <span className="text-xs font-black uppercase text-[#e91e63]">Category #{idx + 1}: {cat.name}</span>
+                  <span className="text-xs font-black uppercase text-[#1D6474]">Category #{idx + 1}: {cat.name}</span>
                   <div>
                     <label className="block text-[11px] font-bold text-gray-700 mb-1">Category Display Name</label>
                     <input
@@ -625,7 +625,7 @@ export default function AdminHomepageManagerPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-3 gap-3">
                 <div>
                   <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                    <ArrowLeftRight className="h-4 w-4 text-[#e91e63]" />
+                    <ArrowLeftRight className="h-4 w-4 text-[#1D6474]" />
                     Before & After Interactive Beauty Comparison Slider
                   </h2>
                   <p className="text-xs text-gray-500 mt-0.5">
@@ -633,7 +633,7 @@ export default function AdminHomepageManagerPage() {
                   </p>
                 </div>
 
-                <label className="flex items-center gap-2 cursor-pointer select-none bg-pink-50 px-3 py-1.5 rounded-xl border border-pink-200">
+                <label className="flex items-center gap-2 cursor-pointer select-none bg-teal-50/60 px-3 py-1.5 rounded-xl border border-teal-200">
                   <input
                     type="checkbox"
                     checked={config.beforeAfterSection?.enabled !== false}
@@ -646,9 +646,9 @@ export default function AdminHomepageManagerPage() {
                         },
                       })
                     }
-                    className="h-4 w-4 rounded accent-[#e91e63]"
+                    className="h-4 w-4 rounded accent-[#1D6474]"
                   />
-                  <span className="text-xs font-bold text-[#e91e63]">Show On Storefront</span>
+                  <span className="text-xs font-bold text-[#1D6474]">Show On Storefront</span>
                 </label>
               </div>
 
@@ -689,7 +689,7 @@ export default function AdminHomepageManagerPage() {
                 </div>
 
                 {/* Photo Sizing & Framing Controls */}
-                <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-xl bg-pink-50/40 p-4 border border-pink-100">
+                <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 rounded-xl bg-teal-50/60/40 p-4 border border-teal-100">
                   <div>
                     <label className="block text-[11px] font-bold text-gray-800 mb-1">
                       Photo Focus & Fit (Prevents Zoom & Cropping)
@@ -737,14 +737,14 @@ export default function AdminHomepageManagerPage() {
                     </select>
                   </div>
 
-                  <div className="sm:col-span-2 pt-2 border-t border-pink-100/80">
-                    <div className="rounded-lg bg-white/80 p-2.5 border border-pink-100 text-[11px] text-gray-700 space-y-1">
-                      <div className="font-bold flex items-center gap-1.5 text-pink-700">
+                  <div className="sm:col-span-2 pt-2 border-t border-teal-100/80">
+                    <div className="rounded-lg bg-white/80 p-2.5 border border-teal-100 text-[11px] text-gray-700 space-y-1">
+                      <div className="font-bold flex items-center gap-1.5 text-[#164E63]">
                         <span>Exact Recommended Dimensions & Alignment Blueprint:</span>
                       </div>
                       <ul className="list-disc list-inside space-y-0.5 text-gray-600 font-medium">
-                        <li><strong>Optimal Resolution:</strong> <code className="bg-pink-50 px-1 py-0.5 rounded text-pink-800 font-bold">1200 × 900 px</code> (Standard 4:3 Aspect Ratio).</li>
-                        <li><strong>Alternative Square:</strong> <code className="bg-pink-50 px-1 py-0.5 rounded text-pink-800 font-bold">1000 × 1000 px</code> (1:1 Ratio).</li>
+                        <li><strong>Optimal Resolution:</strong> <code className="bg-teal-50/60 px-1 py-0.5 rounded text-[#164E63] font-bold">1200 × 900 px</code> (Standard 4:3 Aspect Ratio).</li>
+                        <li><strong>Alternative Square:</strong> <code className="bg-teal-50/60 px-1 py-0.5 rounded text-[#164E63] font-bold">1000 × 1000 px</code> (1:1 Ratio).</li>
                         <li><strong>Facial Eye Line:</strong> Position the model&apos;s eyes approximately <strong>30% from the top</strong> of the canvas.</li>
                         <li><strong>Left & Right Match:</strong> Ensure the model&apos;s face size, angle, and center coordinates are <strong>100% identical</strong> in both Before & After photos.</li>
                       </ul>
@@ -909,7 +909,7 @@ export default function AdminHomepageManagerPage() {
                         },
                       })
                     }
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#1D6474] focus:outline-none"
                   />
                 </div>
 
@@ -1013,7 +1013,7 @@ export default function AdminHomepageManagerPage() {
                         },
                       })
                     }
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#1D6474] focus:outline-none"
                   />
                 </div>
 
@@ -1097,7 +1097,7 @@ export default function AdminHomepageManagerPage() {
                         } as any,
                       })
                     }
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border px-3 py-2 text-xs font-black uppercase text-[#1D6474] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -1131,7 +1131,7 @@ export default function AdminHomepageManagerPage() {
                         } as any,
                       })
                     }
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-[#1D6474] focus:outline-none"
                   />
                 </div>
               </div>
@@ -1151,7 +1151,7 @@ export default function AdminHomepageManagerPage() {
                         } as any,
                       })
                     }
-                    className="h-4 w-4 rounded text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded text-[#1D6474] focus:ring-[#1D6474]"
                   />
                   <span>Discount Badges</span>
                 </label>
@@ -1169,7 +1169,7 @@ export default function AdminHomepageManagerPage() {
                         } as any,
                       })
                     }
-                    className="h-4 w-4 rounded text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded text-[#1D6474] focus:ring-[#1D6474]"
                   />
                   <span>Wishlist Heart</span>
                 </label>
@@ -1187,7 +1187,7 @@ export default function AdminHomepageManagerPage() {
                         } as any,
                       })
                     }
-                    className="h-4 w-4 rounded text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded text-[#1D6474] focus:ring-[#1D6474]"
                   />
                   <span>Free Shipping Strip</span>
                 </label>
@@ -1205,7 +1205,7 @@ export default function AdminHomepageManagerPage() {
                         } as any,
                       })
                     }
-                    className="h-4 w-4 rounded text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded text-[#1D6474] focus:ring-[#1D6474]"
                   />
                   <span>Star Rating</span>
                 </label>
@@ -1223,7 +1223,7 @@ export default function AdminHomepageManagerPage() {
                         } as any,
                       })
                     }
-                    className="h-4 w-4 rounded text-[#e91e63] focus:ring-[#e91e63]"
+                    className="h-4 w-4 rounded text-[#1D6474] focus:ring-[#1D6474]"
                   />
                   <span>Size/Volume Pill</span>
                 </label>
@@ -1237,7 +1237,7 @@ export default function AdminHomepageManagerPage() {
           <div className="space-y-6">
             <div>
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-[#e91e63]" /> Trust Pillars & Value Propositions (4 Strip Cards)
+                <ShieldCheck className="h-4 w-4 text-[#1D6474]" /> Trust Pillars & Value Propositions (4 Strip Cards)
               </h2>
               <p className="text-xs text-gray-500 mt-0.5">
                 Configure the title, subtitle, icon, or custom image logo for each of the 4 storefront trust badges.
@@ -1247,7 +1247,7 @@ export default function AdminHomepageManagerPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {config.trustPillars?.map((tp, idx) => (
                 <div key={tp.id || idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs space-y-3">
-                  <span className="text-xs font-black uppercase text-[#e91e63]">Pillar #{idx + 1}: {tp.title}</span>
+                  <span className="text-xs font-black uppercase text-[#1D6474]">Pillar #{idx + 1}: {tp.title}</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-[11px] font-bold text-gray-700 mb-1">Title</label>
@@ -1327,7 +1327,7 @@ export default function AdminHomepageManagerPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {config.campaignPills?.map((pill, idx) => (
                 <div key={pill.id || idx} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-xs space-y-3">
-                  <span className="text-xs font-black uppercase text-[#e91e63]">Badge #{idx + 1}: {pill.label}</span>
+                  <span className="text-xs font-black uppercase text-[#1D6474]">Badge #{idx + 1}: {pill.label}</span>
                   <div>
                     <label className="block text-[11px] font-bold text-gray-700 mb-1">Pill Text</label>
                     <input
@@ -1367,12 +1367,12 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <Type className="h-4 w-4 text-[#e91e63]" /> 1. Desktop Header Logo & Branding
+                  <Type className="h-4 w-4 text-[#1D6474]" /> 1. Desktop Header Logo & Branding
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Controls the logo on desktop screens. When an image URL is provided, the image is displayed and text is hidden.
                 </p>
-                <div className="mt-2 inline-flex items-center gap-2 rounded-lg bg-pink-50/70 border border-pink-100 px-3 py-1.5 text-[11px] font-semibold text-pink-700">
+                <div className="mt-2 inline-flex items-center gap-2 rounded-lg bg-teal-50/60/70 border border-teal-100 px-3 py-1.5 text-[11px] font-semibold text-[#164E63]">
                   <span>Recommended: 400×90px to 500×100px (4:1 ratio, transparent PNG/SVG). Desktop displays at 44px height.</span>
                 </div>
               </div>
@@ -1382,7 +1382,7 @@ export default function AdminHomepageManagerPage() {
                   <label className="block text-[11px] font-bold text-gray-700 mb-1">Desktop Brand Text (Shown when NO image is set)</label>
                   <input
                     type="text"
-                    placeholder="e.g. Blush & Budget"
+                    placeholder="e.g. Azonno"
                     value={config.headerConfig?.logoText ?? ""}
                     onChange={(e) =>
                       setConfig({
@@ -1443,7 +1443,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <Layout className="h-4 w-4 text-[#e91e63]" /> 2. Mobile Top Header Logo (Mobile Screen Bar)
+                  <Layout className="h-4 w-4 text-[#1D6474]" /> 2. Mobile Top Header Logo (Mobile Screen Bar)
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Controls the logo on the mobile top navigation bar. When set, displays image and hides text. Leave blank to default to Desktop Logo.
@@ -1455,7 +1455,7 @@ export default function AdminHomepageManagerPage() {
                   <label className="block text-[11px] font-bold text-gray-700 mb-1">Mobile Brand Text (Optional - defaults to Desktop)</label>
                   <input
                     type="text"
-                    placeholder="e.g. Blush & Budget (defaults to Desktop Brand Text)"
+                    placeholder="e.g. Azonno (defaults to Desktop Brand Text)"
                     value={config.headerConfig?.mobileLogoText ?? ""}
                     onChange={(e) =>
                       setConfig({
@@ -1497,7 +1497,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <Sliders className="h-4 w-4 text-[#e91e63]" /> 3. Mobile Menu Drawer Logo (mmenu Top Header)
+                  <Sliders className="h-4 w-4 text-[#1D6474]" /> 3. Mobile Menu Drawer Logo (mmenu Top Header)
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Controls the logo inside the slide-over mobile category drawer menu. When set, displays image and hides text.
@@ -1509,7 +1509,7 @@ export default function AdminHomepageManagerPage() {
                   <label className="block text-[11px] font-bold text-gray-700 mb-1">Drawer Brand Text (Optional - defaults to Header)</label>
                   <input
                     type="text"
-                    placeholder="e.g. Blush & Budget (defaults to Header text)"
+                    placeholder="e.g. Azonno (defaults to Header text)"
                     value={config.headerConfig?.drawerLogoText ?? ""}
                     onChange={(e) =>
                       setConfig({
@@ -1548,10 +1548,10 @@ export default function AdminHomepageManagerPage() {
             </div>
 
             {/* Section 1D: Admin Dashboard Sidebar Logo */}
-            <div className="rounded-2xl border-2 border-[#e91e63]/20 bg-linear-to-br from-pink-50 to-white p-6 shadow-xs space-y-4">
+            <div className="rounded-2xl border-2 border-[#1D6474]/20 bg-linear-to-br from-pink-50 to-white p-6 shadow-xs space-y-4">
               <div className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#e91e63]/10">
-                  <ShieldCheck className="h-5 w-5 text-[#e91e63]" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#1D6474]/10">
+                  <ShieldCheck className="h-5 w-5 text-[#1D6474]" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
@@ -1603,7 +1603,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <Search className="h-4 w-4 text-[#e91e63]" /> Search Bar Animated Placeholder Keywords
+                  <Search className="h-4 w-4 text-[#1D6474]" /> Search Bar Animated Placeholder Keywords
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Comma-separated list of search queries that cycle with typing animation in the header search pill.
@@ -1631,7 +1631,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-6">
               <div>
                 <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <Layers className="h-4 w-4 text-[#e91e63]" /> Main Navigation & Hoverable Mega-Menus
+                  <Layers className="h-4 w-4 text-[#1D6474]" /> Main Navigation & Hoverable Mega-Menus
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Configure the categories shown in the header navigation and the rich mega menu dropdown with subcategories, popular brands, and promo banner that opens when customers hover over each category.
@@ -1643,7 +1643,7 @@ export default function AdminHomepageManagerPage() {
                   <div key={cat.id || catIdx} className="rounded-2xl border border-gray-200 p-5 bg-gray-50/50 space-y-4">
                     <div className="flex items-center justify-between border-b border-gray-200 pb-3">
                       <div className="flex items-center gap-2">
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#e91e63] text-[11px] font-black text-white">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#1D6474] text-[11px] font-black text-white">
                           {catIdx + 1}
                         </span>
                         <h4 className="text-sm font-black text-gray-900">{cat.name} Mega-Menu</h4>
@@ -1859,7 +1859,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#e91e63]" /> Top Utility Announcement Bar & Helpline
+                  <Sparkles className="h-4 w-4 text-[#1D6474]" /> Top Utility Announcement Bar & Helpline
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Manage the top announcement strip and customer hotline.
@@ -1873,7 +1873,7 @@ export default function AdminHomepageManagerPage() {
                     type="text"
                     value={config.announcementBadgeText ?? ""}
                     onChange={(e) => setConfig({ ...config, announcementBadgeText: e.target.value })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-[#e91e63] focus:outline-none"
+                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-[#1D6474] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -1901,7 +1901,7 @@ export default function AdminHomepageManagerPage() {
                     type="text"
                     value={config.routineFinderText ?? ""}
                     onChange={(e) => setConfig({ ...config, routineFinderText: e.target.value })}
-                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-pink-600 focus:outline-none"
+                    className="w-full rounded-xl border px-3 py-2 text-xs font-bold text-[#1D6474] focus:outline-none"
                   />
                 </div>
                 <div>
@@ -1949,7 +1949,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <Type className="h-4 w-4 text-[#e91e63]" /> 4. Footer Logo, Branding & Bio (Footer Section)
+                  <Type className="h-4 w-4 text-[#1D6474]" /> 4. Footer Logo, Branding & Bio (Footer Section)
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Controls the logo, brand name text, about summary, and copyright line displayed in the dark footer.
@@ -1963,7 +1963,7 @@ export default function AdminHomepageManagerPage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Blush & Budget (defaults to header logo text)"
+                    placeholder="e.g. Azonno (defaults to header logo text)"
                     value={config.footerBrandText ?? ""}
                     onChange={(e) => setConfig({ ...config, footerBrandText: e.target.value })}
                     className="w-full rounded-xl border px-3 py-2 text-xs font-bold focus:outline-none"
@@ -2017,7 +2017,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <UserCheck className="h-4 w-4 text-[#e91e63]" /> Customer Login & Registration Requirements
+                  <UserCheck className="h-4 w-4 text-[#1D6474]" /> Customer Login & Registration Requirements
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Control whether customers are forced to create an account / login to order, or permitted to checkout as guests.
@@ -2041,7 +2041,7 @@ export default function AdminHomepageManagerPage() {
                     onChange={(e) =>
                       setCheckoutSettings({ ...checkoutSettings, guest_checkout_enabled: e.target.checked })
                     }
-                    className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
+                    className="h-5 w-5 rounded border-gray-300 text-[#1D6474] accent-[#1D6474]"
                   />
                 </label>
 
@@ -2061,7 +2061,7 @@ export default function AdminHomepageManagerPage() {
                     onChange={(e) =>
                       setCheckoutSettings({ ...checkoutSettings, allow_customer_registration: e.target.checked })
                     }
-                    className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
+                    className="h-5 w-5 rounded border-gray-300 text-[#1D6474] accent-[#1D6474]"
                   />
                 </label>
               </div>
@@ -2071,7 +2071,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-[#e91e63]" /> Customer Checkout Fields & Validation Rules
+                  <FileText className="h-4 w-4 text-[#1D6474]" /> Customer Checkout Fields & Validation Rules
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Customize mandatory customer contact inputs and special delivery instructions.
@@ -2095,7 +2095,7 @@ export default function AdminHomepageManagerPage() {
                     onChange={(e) =>
                       setCheckoutSettings({ ...checkoutSettings, require_phone: e.target.checked })
                     }
-                    className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
+                    className="h-5 w-5 rounded border-gray-300 text-[#1D6474] accent-[#1D6474]"
                   />
                 </label>
 
@@ -2115,7 +2115,7 @@ export default function AdminHomepageManagerPage() {
                     onChange={(e) =>
                       setCheckoutSettings({ ...checkoutSettings, require_email: e.target.checked })
                     }
-                    className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
+                    className="h-5 w-5 rounded border-gray-300 text-[#1D6474] accent-[#1D6474]"
                   />
                 </label>
 
@@ -2135,7 +2135,7 @@ export default function AdminHomepageManagerPage() {
                     onChange={(e) =>
                       setCheckoutSettings({ ...checkoutSettings, order_notes_enabled: e.target.checked })
                     }
-                    className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
+                    className="h-5 w-5 rounded border-gray-300 text-[#1D6474] accent-[#1D6474]"
                   />
                 </label>
 
@@ -2143,8 +2143,8 @@ export default function AdminHomepageManagerPage() {
                 <label className="flex items-center justify-between p-3.5 rounded-2xl border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                   <div>
                     <span className="font-bold text-gray-900 text-xs sm:text-sm block flex items-center gap-1.5">
-                      <MapPin className="h-4 w-4 text-[#e91e63]" />
-                      Show Division, District &amp; Thana (বিভাগ, জেলা, থানা) Selectors
+                      <MapPin className="h-4 w-4 text-[#1D6474]" />
+                      Show Division, District &amp; Thana (, , ) Selectors
                     </span>
                     <span className="text-gray-500 text-[11px]">
                       When enabled, customers pick Division, District, and Thana from dropdown lists during checkout. When disabled, customers only choose Inside/Outside Dhaka and enter their complete street address.
@@ -2156,7 +2156,7 @@ export default function AdminHomepageManagerPage() {
                     onChange={(e) =>
                       setCheckoutSettings({ ...checkoutSettings, show_location_hierarchy: e.target.checked })
                     }
-                    className="h-5 w-5 rounded border-gray-300 text-[#e91e63] accent-[#e91e63]"
+                    className="h-5 w-5 rounded border-gray-300 text-[#1D6474] accent-[#1D6474]"
                   />
                 </label>
               </div>
@@ -2166,7 +2166,7 @@ export default function AdminHomepageManagerPage() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
               <div>
                 <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                  <Banknote className="h-4 w-4 text-[#e91e63]" /> Order Spending Limits & Thresholds (BDT)
+                  <Banknote className="h-4 w-4 text-[#1D6474]" /> Order Spending Limits & Thresholds (BDT)
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
                   Set minimum cart subtotal required to place an order and maximum limit for Cash on Delivery.
@@ -2229,7 +2229,7 @@ export default function AdminHomepageManagerPage() {
           <Button
             type="submit"
             disabled={saving}
-            className="rounded-2xl bg-[#e91e63] hover:bg-sg-pink-hover text-white font-extrabold text-sm px-8 py-3.5 shadow-xl transition-all active:scale-95"
+            className="rounded-2xl bg-[#1D6474] hover:bg-[#164E63] text-white font-extrabold text-sm px-8 py-3.5 shadow-xl transition-all active:scale-95"
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
             {saving ? "Publishing Changes..." : "Save & Publish All Sections"}

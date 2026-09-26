@@ -83,7 +83,7 @@ async function fetchPublishedProducts(): Promise<{
     getSettingsByGroup("logistics").catch(() => ({} as Record<string, any>)),
   ]);
 
-  const defaultStoreName = generalSettings.store_name || "Blush & Budget";
+  const defaultStoreName = generalSettings.store_name || "Azonno";
   const defaultCurrency = generalSettings.currency || "BDT";
   const defaultDeliveryCharge = Number(logisticsSettings.inside_dhaka_delivery_fee) || 60;
 

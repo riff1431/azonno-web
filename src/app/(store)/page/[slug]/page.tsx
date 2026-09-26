@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const baseUrl = getBaseUrl();
   if (!page) return { title: "Page Not Found" };
 
-  const title = page.seo_title || `${page.title} — Blush & Budget`;
+  const title = page.seo_title || `${page.title} — Azonno`;
   const description = page.seo_description || page.title;
   const canonicalUrl = `${baseUrl}/page/${slug}`;
 
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title,
       description,
       url: canonicalUrl,
-      siteName: "Blush & Budget",
+      siteName: "Azonno",
       type: "website",
     },
     twitter: {
@@ -50,7 +50,7 @@ export default async function CmsPublicPage({ params }: { params: Promise<{ slug
         month: "long",
         year: "numeric",
       })
-    : "সেপ্টেম্বর ২০২৬";
+    : " 2026";
 
   const breadcrumbs = [
     { name: "Home", url: `${baseUrl}` },
@@ -63,7 +63,7 @@ export default async function CmsPublicPage({ params }: { params: Promise<{ slug
       <CmsPageClient
         slug={page.slug}
         title={page.title}
-        subtitle={page.seo_description || "অফিসিয়াল পলিসি ও তথ্য"}
+        subtitle={page.seo_description || " Policy  "}
         lastUpdated={lastUpdated}
       >
         <div className="space-y-6">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Shopping Cart | Blush & Budget",
+  title: "Shopping Cart | Azonno",
   description: "View and manage your selected beauty items before checkout.",
   robots: {
     index: false,

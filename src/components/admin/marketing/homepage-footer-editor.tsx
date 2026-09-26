@@ -90,7 +90,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
         ...raw.slice(0, 2),
         {
           label: "Routine Finder (Quiz)",
-          labelBn: "রুটিন ফাইন্ডার (কুইজ)",
+          labelBn: "items  ()",
           href: "/quiz",
           isHighlight: true,
         },
@@ -170,7 +170,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
   const addCategoryLink = () => {
     const newItem: FooterLinkItem = {
       label: "New Category",
-      labelBn: "নতুন ক্যাটাগরি",
+      labelBn: "New Category",
       href: "/products?category=all",
       isHighlight: false,
     };
@@ -208,7 +208,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
   const addCustomerCareLink = () => {
     const newItem: FooterLinkItem = {
       label: "New Policy Link",
-      labelBn: "নতুন পলিসি লিংক",
+      labelBn: "New Policy Link",
       href: "/page/help",
       isHighlight: false,
     };
@@ -244,10 +244,10 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-[#e91e63]" />
+                <ShieldCheck className="h-5 w-5 text-[#1D6474]" />
                 Trust Pillars & Guarantees Strip
               </h2>
-              <span className="rounded-full bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-0.5">
+              <span className="rounded-full bg-teal-100/70 text-[#164E63] text-[10px] font-bold px-2 py-0.5">
                 Top Footer Strip
               </span>
             </div>
@@ -263,7 +263,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               onChange={(e) => updateFooter("showTrustPillars", e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e91e63]"></div>
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1D6474]"></div>
             <span className="ml-3 text-xs font-bold text-gray-800">
               {footer.showTrustPillars !== false ? "Strip Active" : "Strip Hidden"}
             </span>
@@ -276,7 +276,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
             {(config.trustPillars || DEFAULT_HOMEPAGE_CONFIG.trustPillars).map((tp, idx) => (
               <div key={tp.id || idx} className="rounded-xl border border-gray-200 bg-gray-50/70 p-3.5 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black uppercase text-[#e91e63]">
+                  <span className="text-[11px] font-black uppercase text-[#1D6474]">
                     Pillar #{idx + 1}: {tp.title}
                   </span>
                   <span className="text-[10px] font-mono font-bold text-gray-400">ID: {tp.id}</span>
@@ -292,7 +292,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                         list[idx] = { ...list[idx], title: e.target.value };
                         onChange({ ...config, trustPillars: list });
                       }}
-                      className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-[#e91e63]"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-[#1D6474]"
                     />
                   </div>
                   <div>
@@ -305,7 +305,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                         list[idx] = { ...list[idx], subtitle: e.target.value };
                         onChange({ ...config, trustPillars: list });
                       }}
-                      className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:border-[#e91e63]"
+                      className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:border-[#1D6474]"
                     />
                   </div>
                 </div>
@@ -318,7 +318,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                       list[idx] = { ...list[idx], iconName: e.target.value };
                       onChange({ ...config, trustPillars: list });
                     }}
-                    className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-[#e91e63]"
+                    className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-[#1D6474]"
                   >
                     <option value="shield">Shield (100% Authentic Guarantee)</option>
                     <option value="truck">Truck (Express 24-48h Delivery)</option>
@@ -336,7 +336,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       {/* 2. Brand & Identity Settings */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
         <h2 className="text-base font-bold text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-          <PanelBottom className="h-5 w-5 text-[#e91e63]" />
+          <PanelBottom className="h-5 w-5 text-[#1D6474]" />
           Footer Brand & Identity
         </h2>
 
@@ -349,7 +349,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="text"
               value={footer.brandText || config.footerBrandText || ""}
               onChange={(e) => updateFooter("brandText", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -361,7 +361,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="text"
               value={footer.copyrightText || config.footerCopyright || ""}
               onChange={(e) => updateFooter("copyrightText", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
         </div>
@@ -401,39 +401,39 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               rows={3}
               value={footer.aboutText || config.footerAboutText || ""}
               onChange={(e) => updateFooter("aboutText", e.target.value)}
-              className="w-full rounded-xl border p-3 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border p-3 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
           <div>
             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-              About Description (বাংলা)
+              About Description (English)
             </label>
             <textarea
               rows={3}
               value={footer.aboutTextBn || ""}
               onChange={(e) => updateFooter("aboutTextBn", e.target.value)}
-              className="w-full rounded-xl border p-3 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border p-3 text-xs text-gray-800 leading-relaxed focus:outline-none focus:border-[#1D6474]"
             />
           </div>
         </div>
       </div>
 
       {/* 3. Footer Category Links (Column 2) - 100% Controllable */}
-      <div className="rounded-2xl border-2 border-pink-200/80 bg-white p-6 shadow-xs space-y-4">
+      <div className="rounded-2xl border-2 border-teal-200/80 bg-white p-6 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <Link2 className="h-5 w-5 text-[#e91e63]" />
+                <Link2 className="h-5 w-5 text-[#1D6474]" />
                 Footer Category Links (Column 2)
               </h2>
-              <span className="rounded-full bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-0.5">
+              <span className="rounded-full bg-teal-100/70 text-[#164E63] text-[10px] font-bold px-2 py-0.5">
                 {footer.categoryLinks?.length || 0} Links
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
-              Manage the navigation links under "ক্যাটাগরি" (Skin Care, Hair Care, Makeup, Special Offers, etc.).
+              Manage the navigation links under "Category" (Skin Care, Hair Care, Makeup, Special Offers, etc.).
             </p>
           </div>
 
@@ -453,7 +453,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="button"
               onClick={addCategoryLink}
               size="sm"
-              className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold"
+              className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold"
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               Add Category Link
@@ -468,7 +468,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               className="rounded-xl border border-gray-200 bg-gray-50/50 p-3.5 flex flex-col lg:flex-row lg:items-center gap-3 justify-between"
             >
               <div className="flex items-center gap-2 shrink-0">
-                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-pink-50 text-xs font-bold text-[#e91e63]">
+                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-50/60 text-xs font-bold text-[#1D6474]">
                   {idx + 1}
                 </span>
                 <div className="flex items-center gap-0.5">
@@ -500,7 +500,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     value={item.label}
                     onChange={(e) => updateCategoryLink(idx, "label", e.target.value)}
                     placeholder="English Label (e.g. Skin Care)"
-                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                   />
                 </div>
                 <div>
@@ -508,8 +508,8 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     type="text"
                     value={item.labelBn || ""}
                     onChange={(e) => updateCategoryLink(idx, "labelBn", e.target.value)}
-                    placeholder="বাংলা নাম (যেমন: স্কিন কেয়ার)"
-                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                    placeholder="English Name (e.g.:  )"
+                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                   />
                 </div>
                 <div>
@@ -518,7 +518,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     value={item.href}
                     onChange={(e) => updateCategoryLink(idx, "href", e.target.value)}
                     placeholder="URL (e.g. /products?category=skin-care)"
-                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-mono text-gray-800 focus:outline-none focus:border-[#e91e63]"
+                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-mono text-gray-800 focus:outline-none focus:border-[#1D6474]"
                   />
                 </div>
               </div>
@@ -529,9 +529,9 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     type="checkbox"
                     checked={item.isHighlight === true}
                     onChange={(e) => updateCategoryLink(idx, "isHighlight", e.target.checked)}
-                    className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                    className="rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                   />
-                  <span className={item.isHighlight ? "text-[#e91e63]" : ""}>Pink Highlight</span>
+                  <span className={item.isHighlight ? "text-[#1D6474]" : ""}>Pink Highlight</span>
                 </label>
 
                 <button
@@ -549,20 +549,20 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       </div>
 
       {/* 4. Customer Care & Policies Links (Column 3) - 100% Controllable */}
-      <div className="rounded-2xl border-2 border-pink-200/80 bg-white p-6 shadow-xs space-y-4">
+      <div className="rounded-2xl border-2 border-teal-200/80 bg-white p-6 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                <Link2 className="h-5 w-5 text-[#e91e63]" />
+                <Link2 className="h-5 w-5 text-[#1D6474]" />
                 Customer Care & Policy Links (Column 3)
               </h2>
-              <span className="rounded-full bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-0.5">
+              <span className="rounded-full bg-teal-100/70 text-[#164E63] text-[10px] font-bold px-2 py-0.5">
                 {footer.customerCareLinks?.length || 0} Links
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-0.5">
-              Manage the navigation links under "গ্রাহক সেবা" (Track Order, Return Policy, Terms, Privacy Policy, FAQ, etc.).
+              Manage the navigation links under " " (Track Order, Return Policy, Terms, Privacy Policy, FAQ, etc.).
             </p>
           </div>
 
@@ -582,7 +582,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="button"
               onClick={addCustomerCareLink}
               size="sm"
-              className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold"
+              className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold"
             >
               <Plus className="h-3.5 w-3.5 mr-1" />
               Add Policy Link
@@ -597,7 +597,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               className="rounded-xl border border-gray-200 bg-gray-50/50 p-3.5 flex flex-col lg:flex-row lg:items-center gap-3 justify-between"
             >
               <div className="flex items-center gap-2 shrink-0">
-                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-pink-50 text-xs font-bold text-[#e91e63]">
+                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-teal-50/60 text-xs font-bold text-[#1D6474]">
                   {idx + 1}
                 </span>
                 <div className="flex items-center gap-0.5">
@@ -629,7 +629,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     value={item.label}
                     onChange={(e) => updateCustomerCareLink(idx, "label", e.target.value)}
                     placeholder="English Label (e.g. Track Order)"
-                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                   />
                 </div>
                 <div>
@@ -637,8 +637,8 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     type="text"
                     value={item.labelBn || ""}
                     onChange={(e) => updateCustomerCareLink(idx, "labelBn", e.target.value)}
-                    placeholder="বাংলা নাম (যেমন: অর্ডার ট্র্যাক)"
-                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                    placeholder="English Name (e.g.: Order )"
+                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                   />
                 </div>
                 <div>
@@ -647,7 +647,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     value={item.href}
                     onChange={(e) => updateCustomerCareLink(idx, "href", e.target.value)}
                     placeholder="URL (e.g. /track-order)"
-                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-mono text-gray-800 focus:outline-none focus:border-[#e91e63]"
+                    className="w-full rounded-lg border bg-white px-3 py-1.5 text-xs font-mono text-gray-800 focus:outline-none focus:border-[#1D6474]"
                   />
                 </div>
               </div>
@@ -658,9 +658,9 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                     type="checkbox"
                     checked={item.isHighlight === true}
                     onChange={(e) => updateCustomerCareLink(idx, "isHighlight", e.target.checked)}
-                    className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                    className="rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                   />
-                  <span className={item.isHighlight ? "text-[#e91e63]" : ""}>Pink Highlight</span>
+                  <span className={item.isHighlight ? "text-[#1D6474]" : ""}>Pink Highlight</span>
                 </label>
 
                 <button
@@ -680,7 +680,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       {/* 5. Support & Contact Information */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
         <h2 className="text-base font-bold text-gray-900 flex items-center gap-2 border-b border-gray-100 pb-3">
-          <Phone className="h-5 w-5 text-[#e91e63]" />
+          <Phone className="h-5 w-5 text-[#1D6474]" />
           Support & Contact Information (Column 4)
         </h2>
 
@@ -693,7 +693,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="text"
               value={footer.supportPhone || config.supportPhone || ""}
               onChange={(e) => updateFooter("supportPhone", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -705,7 +705,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="email"
               value={footer.supportEmail || config.supportEmail || ""}
               onChange={(e) => updateFooter("supportEmail", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -717,19 +717,19 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="text"
               value={footer.supportAddress || "Gulshan, Dhaka, Bangladesh"}
               onChange={(e) => updateFooter("supportAddress", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
           <div>
             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-              Office Address (বাংলা)
+              Office Address (English)
             </label>
             <input
               type="text"
-              value={footer.supportAddressBn || "গুলশান, ঢাকা, বাংলাদেশ"}
+              value={footer.supportAddressBn || ", , English"}
               onChange={(e) => updateFooter("supportAddressBn", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -741,7 +741,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="text"
               value={footer.supportWhatsapp || "+880 1700-000000"}
               onChange={(e) => updateFooter("supportWhatsapp", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
         </div>
@@ -751,7 +751,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-gray-100 pb-3">
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-            <Newspaper className="h-5 w-5 text-[#e91e63]" />
+            <Newspaper className="h-5 w-5 text-[#1D6474]" />
             Newsletter Subscription Box
           </h2>
 
@@ -762,7 +762,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               onChange={(e) => updateFooter("showNewsletter", e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e91e63]"></div>
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1D6474]"></div>
             <span className="ml-2.5 text-xs font-bold text-gray-800">
               {footer.showNewsletter !== false ? "Visible" : "Hidden"}
             </span>
@@ -778,19 +778,19 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="text"
               value={footer.newsletterTitle || "Get Exclusive Deals & Beauty Tips"}
               onChange={(e) => updateFooter("newsletterTitle", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
           <div>
             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-              Newsletter Title (বাংলা)
+              Newsletter Title (English)
             </label>
             <input
               type="text"
-              value={footer.newsletterTitleBn || "এক্সক্লুসিভ অফার ও বিউটি টিপস পান"}
+              value={footer.newsletterTitleBn || "   items items "}
               onChange={(e) => updateFooter("newsletterTitleBn", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -802,19 +802,19 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               type="text"
               value={footer.newsletterSubtitle || "Subscribe for new arrivals, flash sale coupons & skincare routine guides."}
               onChange={(e) => updateFooter("newsletterSubtitle", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
           <div>
             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-              Newsletter Subtitle (বাংলা)
+              Newsletter Subtitle (English)
             </label>
             <input
               type="text"
-              value={footer.newsletterSubtitleBn || "নতুন প্রোডাক্ট রিলিজ, ডিসকাউন্ট ভাউচার ও স্কিনকেয়ার গাইড পেতে সাবস্ক্রাইব করুন।"}
+              value={footer.newsletterSubtitleBn || " Products , Discount       ।"}
               onChange={(e) => updateFooter("newsletterSubtitleBn", e.target.value)}
-              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
         </div>
@@ -824,7 +824,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-gray-100 pb-3">
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-            <Share2 className="h-5 w-5 text-[#e91e63]" />
+            <Share2 className="h-5 w-5 text-[#1D6474]" />
             Social Media URLs & Visibility
           </h2>
 
@@ -835,7 +835,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               onChange={(e) => updateFooter("showSocialLinks", e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e91e63]"></div>
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1D6474]"></div>
             <span className="ml-2.5 text-xs font-bold text-gray-800">
               {footer.showSocialLinks !== false ? "Visible" : "Hidden"}
             </span>
@@ -852,7 +852,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               value={footer.socialLinks?.facebook || ""}
               onChange={(e) => updateSocialLink("facebook", e.target.value)}
               placeholder="https://facebook.com/..."
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -865,7 +865,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               value={footer.socialLinks?.instagram || ""}
               onChange={(e) => updateSocialLink("instagram", e.target.value)}
               placeholder="https://instagram.com/..."
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -878,7 +878,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               value={footer.socialLinks?.youtube || ""}
               onChange={(e) => updateSocialLink("youtube", e.target.value)}
               placeholder="https://youtube.com/..."
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -891,7 +891,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               value={footer.socialLinks?.whatsapp || ""}
               onChange={(e) => updateSocialLink("whatsapp", e.target.value)}
               placeholder="https://wa.me/8801700000000 or +880 1700-000000"
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
 
@@ -904,18 +904,18 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               value={footer.socialLinks?.tiktok || ""}
               onChange={(e) => updateSocialLink("tiktok", e.target.value)}
               placeholder="https://tiktok.com/@..."
-              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#e91e63]"
+              className="w-full rounded-xl border px-3.5 py-2 text-xs font-mono text-gray-900 focus:outline-none focus:border-[#1D6474]"
             />
           </div>
         </div>
       </div>
 
       {/* 8. Payment Method Badges & Display Style */}
-      <div className="rounded-2xl border-2 border-pink-200/80 bg-white p-6 shadow-xs space-y-6">
+      <div className="rounded-2xl border-2 border-teal-200/80 bg-white p-6 shadow-xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
           <div>
             <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-[#e91e63]" />
+              <CreditCard className="h-5 w-5 text-[#1D6474]" />
               Accepted Payment Badges (We Accept)
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -930,7 +930,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               onChange={(e) => updateFooter("showPaymentBadges", e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#e91e63]"></div>
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1D6474]"></div>
             <span className="ml-2.5 text-xs font-bold text-gray-800">
               {footer.showPaymentBadges !== false ? "Visible" : "Hidden"}
             </span>
@@ -961,7 +961,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                       key={item.id}
                       className={cn(
                         "rounded-xl border p-4 space-y-3 transition-colors",
-                        isChecked ? "border-pink-200 bg-pink-50/20" : "border-gray-200 bg-gray-50/40 opacity-70"
+                        isChecked ? "border-teal-200 bg-teal-50/60/20" : "border-gray-200 bg-gray-50/40 opacity-70"
                       )}
                     >
                       <div className="flex items-center justify-between">
@@ -970,7 +970,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                             type="checkbox"
                             checked={isChecked}
                             onChange={(e) => updatePaymentMethod(item.id, e.target.checked)}
-                            className="rounded border-gray-300 text-[#e91e63] focus:ring-[#e91e63]"
+                            className="rounded border-gray-300 text-[#1D6474] focus:ring-[#1D6474]"
                           />
                           <span className="text-xs font-bold text-gray-900">{item.label}</span>
                         </label>
@@ -1050,7 +1050,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200 pb-3">
                 <div>
                   <h3 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                    <Sparkles className="h-4 w-4 text-[#e91e63]" />
+                    <Sparkles className="h-4 w-4 text-[#1D6474]" />
                     Additional Custom Payment / Security Badges
                   </h3>
                   <p className="text-[11px] text-gray-500">
@@ -1061,7 +1061,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                   type="button"
                   onClick={addCustomPaymentBadge}
                   size="sm"
-                  className="bg-[#e91e63] hover:bg-pink-700 text-white text-xs font-bold shrink-0"
+                  className="bg-[#1D6474] hover:bg-[#164E63] text-white text-xs font-bold shrink-0"
                 >
                   <Plus className="h-3.5 w-3.5 mr-1" />
                   Add Custom Badge
@@ -1085,14 +1085,14 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
                           value={badge.name}
                           onChange={(e) => updateCustomPaymentBadge(idx, "name", e.target.value)}
                           placeholder="Badge Name (e.g. Rocket / Upay)"
-                          className="flex-1 rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#e91e63]"
+                          className="flex-1 rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-bold text-gray-900 focus:outline-none focus:border-[#1D6474]"
                         />
                         <label className="flex items-center gap-1.5 cursor-pointer text-xs font-medium text-gray-600 select-none">
                           <input
                             type="checkbox"
                             checked={badge.enabled !== false}
                             onChange={(e) => updateCustomPaymentBadge(idx, "enabled", e.target.checked)}
-                            className="rounded border-gray-300 text-[#e91e63]"
+                            className="rounded border-gray-300 text-[#1D6474]"
                           />
                           Active
                         </label>
@@ -1137,7 +1137,7 @@ export function HomepageFooterEditor({ config, onChange }: HomepageFooterEditorP
             <div className="rounded-2xl border border-slate-700 bg-[#0d131f] p-5 text-white space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs uppercase font-extrabold tracking-wider text-zinc-400">
-                  {previewLang === "bn" ? "আমরা গ্রহণ করি (Live Preview)" : "We Accept (Live Preview)"}
+                  {previewLang === "bn" ? "We   (Live Preview)" : "We Accept (Live Preview)"}
                 </span>
                 <span className="text-[10px] text-zinc-500 font-mono">
                   Exact storefront layout — same card size on all devices

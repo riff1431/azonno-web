@@ -46,7 +46,7 @@ export async function triggerReviewRequest(orderId: string, phone: string, custo
     eventType: "review_request",
     variables: {
       customer_name: customerName,
-      store_name: "Blush & Budget",
+      store_name: "Azonno",
       store_url: `${appUrl}/account/reviews`,
     },
   });
@@ -65,7 +65,7 @@ export async function triggerReplenishmentAlert(phone: string, customerName: str
     eventType: "promotional",
     variables: {
       customer_name: customerName,
-      store_name: "Blush & Budget",
+      store_name: "Azonno",
       discount: "10%",
       coupon_code: "GLOW10",
       store_url: `${appUrl}/`,
